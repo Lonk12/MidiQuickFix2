@@ -16,13 +16,26 @@
 <img src="MQFTitleBlue.png" style="	background-color : #e0ffff;"/></div>
 
 <div class="left_column">
-  <a href="http://sourceforge.net">
-    <img src="http://sourceforge.net/sflogo.php?group_id=124029&amp;type=4"
-     width="125" height="37" border="0" alt="SourceForge.net Logo" />
-  </a>
 
-  <div class="tool_link">
-	SourceForge project links<br />
+  <div class="link_box">
+	<span class="menu_title">MidiQuickFix</span><br />
+	<span class="curr_page">Home</span>
+  </div>
+
+  <div class="link_box">
+	<span class="menu_title">Screenshots</span><br />
+	&nbsp;&nbsp;Coming Soon ...
+	<!-- a href="MQF-Main.png">Main Window</a>
+	<a href="MQF-TrackSummary.png">Track Summary</a -->
+  </div>
+
+  <div class="link_box">
+	<span class="menu_title">Installation</span><br />
+	<a href="setup.html">Instructions</a>
+  </div>
+
+  <div class="link_box">
+	<span class="menu_title">SourceForge project links</span><br />
     <a href="http://sourceforge.net/projects/midiquickfix">
 	 Project Page</a><br />
 	<a href="http://sourceforge.net/project/showfiles.php?group_id=124029">
@@ -32,12 +45,10 @@
 	 CVS Web</a><br />
   </div>
 
-  <div class="tool_link">
-	Screenshots<br />
-	&nbsp;&nbsp;Coming Soon ...
-	<!-- a href="MQF-Main.png">Main Window</a>
-	<a href="MQF-TrackSummary.png">Track Summary</a -->
-  </div>
+  <a href="http://sourceforge.net" -->
+    <img src="http://sourceforge.net/sflogo.php?group_id=124029&amp;type=4"
+     width="125" height="37" border="0" alt="SourceForge.net Logo" />
+  </a>
 
 </div>
 
@@ -48,12 +59,25 @@
 </p>
 It is intended to make it easy to find and fix small problems in a Midi
 sequence without the need for a complex Midi sequencing program.<br />
-<div style="width: 49%; float: left;
+
+<!-- IE6 does not seem to understand the concept of % width -->
+<!-- div style="float : left;
+ width : 50%;
  margin-top : 8px;
  border-top : 2px solid #e0e080;
  border-left : 8px solid #e0e080;
- " >
-<p class="section_head">Current Features</p>
+ " -->
+<!-- END - Removed to avoid IE6 bug -->
+
+ <!-- So we need to use a table instead -->
+ <table style="margin-top : 8px;" cellspacing="0">
+ <tr>
+ <td style="border-top : 2px solid #e0e080;
+  border-left : 8px solid #e0e080;
+  padding : 4px;
+  ">
+<span class="section_head">Current Features</span>
+<br /><br />
 <span class="proj_name">MidiQuickFix</span> currently provides the following:
 <dt>File
 <dd>Open, Save, Save As</dd>
@@ -70,12 +94,22 @@ sequence without the need for a complex Midi sequencing program.<br />
 <dd>Delete event</dd>
 <dd>Edit event : Position, Note, Value, Patch, Channel, MetaData</dd>
 </dt>
-</div>
-<div style="margin-left: 50%;
+</td>
+
+<!-- Removed to avoid IE6 bug -->
+<!-- /div -->
+<!-- div style="margin-left: 50%;
  margin-top : 8px;
  border-top : 2px solid #e0e080;
-">
-<p class="section_head">Future Features</p>
+" -->
+<!-- END - Removed to avoid IE6 bug -->
+
+ <td style="border-top : 2px solid #e0e080;
+  vertical-align : top; 
+  padding : 4px;
+  ">
+<span class="section_head">Future Features</span>
+<br /><br />
 <span class="proj_name">MidiQuickFix</span> will probably be enhanced with the following:
 <dt>Editing
 <dd>Insert event</dd>
@@ -84,9 +118,15 @@ sequence without the need for a complex Midi sequencing program.<br />
 <dd>Split events to a separate track per channel</dd>
 <dd>Convert NOTE_ON 0 events to NOTE_OFF</dd>
 </dt>
-</div>
+</td>
+</tr>
+</table>
 
-<div class="spacer" style="border-top : 2px solid #e0e080;"/>
+<!-- Removed to avoid IE6 bug -->
+<!-- /div -->
+<!-- END - Removed to avoid IE6 bug -->
+
+<div class="spacer" style="border-top : 2px solid #e0e080;" />
 <br />
 <p>
 The original motivation for <span class="proj_name">MidiQuickFix</span>
@@ -100,7 +140,7 @@ lower volume.
 </div>
 
 <div class="right_column">
-  <div class="tool_link">
+  <div class="link_box">
 	Related links<br />
 	&nbsp;&nbsp;Coming Soon ...
   </div>

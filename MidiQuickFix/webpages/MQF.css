@@ -26,9 +26,8 @@ body { background-color : #ffffff; font-family: sans-serif; font-size: 12pt; }
     /*  border: solid black 1px; */
     }
 .centre_column {
-    padding: 8px;
-    margin-left: 128px;
-    margin-right: 128px;
+    margin-left: 133px;
+    margin-right: 133px;
     background-color : #ffffff;
     /*  border: solid black 1px; */
     }
@@ -44,19 +43,42 @@ body { background-color : #ffffff; font-family: sans-serif; font-size: 12pt; }
     /*  border: solid black 1px; */
     }
 
-.heading { font-family: sans-serif; font-size: 20pt; 
-    font-weight: bold; font-variant: small-caps }
 .proj_name { font-family: sans-serif; font-size: 12pt; 
     font-weight: bold; font-variant: small-caps; }
 
 .section_head { font-family: sans-serif; font-size: 14pt;
     font-weight: bold; font-variant: small-caps }
-.logo { float: left; }
-.logo img { width: 128px; Height:128px }
-.link_box { float: left; width: 20em; padding-left: 12px; }
+
 .tool_heading { font-family: sans-serif; font-size: 12pt;
     font-weight: bold; left: 8px }
-.tool_link { font-family: sans-serif; font-size: 10pt; }
-.tool_link a {margin-left : 8px; }
+
+.menu_title { font-weight : bold; }
+.curr_page { margin-left : 8px; }
+.link_box { font-family: sans-serif; font-size: 10pt; margin-top : 1ex }
+.link_box a { margin-left : 8px; }
+.link_box a:link {
+	background : transparent;
+	padding : 2px
+	}
+.link_box a:active {
+	background : transparent;
+	padding : 2px
+	}
+.link_box a:visited {
+	background : transparent;
+	padding : 2px
+	}
+.link_box a:hover {
+	color : #0080f0;
+	text-decoration : none;
+	background : transparent;
+	border : 2px solid; border-color: #b0c0d0 #406080 #406080 #b0c0d0;
+	padding : 0px
+	}
+
 .spacer { clear: both; }
 
+.heading { font-family: sans-serif; font-size: 20pt; 
+    font-weight: bold; font-variant: small-caps }
+.logo { float: left; }
+.logo img { width: 128px; Height:128px }
