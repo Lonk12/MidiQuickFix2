@@ -1,4 +1,12 @@
-body { background-color : #ffffff; font-family: sans-serif; font-size: 12pt; }
+body {
+    color: black;
+    background-color: #d0f0f0;
+    font-family: sans-serif;
+    font-size: 10pt;
+    }
+code {
+    font-family: courier, monospaced;
+    }
 .full_page {
     position: absolute;
     top: 0px;
@@ -10,8 +18,8 @@ body { background-color : #ffffff; font-family: sans-serif; font-size: 12pt; }
 .title_bar {
     padding: 4px;
     text-align: center;
-    background-color : #e0ffff;
-    width: 100%
+    background-color : #d0f0f0;
+    width: 100%;
     /*  border: solid black 1px; */
 }
 .left_column {
@@ -21,13 +29,15 @@ body { background-color : #ffffff; font-family: sans-serif; font-size: 12pt; }
     margin-top: 60px;
     left: 0px;
     width: 125px;
-    height:100%;
-    background-color : #e0ffff;
+    height: 100%;
+    background-color : #d0f0f0;
     /*  border: solid black 1px; */
     }
 .centre_column {
     margin-left: 133px;
     margin-right: 133px;
+    padding-left: 6px;
+    padding-right: 6px;
     background-color : #ffffff;
     /*  border: solid black 1px; */
     }
@@ -39,46 +49,47 @@ body { background-color : #ffffff; font-family: sans-serif; font-size: 12pt; }
     right: 0px;
     width: 125px;
     height: 100%;
-    background-color : #e0ffff;
+    background-color : #d0f0f0;
     /*  border: solid black 1px; */
     }
 
-.proj_name { font-family: sans-serif; font-size: 12pt; 
+.proj_name { font-family: sans-serif; font-size: 10pt; 
     font-weight: bold; font-variant: small-caps; }
 
 .section_head { font-family: sans-serif; font-size: 14pt;
-    font-weight: bold; font-variant: small-caps }
+    font-weight: bold; font-variant: small-caps; }
 
 .tool_heading { font-family: sans-serif; font-size: 12pt;
-    font-weight: bold; left: 8px }
+    font-weight: bold; left: 8px; }
 
 .menu_title { font-weight : bold; }
-.curr_page { margin-left : 8px; }
-.link_box { font-family: sans-serif; font-size: 10pt; margin-top : 1ex }
-.link_box a { margin-left : 8px; }
+.link_box { font-family: sans-serif; font-size: 10pt; margin-top : 1ex; }
+.link_box p { margin-left : 8px; margin-top: 2px; margin-bottom: 4px; }
 .link_box a:link {
 	background : transparent;
-	padding : 2px
+	padding : 2px;
 	}
 .link_box a:active {
 	background : transparent;
-	padding : 2px
+	padding : 2px;
 	}
 .link_box a:visited {
 	background : transparent;
-	padding : 2px
+	padding : 2px;
 	}
 .link_box a:hover {
-	color : #0080f0;
+	color : #000000;
 	text-decoration : none;
 	background : transparent;
-	border : 2px solid; border-color: #b0c0d0 #406080 #406080 #b0c0d0;
-	padding : 0px
+	border : 2px solid; border-color: #ffffff #408080 #408080 #ffffff;
+	padding : 0px;
 	}
 
 .spacer { clear: both; }
 
-.heading { font-family: sans-serif; font-size: 20pt; 
-    font-weight: bold; font-variant: small-caps }
+.heading {
+    font-family: sans-serif; font-size: 20pt; 
+    font-weight: bold; font-variant: small-caps;
+ }
 .logo { float: left; }
-.logo img { width: 128px; Height:128px }
+.logo img { width: 128px; Height:128px; }
