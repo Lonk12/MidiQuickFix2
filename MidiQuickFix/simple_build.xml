@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MidiQuickFix" default="default" basedir=".">
+    <description>Builds the MidiQuickFix jar file.
+    </description>
+
+  <target name="default" depends="jar" description="Build the jar file.">
+  </target>
+
+  <target name="init">
+      <mkdir dir="build"/>
+      <mkdir dir="build/classes"/>
+      <mkdir dir="dist"/>
+  </target>
+
+  <target name="compile" depends="init">
+      <javac srcdir="src" destdir="build/classes" source="1.4" target="1.4">
+        <classpath>
+          <path path="/usr/java/jre/lib/rt.jar"/>
+        </classpath>
+      </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+      <copy todir="build/classes">
+	<fileset includes="**/resources/*" dir="src"/>
+      </copy>
+      <jar jarfile="dist/MidiQuickFix.jar">
+        <manifest>
+          <attribute name="Main-Class" value="com.lemckes.MidiQuickFix.MidiQuickFix"/>
+        </manifest>
+        <fileset dir="build/classes"/>
+      </jar>
+  </target>
+
+  <target name="clean" description="Clean build products.">
+      <delete dir="build"/>
+      <delete dir="dist"/>
+  </target>
+			
+</project>
