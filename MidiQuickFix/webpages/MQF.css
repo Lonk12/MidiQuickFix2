@@ -57,5 +57,6 @@ body { background-color : #ffffff; font-family: sans-serif; font-size: 12pt; }
 .tool_heading { font-family: sans-serif; font-size: 12pt;
     font-weight: bold; left: 8px }
 .tool_link { font-family: sans-serif; font-size: 10pt; }
+.tool_link a {margin-left : 8px; }
 .spacer { clear: both; }
 
