@@ -109,7 +109,7 @@ public class Startup extends javax.swing.JDialog {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        new Startup(new javax.swing.JFrame(), true).show();
+        new Startup(new javax.swing.JFrame(), true).setVisible(true);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

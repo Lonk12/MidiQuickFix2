@@ -89,7 +89,7 @@ public class SplashDrawing extends javax.swing.JComponent {
     
     synchronized void setStageMessage(String message) {
         mStageMessages.add(message);
-        repaint(0, 0, mImageWidth, mImageHeight);
+        repaint();
         try {
             // Wait a bit so that the message is seen
             wait(500);
