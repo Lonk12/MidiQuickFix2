@@ -1,17 +1,61 @@
-body { background-color : #e0ffff; font-family: sans-serif; font-size: 12pt; }
-.title_bar { float : left; }
+body { background-color : #ffffff; font-family: sans-serif; font-size: 12pt; }
+.full_page {
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    left: 0px;
+    right: 0px;
+    /*  border: solid black 1px; */
+    }
+.title_bar {
+    padding: 4px;
+    text-align: center;
+    background-color : #e0ffff;
+    width: 100%
+    /*  border: solid black 1px; */
+}
+.left_column {
+    position: absolute;
+    padding: 4px;
+    top: 0px;
+    margin-top: 60px;
+    left: 0px;
+    width: 125px;
+    height:100%;
+    background-color : #e0ffff;
+    /*  border: solid black 1px; */
+    }
+.centre_column {
+    padding: 8px;
+    margin-left: 128px;
+    margin-right: 128px;
+    background-color : #ffffff;
+    /*  border: solid black 1px; */
+    }
+
+.right_column {
+    position: absolute;
+    padding: 4px;
+    top: 60px;
+    right: 0px;
+    width: 125px;
+    height: 100%;
+    background-color : #e0ffff;
+    /*  border: solid black 1px; */
+    }
+
 .heading { font-family: sans-serif; font-size: 20pt; 
     font-weight: bold; font-variant: small-caps }
-.section-head { font-family: sans-serif; font-size: 14pt;
+.proj_name { font-family: sans-serif; font-size: 12pt; 
+    font-weight: bold; font-variant: small-caps; }
+
+.section_head { font-family: sans-serif; font-size: 14pt;
     font-weight: bold; font-variant: small-caps }
 .logo { float: left; }
 .logo img { width: 128px; Height:128px }
-.tool_box { float: left; border: 1px solid black;
-    padding: 4px; width: 75%;
-    background-image: url(shader.png); }
 .link_box { float: left; width: 20em; padding-left: 12px; }
 .tool_heading { font-family: sans-serif; font-size: 12pt;
-   	font-weight: bold; left: 8px }
-.tool_link { font-family: sans-serif; left: 12px }
+    font-weight: bold; left: 8px }
+.tool_link { font-family: sans-serif; font-size: 10pt; }
 .spacer { clear: both; }
 
