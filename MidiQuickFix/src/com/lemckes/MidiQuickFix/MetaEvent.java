@@ -1,6 +1,8 @@
 package com.lemckes.MidiQuickFix;
 
-import javax.sound.midi.*;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+
 class MetaEvent {
     // META event types
     static final int sequenceNumber = 0x00; //FF 00 02 ss ss or FF 00 00
@@ -84,14 +86,18 @@ class MetaEvent {
             case SMPTEOffset:
                 result[0] = "M:SMPTEOffset";
                 //hr mn se fr ff
-                result[2] = data[0] + ":" + data[1] + ":" + data[2] + ":" + data[3] + ":" + data[4];
+                result[2] = (data[0] & 0x00ff)
+                + ":" + (data[1] & 0x00ff)
+                + ":" + (data[2] & 0x00ff)
+                + ":" + (data[3] & 0x00ff)
+                + ":" + (data[4] & 0x00ff);
                 break;
             case timeSignature:
                 result[0] = "M:TimeSignature";
-                int nn =  data[0];
-                int dd =  (int)(java.lang.Math.pow(2, data[1]));
-                int cc =  data[2];
-                int bb =  data[3];
+                int nn =  (data[0] & 0x00ff);
+                int dd =  (int)(java.lang.Math.pow(2, (data[1] & 0x00ff)));
+                int cc =  (data[2] & 0x00ff);
+                int bb =  (data[3] & 0x00ff);
                 result[2] = nn + "/" + dd + " " + cc + "Metr. " + bb + "N/q";
                 //result[2] += nn + "/" + dd;
                 break;
@@ -121,6 +127,7 @@ class MetaEvent {
             for (int k = 0; k < data.length; ++k) {
                 byte b = data[k];
                 if (b > 31 && b < 128) {
+                    // Printable character.
                     chars[k] = (char)b;
                 } else {
                     chars[k] = '.';
@@ -131,8 +138,8 @@ class MetaEvent {
         
         if (dumpBytes) {
             for (int k = 0; k < data.length; ++k) {
-                byte b = data[k];
-                result[2] = "0x" + Integer.toHexString(b) + " ";
+                int i = data[k] & 0x00ff;
+                result[2] = "0x" + Integer.toHexString(i) + " ";
             }
         }
         return result;
@@ -141,9 +148,16 @@ class MetaEvent {
     // Methods to handle tempo events.
     
     public static int microSecsToBpm(byte[] data) {
-        long t = data[0] << 16;
-        t += data[1] << 8;
-        t += data[2];
+        // Coerce the bytes into ints
+        int[] ints = new int[3];
+        ints[0] = data[0] & 0x00ff;
+        ints[1] = data[1] & 0x00ff;
+        ints[2] = data[2] & 0x00ff;
+        
+        long t = ints[0] << 16;
+        t += ints[1] << 8;
+        t += ints[2];
+        
         return (int)(60000000 / t);
     }
     
@@ -157,8 +171,16 @@ class MetaEvent {
     }
     
     public static int parseTempo(String tempoString) {
-        String digits = tempoString.substring(0, tempoString.indexOf("bpm"));
-        int t = Integer.parseInt(digits);
+        int bpmPos = tempoString.indexOf("bpm");
+        int t = 0;
+        if (bpmPos != -1) {
+            tempoString = tempoString.substring(0, bpmPos);
+        }
+        try {
+            t = Integer.parseInt(tempoString);
+        } catch(NumberFormatException nfe) {
+            nfe.printStackTrace();
+        }
         return t;
     }
     

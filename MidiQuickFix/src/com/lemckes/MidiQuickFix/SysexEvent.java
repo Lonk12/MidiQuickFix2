@@ -14,8 +14,10 @@ class SysexEvent {
         byte[] data = mess.getData();
         result[1] += data.length;
         for (int i = 0; i < data.length; ++i) {
-            if (i > 0) result[2] += ",";
-            result[2] += + data[i];
+            if (i > 0) {
+                 result[2] += ",";
+            }
+            result[2] += data[i] & 0x00ff;
         }
         return result;
     }
