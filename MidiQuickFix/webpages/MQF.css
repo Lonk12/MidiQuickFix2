@@ -1,0 +1,17 @@
+body { background-color : #e0ffff; font-family: sans-serif; font-size: 12pt; }
+.title_bar { float : left; }
+.heading { font-family: sans-serif; font-size: 20pt; 
+    font-weight: bold; font-variant: small-caps }
+.section-head { font-family: sans-serif; font-size: 14pt;
+    font-weight: bold; font-variant: small-caps }
+.logo { float: left; }
+.logo img { width: 128px; Height:128px }
+.tool_box { float: left; border: 1px solid black;
+    padding: 4px; width: 75%;
+    background-image: url(shader.png); }
+.link_box { float: left; width: 20em; padding-left: 12px; }
+.tool_heading { font-family: sans-serif; font-size: 12pt;
+   	font-weight: bold; left: 8px }
+.tool_link { font-family: sans-serif; left: 12px }
+.spacer { clear: both; }
+
