@@ -76,13 +76,13 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
             if (mess instanceof ShortMessage) {
                 int cmd = ((ShortMessage)mess).getCommand();
                 if (cmd == ShortMessage.NOTE_OFF
-                || cmd ==  ShortMessage.NOTE_ON) {
+                        || cmd ==  ShortMessage.NOTE_ON) {
                     mNumNotes++;
                 } else {
-                    mNoNotesRowMap.addElement(new Integer(i));
+                    mNoNotesRowMap.add(new Integer(i));
                 }
             } else {
-                mNoNotesRowMap.addElement(new Integer(i));
+                mNoNotesRowMap.add(new Integer(i));
             }
         }
     }
@@ -164,7 +164,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
                 if (mess instanceof ShortMessage) {
                     int cmd = ((ShortMessage)mess).getCommand();
                     if (cmd == ShortMessage.NOTE_OFF
-                    || cmd ==  ShortMessage.NOTE_ON) {
+                            || cmd ==  ShortMessage.NOTE_ON) {
                         result = true;
                     }
                 }
@@ -330,9 +330,9 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
                 if (mess instanceof ShortMessage) {
                     int channel = ((Integer)value).intValue();
                     int answer = javax.swing.JOptionPane.showConfirmDialog(null,
-                    new String(java.util.ResourceBundle.getBundle(
-                    "com/lemckes/MidiQuickFix/resources/UIStrings").getString("set_channel_question")
-                    + channel));
+                            new String(java.util.ResourceBundle.getBundle(
+                            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("set_channel_question")
+                            + channel));
                     if (answer == javax.swing.JOptionPane.YES_OPTION) {
                         setTrackChannel(channel);
                     } else if (answer == javax.swing.JOptionPane.NO_OPTION) {
@@ -358,23 +358,29 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     }
     
     private void updateMessage(
-    MidiEvent ev, int command, int channel, int d1, int d2)
-    throws InvalidMidiDataException {
+            MidiEvent ev, int command, int channel, int d1, int d2)
+            throws InvalidMidiDataException {
+        
         try {
-            //HACK to fix BUG where data2 is set to data1 in jdk 1.4.2
-            ShortMessage sm = new ShortMessage();
-            sm.setMessage(command, channel, d1, d2);
-            MidiEvent newEv = new MidiEvent(sm, ev.getTick());
-            boolean found = mTrack.remove(ev);
-            boolean notFound = mTrack.add(newEv);
-            
-            // Need to rebuild the map of non-note events.
-            // The remove()/add() calls may have re-ordered the events.
-            buildNoNotesRowMap();
-            
-            //End ugly HACK
-        }
-        catch (InvalidMidiDataException e) {
+            if (MidiQuickFix.VERSION_1_4_2_BUG) {
+                // HACK to fix BUG where data2 is set to data1 in jdk 1.4.2
+                // 
+                ShortMessage sm = new ShortMessage();
+                sm.setMessage(command, channel, d1, d2);
+                MidiEvent newEv = new MidiEvent(sm, ev.getTick());
+                boolean found = mTrack.remove(ev);
+                boolean notFound = mTrack.add(newEv);
+                
+                // Need to rebuild the map of non-note events.
+                // The remove()/add() calls may have re-ordered the events.
+                buildNoNotesRowMap();
+                
+                //End ugly HACK
+            } else {
+                ShortMessage mess = (ShortMessage)ev.getMessage();
+                mess.setMessage(command, channel, d1, d2);
+            }
+        } catch (InvalidMidiDataException e) {
             throw(e);
         }
     }
@@ -441,7 +447,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
             result[0] = str[0];
             result[4] = str[2];
         } else if (st == SysexMessage.SYSTEM_EXCLUSIVE
-        || st == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
+                || st == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
             // Returns Event, Length, Text
             Object[] str = SysexEvent.getSysexStrings((SysexMessage)mess);
             result[0] = str[0];
@@ -482,12 +488,12 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     
     Class[] types = new Class [] {
         java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Integer.class,
-        java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Integer.class
+                java.lang.Object.class,
+                java.lang.Object.class,
+                java.lang.Integer.class,
+                java.lang.Object.class,
+                java.lang.Object.class,
+                java.lang.Integer.class
     };
     public Class getColumnClass(int columnIndex) {
         return types [columnIndex];
@@ -495,12 +501,12 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     
     String[] columnNames = new String[] {
         java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("beat:tick"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("event"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("note"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("value"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("patch"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("Text"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("channel_abbrev")
+                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("event"),
+                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("note"),
+                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("value"),
+                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("patch"),
+                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("Text"),
+                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("channel_abbrev")
     };
     public String getColumnName(int col) {
         return columnNames[col];
