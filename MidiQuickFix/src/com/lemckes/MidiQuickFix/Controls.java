@@ -35,7 +35,7 @@ class Controls {
      * @param graphic If true the returned string is a graphical
      * representation of the value. e.g. value 64 gives
      * "--------|--------"
-     * @return The name of the controller.
+     * @return The value of the controller.
      */
     public static String getControlValue(int val, boolean graphic) {
         String result = "";

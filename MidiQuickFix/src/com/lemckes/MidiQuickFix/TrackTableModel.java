@@ -373,6 +373,12 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     }
     
     void setTrackChannel(int channel) {
+        /**
+         * BUG - This will not work with the call to updateMessage()
+         * because the position of the events in the track may be changed
+         * and some events missed.
+         * This will be fixed when the Java setMessage() bug is fixed.
+         */
         for (int i = 0; i < mTrack.size(); ++i) {
             MidiEvent ev = mTrack.get(i);
             MidiMessage mess = ev.getMessage();
