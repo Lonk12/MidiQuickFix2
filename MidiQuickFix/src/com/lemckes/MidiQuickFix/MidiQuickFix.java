@@ -30,6 +30,7 @@ import javax.swing.table.*;
 import javax.swing.event.*;
 
 import java.awt.FontMetrics;
+import java.util.Properties;
 
 
 /**
@@ -52,57 +53,58 @@ public class MidiQuickFix extends JFrame {
      */
     public MidiQuickFix(String fileName) {
         Startup startDialog = new Startup(new javax.swing.JFrame(), false);
-        startDialog.show();
+        startDialog.setVisible(true);
         
         try {
+            // startDialog.splash.setStageMessage("Version 1.4.2 bug = " + VERSION_1_4_2_BUG);
             mStringBundle = java.util.ResourceBundle.getBundle(
-                "com/lemckes/MidiQuickFix/resources/UIStrings");
+                    "com/lemckes/MidiQuickFix/resources/UIStrings");
             startDialog.splash.setStageMessage(
-                mStringBundle.getString("getting_sequencer"));
+                    mStringBundle.getString("getting_sequencer"));
             mSequencer = MidiSystem.getSequencer();
-
+            
             startDialog.splash.setStageMessage(
-                mStringBundle.getString("get_sequencer_returned"));
+                    mStringBundle.getString("get_sequencer_returned"));
             if (mSequencer == null) {
                 // Error -- sequencer device is not supported.
                 startDialog.splash.setStageMessage(
-                    mStringBundle.getString("get_sequencer_failed"));
+                        mStringBundle.getString("get_sequencer_failed"));
             } else {
                 // Acquire resources and make operational.
                 startDialog.splash.setStageMessage(
-                    mStringBundle.getString("opening_sequencer"));
+                        mStringBundle.getString("opening_sequencer"));
                 mSequencer.open(); // This call blocks the process...
                 startDialog.splash.setStageMessage(
-                    mStringBundle.getString("sequencer_opened"));
+                        mStringBundle.getString("sequencer_opened"));
             }
             if (fileName != null && fileName.length() > 0) {
                 startDialog.splash.setStageMessage(
-                    mStringBundle.getString("opening_file"));
+                        mStringBundle.getString("opening_file"));
                 openFile(fileName);
             }
             initComponents();
             sequenceChooser.addChoosableFileFilter(
-                new MidiQuickFix.MidiFileFilter());
+                    new MidiQuickFix.MidiFileFilter());
             
             startDialog.setVisible(false);
             
             mPlayState = NO_FILE;
             if (fileName != null && fileName.length() > 0) {
                 startDialog.splash.setStageMessage(
-                    mStringBundle.getString("creating_window"));
+                        mStringBundle.getString("creating_window"));
                 setTrackComboModel();
                 setInfoLabels();
                 selectTrack(0);
-            mPlayState = STOPPED;
+                mPlayState = STOPPED;
             }
             createTimer(20);
             mSequenceModified = false;
             setActions();
         } catch(Exception e) {
             startDialog.splash.setStageMessage(
-                mStringBundle.getString("startup_failed"));
+                    mStringBundle.getString("startup_failed"));
             startDialog.splash.setStageMessage(
-                e.getMessage());
+                    e.getMessage());
             e.printStackTrace();
         }
     }
@@ -284,11 +286,11 @@ public class MidiQuickFix extends JFrame {
         int major = (int)(dur / 10);
         int minor = major / 6;
         if (major < 10) {
-            major = 10; minor = 1; 
+            major = 10; minor = 1;
         } else if (major < 15) {
-            major = 15; minor = 1; 
+            major = 15; minor = 1;
         } else if (major < 20) {
-            major = 20; minor = 2; 
+            major = 20; minor = 2;
         } else if (major < 30) {
             major = 30; minor = 5;
         } else if (major < 60) {
@@ -727,7 +729,7 @@ public class MidiQuickFix extends JFrame {
         if (mSeq != null) {
             mTrackSummary.setSequence(mSeq);
             mTrackSummary.setFileName(fileNameLabel.getText());
-            mTrackSummary.show();
+            mTrackSummary.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this,
                     java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("no_sequence_message"),
@@ -978,8 +980,22 @@ public class MidiQuickFix extends JFrame {
      * @param args The command line arguments
      */
     public static void main(String args[]) {
-        new MidiQuickFix().show();
+        Properties p = System.getProperties();
+        String version = p.getProperty("java.version", "No java.version found");
+        if (version.substring(0, 5).equals("1.4.2")) {
+            VERSION_1_4_2_BUG = true;
+        } else {
+            VERSION_1_4_2_BUG = false;
+        }
+        new MidiQuickFix().setVisible(true);
     }
+    
+    /**
+     * Flag if we need to work around the bug in 1.4.2
+     * which does not allow us to update the values of a 
+     * ShortEvent.
+     */
+    static boolean VERSION_1_4_2_BUG;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
