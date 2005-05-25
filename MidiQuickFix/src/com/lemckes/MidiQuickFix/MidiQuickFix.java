@@ -58,40 +58,40 @@ public class MidiQuickFix extends JFrame {
         try {
             // startDialog.splash.setStageMessage("Version 1.4.2 bug = " + VERSION_1_4_2_BUG);
             mStringBundle = java.util.ResourceBundle.getBundle(
-                    "com/lemckes/MidiQuickFix/resources/UIStrings");
+                "com/lemckes/MidiQuickFix/resources/UIStrings");
             startDialog.splash.setStageMessage(
-                    mStringBundle.getString("getting_sequencer"));
+                mStringBundle.getString("getting_sequencer"));
             mSequencer = MidiSystem.getSequencer();
             
             startDialog.splash.setStageMessage(
-                    mStringBundle.getString("get_sequencer_returned"));
+                mStringBundle.getString("get_sequencer_returned"));
             if (mSequencer == null) {
                 // Error -- sequencer device is not supported.
                 startDialog.splash.setStageMessage(
-                        mStringBundle.getString("get_sequencer_failed"));
+                    mStringBundle.getString("get_sequencer_failed"));
             } else {
                 // Acquire resources and make operational.
                 startDialog.splash.setStageMessage(
-                        mStringBundle.getString("opening_sequencer"));
+                    mStringBundle.getString("opening_sequencer"));
                 mSequencer.open(); // This call blocks the process...
                 startDialog.splash.setStageMessage(
-                        mStringBundle.getString("sequencer_opened"));
+                    mStringBundle.getString("sequencer_opened"));
             }
             if (fileName != null && fileName.length() > 0) {
                 startDialog.splash.setStageMessage(
-                        mStringBundle.getString("opening_file"));
+                    mStringBundle.getString("opening_file"));
                 openFile(fileName);
             }
             initComponents();
             sequenceChooser.addChoosableFileFilter(
-                    new MidiQuickFix.MidiFileFilter());
+                new MidiQuickFix.MidiFileFilter());
             
             startDialog.setVisible(false);
             
             mPlayState = NO_FILE;
             if (fileName != null && fileName.length() > 0) {
                 startDialog.splash.setStageMessage(
-                        mStringBundle.getString("creating_window"));
+                    mStringBundle.getString("creating_window"));
                 setTrackComboModel();
                 setInfoLabels();
                 selectTrack(0);
@@ -102,9 +102,9 @@ public class MidiQuickFix extends JFrame {
             setActions();
         } catch(Exception e) {
             startDialog.splash.setStageMessage(
-                    mStringBundle.getString("startup_failed"));
+                mStringBundle.getString("startup_failed"));
             startDialog.splash.setStageMessage(
-                    e.getMessage());
+                e.getMessage());
             e.printStackTrace();
         }
     }
@@ -121,9 +121,9 @@ public class MidiQuickFix extends JFrame {
         } catch (Exception e) {
             // Handle error and/or return
             System.out.println(
-                    "Exception in openFile(String fileName) : "
-                    + e.getMessage()
-                    );
+                "Exception in openFile(String fileName) : "
+                + e.getMessage()
+                );
             e.printStackTrace();
         }
     }
@@ -153,6 +153,11 @@ public class MidiQuickFix extends JFrame {
             
             if (mTrackSummary != null) {
                 mTrackSummary.setSequence(mSeq);
+                mTrackSummary.setFileName(mFileName);
+            }
+            
+            if (mLyricDialog != null) {
+                mLyricDialog.setFileName(mFileName);
             }
         } catch (Exception e) {
             // Handle error and/or return
@@ -174,8 +179,8 @@ public class MidiQuickFix extends JFrame {
         boolean continueAction = true;
         if (mSequenceModified) {
             int answer = JOptionPane.showConfirmDialog(null,
-                    new String(mStringBundle.getString("check_save")),
-                    new String(mStringBundle.getString("save_changes")), JOptionPane.YES_NO_CANCEL_OPTION);
+                new String(mStringBundle.getString("check_save")),
+                new String(mStringBundle.getString("save_changes")), JOptionPane.YES_NO_CANCEL_OPTION);
             if (answer == JOptionPane.YES_OPTION) {
                 java.io.File myMidiFile = new java.io.File(mFilePath);
                 saveAs(myMidiFile);
@@ -257,7 +262,7 @@ public class MidiQuickFix extends JFrame {
             }
         }
         trackSelector.setModel(
-                new DefaultComboBoxModel(trackList));
+            new DefaultComboBoxModel(trackList));
     }
     
     /** Set the table cell editor for the Patch column. */
@@ -266,7 +271,7 @@ public class MidiQuickFix extends JFrame {
         
         String[] s = InstrumentNames.getNameArray();
         JComboBox comboBox =
-                new JComboBox(new DefaultComboBoxModel(s));
+            new JComboBox(new DefaultComboBoxModel(s));
         instrumentColumn.setCellEditor(new DefaultCellEditor(comboBox));
     }
     
@@ -377,7 +382,8 @@ public class MidiQuickFix extends JFrame {
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form MidiQuickFix.
      */
-    private void initComponents() {//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
+    private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
         sequenceChooser = new javax.swing.JFileChooser();
@@ -421,12 +427,13 @@ public class MidiQuickFix extends JFrame {
         pasteMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem = new javax.swing.JMenuItem();
         sequenceMenu = new javax.swing.JMenu();
-        summaryMenuItem = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
         playMenuItem = new javax.swing.JMenuItem();
         pauseMenuItem = new javax.swing.JMenuItem();
         stopMenuItem = new javax.swing.JMenuItem();
         rewindMenuItem = new javax.swing.JMenuItem();
+        viewMenu = new javax.swing.JMenu();
+        lyricsMenuItem = new javax.swing.JMenuItem();
+        summaryMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -450,7 +457,7 @@ public class MidiQuickFix extends JFrame {
         tablePanel.setLayout(new java.awt.BorderLayout());
 
         tablePanel.setBorder(new javax.swing.border.EmptyBorder(new java.awt.Insets(3, 0, 3, 0)));
-        tableScrollPane.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        tableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         tableScrollPane.setPreferredSize(new java.awt.Dimension(500, 403));
         trackTable.setName("trackTable");
         tableScrollPane.setViewportView(trackTable);
@@ -676,18 +683,6 @@ public class MidiQuickFix extends JFrame {
 
         sequenceMenu.setMnemonic('S');
         sequenceMenu.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("sequence"));
-        summaryMenuItem.setMnemonic('T');
-        summaryMenuItem.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("track_summary"));
-        summaryMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                summaryMenuItemActionPerformed(evt);
-            }
-        });
-
-        sequenceMenu.add(summaryMenuItem);
-
-        sequenceMenu.add(jSeparator1);
-
         playMenuItem.setAction(mPlayAction);
         playMenuItem.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("play"));
         sequenceMenu.add(playMenuItem);
@@ -706,12 +701,42 @@ public class MidiQuickFix extends JFrame {
 
         menuBar.add(sequenceMenu);
 
+        viewMenu.setMnemonic('V');
+        viewMenu.setText("View");
+        lyricsMenuItem.setMnemonic('L');
+        lyricsMenuItem.setText("Lyrics");
+        lyricsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lyricsMenuItemActionPerformed(evt);
+            }
+        });
+
+        viewMenu.add(lyricsMenuItem);
+
+        summaryMenuItem.setMnemonic('T');
+        summaryMenuItem.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("track_summary"));
+        summaryMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                summaryMenuItemActionPerformed(evt);
+            }
+        });
+
+        viewMenu.add(summaryMenuItem);
+
+        menuBar.add(viewMenu);
+
         helpMenu.setMnemonic('H');
         helpMenu.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("help"));
         contentsMenuItem.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("contents"));
         helpMenu.add(contentsMenuItem);
 
         aboutMenuItem.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("about"));
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
+
         helpMenu.add(aboutMenuItem);
 
         menuBar.add(helpMenu);
@@ -719,7 +744,28 @@ public class MidiQuickFix extends JFrame {
         setJMenuBar(menuBar);
 
         pack();
-    }//GEN-END:initComponents
+    }
+    // </editor-fold>//GEN-END:initComponents
+
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+// TODO add your handling code here:
+        if (mAboutDialog == null) {
+            mAboutDialog = new AboutDialog(this, false);
+        }
+        mAboutDialog.setVisible(true);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
+    
+    private void lyricsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lyricsMenuItemActionPerformed
+        // TODO add your handling code here:
+        if (mLyricDialog == null) {
+            mLyricDialog = new LyricDialog(this, false);
+        }
+        if (mSequencer != null) {
+            mLyricDialog.setSequencer(mSequencer);
+            mLyricDialog.setFileName(fileNameLabel.getText());
+            mLyricDialog.setVisible(true);
+        }
+    }//GEN-LAST:event_lyricsMenuItemActionPerformed
     
     private void summaryMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summaryMenuItemActionPerformed
         // Add your handling code here:
@@ -732,9 +778,9 @@ public class MidiQuickFix extends JFrame {
             mTrackSummary.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this,
-                    java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("no_sequence_message"),
-                    java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("no_sequence_title"),
-                    JOptionPane.ERROR_MESSAGE);
+                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("no_sequence_message"),
+                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("no_sequence_title"),
+                JOptionPane.ERROR_MESSAGE);
         }
         
     }//GEN-LAST:event_summaryMenuItemActionPerformed
@@ -775,9 +821,9 @@ public class MidiQuickFix extends JFrame {
         } catch (Exception e) {
             // Handle error and/or return
             System.out.println(
-                    "Exception in saveMenuItemActionPerformed : "
-                    + e.getMessage()
-                    );
+                "Exception in saveMenuItemActionPerformed : "
+                + e.getMessage()
+                );
         }
     }//GEN-LAST:event_saveMenuItemActionPerformed
     
@@ -788,15 +834,13 @@ public class MidiQuickFix extends JFrame {
     
     private void createTimer(int delay) {
         java.awt.event.ActionListener taskPerformer =
-                new java.awt.event.ActionListener() {
+            new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 //...Perform a task...
                 setPositionIndicator(false);
                 
                 if (!mSequencer.isRunning()) {
-                    mTimer.stop();
-                    mPlayState = STOPPED;
-                    setActions();
+                    stop();
                 }
             }
         };
@@ -807,7 +851,7 @@ public class MidiQuickFix extends JFrame {
         long ticks = mSequencer.getTickPosition();
         long pos = mSequencer.getMicrosecondPosition()/1000000;
         posLabel.setText(mStringBundle.getString("position") + formatSeconds(pos) +
-                " (" + formatTicks(ticks) + ")");
+            " (" + formatTicks(ticks) + ")");
         
         if (!fromSlider) {
             positionSlider.setValue((int)pos);
@@ -840,7 +884,7 @@ public class MidiQuickFix extends JFrame {
         int[] selRows = trackTable.getSelectedRows();
         for (int i = 0; i< selRows.length; ++i) {
             System.out.println("Deleting row " + selRows[i]
-                    + " " + trackTable.getValueAt(selRows[i], 0));
+                + " " + trackTable.getValueAt(selRows[i], 0));
         }
         ((TrackTableModel)trackTable.getModel()).deleteEvents(selRows);
     }//GEN-LAST:event_deleteButtonActionPerformed
@@ -915,8 +959,8 @@ public class MidiQuickFix extends JFrame {
         mCurrentTrack = trackNum;
         // System.out.println(mStringBundle.getString("track") + mCurrentTrack + " selected.");
         trackTable.setModel(
-                new TrackTableModel(mTracks[mCurrentTrack], mResolution, showNotesCheck.isSelected(), KeySignatures.isInFlats(mKeySig))
-                );
+            new TrackTableModel(mTracks[mCurrentTrack], mResolution, showNotesCheck.isSelected(), KeySignatures.isInFlats(mKeySig))
+            );
         
         trackTable.getModel().addTableModelListener(new tableChangeListener());
         
@@ -992,7 +1036,7 @@ public class MidiQuickFix extends JFrame {
     
     /**
      * Flag if we need to work around the bug in 1.4.2
-     * which does not allow us to update the values of a 
+     * which does not allow us to update the values of a
      * ShortEvent.
      */
     static boolean VERSION_1_4_2_BUG;
@@ -1012,9 +1056,9 @@ public class MidiQuickFix extends JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPanel infoPanel;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel keyLabel;
     private javax.swing.JLabel lengthLabel;
+    private javax.swing.JMenuItem lyricsMenuItem;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
@@ -1047,7 +1091,9 @@ public class MidiQuickFix extends JFrame {
     private javax.swing.JPanel trackPanel;
     private javax.swing.JComboBox trackSelector;
     private javax.swing.JTable trackTable;
-    private javax.swing.JPanel transportPanel;//GEN-END:variables
+    private javax.swing.JPanel transportPanel;
+    private javax.swing.JMenu viewMenu;
+    // End of variables declaration//GEN-END:variables
     
     /** Resource bundle of displayed strings */
     java.util.ResourceBundle mStringBundle;
@@ -1082,6 +1128,10 @@ public class MidiQuickFix extends JFrame {
     
     TrackSummary mTrackSummary = null;
     
+    LyricDialog mLyricDialog = null;
+    
+    AboutDialog mAboutDialog = null;
+    
     static final int NO_FILE = -1;
     static final int STOPPED = 0;
     static final int PAUSED = 1;
@@ -1096,9 +1146,9 @@ public class MidiQuickFix extends JFrame {
         /** Creates a new instance of PlayAction */
         public PlayAction() {
             putValue(SMALL_ICON,
-                    new javax.swing.ImageIcon(getClass().getResource("/com/lemckes/MidiQuickFix/resources/Play16.gif")));
+                new javax.swing.ImageIcon(getClass().getResource("/com/lemckes/MidiQuickFix/resources/Play16.gif")));
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_SPACE, java.awt.event.InputEvent.ALT_MASK));
+                javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_SPACE, java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
@@ -1116,6 +1166,10 @@ public class MidiQuickFix extends JFrame {
     PlayAction mPlayAction = new PlayAction();
     
     private void play() {
+        // Clear the lyrics, but only if we are playing from the start.
+        if (mPausedPos == 0 && mLyricDialog != null) {
+            mLyricDialog.clear();
+        }
         mSequencer.start();
         mSequencer.setMicrosecondPosition(mPausedPos);
         mTimer.start();
@@ -1130,9 +1184,9 @@ public class MidiQuickFix extends JFrame {
         /** Creates a new instance of PauseAction */
         public PauseAction() {
             putValue(SMALL_ICON,
-                    new javax.swing.ImageIcon(getClass().getResource("/com/lemckes/MidiQuickFix/resources/Pause16.gif")));
+                new javax.swing.ImageIcon(getClass().getResource("/com/lemckes/MidiQuickFix/resources/Pause16.gif")));
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
+                javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
@@ -1170,9 +1224,9 @@ public class MidiQuickFix extends JFrame {
         /** Creates a new instance of StopAction */
         public StopAction() {
             putValue(SMALL_ICON,
-                    new javax.swing.ImageIcon(getClass().getResource("/com/lemckes/MidiQuickFix/resources/Stop16.gif")));
+                new javax.swing.ImageIcon(getClass().getResource("/com/lemckes/MidiQuickFix/resources/Stop16.gif")));
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_BACK_SPACE , java.awt.event.InputEvent.ALT_MASK));
+                javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_BACK_SPACE , java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
@@ -1205,9 +1259,9 @@ public class MidiQuickFix extends JFrame {
         /** Creates a new instance of RewindAction */
         public RewindAction() {
             putValue(SMALL_ICON,
-                    new javax.swing.ImageIcon(getClass().getResource("/com/lemckes/MidiQuickFix/resources/Rewind16.gif")));
+                new javax.swing.ImageIcon(getClass().getResource("/com/lemckes/MidiQuickFix/resources/Rewind16.gif")));
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_MASK));
+                javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
