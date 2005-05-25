@@ -33,7 +33,7 @@ import javax.sound.midi.*;
  * The model for the track summary table.
  * @version $Id$
  */
-class TrackSummaryTableModel extends AbstractTableModel implements TableModelListener {
+class TrackSummaryTableModel extends AbstractTableModel {
     
     Synthesizer mSynth;
     
@@ -79,10 +79,10 @@ class TrackSummaryTableModel extends AbstractTableModel implements TableModelLis
         
         System.out.println("Synth = " + mSynth.toString());
         mChannels = mSynth.getChannels();
-        for (int i = 0; i < mChannels.length; ++i) {
-            System.out.println("Ch " + i + " : "
-            + mChannels[i]);
-        }
+        //        for (int i = 0; i < mChannels.length; ++i) {
+        //            System.out.println("Ch " + i + " : "
+        //            + mChannels[i]);
+        //        }
         try {
             mSeq = MidiSystem.getSequencer();
         } catch(MidiUnavailableException e) {
@@ -114,7 +114,6 @@ class TrackSummaryTableModel extends AbstractTableModel implements TableModelLis
                     if (str[0].equals("M:TrackName")) {
                         mInfo[i].mName = (String)str[2];
                     }
-                    
                 }
                 
                 if (mm instanceof ShortMessage) {
@@ -133,8 +132,6 @@ class TrackSummaryTableModel extends AbstractTableModel implements TableModelLis
                         }
                     }
                 }
-                
-                addTableModelListener(this);
             }
         }
     }
@@ -209,18 +206,22 @@ class TrackSummaryTableModel extends AbstractTableModel implements TableModelLis
                 mInfo[row].mSolo = ((Boolean)value).booleanValue();
                 mSeq.setTrackSolo(row, mInfo[row].mSolo);
                 boolean soloed = mSeq.getTrackSolo(row);
-                //                mChannels[mInfo[row].mChannel].setSolo(mInfo[row].mSolo);
-                System.out.println("TrackSummaryTableModel.setValueAt Solo = " + value
-                + " is actually " + soloed);
+                if (soloed != mInfo[row].mSolo) {
+                    System.out.println("Solo not supported. (Set to " + value
+                        + " is actually " + soloed + ")");
+                    mChannels[mInfo[row].mChannel].setSolo(mInfo[row].mSolo);
+                }
                 break;
             case 6:
                 // Mute
                 mInfo[row].mMute = ((Boolean)value).booleanValue();
                 mSeq.setTrackMute(row, mInfo[row].mMute);
                 boolean muted = mSeq.getTrackMute(row);
-                //                mChannels[mInfo[row].mChannel].setMute(mInfo[row].mMute);
-                System.out.println("TrackSummaryTableModel.setValueAt Mute = " + value
-                + " is actually " + muted);
+                if (muted != mInfo[row].mMute) {
+                    System.out.println("Mute not supported. (Set to " + value
+                        + " is actually " + muted + ")");
+                    mChannels[mInfo[row].mChannel].setMute(mInfo[row].mMute);
+                }
                 break;
             default:
                 // Do Nothing
@@ -241,12 +242,12 @@ class TrackSummaryTableModel extends AbstractTableModel implements TableModelLis
     
     Class[] types = new Class [] {
         java.lang.Integer.class,
-        java.lang.String.class,
-        java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Integer.class,
-        java.lang.Boolean.class,
-        java.lang.Boolean.class
+            java.lang.String.class,
+            java.lang.Object.class,
+            java.lang.Object.class,
+            java.lang.Integer.class,
+            java.lang.Boolean.class,
+            java.lang.Boolean.class
     };
     
     public Class getColumnClass(int columnIndex) {
@@ -255,13 +256,14 @@ class TrackSummaryTableModel extends AbstractTableModel implements TableModelLis
     
     String[] columnNames = new String[] {
         java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("no."),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("name"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("start"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("end"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("channel_abbrev"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("solo"),
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("mute")
+            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("name"),
+            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("start"),
+            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("end"),
+            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("channel_abbrev"),
+            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("solo"),
+            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("mute")
     };
+    
     public String getColumnName(int col) {
         return columnNames[col];
     }
@@ -276,10 +278,6 @@ class TrackSummaryTableModel extends AbstractTableModel implements TableModelLis
             ret = false;
         }
         return ret;
-    }
-    
-    public void tableChanged(javax.swing.event.TableModelEvent e) {
-        System.out.println("TableChanged(" + e.toString() + ")");
     }
     
 }
