@@ -25,9 +25,13 @@ package com.lemckes.MidiQuickFix;
 
 import java.awt.Graphics2D;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
+import java.net.URL;
+import java.util.ArrayList;
 
-import java.util.Vector;
 
 /**
  * This class handles the display of the splash screen in the startup dialog.
@@ -42,18 +46,26 @@ public class SplashDrawing extends javax.swing.JComponent {
     
     float mLineHeight;
     
-    Vector mStageMessages = new Vector();
+    boolean mCentred = false;
+    
+    ArrayList<String> mStageMessages = new ArrayList<String>();
+    
+    Font mFont;
+    FontRenderContext mFrContext;
     
     /** Creates a new instance of SplashDrawing */
     public SplashDrawing() {
-        java.awt.Font font = new java.awt.Font("Dialog", 1, 14);
-        setFont(font);
-        java.awt.font.FontRenderContext frc = new java.awt.font.FontRenderContext (null, false, false);
-        java.awt.font.LineMetrics fm = font.getLineMetrics("A Typical Message String", frc);
+        mFont = new java.awt.Font("Dialog", 1, 14);
+        setFont(mFont);
+        mFrContext = new FontRenderContext(null, true, true);
+        LineMetrics fm = mFont.getLineMetrics("A Typical Message String", mFrContext);
         mLineHeight = fm.getHeight();
         
         java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
-        mImage = tk.getImage(getClass().getResource("/com/lemckes/MidiQuickFix/resources/MQFsplash2.png"));
+//        mImage = tk.getImage(getClass().getResource("/com/lemckes/MidiQuickFix/resources/MQFsplash2.png"));
+        URL url = getClass().getResource("resources/MQFsplash2.png");
+        System.out.println("Splash screenURL = " + url);
+        mImage = tk.getImage(url);
         MediaTracker mt = new MediaTracker(this);
         mt.addImage(mImage, 1);
         try {
@@ -66,7 +78,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         mImageHeight = mImage.getHeight(null);
         // System.out.println("Width=" + w + " Height=" + h);
         mBi = new BufferedImage(mImage.getWidth(null), mImage.getHeight(null),
-        BufferedImage.TYPE_INT_RGB);
+            BufferedImage.TYPE_INT_RGB);
         Graphics2D g = mBi.createGraphics();
         g.drawImage(mImage, 0, 0, null);
         g.dispose();
@@ -78,13 +90,29 @@ public class SplashDrawing extends javax.swing.JComponent {
      */
     public void paint(java.awt.Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
+        g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+            RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.drawImage(mBi, 0, 0, this);
-        int startPos = (int)((mImageHeight - mLineHeight * mStageMessages.size()) / 2);
+        
+        int startY = (int)((mImageHeight - mLineHeight * mStageMessages.size()) / 2);
+        int startX = 20;
         for (int i = 0; i < mStageMessages.size(); ++i) {
-            int x = 20;
-            int y = startPos + (int)(i * mLineHeight);
-            g2.drawString((String)mStageMessages.get(i), x, y);
+            if (!mCentred) {
+                startX = 20;
+            } else {
+                Rectangle2D r = mFont.getStringBounds(mStageMessages.get(i), mFrContext);
+                double width = r.getWidth();
+                startX = (int)((mImageWidth - width) / 2);
+            }
+            int y = startY + (int)(i * mLineHeight);
+            g2.drawString((String)mStageMessages.get(i), startX, y);
         }
+    }
+    
+    void setCentredText(boolean centred) {
+        mCentred = centred;
     }
     
     synchronized void setStageMessage(String message) {
@@ -107,6 +135,5 @@ public class SplashDrawing extends javax.swing.JComponent {
     
     public Dimension getSize() {
         return new Dimension(mImageWidth, mImageHeight);
-        //        return new Dimension(im.getWidth(null), im.getHeight(null));
     }
 }
