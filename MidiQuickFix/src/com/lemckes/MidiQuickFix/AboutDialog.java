@@ -69,9 +69,12 @@ public class AboutDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         buttonPanel = new javax.swing.JPanel();
-        cancelButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("MidiQuickFix");
         setFont(new java.awt.Font("Dialog", 1, 14));
+        setName("aboutDialog");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
@@ -80,14 +83,14 @@ public class AboutDialog extends javax.swing.JDialog {
 
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        cancelButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("ok"));
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+        okButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("ok"));
+        okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                okButtonActionPerformed(evt);
             }
         });
 
-        buttonPanel.add(cancelButton);
+        buttonPanel.add(okButton);
 
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
@@ -95,9 +98,9 @@ public class AboutDialog extends javax.swing.JDialog {
     }
     // </editor-fold>//GEN-END:initComponents
     
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        System.exit(1);
-    }//GEN-LAST:event_cancelButtonActionPerformed
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        doClose(RET_OK);
+    }//GEN-LAST:event_okButtonActionPerformed
     
     /** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
@@ -119,7 +122,7 @@ public class AboutDialog extends javax.swing.JDialog {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
-    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
     
     private int returnStatus = RET_OK;
