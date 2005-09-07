@@ -157,6 +157,16 @@
                 </Property>
               </Properties>
             </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator1">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="splitMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Split"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="splitMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="viewMenu">

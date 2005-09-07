@@ -431,6 +431,8 @@ public class MidiQuickFix extends JFrame {
         pauseMenuItem = new javax.swing.JMenuItem();
         stopMenuItem = new javax.swing.JMenuItem();
         rewindMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        splitMenuItem = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
         lyricsMenuItem = new javax.swing.JMenuItem();
         summaryMenuItem = new javax.swing.JMenuItem();
@@ -699,6 +701,17 @@ public class MidiQuickFix extends JFrame {
         rewindMenuItem.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("rewind"));
         sequenceMenu.add(rewindMenuItem);
 
+        sequenceMenu.add(jSeparator1);
+
+        splitMenuItem.setText("Split");
+        splitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                splitMenuItemActionPerformed(evt);
+            }
+        });
+
+        sequenceMenu.add(splitMenuItem);
+
         menuBar.add(sequenceMenu);
 
         viewMenu.setMnemonic('V');
@@ -746,7 +759,57 @@ public class MidiQuickFix extends JFrame {
         pack();
     }
     // </editor-fold>//GEN-END:initComponents
-
+    
+    private void splitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_splitMenuItemActionPerformed
+        
+        JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle(
+            "com/lemckes/MidiQuickFix/resources/UIStrings").
+            getString("not_implemented_message"),
+            java.util.ResourceBundle.getBundle(
+            "com/lemckes/MidiQuickFix/resources/UIStrings").
+            getString("not_implemented_title"),
+            JOptionPane.ERROR_MESSAGE);
+        return;
+        
+        /*
+        Track t[] = new Track[16];
+        Track t0 = mTracks[0];
+        for (int i = 0; i < 16; ++i) {
+            t[i] = mSeq.createTrack();
+            MetaMessage mm = new MetaMessage();
+            String name = "Channel" + String.valueOf(i);
+            char[] cName = name.toCharArray();
+            byte[] bName = new byte[cName.length];
+            for (int j = 0; j < cName.length; ++j) {
+                bName[j] = (byte)cName[j];
+            }
+            try {
+                mm.setMessage(MetaEvent.trackName, bName, bName.length);
+            } catch (InvalidMidiDataException imde) {
+                imde.printStackTrace();
+            }
+            t[i].add(new MidiEvent(mm, 0));
+        }
+         
+        for (int i = 0; i < t0.size(); ++i) {
+            MidiEvent ev = t0.get(i);
+            MidiMessage mess = ev.getMessage();
+            if (mess instanceof ShortMessage) {
+                int st = ((ShortMessage)mess).getStatus();
+                // Check that this is a channel message
+                if ((st & 0xf0) <= 0xf0) {
+                    ShortMessage sm = (ShortMessage)mess;
+                    //int command = sm.getCommand();
+                    int channel = sm.getChannel();
+                    //int d1 = sm.getData1();
+                    //int d2 = sm.getData2();
+                    t[channel].add(ev);
+                }
+            }
+        }
+         */
+    }//GEN-LAST:event_splitMenuItemActionPerformed
+    
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
 // TODO add your handling code here:
         if (mAboutDialog == null) {
@@ -1056,6 +1119,7 @@ public class MidiQuickFix extends JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPanel infoPanel;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel keyLabel;
     private javax.swing.JLabel lengthLabel;
     private javax.swing.JMenuItem lyricsMenuItem;
@@ -1078,6 +1142,7 @@ public class MidiQuickFix extends JFrame {
     private javax.swing.JFileChooser sequenceChooser;
     private javax.swing.JMenu sequenceMenu;
     private javax.swing.JCheckBox showNotesCheck;
+    private javax.swing.JMenuItem splitMenuItem;
     private javax.swing.JButton stopButton;
     private javax.swing.JMenuItem stopMenuItem;
     private javax.swing.JMenuItem summaryMenuItem;
@@ -1166,10 +1231,17 @@ public class MidiQuickFix extends JFrame {
     PlayAction mPlayAction = new PlayAction();
     
     private void play() {
+        try {
+            mSequencer.setSequence(mSeq);
+        } catch (InvalidMidiDataException imde) {
+            imde.printStackTrace();
+        }
+        
         // Clear the lyrics, but only if we are playing from the start.
         if (mPausedPos == 0 && mLyricDialog != null) {
             mLyricDialog.clear();
         }
+        
         mSequencer.start();
         mSequencer.setMicrosecondPosition(mPausedPos);
         mTimer.start();
