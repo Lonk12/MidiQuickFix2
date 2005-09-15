@@ -44,22 +44,24 @@ class InstrumentNames {
             
             mNameArray = new String[instruments.length];
             for (int j = 0; j < instruments.length; ++j) {
-                System.out.println(j + "   " + instruments[j].getName());
+                // System.out.println(j + "   " + instruments[j].getName());
                 mNameArray[j] = instruments[j].getName();
             }
         } catch (javax.sound.midi.MidiUnavailableException e) {
-            System.out.println("Failed to getSynthesizer() : " + e.getMessage());
-            System.out.println("  --  Using resource bundle for instrument names");
+            System.out.println("Failed to getSynthesizer()  " + e.getMessage());
+            System.out.println("-- Using resource bundle for instrument names");
             
             ResourceBundle mInstrumentsBundle =
-                    ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/GM1Instruments");
+                ResourceBundle.getBundle(
+                "com/lemckes/MidiQuickFix/resources/GM1Instruments");
             int numInsts =
-                    Integer.parseInt(mInstrumentsBundle.getString("count"));
+                Integer.parseInt(mInstrumentsBundle.getString("count"));
             
             mNameArray = new String[numInsts];
             for (int j = 0; j < numInsts; ++j) {
-                mNameArray[j] = mInstrumentsBundle.getString(new Integer(j + 1).toString());
-                System.out.println(j + "   " + mNameArray[j]);
+                mNameArray[j] =
+                    mInstrumentsBundle.getString(new Integer(j + 1).toString());
+                // System.out.println(j + "   " + mNameArray[j]);
             }
         }
     }

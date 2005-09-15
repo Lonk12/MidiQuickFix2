@@ -221,7 +221,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
         if (!mShowNotes) {
             eventIndex = ((Integer)mNoNotesRowMap.get(row)).intValue();
         }
-        System.out.println("setValueAt(" + value.toString() + ", " + eventIndex + ", " + column + ")");
+        // System.out.println("setValueAt(" + value.toString() + ", " + eventIndex + ", " + column + ")");
         
         MidiEvent ev = mTrack.get(eventIndex);
         MidiMessage mess = ev.getMessage();
@@ -386,7 +386,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     }
     
     public void deleteEvents(int[] rows) {
-        System.out.println("deleteEvents");
+        // System.out.println("deleteEvents");
         java.util.Vector events = new java.util.Vector();
         for (int i = 0; i < rows.length; ++i) {
             int eventIndex = rows[i];
@@ -394,7 +394,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
             if (!mShowNotes) {
                 eventIndex = ((Integer)mNoNotesRowMap.get(rows[i])).intValue();
             }
-            System.out.println("Removing event " + eventIndex + " at row " + rows[i]);
+            // System.out.println("Removing event " + eventIndex + " at row " + rows[i]);
             events.add(mTrack.get(eventIndex));
         }
         

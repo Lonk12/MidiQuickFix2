@@ -66,18 +66,19 @@ class TrackSummaryTableModel extends AbstractTableModel {
     /** Creates a new instance of a TrackSummaryTableModel */
     public TrackSummaryTableModel(Sequence s) {
         MidiDevice.Info[] mdi = MidiSystem.getMidiDeviceInfo();
-        for (int i = 0; i < mdi.length; ++i) {
-            System.out.println(i + " : " + mdi[i].toString());
-        }
+        // for (int i = 0; i < mdi.length; ++i) {
+        //     System.out.println(i + " : " + mdi[i].toString());
+        // }
         
         try {
             mSynth = MidiSystem.getSynthesizer();
             MidiDevice md = MidiSystem.getMidiDevice(mdi[0]);
         } catch(MidiUnavailableException e) {
-            System.out.println("No Synthesiser available. (Could make playing tricky.)");
+            System.out.println("No Synthesiser available." +
+                " (Could make playing tricky.)");
         }
         
-        System.out.println("Synth = " + mSynth.toString());
+        // System.out.println("Synth = " + mSynth.toString());
         mChannels = mSynth.getChannels();
         //        for (int i = 0; i < mChannels.length; ++i) {
         //            System.out.println("Ch " + i + " : "
@@ -86,7 +87,8 @@ class TrackSummaryTableModel extends AbstractTableModel {
         try {
             mSeq = MidiSystem.getSequencer();
         } catch(MidiUnavailableException e) {
-            System.out.println("No Sequencer available. (Could make playing tricky.)");
+            System.out.println("No Sequencer available." +
+                " (Could make playing tricky.)");
         }
         
         mSequence = s;
@@ -255,13 +257,20 @@ class TrackSummaryTableModel extends AbstractTableModel {
     }
     
     String[] columnNames = new String[] {
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("no."),
-            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("name"),
-            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("start"),
-            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("end"),
-            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("channel_abbrev"),
-            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("solo"),
-            java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("mute")
+        java.util.ResourceBundle.getBundle(
+            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("no."),
+            java.util.ResourceBundle.getBundle(
+            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("name"),
+            java.util.ResourceBundle.getBundle(
+            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("start"),
+            java.util.ResourceBundle.getBundle(
+            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("end"),
+            java.util.ResourceBundle.getBundle(
+            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("channel_abbrev"),
+            java.util.ResourceBundle.getBundle(
+            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("solo"),
+            java.util.ResourceBundle.getBundle(
+            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("mute")
     };
     
     public String getColumnName(int col) {

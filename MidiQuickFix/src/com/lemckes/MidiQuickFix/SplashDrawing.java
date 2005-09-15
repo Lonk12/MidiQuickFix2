@@ -48,7 +48,8 @@ public class SplashDrawing extends javax.swing.JComponent {
     
     boolean mCentred = false;
     
-    ArrayList<String> mStageMessages = new ArrayList<String>();
+    //  For java 1.5 ArrayList<String> mStageMessages = new ArrayList<String>();
+    ArrayList mStageMessages = new ArrayList();
     
     Font mFont;
     FontRenderContext mFrContext;
@@ -64,7 +65,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
 //        mImage = tk.getImage(getClass().getResource("/com/lemckes/MidiQuickFix/resources/MQFsplash2.png"));
         URL url = getClass().getResource("resources/MQFsplash2.png");
-        System.out.println("Splash screenURL = " + url);
+        // System.out.println("Splash screenURL = " + url);
         mImage = tk.getImage(url);
         MediaTracker mt = new MediaTracker(this);
         mt.addImage(mImage, 1);
@@ -102,7 +103,8 @@ public class SplashDrawing extends javax.swing.JComponent {
             if (!mCentred) {
                 startX = 20;
             } else {
-                Rectangle2D r = mFont.getStringBounds(mStageMessages.get(i), mFrContext);
+                Rectangle2D r =
+                    mFont.getStringBounds((String)mStageMessages.get(i), mFrContext);
                 double width = r.getWidth();
                 startX = (int)((mImageWidth - width) / 2);
             }

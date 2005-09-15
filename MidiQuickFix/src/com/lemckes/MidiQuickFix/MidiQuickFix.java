@@ -56,7 +56,8 @@ public class MidiQuickFix extends JFrame {
         startDialog.setVisible(true);
         
         try {
-            // startDialog.splash.setStageMessage("Version 1.4.2 bug = " + VERSION_1_4_2_BUG);
+            startDialog.splash.setStageMessage(
+                "Using Java Version " + mJavaVersion);
             mStringBundle = java.util.ResourceBundle.getBundle(
                 "com/lemckes/MidiQuickFix/resources/UIStrings");
             startDialog.splash.setStageMessage(
@@ -205,10 +206,10 @@ public class MidiQuickFix extends JFrame {
             // Save the Sequence object
             int types[] = MidiSystem.getMidiFileTypes(mSeq);
             
-            System.out.println("saveFile - Midi File Types");
-            for (int i = 0; i < types.length; ++i) {
-                System.out.println("Type " + i + " = " + types[i]);
-            }
+            // System.out.println("saveFile - Midi File Types");
+            // for (int i = 0; i < types.length; ++i) {
+            //     System.out.println("Type " + i + " = " + types[i]);
+            // }
             
             // I guess the last one will be the 'best'
             int type = types[types.length - 1];
@@ -946,8 +947,8 @@ public class MidiQuickFix extends JFrame {
         // Add your handling code here:
         int[] selRows = trackTable.getSelectedRows();
         for (int i = 0; i< selRows.length; ++i) {
-            System.out.println("Deleting row " + selRows[i]
-                + " " + trackTable.getValueAt(selRows[i], 0));
+            // System.out.println("Deleting row " + selRows[i]
+            //     + " " + trackTable.getValueAt(selRows[i], 0));
         }
         ((TrackTableModel)trackTable.getModel()).deleteEvents(selRows);
     }//GEN-LAST:event_deleteButtonActionPerformed
@@ -1088,8 +1089,9 @@ public class MidiQuickFix extends JFrame {
      */
     public static void main(String args[]) {
         Properties p = System.getProperties();
-        String version = p.getProperty("java.version", "No java.version found");
-        if (version.substring(0, 5).equals("1.4.2")) {
+        // p.list(System.out);
+        mJavaVersion = p.getProperty("java.version", "No java.version found");
+        if (mJavaVersion.substring(0, 5).equals("1.4.2")) {
             VERSION_1_4_2_BUG = true;
         } else {
             VERSION_1_4_2_BUG = false;
@@ -1103,6 +1105,7 @@ public class MidiQuickFix extends JFrame {
      * ShortEvent.
      */
     static boolean VERSION_1_4_2_BUG;
+    static String mJavaVersion;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
