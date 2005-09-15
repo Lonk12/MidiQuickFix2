@@ -23,6 +23,8 @@
 
 package com.lemckes.MidiQuickFix;
 
+import java.util.Properties;
+
 /**
  * Show the About dialog.
  * @version $Id$
@@ -33,27 +35,51 @@ public class AboutDialog extends javax.swing.JDialog {
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
     
-    /** The component which displays our splash screen */
-    SplashDrawing splash;
+    /**
+     * The component which displays our splash screen
+     */
+    SplashDrawing mSplash;
     
     /** Creates new Startup dialog */
     public AboutDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         setTitle("About MidiQuickFix");
-        splash = new SplashDrawing();
-        splash.setCentredText(true);
-        splash.setStageMessage("MidiQuickFix - A Simple Midi file editor and player");
-        splash.setStageMessage("");
-        splash.setStageMessage("Copyright (C) 2004-2005 John Lemcke");
-        splash.setStageMessage("jostle@users.sourceforge.net");
-
+        mSplash = new SplashDrawing();
+        mSplash.setCentredText(true);
+        mSplash.setStageMessage("MidiQuickFix - A Simple Midi file editor and player");
+        mSplash.setStageMessage("http://midiquickfix.sourceforge.net");
+        mSplash.setStageMessage("");
+        mSplash.setStageMessage("Copyright (C) 2004-2005 John Lemcke");
+        mSplash.setStageMessage("jostle@users.sourceforge.net");
+        
+        showSystemInfo();
+        
         initComponents();
-        getContentPane().add(splash, java.awt.BorderLayout.CENTER);
+        getContentPane().add(mSplash, java.awt.BorderLayout.CENTER);
         pack();
         java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
         java.awt.Dimension sd = tk.getScreenSize();
         java.awt.Dimension dd = getSize();
         setLocation((int)((sd.getWidth() - dd.getWidth()) / 2), (int)((sd.getHeight() - dd.getHeight()) / 2));
+    }
+    
+    void showSystemInfo() {
+        Properties p = System.getProperties();
+        
+        String name = p.getProperty("java.vm.name", "Unknown Java");
+        String version = p.getProperty("java.vm.version", "Unknown Version");
+        String vendor = p.getProperty("java.vm.vendor", "Unknown Vendor");
+        
+        mSplash.setStageMessage("");
+        mSplash.setStageMessage(name + " - " + version);
+        mSplash.setStageMessage("Vendor : " + vendor);
+        
+        String osname = p.getProperty("os.name", "Unknown Java");
+        String osversion = p.getProperty("os.version", "Unknown Version");
+        String arch = p.getProperty("os.arch", "Unknown Vendor");
+        
+        mSplash.setStageMessage("");
+        mSplash.setStageMessage(osname + " - " + arch + " - " + osversion);
     }
     
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
