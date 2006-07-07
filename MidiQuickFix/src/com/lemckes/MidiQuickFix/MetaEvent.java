@@ -61,7 +61,7 @@ class MetaEvent {
         boolean dumpBytes = false;
         
         int type = mess.getType();
-        int len = mess.getLength();
+        // int len = mess.getLength();
         byte[] data = mess.getData();
         
         // The returned Object array

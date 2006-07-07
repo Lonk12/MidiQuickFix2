@@ -23,6 +23,8 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.TraceDialog;
+import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.swing.table.*;
 
 import javax.swing.event.TableModelListener;
@@ -36,7 +38,7 @@ import javax.sound.midi.*;
 class TrackTableModel extends AbstractTableModel implements TableModelListener {
     
     /** The Track which is being displayed. */
-    Track mTrack;
+    transient Track mTrack;
     
     /** The Beats/Tick resolution of this track. */
     int mResolution;
@@ -51,7 +53,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     int mNumNotes;
     
     /** Maps table row to track index when mShowNotes is false. */
-    java.util.Vector mNoNotesRowMap;
+    java.util.Vector<Integer> mNoNotesRowMap;
     
     public TrackTableModel(Track t, int res, boolean showNotes, boolean inFlats) {
         mTrack = t;
@@ -69,14 +71,14 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
      */
     private void buildNoNotesRowMap() {
         mNumNotes = 0;
-        mNoNotesRowMap = new java.util.Vector();
+        mNoNotesRowMap = new java.util.Vector<Integer>();
         
         for (int i = 0; i < mTrack.size(); ++i) {
             MidiMessage mess = mTrack.get(i).getMessage();
             if (mess instanceof ShortMessage) {
                 int cmd = ((ShortMessage)mess).getCommand();
                 if (cmd == ShortMessage.NOTE_OFF
-                        || cmd ==  ShortMessage.NOTE_ON) {
+                    || cmd ==  ShortMessage.NOTE_ON) {
                     mNumNotes++;
                 } else {
                     mNoNotesRowMap.add(new Integer(i));
@@ -164,7 +166,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
                 if (mess instanceof ShortMessage) {
                     int cmd = ((ShortMessage)mess).getCommand();
                     if (cmd == ShortMessage.NOTE_OFF
-                            || cmd ==  ShortMessage.NOTE_ON) {
+                        || cmd ==  ShortMessage.NOTE_ON) {
                         result = true;
                     }
                 }
@@ -241,7 +243,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
                     ShortMessage sm = (ShortMessage)mess;
                     int command = (int)(sm.getCommand() & 0xff);
                     int channel = (int)(sm.getChannel() & 0xff);
-                    int d1 = (int)(sm.getData1() & 0xff);
+                    // int d1 = (int)(sm.getData1() & 0xff);
                     int d2 = (int)(sm.getData2() & 0xff);
                     try {
                         updateMessage(ev, command, channel, NoteNames.getNoteNumber((String)value), d2);
@@ -267,12 +269,9 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
                                 d1 = ((Integer)value).intValue();
                                 break;
                             case ShortMessage.CONTROL_CHANGE:
-                                d2 = ((Integer)value).intValue();
-                                break;
                             case ShortMessage.NOTE_OFF:
-                                d2 = ((Integer)value).intValue();
-                                break;
                             case ShortMessage.NOTE_ON:
+                            case ShortMessage.POLY_PRESSURE:
                                 d2 = ((Integer)value).intValue();
                                 break;
                             case ShortMessage.PITCH_BEND:
@@ -280,16 +279,15 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
                                 d1 = val & 0x7f;
                                 d2 = (val - d1) >> 7;
                                 break;
-                            case ShortMessage.POLY_PRESSURE:
-                                d2 = ((Integer)value).intValue();
-                                break;
                             case ShortMessage.PROGRAM_CHANGE:
                                 // Should not get here. PROGRAM_CHANGE is handled in the PATCH column
-                                System.out.println("Got to a PROGRAM_CHANGE event in the value column.");
+                                TraceDialog.addTrace("TrackTableModel - ");
+                                TraceDialog.addTrace("Got to a PROGRAM_CHANGE event in the value column.");
                                 break;
                             default:
                                 // Should not get here
-                                System.out.println("Got to a default case in the value column.");
+                                TraceDialog.addTrace("TrackTableModel - ");
+                                TraceDialog.addTrace("Got to a default case in the value column.");
                         }
                     }
                     
@@ -330,9 +328,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
                 if (mess instanceof ShortMessage) {
                     int channel = ((Integer)value).intValue();
                     int answer = javax.swing.JOptionPane.showConfirmDialog(null,
-                            new String(java.util.ResourceBundle.getBundle(
-                            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("set_channel_question")
-                            + channel));
+                        UiStrings.getString("set_channel_question") + channel);
                     if (answer == javax.swing.JOptionPane.YES_OPTION) {
                         setTrackChannel(channel);
                     } else if (answer == javax.swing.JOptionPane.NO_OPTION) {
@@ -358,18 +354,21 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     }
     
     private void updateMessage(
-            MidiEvent ev, int command, int channel, int d1, int d2)
-            throws InvalidMidiDataException {
+        MidiEvent ev, int command, int channel, int d1, int d2)
+        throws InvalidMidiDataException {
         
         try {
             if (MidiQuickFix.VERSION_1_4_2_BUG) {
                 // HACK to fix BUG where data2 is set to data1 in jdk 1.4.2
-                // 
+                //
+                // Create a new message, set its values to those of
+                // the old message, remove the old message and
+                // add the new message.
                 ShortMessage sm = new ShortMessage();
                 sm.setMessage(command, channel, d1, d2);
                 MidiEvent newEv = new MidiEvent(sm, ev.getTick());
-                boolean found = mTrack.remove(ev);
-                boolean notFound = mTrack.add(newEv);
+                mTrack.remove(ev);
+                mTrack.add(newEv);
                 
                 // Need to rebuild the map of non-note events.
                 // The remove()/add() calls may have re-ordered the events.
@@ -387,7 +386,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     
     public void deleteEvents(int[] rows) {
         // System.out.println("deleteEvents");
-        java.util.Vector events = new java.util.Vector();
+        java.util.Vector<MidiEvent> events = new java.util.Vector<MidiEvent>();
         for (int i = 0; i < rows.length; ++i) {
             int eventIndex = rows[i];
             // Adjust the index if notes are not being displayed
@@ -447,7 +446,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
             result[0] = str[0];
             result[4] = str[2];
         } else if (st == SysexMessage.SYSTEM_EXCLUSIVE
-                || st == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
+            || st == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
             // Returns Event, Length, Text
             Object[] str = SysexEvent.getSysexStrings((SysexMessage)mess);
             result[0] = str[0];
@@ -488,25 +487,25 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     
     Class[] types = new Class [] {
         java.lang.Object.class,
-                java.lang.Object.class,
-                java.lang.Object.class,
-                java.lang.Integer.class,
-                java.lang.Object.class,
-                java.lang.Object.class,
-                java.lang.Integer.class
+            java.lang.Object.class,
+            java.lang.Object.class,
+            java.lang.Integer.class,
+            java.lang.Object.class,
+            java.lang.Object.class,
+            java.lang.Integer.class
     };
     public Class getColumnClass(int columnIndex) {
         return types [columnIndex];
     }
     
     String[] columnNames = new String[] {
-        java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("beat:tick"),
-                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("event"),
-                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("note"),
-                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("value"),
-                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("patch"),
-                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("Text"),
-                java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("channel_abbrev")
+        UiStrings.getString("beat:tick"),
+            UiStrings.getString("event"),
+            UiStrings.getString("note"),
+            UiStrings.getString("value"),
+            UiStrings.getString("patch"),
+            UiStrings.getString("Text"),
+            UiStrings.getString("channel_abbrev")
     };
     public String getColumnName(int col) {
         return columnNames[col];

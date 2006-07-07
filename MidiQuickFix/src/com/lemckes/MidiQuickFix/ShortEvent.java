@@ -35,7 +35,7 @@ class ShortEvent {
         // Event, Note, Value, Patch, Text, Channel
         Object[] result = { "", "", null, "", "", null };
         int st = mess.getStatus();
-        int len = mess.getLength();
+        //int len = mess.getLength();
         int d1 = mess.getData1();
         int d2 = mess.getData2();
         
@@ -48,8 +48,8 @@ class ShortEvent {
                     break;
                 case javax.sound.midi.ShortMessage.CONTROL_CHANGE:
                     //result[0] = "CONTROL_CHANGE";
-                    result[0] = Controls.getControlName(d1);
-                    result[2] = Controls.getControlValue(d2, false);
+                    result[0] = Controllers.getControlName(d1);
+                    result[2] = Controllers.getControlValue(d2, false);
                     break;
                 case javax.sound.midi.ShortMessage.NOTE_OFF:
                     result[0] = "NOTE_OFF";

@@ -35,6 +35,8 @@ public class PlayController {
     static final public int PAUSED = 1;
     static final public int PLAYING = 2;
     
+    private boolean looping = false;
+    
     int mPlayState = NO_FILE;
     
     /** The microsecond position at which the sequence was paused. */
@@ -64,8 +66,7 @@ public class PlayController {
         return mPlayState;
     }
     
-    public long getPausedPosition()
-    {
+    public long getPausedPosition() {
         return mPausedPos;
     }
     
@@ -87,8 +88,8 @@ public class PlayController {
 //                new javax.swing.ImageIcon(getClass().getResource(
 //                "/com/lemckes/MidiQuickFix/resources/Play16.gif")));
             putValue(ACCELERATOR_KEY,
-                javax.swing.KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_SPACE, java.awt.event.InputEvent.ALT_MASK));
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_SPACE, java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
@@ -123,8 +124,8 @@ public class PlayController {
 //                new javax.swing.ImageIcon(getClass().getResource(
 //                "/com/lemckes/MidiQuickFix/resources/Pause16.gif")));
             putValue(ACCELERATOR_KEY,
-                javax.swing.KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
@@ -162,8 +163,8 @@ public class PlayController {
 //                new javax.swing.ImageIcon(getClass().getResource(
 //                "/com/lemckes/MidiQuickFix/resources/Stop16.gif")));
             putValue(ACCELERATOR_KEY,
-                javax.swing.KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_BACK_SPACE , java.awt.event.InputEvent.ALT_MASK));
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_BACK_SPACE , java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
@@ -177,15 +178,14 @@ public class PlayController {
     }
     transient public StopAction mStopAction = new StopAction();
     
-    public void stop()
-    {
-            MidiSeqPlayer stopper = (MidiSeqPlayer)mStopAction.getValue("stopper");
-            if (mPlayState != STOPPED) {
-                stopper.stop();
-                mPausedPos = 0;
-                mPlayState = STOPPED;
-            }
-            setActions();
+    public void stop() {
+        MidiSeqPlayer stopper = (MidiSeqPlayer)mStopAction.getValue("stopper");
+        if (mPlayState != STOPPED) {
+            stopper.stop();
+            mPausedPos = 0;
+            mPlayState = STOPPED;
+        }
+        setActions();
     }
     
     /**
@@ -198,8 +198,8 @@ public class PlayController {
 //                new javax.swing.ImageIcon(getClass().getResource(
 //                "/com/lemckes/MidiQuickFix/resources/Rewind16.gif")));
             putValue(ACCELERATOR_KEY,
-                javax.swing.KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_MASK));
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
@@ -213,12 +213,44 @@ public class PlayController {
     }
     transient public RewindAction mRewindAction = new RewindAction();
     
-    public void rewind()
-    {
-            MidiSeqPlayer rewinder = (MidiSeqPlayer)mRewindAction.getValue("rewinder");
-            rewinder.rewind();
-            mPausedPos = 0;
-            setActions();
+    public void rewind() {
+        MidiSeqPlayer rewinder = (MidiSeqPlayer)mRewindAction.getValue("rewinder");
+        rewinder.rewind();
+        mPausedPos = 0;
+        setActions();
+    }
+    
+    /**
+     * An Action to handle the Loop option.
+     */
+    public class LoopAction extends javax.swing.AbstractAction {
+        /** Creates a new instance of LoopAction */
+        public LoopAction() {
+//            putValue(SMALL_ICON,
+//                new javax.swing.ImageIcon(getClass().getResource(
+//                "/com/lemckes/MidiQuickFix/resources/Loop16.gif")));
+            putValue(ACCELERATOR_KEY,
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_L , java.awt.event.InputEvent.ALT_MASK));
+        }
+        
+        /**
+         * Performs the functions required for Looping
+         * @param e The event which triggered the action.
+         */
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            // System.out.println("LoopAction.actionPerformed");
+            loop();
+        }
+    }
+    transient public LoopAction mLoopAction = new LoopAction();
+    
+    public void loop() {
+        MidiSeqPlayer looper = (MidiSeqPlayer)mLoopAction.getValue("looper");
+        looping = !looping;
+        System.out.println(looping ? "Looping" : "Not Looping");
+        looper.loop(looping);
+        //setActions();
     }
     
     private void setActions() {
@@ -227,21 +259,33 @@ public class PlayController {
             mPauseAction.setEnabled(false);
             mRewindAction.setEnabled(false);
             mStopAction.setEnabled(false);
+            mLoopAction.setEnabled(false);
         } else if (mPlayState == PLAYING) {
             mPlayAction.setEnabled(false);
             mPauseAction.setEnabled(true);
             mRewindAction.setEnabled(true);
             mStopAction.setEnabled(true);
+            mLoopAction.setEnabled(true);
         } else if (mPlayState == PAUSED) {
             mPlayAction.setEnabled(true);
             mPauseAction.setEnabled(true);
             mRewindAction.setEnabled(true);
             mStopAction.setEnabled(true);
+            mLoopAction.setEnabled(true);
         } else if (mPlayState == STOPPED) {
             mPlayAction.setEnabled(true);
             mPauseAction.setEnabled(false);
             mRewindAction.setEnabled(false);
             mStopAction.setEnabled(false);
+            mLoopAction.setEnabled(true);
         }
+    }
+    
+    public boolean isLooping() {
+        return looping;
+    }
+    
+    public void setLooping(boolean looping) {
+        this.looping = looping;
     }
 }

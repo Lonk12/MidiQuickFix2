@@ -57,7 +57,7 @@ public class KeySignatures {
      * data[1] 0=major, 1=minor.
      */
     static String getKeyName(byte data[]) {
-        String result = new String("");
+        String result = "";
         int k = data[0] + 7;
         int m = data[1];
         result += keyNames[k];

@@ -39,22 +39,22 @@ import javax.swing.AbstractAction;
  */
 public class TransportPanel extends javax.swing.JPanel {
     
-    private DrawnIcon pauseIcon;
-    private DrawnIcon playIcon;
-    private DrawnIcon rewindIcon;
-    private DrawnIcon stopIcon;
-    private DrawnIcon loopIcon;
-    private DrawnIcon recordIcon;
+    transient private DrawnIcon pauseIcon;
+    transient private DrawnIcon playIcon;
+    transient private DrawnIcon rewindIcon;
+    transient private DrawnIcon stopIcon;
+    transient private DrawnIcon loopIcon;
+    transient private DrawnIcon recordIcon;
     
-    private GeneralPath playPath = new GeneralPath();
-    private GeneralPath stopPath = new GeneralPath();
-    private GeneralPath pausePath = new GeneralPath();
-    private GeneralPath loopPath = new GeneralPath();
-    private GeneralPath rewindPath = new GeneralPath();
-    private GeneralPath recordPath = new GeneralPath();
+    transient private GeneralPath playPath = new GeneralPath();
+    transient private GeneralPath stopPath = new GeneralPath();
+    transient private GeneralPath pausePath = new GeneralPath();
+    transient private GeneralPath loopPath = new GeneralPath();
+    transient private GeneralPath rewindPath = new GeneralPath();
+    transient private GeneralPath recordPath = new GeneralPath();
     
-    GeneralPath loopOuterPath = new GeneralPath();
-    GeneralPath loopInnerPath = new GeneralPath();
+    transient private GeneralPath loopOuterPath = new GeneralPath();
+    transient private GeneralPath loopInnerPath = new GeneralPath();
     
     /** Creates new form TransportPanel */
     public TransportPanel() {
@@ -154,14 +154,15 @@ public class TransportPanel extends javax.swing.JPanel {
 //        recordIcon.setPath(recordPath);
 //        recordButton.setPreferredSize(buttonSize);
 //        recordIcon.setFillColour(Color.RED);
-//
-//        loopIcon.setPath(loopPath);
-//        loopButton.setPreferredSize(buttonSize);
-//        loopIcon.setFillColour(Color.LIGHT_GRAY);
+
+        loopIcon = new DrawnIcon(loopButton, loopPath);
+        loopIcon.setPath(loopPath);
+        loopButton.setPreferredSize(buttonSize);
+        loopIcon.setFillColour(Color.LIGHT_GRAY);
         
     }
     
-    public void setActions(RewindAction r, PlayAction p, PauseAction u, StopAction s) {
+    public void setActions(RewindAction r, PlayAction p, PauseAction u, StopAction s, LoopAction l) {
         r.putValue(AbstractAction.SMALL_ICON, rewindIcon);
         rewindButton.setAction(r);
         p.putValue(AbstractAction.SMALL_ICON, playIcon);
@@ -170,6 +171,8 @@ public class TransportPanel extends javax.swing.JPanel {
         pauseButton.setAction(u);
         s.putValue(AbstractAction.SMALL_ICON, stopIcon);
         stopButton.setAction(s);
+        l.putValue(AbstractAction.SMALL_ICON, loopIcon);
+        loopButton.setAction(l);
         
     }
     
@@ -184,31 +187,51 @@ public class TransportPanel extends javax.swing.JPanel {
         playButton = new javax.swing.JButton();
         pauseButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
+        loopButton = new javax.swing.JToggleButton();
 
-        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 1, 1));
+        setLayout(new java.awt.GridLayout(1, 0, 1, 1));
 
         setBorder(new javax.swing.border.EtchedBorder(javax.swing.border.EtchedBorder.RAISED));
+        rewindButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("rewind"));
         rewindButton.setBorderPainted(false);
+        rewindButton.setDefaultCapable(false);
+        rewindButton.setFocusPainted(false);
         rewindButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(rewindButton);
 
+        playButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("play"));
         playButton.setBorderPainted(false);
+        playButton.setDefaultCapable(false);
+        playButton.setFocusPainted(false);
         playButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(playButton);
 
+        pauseButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("pause"));
         pauseButton.setBorderPainted(false);
+        pauseButton.setDefaultCapable(false);
+        pauseButton.setFocusPainted(false);
         pauseButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(pauseButton);
 
+        stopButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("stop"));
         stopButton.setBorderPainted(false);
+        stopButton.setDefaultCapable(false);
+        stopButton.setFocusPainted(false);
         stopButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(stopButton);
+
+        loopButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("loop"));
+        loopButton.setBorderPainted(false);
+        loopButton.setFocusPainted(false);
+        loopButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        add(loopButton);
 
     }
     // </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton loopButton;
     private javax.swing.JButton pauseButton;
     private javax.swing.JButton playButton;
     private javax.swing.JButton rewindButton;

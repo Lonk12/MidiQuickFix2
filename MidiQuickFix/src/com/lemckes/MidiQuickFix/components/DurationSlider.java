@@ -38,25 +38,47 @@ public class DurationSlider extends javax.swing.JSlider {
         initComponents();
     }
     
-    public void setDuration(long dur) {
+    public void setDuration(long dur, boolean ticks, int resolution) {
         setMinimum(0);
         setMaximum((int)dur);
-        int major = (int)(dur / 10);
-        int minor = major / 6;
-        if (major < 10) {
-            major = 10; minor = 1;
-        } else if (major < 15) {
-            major = 15; minor = 1;
-        } else if (major < 20) {
-            major = 20; minor = 2;
-        } else if (major < 30) {
-            major = 30; minor = 5;
-        } else if (major < 60) {
-            major = 60; minor = 10;
-        } else if (major < 120) {
-            major = 120; minor = 20;
-        }
         
+        int major;
+        int minor;
+        
+        if (ticks) {
+            int beats = (int)(dur / resolution);
+            major = beats / 10;
+            minor = major / 8;
+            if (major < 8) {
+                major = 8; minor = 1;
+            } else if (major < 16) {
+                major = 16; minor = 1;
+            } else if (major < 32) {
+                major = 32; minor = 8;
+            } else if (major < 64) {
+                major = 64; minor = 16;
+            } else if (major < 128) {
+                major = 128; minor = 32;
+            }
+            major *= resolution;
+            minor *= resolution;
+        } else {
+            major = (int)(dur / 10);
+            minor = major / 6;
+            if (major < 10) {
+                major = 10; minor = 1;
+            } else if (major < 15) {
+                major = 15; minor = 1;
+            } else if (major < 20) {
+                major = 20; minor = 2;
+            } else if (major < 30) {
+                major = 30; minor = 5;
+            } else if (major < 60) {
+                major = 60; minor = 10;
+            } else if (major < 120) {
+                major = 120; minor = 20;
+            }
+        }
         setMajorTickSpacing(major);
         setMinorTickSpacing(minor);
         //Create the label table
@@ -64,7 +86,11 @@ public class DurationSlider extends javax.swing.JSlider {
         for (java.util.Enumeration e = labelTable.keys(); e.hasMoreElements();) {
             Integer pos = (Integer)e.nextElement();
             JLabel label = (JLabel)labelTable.get(pos);
-            label.setText(Formats.formatSeconds(pos.intValue()));
+            if (ticks) {
+                label.setText(Formats.formatBeats(pos.intValue(), resolution));
+            } else {
+                label.setText(Formats.formatSeconds(pos.intValue()));
+            }
         }
         setLabelTable(labelTable);
         setPaintLabels(true);

@@ -1,9 +1,25 @@
-/*
- * DrawnIcon.java
+/**************************************************************
  *
- * Created on 29 April 2006, 08:38
+ *   MidiQuickFix - A Simple Midi file editor and player
  *
- */
+ *   Copyright (C) 2004-2005 John Lemcke
+ *   jostle@users.sourceforge.net
+ *
+ *   This program is free software; you can redistribute it
+ *   and/or modify it under the terms of the Artistic License
+ *   as published by Larry Wall, either version 2.0,
+ *   or (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *   See the Artistic License for more details.
+ *
+ *   You should have received a copy of the Artistic License with this Kit,
+ *   in the file named "Artistic.clarified".
+ *   If not, I'll be glad to provide one.
+ *
+ **************************************************************/
 
 package com.lemckes.MidiQuickFix.util;
 
@@ -20,8 +36,8 @@ import javax.swing.AbstractButton;
 import javax.swing.Icon;
 
 /**
- *
- * @author john
+ * An Icon that draws itself using a GeneralPath.
+ * @version $Id$
  */
 public class DrawnIcon implements Icon {
     
@@ -52,12 +68,12 @@ public class DrawnIcon implements Icon {
     }
 
     public int getIconHeight() {
-        return 10;
+        return 12;
         //return parent.getHeight();
     }
 
     public int getIconWidth() {
-        return 10;
+        return 12;
         //return parent.getWidth();
     }
 
@@ -69,8 +85,16 @@ public class DrawnIcon implements Icon {
         AffineTransform savedAT = g2.getTransform();
         double xScale = component.getWidth();
         double yScale = component.getHeight();
+        
+        // Maintain a square aspect ratio for the icon.
+        double scale = Math.min(xScale, yScale);
         AffineTransform at =
-            AffineTransform.getScaleInstance(yScale, yScale);
+            AffineTransform.getScaleInstance(scale, scale);
+        
+        double xTrans = xScale > yScale ? (xScale - yScale) / (2 * yScale) : 0;
+        double yTrans = yScale > xScale ? (yScale - xScale) / (2 * xScale) : 0;
+        
+        at.translate(xTrans, yTrans);
         
         g2.setRenderingHint(
             RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -96,8 +120,9 @@ public class DrawnIcon implements Icon {
     
     void drawBorder(Graphics2D g2) {
         boolean pressed = parent.getModel().isArmed();
+        boolean selected = parent.isSelected();
         
-        if (active || pressed) {
+        if (active || pressed || selected) {
             g2.setColor(activeBorderColour);
         } else {
             g2.setColor(borderColour);

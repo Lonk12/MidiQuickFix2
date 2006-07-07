@@ -51,6 +51,20 @@ public class Formats {
     }
     
     /**
+     * Format the given ticks into a beats string.
+     * @param ticks the number of ticks
+     * @param ticksPerBeat the number of ticks per beat (a.k.a. resolution)
+     */
+    public static String formatBeats(long ticks, int ticksPerBeat) {
+        java.text.DecimalFormat beatF = new java.text.DecimalFormat("0");
+        long beat = 0;
+        if (ticksPerBeat > 0) {
+            beat = ticks / ticksPerBeat;
+        }
+        return beatF.format(beat);
+    }
+    
+    /**
      * Format the given number of seconds into a minutes:seconds string.
      * @parm seconds the number of seconds to format
      */

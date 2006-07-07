@@ -40,7 +40,7 @@ class Controllers {
         int count = Integer.parseInt(mControllersBundle.getString("count"));
         mNameArray = new String[count];
         for (int i = 0; i < count; ++i) {
-            mNameArray[i] = mControllersBundle.getString(new Integer(i).toString());
+            mNameArray[i] = mControllersBundle.getString(Integer.toString(i));
         }
     }
     

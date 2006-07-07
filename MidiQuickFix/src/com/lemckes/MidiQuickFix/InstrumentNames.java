@@ -60,7 +60,7 @@ class InstrumentNames {
             mNameArray = new String[numInsts];
             for (int j = 0; j < numInsts; ++j) {
                 mNameArray[j] =
-                    mInstrumentsBundle.getString(new Integer(j + 1).toString());
+                    mInstrumentsBundle.getString(Integer.toString(j + 1));
                 // System.out.println(j + "   " + mNameArray[j]);
             }
         }
@@ -71,7 +71,7 @@ class InstrumentNames {
      * @param num The patch number.
      */
     static public String getName(int num) {
-        return mNameArray[num].toString();
+        return mNameArray[num];
     }
     
     /** Get all the instrument names from the resource bundle.

@@ -34,5 +34,5 @@ public interface MidiSeqPlayer {
     public void resume();
     public void stop();
     public void rewind();
-    
+    public void loop(boolean loop);
 }

@@ -23,9 +23,8 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.swing.table.*;
-
-import javax.swing.event.TableModelListener;
 
 import javax.sound.midi.*;
 
@@ -35,23 +34,23 @@ import javax.sound.midi.*;
  */
 class TrackSummaryTableModel extends AbstractTableModel {
     
-    Synthesizer mSynth;
+    transient Synthesizer mSynth;
     
-    MidiChannel[] mChannels;
+    transient MidiChannel[] mChannels;
     
-    Sequencer mSeq;
+    transient Sequencer mSeq;
     
     /** The Sequence which is loaded. */
-    Sequence mSequence;
+    transient Sequence mSequence;
     
     /** The resolution of the sequence */
     int mRes;
     
     /** The tracks in the sequence */
-    Track[] mTracks;
+    transient Track[] mTracks;
     
     /** The data about a track */
-    class TrackInfo {
+    static class TrackInfo {
         String mName;
         long mStart;
         long mEnd;
@@ -61,18 +60,18 @@ class TrackSummaryTableModel extends AbstractTableModel {
     };
     
     /** The track info for each track */
-    TrackInfo[] mInfo;
+    transient TrackInfo[] mInfo;
     
     /** Creates a new instance of a TrackSummaryTableModel */
     public TrackSummaryTableModel(Sequence s) {
-        MidiDevice.Info[] mdi = MidiSystem.getMidiDeviceInfo();
+        // MidiDevice.Info[] mdi = MidiSystem.getMidiDeviceInfo();
         // for (int i = 0; i < mdi.length; ++i) {
         //     System.out.println(i + " : " + mdi[i].toString());
         // }
         
         try {
             mSynth = MidiSystem.getSynthesizer();
-            MidiDevice md = MidiSystem.getMidiDevice(mdi[0]);
+            //MidiDevice md = MidiSystem.getMidiDevice(mdi[0]);
         } catch(MidiUnavailableException e) {
             System.out.println("No Synthesiser available." +
                 " (Could make playing tricky.)");
@@ -180,10 +179,10 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 }
                 break;
             case 5:
-                result = new Boolean(mInfo[row].mSolo);
+                result = Boolean.valueOf(mInfo[row].mSolo);
                 break;
             case 6:
-                result = new Boolean(mInfo[row].mMute);
+                result = Boolean.valueOf(mInfo[row].mMute);
                 break;
             default:
                 result = "";
@@ -201,7 +200,6 @@ class TrackSummaryTableModel extends AbstractTableModel {
         //     return;
         // }
         
-        Track t = mTracks[row];
         switch (column) {
             case 5:
                 // Solo
@@ -257,20 +255,13 @@ class TrackSummaryTableModel extends AbstractTableModel {
     }
     
     String[] columnNames = new String[] {
-        java.util.ResourceBundle.getBundle(
-            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("no."),
-            java.util.ResourceBundle.getBundle(
-            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("name"),
-            java.util.ResourceBundle.getBundle(
-            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("start"),
-            java.util.ResourceBundle.getBundle(
-            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("end"),
-            java.util.ResourceBundle.getBundle(
-            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("channel_abbrev"),
-            java.util.ResourceBundle.getBundle(
-            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("solo"),
-            java.util.ResourceBundle.getBundle(
-            "com/lemckes/MidiQuickFix/resources/UIStrings").getString("mute")
+        UiStrings.getString("no."),
+            UiStrings.getString("name"),
+            UiStrings.getString("start"),
+            UiStrings.getString("end"),
+            UiStrings.getString("channel_abbrev"),
+            UiStrings.getString("solo"),
+            UiStrings.getString("mute")
     };
     
     public String getColumnName(int col) {

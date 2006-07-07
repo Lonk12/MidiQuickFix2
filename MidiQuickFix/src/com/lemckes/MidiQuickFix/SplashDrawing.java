@@ -39,8 +39,8 @@ import java.util.ArrayList;
  */
 public class SplashDrawing extends javax.swing.JComponent {
     
-    BufferedImage mBi;
-    Image mImage;
+    transient BufferedImage mBi;
+    transient Image mImage;
     int mImageWidth;
     int mImageHeight;
     
@@ -49,10 +49,10 @@ public class SplashDrawing extends javax.swing.JComponent {
     boolean mCentred = false;
     
     //  For java 1.5 ArrayList<String> mStageMessages = new ArrayList<String>();
-    ArrayList mStageMessages = new ArrayList();
+    ArrayList<String> mStageMessages = new ArrayList<String>();
     
     Font mFont;
-    FontRenderContext mFrContext;
+    transient FontRenderContext mFrContext;
     
     /** Creates a new instance of SplashDrawing */
     public SplashDrawing() {
@@ -63,9 +63,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         mLineHeight = fm.getHeight();
         
         java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
-//        mImage = tk.getImage(getClass().getResource("/com/lemckes/MidiQuickFix/resources/MQFsplash2.png"));
         URL url = getClass().getResource("resources/MQFsplash2.png");
-        // System.out.println("Splash screenURL = " + url);
         mImage = tk.getImage(url);
         MediaTracker mt = new MediaTracker(this);
         mt.addImage(mImage, 1);
@@ -77,8 +75,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         
         mImageWidth = mImage.getWidth(null);
         mImageHeight = mImage.getHeight(null);
-        // System.out.println("Width=" + w + " Height=" + h);
-        mBi = new BufferedImage(mImage.getWidth(null), mImage.getHeight(null),
+        mBi = new BufferedImage(mImageWidth, mImageHeight,
             BufferedImage.TYPE_INT_RGB);
         Graphics2D g = mBi.createGraphics();
         g.drawImage(mImage, 0, 0, null);
@@ -123,7 +120,8 @@ public class SplashDrawing extends javax.swing.JComponent {
         try {
             // Wait a bit so that the message is seen
             wait(500);
-        } catch(Exception e) {
+        } catch(InterruptedException e) {
+            // Do Nothing
         }
     }
     

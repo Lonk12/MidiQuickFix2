@@ -39,7 +39,7 @@ public class LyricDialog extends JDialog implements MetaEventListener {
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
     
-    private Document doc;
+    transient private Document doc;
     
     /** Creates new form LyricDialog */
     public LyricDialog(java.awt.Frame parent, boolean modal) {
@@ -55,9 +55,8 @@ public class LyricDialog extends JDialog implements MetaEventListener {
         if (
             ((type == MetaEvent.lyric && lyricsCheckBox.isSelected()) ||
             (type == MetaEvent.text && textCheckBox.isSelected()))
-            )
-        {
-            int len = metaMessage.getLength();
+            ) {
+            //int len = metaMessage.getLength();
             byte[] data = metaMessage.getData();
             
             StringBuffer sb = new StringBuffer(data.length);
@@ -109,12 +108,13 @@ public class LyricDialog extends JDialog implements MetaEventListener {
             mSequencer.removeMetaEventListener(this);
         }
         
-        // Get the sequence and pre-load all the 
+        //TODO
+        // Get the sequence and pre-load all the
         // lyric/text events.
-        // This will let us display the whole of a 
+        // This will let us display the whole of a
         // 'paragraph' and highlight the current word.
         // (eventually)
-        Sequence mySequence = seq.getSequence();
+        // Sequence mySequence = seq.getSequence();
         
         
         mSequencer = seq;
@@ -234,7 +234,6 @@ public class LyricDialog extends JDialog implements MetaEventListener {
     // </editor-fold>//GEN-END:initComponents
     
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
-        // TODO add your handling code here:
         lyricText.setText(null);
     }//GEN-LAST:event_clearButtonActionPerformed
     
@@ -280,9 +279,9 @@ public class LyricDialog extends JDialog implements MetaEventListener {
     
     private int returnStatus = RET_CANCEL;
     
-    private Sequencer mSequencer;
+    transient private Sequencer mSequencer;
     
-    private Sequence mSequence;
+    transient private Sequence mSequence;
     
     private boolean mNewPage = false;
 }
