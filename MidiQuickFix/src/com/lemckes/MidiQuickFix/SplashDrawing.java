@@ -83,7 +83,7 @@ public class SplashDrawing extends javax.swing.JComponent {
     }
     
     /**
-     * Draw the splash image and any messages which need to be displayed.
+     * Draw the splash image and any messages that need to be displayed.
      * @param g The Graphics to draw into.
      */
     public void paint(java.awt.Graphics g) {

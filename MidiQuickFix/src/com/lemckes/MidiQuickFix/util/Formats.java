@@ -27,19 +27,21 @@ package com.lemckes.MidiQuickFix.util;
  * Utilities to return formatted strings for various types of values.
  * @version $Id$
  */
-public class Formats {
-    
-    /** Creates a new instance of Formats */
-    public Formats() {
-    }
+public final class Formats {
     
     /**
      * Format the given ticks into a beats:ticks string.
      * @param ticks the number of ticks
      * @param ticksPerBeat the number of ticks per beat (a.k.a. resolution)
+     * @param longFormat if true the 'beats' part is formatted with at least 5 digits
      */
-    public static String formatTicks(long ticks, int ticksPerBeat) {
-        java.text.DecimalFormat beatF = new java.text.DecimalFormat("0");
+    public static String formatTicks(long ticks, int ticksPerBeat, boolean longFormat) {
+        java.text.DecimalFormat beatF;
+        if (longFormat) {
+            beatF = new java.text.DecimalFormat("00000");
+        } else {
+            beatF = new java.text.DecimalFormat("0");
+        }
         java.text.DecimalFormat tickF = new java.text.DecimalFormat("000");
         long beat = 0;
         long tick = 0;
@@ -48,6 +50,43 @@ public class Formats {
             tick = ticks % ticksPerBeat;
         }
         return beatF.format(beat) + ":" + tickF.format(tick);
+    }
+    
+    /**
+     * Convert a string in beats:ticks format to its value as a number of ticks
+     * @param tickString the beats:ticks string
+     * @param ticksPerBeat the number of ticks per beat (a.k.a. resolution)
+     * @return the number of ticks represented by the tickString
+     * or -1 if the string cannot be parsed
+     */
+    public static int parseTicks(String tickString, int ticksPerBeat) {
+        int r;
+        String ticks = "X";
+        String beats = "X";
+        try {
+            int colonPos = tickString.indexOf(':');
+            if (colonPos == -1 ||
+              (colonPos == tickString.length() - 1 &&
+              tickString.length() > 1)) {
+                // No colon found or found at end; parse the string as beats
+                ticks = tickString.substring(colonPos + 1);
+                beats = "0";
+            } else if (colonPos == 0 && tickString.length() > 1) {
+                // Colon at start; parse as ticks
+                ticks = tickString.substring(colonPos + 1);
+                beats = "0";
+            } else {
+                // Something each side of the colon; parse both
+                ticks = tickString.substring(colonPos + 1);
+                beats = tickString.substring(0, colonPos);
+            }
+            int b = Integer.parseInt(beats);
+            int t = Integer.parseInt(ticks);
+            r = b * ticksPerBeat + t;
+        } catch(NumberFormatException nfe) {
+            r = -1;
+        }
+        return r;
     }
     
     /**

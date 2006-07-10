@@ -25,13 +25,20 @@ package com.lemckes.MidiQuickFix.components;
 
 import com.lemckes.MidiQuickFix.util.DrawnIcon;
 import com.lemckes.MidiQuickFix.util.Formats;
+import com.lemckes.MidiQuickFix.util.LoopSliderEvent;
+import com.lemckes.MidiQuickFix.util.LoopSliderListener;
+import com.lemckes.MidiQuickFix.util.RegexFormatter;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.GeneralPath;
+import javax.swing.JFormattedTextField;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
+import javax.swing.text.DefaultFormatterFactory;
 
 /**
- * A slider that can have loop points
+ * A duration slider that can have loop points
+ * @see DurationSlider
  * @version $Id$
  */
 public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
@@ -49,10 +56,23 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     /** Creates new form LoopSlider */
     public LoopSlider() {
         initComponents();
+        
+        RegexFormatter formatter = new RegexFormatter("[0-9]+:[0-9]+");
+        formatter.setAllowsInvalid(false);
+        formatter.setOverwriteMode(false);
+        formatter.setCommitsOnValidEdit(true);
+        loopInField.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+        loopInField.setFormatterFactory(new DefaultFormatterFactory(formatter));
+        loopOutField.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+        loopOutField.setFormatterFactory(new DefaultFormatterFactory(formatter));
+        currPositionField.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+        currPositionField.setFormatterFactory(new DefaultFormatterFactory(formatter));
+        
         loopInButton.setPreferredSize(new Dimension(25,14));
         inPath.moveTo(0.3f, 0.2f);
         inPath.lineTo(0.3f, 0.8f);
-        inPath.lineTo(0.7f, 0.2f);
+        inPath.lineTo(0.3f, 0.4f);
+        inPath.lineTo(0.6f, 0.2f);
         inPath.closePath();
         inPath.moveTo(0.1f, 0.8f);
         inPath.lineTo(0.9f, 0.8f);
@@ -70,9 +90,10 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         loopInButton.setIcon(inIcon);
         
         loopOutButton.setPreferredSize(new Dimension(25,14));
-        outPath.moveTo(0.3f, 0.2f);
+        outPath.moveTo(0.4f, 0.2f);
         outPath.lineTo(0.7f, 0.2f);
         outPath.lineTo(0.7f, 0.8f);
+        outPath.lineTo(0.7f, 0.4f);
         outPath.closePath();
         outPath.moveTo(0.1f, 0.8f);
         outPath.lineTo(0.9f, 0.8f);
@@ -90,10 +111,12 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         loopOutButton.setIcon(outIcon);
         
         durationSlider.addChangeListener(this);
+        
+        mListenerList = new EventListenerList();
     }
     
-    public void addChangeListener(ChangeListener l) {
-        durationSlider.addChangeListener(l);
+    public void addLoopSliderListener(LoopSliderListener l) {
+        mListenerList.add(LoopSliderListener.class, l);
     }
     
     public void setValue(int val) {
@@ -103,31 +126,49 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     public void setDuration(long duration, boolean ticks, int resolution) {
         this.resolution = resolution;
         loopInPoint = 0;
-        loopInField.setText(Formats.formatTicks(loopInPoint, resolution));
+        loopInField.setText(Formats.formatTicks(loopInPoint, resolution, false));
         loopOutPoint = (int)duration;
-        loopOutField.setText(Formats.formatTicks(loopOutPoint, resolution));
+        loopOutField.setText(Formats.formatTicks(loopOutPoint, resolution, false));
         durationSlider.setDuration(duration, ticks, resolution);
     }
     
     public void stateChanged(javax.swing.event.ChangeEvent changeEvent) {
         int val = durationSlider.getValue();
-        currPositionField.setText(Formats.formatTicks(val, resolution));
+        //System.out.println("stateChanged val = " + val);
+        currPositionField.setText(Formats.formatTicks(val, resolution, false));
+        fireLoopSliderChanged(durationSlider.getValueIsAdjusting());
     }
-
+    
     public int getLoopInPoint() {
         return loopInPoint;
     }
-
+    
     public void setLoopInPoint(int loopInPoint) {
-        this.loopInPoint = loopInPoint;
+        loopInPoint = loopInPoint < 0 ? 0 : loopInPoint;
+        loopInPoint = loopInPoint > durationSlider.getMaximum() ?
+            durationSlider.getMaximum() :
+            loopInPoint;
+        if (this.loopInPoint != loopInPoint) {
+            this.loopInPoint = loopInPoint;
+            loopInField.setText(Formats.formatTicks(loopInPoint, resolution, false));
+            fireLoopPointChanged();
+        }
     }
-
+    
     public int getLoopOutPoint() {
         return loopOutPoint;
     }
-
+    
     public void setLoopOutPoint(int loopOutPoint) {
-        this.loopOutPoint = loopOutPoint;
+        loopOutPoint = loopOutPoint < 0 ? 0 : loopOutPoint;
+        loopOutPoint = loopOutPoint > durationSlider.getMaximum() ?
+            durationSlider.getMaximum() :
+            loopOutPoint;
+        if (loopOutPoint >= 0 && this.loopOutPoint != loopOutPoint) {
+            this.loopOutPoint = loopOutPoint;
+            loopOutField.setText(Formats.formatTicks(loopOutPoint, resolution, false));
+            fireLoopPointChanged();
+        }
     }
     
     /** This method is called from within the constructor to
@@ -139,36 +180,56 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        loopInField = new javax.swing.JTextField();
-        loopOutField = new javax.swing.JTextField();
+        loopInField = new javax.swing.JFormattedTextField();
+        loopOutField = new javax.swing.JFormattedTextField();
         durationSlider = new com.lemckes.MidiQuickFix.components.DurationSlider();
-        currPositionField = new javax.swing.JTextField();
+        currPositionField = new javax.swing.JFormattedTextField();
         loopInButton = new javax.swing.JButton();
-        loopInLabel = new javax.swing.JLabel();
         loopOutButton = new javax.swing.JButton();
-        loopOutLabel = new javax.swing.JLabel();
 
         setLayout(new java.awt.GridBagLayout());
 
         setBorder(new javax.swing.border.EmptyBorder(new java.awt.Insets(3, 3, 3, 3)));
         loopInField.setColumns(8);
-        loopInField.setFont(new java.awt.Font("DialogInput", 0, 14));
         loopInField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        loopInField.setFont(new java.awt.Font("DialogInput", 0, 14));
+        loopInField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loopInFieldActionPerformed(evt);
+            }
+        });
+        loopInField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                loopInFieldFocusLost(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
         add(loopInField, gridBagConstraints);
 
         loopOutField.setColumns(8);
-        loopOutField.setFont(new java.awt.Font("DialogInput", 0, 14));
         loopOutField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        loopOutField.setFont(new java.awt.Font("DialogInput", 0, 14));
+        loopOutField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loopOutFieldActionPerformed(evt);
+            }
+        });
+        loopOutField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                loopOutFieldFocusLost(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
         add(loopOutField, gridBagConstraints);
@@ -181,8 +242,19 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         add(durationSlider, gridBagConstraints);
 
         currPositionField.setColumns(8);
-        currPositionField.setFont(new java.awt.Font("DialogInput", 0, 14));
         currPositionField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        currPositionField.setFont(new java.awt.Font("DialogInput", 0, 14));
+        currPositionField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                currPositionFieldActionPerformed(evt);
+            }
+        });
+        currPositionField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                currPositionFieldFocusLost(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -202,14 +274,6 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         add(loopInButton, gridBagConstraints);
 
-        loopInLabel.setFont(new java.awt.Font("Dialog", 1, 14));
-        loopInLabel.setText(" In ");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 1);
-        add(loopInLabel, gridBagConstraints);
-
         loopOutButton.setToolTipText("Set Loop-Out Point");
         loopOutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -223,38 +287,87 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         add(loopOutButton, gridBagConstraints);
 
-        loopOutLabel.setFont(new java.awt.Font("Dialog", 1, 14));
-        loopOutLabel.setText("Out");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 1, 0, 0);
-        add(loopOutLabel, gridBagConstraints);
-
     }
     // </editor-fold>//GEN-END:initComponents
     
+    private void loopOutFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopOutFieldActionPerformed
+        System.out.println("loopOutFieldActionPerformed");
+        setLoopOutPoint((int)Formats.parseTicks(loopOutField.getText(), resolution));
+    }//GEN-LAST:event_loopOutFieldActionPerformed
+    
+    private void loopOutFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_loopOutFieldFocusLost
+        System.out.println("loopOutFieldFocusLost");
+        setLoopOutPoint((int)Formats.parseTicks(loopOutField.getText(), resolution));
+    }//GEN-LAST:event_loopOutFieldFocusLost
+    
+    private void currPositionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currPositionFieldActionPerformed
+        System.out.println("currPositionFieldActionPerformed");
+        setValue((int)Formats.parseTicks(currPositionField.getText(), resolution));
+    }//GEN-LAST:event_currPositionFieldActionPerformed
+    
+    private void currPositionFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_currPositionFieldFocusLost
+        System.out.println("currPositionFieldFocusLost");
+        setValue((int)Formats.parseTicks(currPositionField.getText(), resolution));
+    }//GEN-LAST:event_currPositionFieldFocusLost
+    
+    private void loopInFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_loopInFieldFocusLost
+        System.out.println("loopInFieldFocusLost");
+        setLoopInPoint((int)Formats.parseTicks(loopInField.getText(), resolution));
+    }//GEN-LAST:event_loopInFieldFocusLost
+    
+    private void loopInFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopInFieldActionPerformed
+        System.out.println("loopInFieldActionPerformed");
+        setLoopInPoint((int)Formats.parseTicks(loopInField.getText(), resolution));
+    }//GEN-LAST:event_loopInFieldActionPerformed
+    
     private void loopOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopOutButtonActionPerformed
-        loopOutPoint = durationSlider.getValue();
-        loopOutField.setText(Formats.formatTicks(loopOutPoint, resolution));
+        setLoopOutPoint(durationSlider.getValue());
     }//GEN-LAST:event_loopOutButtonActionPerformed
     
     private void loopInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopInButtonActionPerformed
-        loopInPoint = durationSlider.getValue();
-        loopInField.setText(Formats.formatTicks(loopInPoint, resolution));
+        setLoopInPoint(durationSlider.getValue());
     }//GEN-LAST:event_loopInButtonActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField currPositionField;
+    private javax.swing.JFormattedTextField currPositionField;
     private com.lemckes.MidiQuickFix.components.DurationSlider durationSlider;
     private javax.swing.JButton loopInButton;
-    private javax.swing.JTextField loopInField;
-    private javax.swing.JLabel loopInLabel;
+    private javax.swing.JFormattedTextField loopInField;
     private javax.swing.JButton loopOutButton;
-    private javax.swing.JTextField loopOutField;
-    private javax.swing.JLabel loopOutLabel;
+    private javax.swing.JFormattedTextField loopOutField;
     // End of variables declaration//GEN-END:variables
+    
+    /**
+     * Notify listeners that are interested in loop slider events.
+     * @param valueIsAdjusting True if the slider is being adjusted.
+     */
+    protected void fireLoopSliderChanged(boolean valueIsAdjusting) {
+        LoopSliderListener[] keyListeners =
+          (LoopSliderListener[])
+          (mListenerList.getListeners(LoopSliderListener.class));
+        for (int i = keyListeners.length - 1; i >= 0; --i) {
+            keyListeners[i].loopSliderChanged(
+              new LoopSliderEvent(durationSlider.getValue(),
+              loopInPoint, loopOutPoint, valueIsAdjusting));
+        }
+    }
+    
+    /**
+     * Notify listeners that are interested in loop slider events.
+     * @param valueIsAdjusting True if the slider is being adjusted.
+     */
+    protected void fireLoopPointChanged() {
+        LoopSliderListener[] keyListeners =
+          (LoopSliderListener[])
+          (mListenerList.getListeners(LoopSliderListener.class));
+        for (int i = keyListeners.length - 1; i >= 0; --i) {
+            keyListeners[i].loopPointChanged(
+              new LoopSliderEvent(durationSlider.getValue(), loopInPoint, loopOutPoint, false));
+        }
+    }
+    
+    /** The list of registered listeners. */
+    protected EventListenerList mListenerList;
     
 }

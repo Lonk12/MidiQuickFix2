@@ -22,10 +22,13 @@
  **************************************************************/
 
 package com.lemckes.MidiQuickFix.util;
-import javax.sound.midi.*;
+
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.swing.AbstractAction;
 
 /**
- *
+ * Maintains the state of play
  * @version $Id$
  */
 public class PlayController {
@@ -39,7 +42,7 @@ public class PlayController {
     
     int mPlayState = NO_FILE;
     
-    /** The microsecond position at which the sequence was paused. */
+    /** The tick position at which the sequence was paused. */
     long mPausedPos;
     
     Sequencer mSequencer;
@@ -53,6 +56,7 @@ public class PlayController {
     
     /**
      * Set the state of play ;-)
+     * @param state Probably should be one of NO_FILE, STOPPED, PAUSED, PLAYING
      */
     public void setPlayState(int state) {
         mPlayState = state;
@@ -84,17 +88,15 @@ public class PlayController {
     public class PlayAction extends javax.swing.AbstractAction {
         /** Creates a new instance of PlayAction */
         public PlayAction() {
-//            putValue(SMALL_ICON,
-//                new javax.swing.ImageIcon(getClass().getResource(
-//                "/com/lemckes/MidiQuickFix/resources/Play16.gif")));
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
-                    java.awt.event.KeyEvent.VK_SPACE, java.awt.event.InputEvent.ALT_MASK));
+                javax.swing.KeyStroke.getKeyStroke(
+                java.awt.event.KeyEvent.VK_SPACE,
+                java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
          * Performs the functions required for Playing
-         * @param e The event which triggered the action.
+         * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
             // System.out.println("PlayAction.actionPerformed");
@@ -105,10 +107,6 @@ public class PlayController {
     
     public void play() {
         MidiSeqPlayer player = (MidiSeqPlayer)mPlayAction.getValue("player");
-        if (mPlayState == PLAYING) {
-            player.rewind();
-            mPausedPos = 0;
-        }
         player.play();
         mPlayState = PLAYING;
         setActions();
@@ -120,17 +118,14 @@ public class PlayController {
     public class PauseAction extends javax.swing.AbstractAction {
         /** Creates a new instance of PauseAction */
         public PauseAction() {
-//            putValue(SMALL_ICON,
-//                new javax.swing.ImageIcon(getClass().getResource(
-//                "/com/lemckes/MidiQuickFix/resources/Pause16.gif")));
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
-                    java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
+                javax.swing.KeyStroke.getKeyStroke(
+                java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
          * Performs the functions required for Playing
-         * @param e The event which triggered the action.
+         * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
             // System.out.println("PauseAction.actionPerformed");
@@ -142,7 +137,7 @@ public class PlayController {
     public void pause() {
         MidiSeqPlayer pauser = (MidiSeqPlayer)mPauseAction.getValue("pauser");
         if (mPlayState == PLAYING) {
-            mPausedPos = mSequencer.getMicrosecondPosition();
+            mPausedPos = mSequencer.getTickPosition();
             pauser.pause();
             mPlayState = PAUSED;
             setActions();
@@ -159,17 +154,14 @@ public class PlayController {
     public class StopAction extends javax.swing.AbstractAction {
         /** Creates a new instance of StopAction */
         public StopAction() {
-//            putValue(SMALL_ICON,
-//                new javax.swing.ImageIcon(getClass().getResource(
-//                "/com/lemckes/MidiQuickFix/resources/Stop16.gif")));
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
-                    java.awt.event.KeyEvent.VK_BACK_SPACE , java.awt.event.InputEvent.ALT_MASK));
+                javax.swing.KeyStroke.getKeyStroke(
+                java.awt.event.KeyEvent.VK_BACK_SPACE , java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
          * Performs the functions required for Stopping
-         * @param e The event which triggered the action.
+         * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
             // System.out.println("StopAction.actionPerformed");
@@ -194,17 +186,14 @@ public class PlayController {
     public class RewindAction extends javax.swing.AbstractAction {
         /** Creates a new instance of RewindAction */
         public RewindAction() {
-//            putValue(SMALL_ICON,
-//                new javax.swing.ImageIcon(getClass().getResource(
-//                "/com/lemckes/MidiQuickFix/resources/Rewind16.gif")));
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
-                    java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_MASK));
+                javax.swing.KeyStroke.getKeyStroke(
+                java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
          * Performs the functions required for Rewinding
-         * @param e The event which triggered the action.
+         * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
             // System.out.println("RewindAction.actionPerformed");
@@ -226,17 +215,14 @@ public class PlayController {
     public class LoopAction extends javax.swing.AbstractAction {
         /** Creates a new instance of LoopAction */
         public LoopAction() {
-//            putValue(SMALL_ICON,
-//                new javax.swing.ImageIcon(getClass().getResource(
-//                "/com/lemckes/MidiQuickFix/resources/Loop16.gif")));
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
-                    java.awt.event.KeyEvent.VK_L , java.awt.event.InputEvent.ALT_MASK));
+                javax.swing.KeyStroke.getKeyStroke(
+                java.awt.event.KeyEvent.VK_L , java.awt.event.InputEvent.ALT_MASK));
         }
         
         /**
          * Performs the functions required for Looping
-         * @param e The event which triggered the action.
+         * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
             // System.out.println("LoopAction.actionPerformed");
@@ -248,32 +234,39 @@ public class PlayController {
     public void loop() {
         MidiSeqPlayer looper = (MidiSeqPlayer)mLoopAction.getValue("looper");
         looping = !looping;
-        System.out.println(looping ? "Looping" : "Not Looping");
+        //System.out.println(looping ? "Looping" : "Not Looping");
         looper.loop(looping);
-        //setActions();
     }
     
     private void setActions() {
         if (mPlayState == NO_FILE) {
+            ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
             mPlayAction.setEnabled(false);
+            ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
             mPauseAction.setEnabled(false);
             mRewindAction.setEnabled(false);
             mStopAction.setEnabled(false);
             mLoopAction.setEnabled(false);
         } else if (mPlayState == PLAYING) {
+            ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
             mPlayAction.setEnabled(false);
+            ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
             mPauseAction.setEnabled(true);
             mRewindAction.setEnabled(true);
             mStopAction.setEnabled(true);
             mLoopAction.setEnabled(true);
         } else if (mPlayState == PAUSED) {
+            ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
             mPlayAction.setEnabled(true);
+            ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
             mPauseAction.setEnabled(true);
             mRewindAction.setEnabled(true);
             mStopAction.setEnabled(true);
             mLoopAction.setEnabled(true);
         } else if (mPlayState == STOPPED) {
+            ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
             mPlayAction.setEnabled(true);
+            ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
             mPauseAction.setEnabled(false);
             mRewindAction.setEnabled(false);
             mStopAction.setEnabled(false);

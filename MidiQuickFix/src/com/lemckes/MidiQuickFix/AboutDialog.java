@@ -36,7 +36,7 @@ public class AboutDialog extends javax.swing.JDialog {
     public static final int RET_OK = 1;
     
     /**
-     * The component which displays our splash screen
+     * The component that displays our splash screen
      */
     SplashDrawing mSplash;
     

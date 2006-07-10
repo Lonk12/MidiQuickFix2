@@ -125,8 +125,8 @@ class MetaEvent {
                 int dd =  (int)(java.lang.Math.pow(2, (data[1] & 0x00ff)));
                 int cc =  (data[2] & 0x00ff);
                 int bb =  (data[3] & 0x00ff);
-                result[2] = nn + "/" + dd + " " + cc + "Metr. " + bb + "N/q";
-                //result[2] += nn + "/" + dd;
+                //result[2] = nn + "/" + dd + " " + cc + "Metr. " + bb + "N/q";
+                result[2] = nn + "/" + dd;
                 break;
             case keySignature:
                 result[0] = "M:KeySignature";
@@ -135,7 +135,8 @@ class MetaEvent {
             case tempo:
                 result[0] = "M:Tempo";
                 int bpm = microSecsToBpm(data);
-                result[2] = bpm + "bpm";
+                //result[2] = bpm + "bpm";
+                result[2] = Integer.toString(bpm);
                 break;
             case endOfTrack:
                 result[0] = "M:EndOfTrack";

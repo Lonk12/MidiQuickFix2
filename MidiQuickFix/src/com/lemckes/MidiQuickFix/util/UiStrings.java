@@ -25,7 +25,7 @@ package com.lemckes.MidiQuickFix.util;
 import java.util.ResourceBundle;
 
 /**
- *
+ * Provide access to the UIStrings resouces bundle.
  * @version $Id$
  */
 public class UiStrings {

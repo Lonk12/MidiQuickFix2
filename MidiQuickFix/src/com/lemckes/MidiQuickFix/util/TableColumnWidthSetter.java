@@ -21,11 +21,13 @@
  *
  **************************************************************/
 
-
 package com.lemckes.MidiQuickFix.util;
 
 import javax.swing.JTable;
-import javax.swing.table.*;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+
 
 /**
  * A utility to set the widths of a JTable's columns.
@@ -37,7 +39,7 @@ public class TableColumnWidthSetter {
      * If all column heads are wider than the column's cells'
      * contents, then you can just use column.sizeWidthToFit().
      * @param table The table for which to set column widths.
-     * @param longValues An array of objects which represent the longest
+     * @param longValues An array of objects that represent the longest
      * content of each column. If <CODE>null</CODE> then
      * only the header contents will be used to determine the width.
      * The array may contain <CODE>null</CODE> entries in which case

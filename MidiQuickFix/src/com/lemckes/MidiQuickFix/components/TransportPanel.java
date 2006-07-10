@@ -34,7 +34,7 @@ import java.awt.geom.PathIterator;
 import javax.swing.AbstractAction;
 
 /**
- *
+ * The UI for media transport controls such as Play, Pause, Stop etc.
  * @version $Id$
  */
 public class TransportPanel extends javax.swing.JPanel {
@@ -158,7 +158,7 @@ public class TransportPanel extends javax.swing.JPanel {
         loopIcon = new DrawnIcon(loopButton, loopPath);
         loopIcon.setPath(loopPath);
         loopButton.setPreferredSize(buttonSize);
-        loopIcon.setFillColour(Color.LIGHT_GRAY);
+        loopIcon.setFillColour(Color.BLUE);
         
     }
     

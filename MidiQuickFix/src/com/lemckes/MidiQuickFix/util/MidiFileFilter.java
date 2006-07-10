@@ -24,7 +24,6 @@
 package com.lemckes.MidiQuickFix.util;
 
 /**
- *
  * A FileFilter to select just midi files (.mid and .kar)
  * @version $Id$
  */

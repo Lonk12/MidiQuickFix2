@@ -69,12 +69,10 @@ public class DrawnIcon implements Icon {
 
     public int getIconHeight() {
         return 12;
-        //return parent.getHeight();
     }
 
     public int getIconWidth() {
         return 12;
-        //return parent.getWidth();
     }
 
     public void paintIcon(Component component, Graphics g,

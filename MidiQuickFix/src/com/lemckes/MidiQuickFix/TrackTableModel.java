@@ -23,11 +23,11 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.swing.table.*;
 
-import javax.swing.event.TableModelListener;
 
 import javax.sound.midi.*;
 
@@ -35,9 +35,9 @@ import javax.sound.midi.*;
  * The model for the main track table.
  * @version $Id$
  */
-class TrackTableModel extends AbstractTableModel implements TableModelListener {
+class TrackTableModel extends DefaultTableModel {
     
-    /** The Track which is being displayed. */
+    /** The Track that is being displayed. */
     transient Track mTrack;
     
     /** The Beats/Tick resolution of this track. */
@@ -61,7 +61,6 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
         mInFlats = inFlats;
         mShowNotes = showNotes;
         buildNoNotesRowMap();
-        addTableModelListener(this);
     }
     
     /**
@@ -96,7 +95,9 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     }
     
     public int getRowCount() {
-        if (mShowNotes) {
+        if (mTrack == null) {
+            return 0;
+        } else if (mShowNotes) {
             return mTrack.size();
         } else {
             return mTrack.size() - mNumNotes;
@@ -118,7 +119,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
         long tick = mTrack.get(eventIndex).getTick();
         switch (column) {
             case 0:
-                result = getTickString(tick, mResolution);
+                result = Formats.formatTicks(tick, mResolution, true);
                 break;
             case 1:
                 result = getMessageArray(mess)[0];
@@ -230,7 +231,7 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
         switch (column) {
             case 0:
                 // Tick
-                ev.setTick(getTickValue(value.toString(), mResolution));
+                ev.setTick(Formats.parseTicks(value.toString(), mResolution));
                 fireTableCellUpdated(row, column);
                 break;
             case 1:
@@ -344,8 +345,6 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
                             System.out.println("Error: setValueAt column 6. " + e.getMessage());
                         }
                     }
-                    // Must have been CANCEL
-                    // Do Nothing
                 }
                 break;
             default:
@@ -464,27 +463,6 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
         return result;
     }
     
-    static String getTickString(long tick, int res) {
-        java.text.DecimalFormat beatF = new java.text.DecimalFormat("00000");
-        java.text.DecimalFormat tickF = new java.text.DecimalFormat("000");
-        
-        String result;
-        long beats = tick / res;
-        long ticks = tick % res;
-        result = beatF.format(beats) + ":" + tickF.format(ticks);
-        return result;
-    }
-    
-    static long getTickValue(String tickString, int res) {
-        int colonPos = tickString.indexOf(':');
-        String beats = tickString.substring(0, colonPos);
-        String ticks = tickString.substring(colonPos + 1);
-        long b = Long.parseLong(beats);
-        long t = Long.parseLong(ticks);
-        long r = b * res + t;
-        return r;
-    }
-    
     Class[] types = new Class [] {
         java.lang.Object.class,
             java.lang.Object.class,
@@ -510,9 +488,4 @@ class TrackTableModel extends AbstractTableModel implements TableModelListener {
     public String getColumnName(int col) {
         return columnNames[col];
     }
-    
-    public void tableChanged(javax.swing.event.TableModelEvent e) {
-        // System.out.println("TrackTableModel.tableChanged(" + e.toString() + ")");
-    }
-    
 }

@@ -40,7 +40,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
     
     transient Sequencer mSeq;
     
-    /** The Sequence which is loaded. */
+    /** The Sequence that is loaded. */
     transient Sequence mSequence;
     
     /** The resolution of the sequence */
@@ -79,6 +79,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
         
         // System.out.println("Synth = " + mSynth.toString());
         mChannels = mSynth.getChannels();
+        mChannels[0].allSoundOff();
         //        for (int i = 0; i < mChannels.length; ++i) {
         //            System.out.println("Ch " + i + " : "
         //            + mChannels[i]);

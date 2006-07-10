@@ -28,7 +28,7 @@ import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.swing.JLabel;
 
 /**
- *
+ * A slider that represents a duration in either tick or seconds.
  * @version $Id$
  */
 public class DurationSlider extends javax.swing.JSlider {
