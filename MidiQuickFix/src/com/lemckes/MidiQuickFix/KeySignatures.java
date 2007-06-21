@@ -56,7 +56,7 @@ public class KeySignatures {
      * i.e. -7=7flats +7=7sharps.
      * data[1] 0=major, 1=minor.
      */
-    static String getKeyName(byte data[]) {
+    public static String getKeyName(byte data[]) {
         String result = "";
         int k = data[0] + 7;
         int m = data[1];
@@ -78,7 +78,7 @@ public class KeySignatures {
      * @see Midi.KeySignatures.getKeyName
      *
      */
-    static byte[] getKeyValues(String keyName) {
+    public static byte[] getKeyValues(String keyName) {
         byte[] result = { 0, 0 };
         // Check for a minor key
         int mPos = keyName.indexOf("m");
@@ -102,7 +102,7 @@ public class KeySignatures {
      * as returned by getKeyName.
      * @return True if the notes should be displayed as flats.
      */
-    static boolean isInFlats(String keyName) {
+    public static boolean isInFlats(String keyName) {
         if (keyName == null) {
             return false;
         }
@@ -117,7 +117,7 @@ public class KeySignatures {
      * values define the number of flats.
      * @return True if the notes should be displayed as flats.
      */
-    static boolean isInFlats(int keyNum) {
+    public static boolean isInFlats(int keyNum) {
         return keyNum < 0;
     }
 }

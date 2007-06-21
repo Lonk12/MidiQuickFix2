@@ -75,10 +75,7 @@ public class DrawnIcon implements Icon {
         return 12;
     }
 
-    public void paintIcon(Component component, Graphics g,
-        int x, int y) {
-        
-        //System.out.println("paintIcon x=" + x + " y=" + y);
+    public void paintIcon(Component component, Graphics g, int x, int y) {
         Graphics2D g2 = (Graphics2D)g;
         AffineTransform savedAT = g2.getTransform();
         double xScale = component.getWidth();

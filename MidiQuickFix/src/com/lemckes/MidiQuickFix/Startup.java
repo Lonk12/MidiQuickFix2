@@ -23,6 +23,8 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.UiStrings;
+
 /**
  * Show a splash screen and startup progress.
  * @version $Id$
@@ -38,7 +40,7 @@ public class Startup extends javax.swing.JDialog {
     /** Creates new Startup dialog */
     public Startup(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        setTitle("Initialising MidiQuickFix");
+        setTitle(UiStrings.getString("startup_initialising"));
         splash = new SplashDrawing();
         initComponents();
         getContentPane().add(splash, java.awt.BorderLayout.CENTER);
@@ -73,7 +75,7 @@ public class Startup extends javax.swing.JDialog {
 
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        cancelButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("cancel"));
+        cancelButton.setText(UiStrings.getString("cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
@@ -85,8 +87,7 @@ public class Startup extends javax.swing.JDialog {
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
         pack();
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
     
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         System.exit(1);

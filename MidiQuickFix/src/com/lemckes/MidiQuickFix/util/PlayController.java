@@ -33,14 +33,16 @@ import javax.swing.AbstractAction;
  */
 public class PlayController {
     
-    static final public int NO_FILE = -1;
-    static final public int STOPPED = 0;
-    static final public int PAUSED = 1;
-    static final public int PLAYING = 2;
+    public enum PlayState {
+        NO_FILE,
+        STOPPED,
+        PAUSED,
+        PLAYING
+    }
     
     private boolean looping = false;
     
-    int mPlayState = NO_FILE;
+    PlayState mPlayState = PlayState.NO_FILE;
     
     /** The tick position at which the sequence was paused. */
     long mPausedPos;
@@ -58,15 +60,15 @@ public class PlayController {
      * Set the state of play ;-)
      * @param state Probably should be one of NO_FILE, STOPPED, PAUSED, PLAYING
      */
-    public void setPlayState(int state) {
+    public void setPlayState(PlayState state) {
         mPlayState = state;
-        if (state == STOPPED) {
+        if (state == PlayState.STOPPED) {
             mPausedPos = 0;
         }
         setActions();
     }
     
-    public int getPlayState() {
+    public PlayState getPlayState() {
         return mPlayState;
     }
     
@@ -108,7 +110,7 @@ public class PlayController {
     public void play() {
         MidiSeqPlayer player = (MidiSeqPlayer)mPlayAction.getValue("player");
         player.play();
-        mPlayState = PLAYING;
+        mPlayState = PlayState.PLAYING;
         setActions();
     }
     
@@ -136,14 +138,14 @@ public class PlayController {
     
     public void pause() {
         MidiSeqPlayer pauser = (MidiSeqPlayer)mPauseAction.getValue("pauser");
-        if (mPlayState == PLAYING) {
+        if (mPlayState == PlayState.PLAYING) {
             mPausedPos = mSequencer.getTickPosition();
             pauser.pause();
-            mPlayState = PAUSED;
+            mPlayState = PlayState.PAUSED;
             setActions();
-        } else if (mPlayState == PAUSED) {
+        } else if (mPlayState == PlayState.PAUSED) {
             pauser.play();
-            mPlayState = PLAYING;
+            mPlayState = PlayState.PLAYING;
             setActions();
         }
     }
@@ -172,10 +174,10 @@ public class PlayController {
     
     public void stop() {
         MidiSeqPlayer stopper = (MidiSeqPlayer)mStopAction.getValue("stopper");
-        if (mPlayState != STOPPED) {
+        if (mPlayState != PlayState.STOPPED) {
             stopper.stop();
             mPausedPos = 0;
-            mPlayState = STOPPED;
+            mPlayState = PlayState.STOPPED;
         }
         setActions();
     }
@@ -239,7 +241,7 @@ public class PlayController {
     }
     
     private void setActions() {
-        if (mPlayState == NO_FILE) {
+        if (mPlayState == PlayState.NO_FILE) {
             ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
             mPlayAction.setEnabled(false);
             ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
@@ -247,7 +249,7 @@ public class PlayController {
             mRewindAction.setEnabled(false);
             mStopAction.setEnabled(false);
             mLoopAction.setEnabled(false);
-        } else if (mPlayState == PLAYING) {
+        } else if (mPlayState == PlayState.PLAYING) {
             ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
             mPlayAction.setEnabled(false);
             ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
@@ -255,7 +257,7 @@ public class PlayController {
             mRewindAction.setEnabled(true);
             mStopAction.setEnabled(true);
             mLoopAction.setEnabled(true);
-        } else if (mPlayState == PAUSED) {
+        } else if (mPlayState == PlayState.PAUSED) {
             ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
             mPlayAction.setEnabled(true);
             ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
@@ -263,7 +265,7 @@ public class PlayController {
             mRewindAction.setEnabled(true);
             mStopAction.setEnabled(true);
             mLoopAction.setEnabled(true);
-        } else if (mPlayState == STOPPED) {
+        } else if (mPlayState == PlayState.STOPPED) {
             ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
             mPlayAction.setEnabled(true);
             ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);

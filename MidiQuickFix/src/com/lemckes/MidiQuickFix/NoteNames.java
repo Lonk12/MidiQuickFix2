@@ -56,9 +56,6 @@ class NoteNames {
         int octave = Integer.parseInt(name.substring(name.length() - 1, name.length()));
         int noteNum = octave * 12;
         String note = name.substring(0, name.length() - 1);
-        //StringBuffer sb = new StringBuffer(note);
-        //sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
-        // System.out.println("getNoteNumber name=" + name + " note=" + note + " oct=" + octave);
         boolean found = false;
         for (int i = 0; i < flatNames.length; ++i) {
             if (note.equalsIgnoreCase(flatNames[i])) {

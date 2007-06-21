@@ -37,7 +37,7 @@ class Controllers {
     /** Create an ControllerNames object. */
     static {
         mControllersBundle = ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/Controllers");
-        int count = Integer.parseInt(mControllersBundle.getString("count"));
+        int count = Integer.parseInt(mControllersBundle.getString("count")); // NOI18N
         mNameArray = new String[count];
         for (int i = 0; i < count; ++i) {
             mNameArray[i] = mControllersBundle.getString(Integer.toString(i));

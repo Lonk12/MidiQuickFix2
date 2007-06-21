@@ -13,6 +13,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,44,0,0,1,-112"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
@@ -25,7 +26,7 @@
     <Component class="javax.swing.JButton" name="rewindButton">
       <Properties>
         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="rewind" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="rewind" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="borderPainted" type="boolean" value="false"/>
         <Property name="defaultCapable" type="boolean" value="false"/>
@@ -38,7 +39,7 @@
     <Component class="javax.swing.JButton" name="playButton">
       <Properties>
         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="play" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="play" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="borderPainted" type="boolean" value="false"/>
         <Property name="defaultCapable" type="boolean" value="false"/>
@@ -51,7 +52,7 @@
     <Component class="javax.swing.JButton" name="pauseButton">
       <Properties>
         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="pause" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="pause" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="borderPainted" type="boolean" value="false"/>
         <Property name="defaultCapable" type="boolean" value="false"/>
@@ -64,7 +65,7 @@
     <Component class="javax.swing.JButton" name="stopButton">
       <Properties>
         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="stop" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="stop" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="borderPainted" type="boolean" value="false"/>
         <Property name="defaultCapable" type="boolean" value="false"/>
@@ -77,7 +78,7 @@
     <Component class="javax.swing.JToggleButton" name="loopButton">
       <Properties>
         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="loop" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="loop" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="borderPainted" type="boolean" value="false"/>
         <Property name="focusPainted" type="boolean" value="false"/>

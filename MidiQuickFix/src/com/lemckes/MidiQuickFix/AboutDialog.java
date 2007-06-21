@@ -23,6 +23,7 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.util.Properties;
 
 /**
@@ -49,8 +50,8 @@ public class AboutDialog extends javax.swing.JDialog {
         mSplash.setStageMessage("MidiQuickFix - A Simple Midi file editor and player");
         mSplash.setStageMessage("http://midiquickfix.sourceforge.net");
         mSplash.setStageMessage("");
-        mSplash.setStageMessage("Copyright (C) 2004-2005 John Lemcke");
-        mSplash.setStageMessage("jostle@users.sourceforge.net");
+        mSplash.setStageMessage(UiStrings.getString("copyright"));
+        mSplash.setStageMessage(UiStrings.getString("contact_email"));
         
         showSystemInfo();
         
@@ -109,7 +110,7 @@ public class AboutDialog extends javax.swing.JDialog {
 
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        okButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("ok"));
+        okButton.setText(UiStrings.getString("ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
@@ -121,8 +122,7 @@ public class AboutDialog extends javax.swing.JDialog {
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
         pack();
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
     
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         doClose(RET_OK);

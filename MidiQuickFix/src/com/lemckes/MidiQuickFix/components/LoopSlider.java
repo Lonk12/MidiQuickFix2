@@ -28,6 +28,7 @@ import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.LoopSliderEvent;
 import com.lemckes.MidiQuickFix.util.LoopSliderListener;
 import com.lemckes.MidiQuickFix.util.RegexFormatter;
+import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.GeneralPath;
@@ -134,7 +135,6 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     
     public void stateChanged(javax.swing.event.ChangeEvent changeEvent) {
         int val = durationSlider.getValue();
-        //System.out.println("stateChanged val = " + val);
         currPositionField.setText(Formats.formatTicks(val, resolution, false));
         fireLoopSliderChanged(durationSlider.getValueIsAdjusting());
     }
@@ -186,10 +186,12 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         currPositionField = new javax.swing.JFormattedTextField();
         loopInButton = new javax.swing.JButton();
         loopOutButton = new javax.swing.JButton();
+        loopInLabel = new javax.swing.JLabel();
+        loopOutLabel = new javax.swing.JLabel();
 
         setLayout(new java.awt.GridBagLayout());
 
-        setBorder(new javax.swing.border.EmptyBorder(new java.awt.Insets(3, 3, 3, 3)));
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 3, 3, 3));
         loopInField.setColumns(8);
         loopInField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         loopInField.setFont(new java.awt.Font("DialogInput", 0, 14));
@@ -205,10 +207,10 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
         add(loopInField, gridBagConstraints);
 
@@ -227,17 +229,17 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
         add(loopOutField, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 7;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(durationSlider, gridBagConstraints);
 
@@ -258,10 +260,11 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(1, 3, 0, 2);
         add(currPositionField, gridBagConstraints);
 
-        loopInButton.setToolTipText("Set Loop-In Point");
+        loopInButton.setToolTipText(UiStrings.getString("loop-in_point_tooltip")); // NOI18N
         loopInButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loopInButtonActionPerformed(evt);
@@ -272,9 +275,10 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         add(loopInButton, gridBagConstraints);
 
-        loopOutButton.setToolTipText("Set Loop-Out Point");
+        loopOutButton.setToolTipText(UiStrings.getString("loop-out_point_tooltip")); // NOI18N
         loopOutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loopOutButtonActionPerformed(evt);
@@ -285,38 +289,52 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(loopOutButton, gridBagConstraints);
 
-    }
-    // </editor-fold>//GEN-END:initComponents
+        loopInLabel.setText(UiStrings.getString("in")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        add(loopInLabel, gridBagConstraints);
+
+        loopOutLabel.setText(UiStrings.getString("out")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        add(loopOutLabel, gridBagConstraints);
+
+    }// </editor-fold>//GEN-END:initComponents
     
     private void loopOutFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopOutFieldActionPerformed
-        System.out.println("loopOutFieldActionPerformed");
         setLoopOutPoint((int)Formats.parseTicks(loopOutField.getText(), resolution));
     }//GEN-LAST:event_loopOutFieldActionPerformed
     
     private void loopOutFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_loopOutFieldFocusLost
-        System.out.println("loopOutFieldFocusLost");
         setLoopOutPoint((int)Formats.parseTicks(loopOutField.getText(), resolution));
     }//GEN-LAST:event_loopOutFieldFocusLost
     
     private void currPositionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currPositionFieldActionPerformed
-        System.out.println("currPositionFieldActionPerformed");
         setValue((int)Formats.parseTicks(currPositionField.getText(), resolution));
     }//GEN-LAST:event_currPositionFieldActionPerformed
     
     private void currPositionFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_currPositionFieldFocusLost
-        System.out.println("currPositionFieldFocusLost");
         setValue((int)Formats.parseTicks(currPositionField.getText(), resolution));
     }//GEN-LAST:event_currPositionFieldFocusLost
     
     private void loopInFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_loopInFieldFocusLost
-        System.out.println("loopInFieldFocusLost");
         setLoopInPoint((int)Formats.parseTicks(loopInField.getText(), resolution));
     }//GEN-LAST:event_loopInFieldFocusLost
     
     private void loopInFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopInFieldActionPerformed
-        System.out.println("loopInFieldActionPerformed");
         setLoopInPoint((int)Formats.parseTicks(loopInField.getText(), resolution));
     }//GEN-LAST:event_loopInFieldActionPerformed
     
@@ -334,8 +352,10 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     private com.lemckes.MidiQuickFix.components.DurationSlider durationSlider;
     private javax.swing.JButton loopInButton;
     private javax.swing.JFormattedTextField loopInField;
+    private javax.swing.JLabel loopInLabel;
     private javax.swing.JButton loopOutButton;
     private javax.swing.JFormattedTextField loopOutField;
+    private javax.swing.JLabel loopOutLabel;
     // End of variables declaration//GEN-END:variables
     
     /**

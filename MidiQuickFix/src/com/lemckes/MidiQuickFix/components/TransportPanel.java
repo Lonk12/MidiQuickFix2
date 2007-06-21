@@ -25,6 +25,7 @@ package com.lemckes.MidiQuickFix.components;
 
 import com.lemckes.MidiQuickFix.util.DrawnIcon;
 import com.lemckes.MidiQuickFix.util.PlayController.*;
+import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Area;
@@ -191,43 +192,42 @@ public class TransportPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.GridLayout(1, 0, 1, 1));
 
-        setBorder(new javax.swing.border.EtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        rewindButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("rewind"));
+        setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
+        rewindButton.setToolTipText(UiStrings.getString("rewind")); // NOI18N
         rewindButton.setBorderPainted(false);
         rewindButton.setDefaultCapable(false);
         rewindButton.setFocusPainted(false);
         rewindButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(rewindButton);
 
-        playButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("play"));
+        playButton.setToolTipText(UiStrings.getString("play")); // NOI18N
         playButton.setBorderPainted(false);
         playButton.setDefaultCapable(false);
         playButton.setFocusPainted(false);
         playButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(playButton);
 
-        pauseButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("pause"));
+        pauseButton.setToolTipText(UiStrings.getString("pause")); // NOI18N
         pauseButton.setBorderPainted(false);
         pauseButton.setDefaultCapable(false);
         pauseButton.setFocusPainted(false);
         pauseButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(pauseButton);
 
-        stopButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("stop"));
+        stopButton.setToolTipText(UiStrings.getString("stop")); // NOI18N
         stopButton.setBorderPainted(false);
         stopButton.setDefaultCapable(false);
         stopButton.setFocusPainted(false);
         stopButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(stopButton);
 
-        loopButton.setToolTipText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("loop"));
+        loopButton.setToolTipText(UiStrings.getString("loop")); // NOI18N
         loopButton.setBorderPainted(false);
         loopButton.setFocusPainted(false);
         loopButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(loopButton);
 
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

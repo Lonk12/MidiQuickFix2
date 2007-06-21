@@ -482,7 +482,7 @@ class TrackTableModel extends DefaultTableModel {
             UiStrings.getString("note"),
             UiStrings.getString("value"),
             UiStrings.getString("patch"),
-            UiStrings.getString("Text"),
+            UiStrings.getString("text"),
             UiStrings.getString("channel_abbrev")
     };
     public String getColumnName(int col) {

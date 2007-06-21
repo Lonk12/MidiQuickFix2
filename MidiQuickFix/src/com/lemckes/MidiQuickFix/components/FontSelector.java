@@ -196,7 +196,7 @@ public class FontSelector extends javax.swing.JDialog {
 
         insetPanel.setLayout(new java.awt.BorderLayout(0, 12));
 
-        insetPanel.setBorder(new javax.swing.border.EmptyBorder(new java.awt.Insets(12, 12, 11, 11)));
+        insetPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 12, 11, 11));
         insetPanel.setName("insetPanel");
         mainPanel.setLayout(new java.awt.BorderLayout(6, 6));
 
@@ -213,7 +213,7 @@ public class FontSelector extends javax.swing.JDialog {
         attributesPanel.setLayout(new java.awt.GridBagLayout());
 
         attributesPanel.setName("attributesPanel");
-        sizeLabel.setText("Size:");
+        sizeLabel.setText(UiStrings.getString("size")); // NOI18N
         sizeLabel.setName("sizeLabel");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -222,7 +222,7 @@ public class FontSelector extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
         attributesPanel.add(sizeLabel, gridBagConstraints);
 
-        boldCheckBox.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("bold"));
+        boldCheckBox.setText(UiStrings.getString("bold")); // NOI18N
         boldCheckBox.setName("boldCheckBox");
         boldCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -238,7 +238,7 @@ public class FontSelector extends javax.swing.JDialog {
         attributesPanel.add(boldCheckBox, gridBagConstraints);
 
         italicCheckBox.setFont(new java.awt.Font("Dialog", 3, 12));
-        italicCheckBox.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("italic"));
+        italicCheckBox.setText(UiStrings.getString("italic")); // NOI18N
         italicCheckBox.setName("italicCheckBox");
         italicCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -268,7 +268,7 @@ public class FontSelector extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         attributesPanel.add(sizeCombo, gridBagConstraints);
 
-        styleLabel.setText("Style:");
+        styleLabel.setText(UiStrings.getString("style")); // NOI18N
         styleLabel.setName("styleLabel");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -281,12 +281,12 @@ public class FontSelector extends javax.swing.JDialog {
         mainPanel.add(attributesPanel, java.awt.BorderLayout.EAST);
 
         previewText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        previewText.setText("Sample Text Preview");
-        previewText.setToolTipText("Enter some sample text here.");
+        previewText.setText(UiStrings.getString("sample_text_preview")); // NOI18N
+        previewText.setToolTipText(UiStrings.getString("sample_text")); // NOI18N
         previewText.setName("previewText");
         mainPanel.add(previewText, java.awt.BorderLayout.SOUTH);
 
-        familyLabel.setText("Family:");
+        familyLabel.setText(UiStrings.getString("family")); // NOI18N
         familyLabel.setName("familyLabel");
         mainPanel.add(familyLabel, java.awt.BorderLayout.NORTH);
 
@@ -298,7 +298,7 @@ public class FontSelector extends javax.swing.JDialog {
         buttonGrid.setLayout(new java.awt.GridLayout(1, 0, 5, 0));
 
         buttonGrid.setName("buttonGrid");
-        okButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("apply"));
+        okButton.setText(UiStrings.getString("apply")); // NOI18N
         okButton.setName("okButton");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -308,7 +308,7 @@ public class FontSelector extends javax.swing.JDialog {
 
         buttonGrid.add(okButton);
 
-        cancelButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("close"));
+        cancelButton.setText(UiStrings.getString("close")); // NOI18N
         cancelButton.setName("cancelButton");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -325,8 +325,7 @@ public class FontSelector extends javax.swing.JDialog {
         getContentPane().add(insetPanel, java.awt.BorderLayout.CENTER);
 
         pack();
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
     
     private void italicCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_italicCheckBoxActionPerformed
         StyleConstants.setItalic(mAttributes, italicCheckBox.isSelected());

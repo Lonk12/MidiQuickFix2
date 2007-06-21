@@ -80,7 +80,7 @@ public class TraceDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        clearButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("clear"));
+        clearButton.setText(UiStrings.getString("clear")); // NOI18N
         clearButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearButtonActionPerformed(evt);
@@ -89,7 +89,7 @@ public class TraceDialog extends javax.swing.JDialog {
 
         buttonPanel.add(clearButton);
 
-        closeButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("close"));
+        closeButton.setText(UiStrings.getString("close")); // NOI18N
         closeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 closeButtonActionPerformed(evt);
@@ -111,12 +111,11 @@ public class TraceDialog extends javax.swing.JDialog {
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("MidiQuickFix - Debugging Trace");
+        jLabel1.setText(UiStrings.getString("trace_dialog_title")); // NOI18N
         getContentPane().add(jLabel1, java.awt.BorderLayout.NORTH);
 
         pack();
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
     
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         clear();

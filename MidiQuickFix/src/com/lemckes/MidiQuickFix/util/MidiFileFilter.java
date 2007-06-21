@@ -58,7 +58,7 @@ public class MidiFileFilter extends javax.swing.filechooser.FileFilter {
      * @return The description of this filter
      */
     public String getDescription() {
-        return "Midi Files (*.mid, *.kar)";
+        return UiStrings.getString("midi_file_filter_description");
     }
 }
 

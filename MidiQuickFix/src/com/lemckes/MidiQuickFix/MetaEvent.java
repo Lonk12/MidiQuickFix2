@@ -30,33 +30,33 @@ import javax.sound.midi.MetaMessage;
  * Handle Midi Meta events.
  * @version $Id$
  */
-class MetaEvent {
+public class MetaEvent {
     // META event types
-    static final int sequenceNumber = 0x00; //FF 00 02 ss ss or FF 00 00
-    static final int text           = 0x01; //FF 01 len text (arbitrary text)
-    static final int copyright      = 0x02; //FF 02 len text
-    static final int trackName      = 0x03; //FF 03 len text
-    static final int instrument     = 0x04; //FF 04 len text
-    static final int lyric          = 0x05; //FF 05 len text
-    static final int marker         = 0x06; //FF 06 len text (e.g. Loop point)
-    static final int cuePoint       = 0x07; //FF 07 len text (e.g. .wav file name)
-    static final int programName    = 0x08; //FF 08 len text (PIANO, FLUTE, ...)
-    static final int deviceName     = 0x09; //FF 09 len text (MIDI Out 1, MIDI Out 2)
-    static final int endOfTrack     = 0x2f; //FF 2F 00
-    static final int tempo          = 0x51; //FF 51 03 tt tt tt microseconds
-    static final int SMPTEOffset    = 0x54; //FF 54 05 hr mn se fr ff
-    static final int timeSignature  = 0x58; //FF 58 04 nn dd cc bb
+    public static final int SEQUENCE_NUMBER = 0x00; //FF 00 02 ss ss or FF 00 00
+    public static final int TEXT            = 0x01; //FF 01 len TEXT (arbitrary TEXT)
+    public static final int COPYRIGHT       = 0x02; //FF 02 len TEXT
+    public static final int TRACK_NAME      = 0x03; //FF 03 len TEXT
+    public static final int INSTRUMENT      = 0x04; //FF 04 len TEXT
+    public static final int LYRIC           = 0x05; //FF 05 len TEXT
+    public static final int MARKER          = 0x06; //FF 06 len TEXT (e.g. Loop point)
+    public static final int CUE_POINT       = 0x07; //FF 07 len TEXT (e.g. .wav file name)
+    public static final int PROGRAM_NAME    = 0x08; //FF 08 len TEXT (PIANO, FLUTE, ...)
+    public static final int DEVICE_NAME     = 0x09; //FF 09 len TEXT (MIDI Out 1, MIDI Out 2)
+    public static final int END_OF_TRACK    = 0x2f; //FF 2F 00
+    public static final int TEMPO           = 0x51; //FF 51 03 tt tt tt microseconds
+    public static final int SMPTE_OFFSET    = 0x54; //FF 54 05 hr mn se fr ff
+    public static final int TIME_SIGNATURE  = 0x58; //FF 58 04 nn dd cc bb
     // nn=numerator, dd=denominator (2^dd), cc=MIDI clocks/metronome click
     // bb=no. of notated 32nd notes per MIDI quarter note (24 MIDI clocks).
     // No I don't understand that last one.
     // 06 03 18 08 is 6/8 time, 24 clocks/metronome, 8 1/32ndnotes/1/4note
     
-    static final int keySignature   = 0x59; //FF 59 02 sf mi
+    public static final int KEY_SIGNATURE   = 0x59; //FF 59 02 sf mi
     // -sf=no. of flats +sf=no. of sharps mi=0=major mi=1=minor
     
-    static final int proprietaryData    = 0x7f; //FF 7F len data
+    public static final int PROPRIETARY_DATA = 0x7f; //FF 7F len data
     
-    static Object[] getMetaStrings(MetaMessage mess) {
+    public static Object[] getMetaStrings(MetaMessage mess) {
         boolean dumpText = false;
         boolean dumpBytes = false;
         
@@ -70,47 +70,47 @@ class MetaEvent {
         result[1] = new Integer(data.length);
         
         switch (type) {
-            case sequenceNumber:
+            case SEQUENCE_NUMBER:
                 result[0] = "M:SequenceNumber";
                 dumpBytes = true;
                 break;
-            case text:
+            case TEXT:
                 result[0] = "M:Text";
                 dumpText = true;
                 break;
-            case copyright:
+            case COPYRIGHT:
                 result[0] = "M:Copyright";
                 dumpText = true;
                 break;
-            case trackName:
+            case TRACK_NAME:
                 result[0] = "M:TrackName";
                 dumpText = true;
                 break;
-            case instrument:
+            case INSTRUMENT:
                 result[0] = "M:Instrument";
                 dumpText = true;
                 break;
-            case lyric:
+            case LYRIC:
                 result[0] = "M:Lyric";
                 dumpText = true;
                 break;
-            case marker:
+            case MARKER:
                 result[0] = "M:Marker";
                 dumpText = true;
                 break;
-            case cuePoint:
+            case CUE_POINT:
                 result[0] = "M:CuePoint";
                 dumpText = true;
                 break;
-            case programName:
+            case PROGRAM_NAME:
                 result[0] = "M:ProgramName";
                 dumpText = true;
                 break;
-            case deviceName:
+            case DEVICE_NAME:
                 result[0] = "M:DeviceName";
                 dumpText = true;
                 break;
-            case SMPTEOffset:
+            case SMPTE_OFFSET:
                 result[0] = "M:SMPTEOffset";
                 //hr mn se fr ff
                 result[2] = (data[0] & 0x00ff)
@@ -119,7 +119,7 @@ class MetaEvent {
                 + ":" + (data[3] & 0x00ff)
                 + ":" + (data[4] & 0x00ff);
                 break;
-            case timeSignature:
+            case TIME_SIGNATURE:
                 result[0] = "M:TimeSignature";
                 int nn =  (data[0] & 0x00ff);
                 int dd =  (int)(java.lang.Math.pow(2, (data[1] & 0x00ff)));
@@ -128,20 +128,20 @@ class MetaEvent {
                 //result[2] = nn + "/" + dd + " " + cc + "Metr. " + bb + "N/q";
                 result[2] = nn + "/" + dd;
                 break;
-            case keySignature:
+            case KEY_SIGNATURE:
                 result[0] = "M:KeySignature";
                 result[2] = KeySignatures.getKeyName(data);
                 break;
-            case tempo:
+            case TEMPO:
                 result[0] = "M:Tempo";
                 int bpm = microSecsToBpm(data);
                 //result[2] = bpm + "bpm";
                 result[2] = Integer.toString(bpm);
                 break;
-            case endOfTrack:
+            case END_OF_TRACK:
                 result[0] = "M:EndOfTrack";
                 break;
-            case proprietaryData:
+            case PROPRIETARY_DATA:
                 result[0] = "M:ProprietaryData";
                 dumpBytes = true;
                 break;
@@ -173,7 +173,7 @@ class MetaEvent {
         return result;
     }
     
-    // Methods to handle tempo events.
+    // Methods to handle TEMPO events.
     
     public static int microSecsToBpm(byte[] data) {
         // Coerce the bytes into ints
@@ -219,7 +219,7 @@ class MetaEvent {
     
     public static boolean isEditable(MetaMessage mess) {
         int type = mess.getType();
-        return ((type >= 1 && type <= 9) || type == tempo || type == keySignature);
+        return ((type >= 1 && type <= 9) || type == TEMPO || type == KEY_SIGNATURE);
     }
     
     public static void setMetaData(MetaMessage mess, String s) {
@@ -232,10 +232,10 @@ class MetaEvent {
             for (int i = 0; i < len; ++i) {
                 data[i] = (byte)s.charAt(i);
             }
-        } else if (type == tempo) {
+        } else if (type == TEMPO) {
             int bpm = parseTempo(s);
             data = bpmToMicroSecs(bpm);
-        } else if (type == keySignature) {
+        } else if (type == KEY_SIGNATURE) {
             data = KeySignatures.getKeyValues(s);
         }
         

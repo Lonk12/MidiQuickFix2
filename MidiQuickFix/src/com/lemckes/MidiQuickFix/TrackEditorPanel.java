@@ -23,6 +23,7 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
@@ -43,8 +44,7 @@ public class TrackEditorPanel extends javax.swing.JPanel {
         initComponents();
     }
     
-    public void setSequence(Sequence seq)
-    {
+    public void setSequence(Sequence seq) {
         mSeq = seq;
         mTracks = mSeq.getTracks();
         setTrackComboModel(mTracks);
@@ -70,17 +70,17 @@ public class TrackEditorPanel extends javax.swing.JPanel {
                 if (mess.getStatus() == MetaMessage.META) {
                     int type = ((MetaMessage)mess).getType();
                     Object[] str = MetaEvent.getMetaStrings((MetaMessage)mess);
-                    if (type == MetaEvent.trackName) {
+                    if (type == MetaEvent.TRACK_NAME) {
                         trackList[i] += " - " + (String)str[2];
                     }
-                    if (type == MetaEvent.keySignature) {
+                    if (type == MetaEvent.KEY_SIGNATURE) {
                         mKeySig = (String)str[2];
                     }
                 }
             }
         }
         trackSelector.setModel(
-          new DefaultComboBoxModel(trackList));
+            new DefaultComboBoxModel(trackList));
     }
     
     /** Display the selected track in the editor.
@@ -88,16 +88,16 @@ public class TrackEditorPanel extends javax.swing.JPanel {
      */
     void selectTrack(int trackNum) {
         mCurrentTrack = trackNum;
-        
-        trackTable.setTrack(
-          mTracks[mCurrentTrack],
-          mSeq.getResolution(),
-          showNotesCheck.isSelected(),
-          KeySignatures.isInFlats(mKeySig));
+        if (mSeq != null) {
+            trackTable.setTrack(
+                mTracks[mCurrentTrack],
+                mSeq.getResolution(),
+                showNotesCheck.isSelected(),
+                KeySignatures.isInFlats(mKeySig));
+        }
     }
     
-    public void addTableChangeListener(TableModelListener l)
-    {
+    public void addTableChangeListener(TableModelListener l) {
         trackTable.getModel().addTableModelListener(l);
     }
     
@@ -132,7 +132,7 @@ public class TrackEditorPanel extends javax.swing.JPanel {
 
         buttonPanel.setLayout(new java.awt.GridLayout(0, 1, 0, 3));
 
-        insertButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("insert"));
+        insertButton.setText(UiStrings.getString("insert")); // NOI18N
         insertButton.setEnabled(false);
         insertButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         insertButton.addActionListener(new java.awt.event.ActionListener() {
@@ -143,7 +143,7 @@ public class TrackEditorPanel extends javax.swing.JPanel {
 
         buttonPanel.add(insertButton);
 
-        deleteButton.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("delete"));
+        deleteButton.setText(UiStrings.getString("delete")); // NOI18N
         deleteButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -159,9 +159,9 @@ public class TrackEditorPanel extends javax.swing.JPanel {
 
         trackPanel.setLayout(new java.awt.BorderLayout());
 
-        trackPanel.setBorder(new javax.swing.border.EmptyBorder(new java.awt.Insets(0, 0, 6, 0)));
+        trackPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 6, 0));
         showNotesCheck.setSelected(true);
-        showNotesCheck.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("show_notes"));
+        showNotesCheck.setText(UiStrings.getString("show_notes")); // NOI18N
         showNotesCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showNotesCheckActionPerformed(evt);
@@ -172,7 +172,7 @@ public class TrackEditorPanel extends javax.swing.JPanel {
 
         trackSelectorPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 0));
 
-        trackLabel.setText(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings").getString("track"));
+        trackLabel.setText(UiStrings.getString("track")); // NOI18N
         trackSelectorPanel.add(trackLabel);
 
         trackSelector.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0" }));
@@ -190,23 +190,22 @@ public class TrackEditorPanel extends javax.swing.JPanel {
 
         add(trackPanel, java.awt.BorderLayout.NORTH);
 
-    }
-    // </editor-fold>//GEN-END:initComponents
-
+    }// </editor-fold>//GEN-END:initComponents
+    
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int[] selRows = trackTable.getSelectedRows();
         trackTable.deleteRows(selRows);
     }//GEN-LAST:event_deleteButtonActionPerformed
-
+    
     private void insertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertButtonActionPerformed
         //Nothing yet.
         
     }//GEN-LAST:event_insertButtonActionPerformed
-
+    
     private void showNotesCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNotesCheckActionPerformed
         trackTable.showNotes(showNotesCheck.isSelected());
     }//GEN-LAST:event_showNotesCheckActionPerformed
-
+    
     private void trackSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackSelectorActionPerformed
         selectTrack(trackSelector.getSelectedIndex());
     }//GEN-LAST:event_trackSelectorActionPerformed
