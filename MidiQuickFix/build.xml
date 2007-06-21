@@ -66,4 +66,33 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <target name="package-src" depends="jar"
+            description="Create a release package of the source code">
+        <delete dir="release"/>
+        <mkdir dir="release/MidiQuickFix"/>
+        <copy todir="release/MidiQuickFix">
+            <fileset includes="build.xml, manifest.mf, simple_build.xml" dir="."/>
+        </copy>
+        <mkdir dir="release/MidiQuickFix/nbproject"/>
+        <copy todir="release/MidiQuickFix/nbproject">
+            <fileset includes="build-impl.xml, project.properties, project.xml" dir="nbproject"/>
+        </copy>
+        <mkdir dir="release/MidiQuickFix/test/com/lemckes/MidiQuickFix"/>
+        <copy todir="release/MidiQuickFix/test/com/lemckes/MidiQuickFix">
+            <fileset includes="*java, *form" dir="test/com/lemckes/MidiQuickFix"/>
+            <fileset includes="*/*java, */*form" dir="test/com/lemckes/MidiQuickFix"/>
+        </copy>
+        <mkdir dir="release/MidiQuickFix/src/com/lemckes/MidiQuickFix"/>
+        <copy todir="release/MidiQuickFix/src/com/lemckes/MidiQuickFix">
+            <fileset includes="*java, *form" dir="src/com/lemckes/MidiQuickFix"/>
+            <fileset includes="*/*java, */*form" dir="src/com/lemckes/MidiQuickFix"/>
+            <fileset includes="resources/*properties" dir="src/com/lemckes/MidiQuickFix"/>
+            <fileset includes="resources/*gif, resources/*png" dir="src/com/lemckes/MidiQuickFix"/>
+        </copy>
+        <zip basedir="release" zipfile="MidiQuickFix-src.zip" includes="MidiQuickFix/**">
+        </zip>
+    </target>
+    
+    
 </project>
