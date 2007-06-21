@@ -6,7 +6,7 @@
 
 package com.lemckes.MidiQuickFix;
 
-import java.awt.AlphaComposite;
+import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
