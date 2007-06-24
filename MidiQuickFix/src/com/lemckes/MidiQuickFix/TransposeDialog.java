@@ -20,8 +20,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
+ * Allow the user to select the number of semitones by which
+ * to transpose the sequence.
  *
- * @author  john
+ * @version $Id$
  */
 public class TransposeDialog extends javax.swing.JDialog {
     /** A return status code - returned if Cancel button has been pressed */
@@ -60,6 +62,11 @@ public class TransposeDialog extends javax.swing.JDialog {
         pack();
     }
     
+    /**
+     * Rotate the string that represents the transposed keys
+     * to show the result of transposing by <code>semitones</code>
+     * @param semitones the number of semitones
+     */
     private void updateToString(int semitones) {
         int splitPos = (semitones % 12) * 3;
         splitPos = splitPos < 0 ? splitPos + 36 : splitPos;
@@ -68,16 +75,38 @@ public class TransposeDialog extends javax.swing.JDialog {
         toKeyField.setText(shiftedString);
     }
     
+    /**
+     * Get the setting of the <code>semitones</code> field
+     * @return the number of semitones to transpose
+     */
     public int getTransposeBy() {
         return mTransposeBy;
     }
     
+    /**
+     * Set the number of semitones by which to transpose.
+     * Mostly useful for resetting the transpose to zero
+     * after each transposition.
+     * @param semitones the number of semitones
+     */
     public void setTransposeBy(int semitones) {
         mTransposeBy = semitones;
         semitoneSpinner.setValue(mTransposeBy);
     }
     
-    /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
+    /**
+     * Get the setting of the doDrums checkbox
+     * @return <code>true</code> if the drum channel should be transposed
+     */
+    public boolean getDoDrums()
+    {
+        return doDrumsCheckBox.isSelected();
+    }
+    
+    /**
+     * Get the status of the dialog when it was closed
+     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
+     */
     public int getReturnStatus() {
         return returnStatus;
     }
@@ -98,6 +127,7 @@ public class TransposeDialog extends javax.swing.JDialog {
         fromLabel = new javax.swing.JLabel();
         toLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        doDrumsCheckBox = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         buttonPanel = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
@@ -114,7 +144,7 @@ public class TransposeDialog extends javax.swing.JDialog {
 
         mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         jTextField1.setEditable(false);
-        jTextField1.setFont(new java.awt.Font("DialogInput", 0, 12));
+        jTextField1.setFont(new java.awt.Font("Monospaced", 0, 12));
         jTextField1.setText(" C  Db D  Eb E  F  F# G  Ab A  Bb B ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -132,7 +162,7 @@ public class TransposeDialog extends javax.swing.JDialog {
         mainPanel.add(semitoneSpinner, gridBagConstraints);
 
         toKeyField.setEditable(false);
-        toKeyField.setFont(new java.awt.Font("DialogInput", 0, 12));
+        toKeyField.setFont(new java.awt.Font("Monospaced", 0, 12));
         toKeyField.setText(" C  Db D  Eb E  F  F# G  Ab A  Bb B ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -162,6 +192,17 @@ public class TransposeDialog extends javax.swing.JDialog {
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
         mainPanel.add(jLabel1, gridBagConstraints);
+
+        doDrumsCheckBox.setText(UiStrings.getString("transpose_drum_channel")); // NOI18N
+        doDrumsCheckBox.setToolTipText(UiStrings.getString("transpose_drums_tooltip")); // NOI18N
+        doDrumsCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        doDrumsCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 0);
+        mainPanel.add(doDrumsCheckBox, gridBagConstraints);
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
@@ -230,6 +271,7 @@ public class TransposeDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JCheckBox doDrumsCheckBox;
     private javax.swing.JLabel fromLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel3;
@@ -243,6 +285,12 @@ public class TransposeDialog extends javax.swing.JDialog {
     
     private int returnStatus = RET_CANCEL;
     
+    /**
+     * This class uses the GlassPane to highlight the columns in the
+     * text fields.
+     * There are probably much better ways to do this but it seemed
+     * like a good idea at the time.
+     */
     class KeyHighlighter extends JComponent {
         private List<Component> comps;
         

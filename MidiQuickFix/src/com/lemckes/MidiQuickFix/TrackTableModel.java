@@ -224,7 +224,6 @@ class TrackTableModel extends DefaultTableModel {
         if (!mShowNotes) {
             eventIndex = ((Integer)mNoNotesRowMap.get(row)).intValue();
         }
-        // System.out.println("setValueAt(" + value.toString() + ", " + eventIndex + ", " + column + ")");
         
         MidiEvent ev = mTrack.get(eventIndex);
         MidiMessage mess = ev.getMessage();
@@ -236,7 +235,7 @@ class TrackTableModel extends DefaultTableModel {
                 break;
             case 1:
                 // Event
-                System.out.println("Error: setValueAt column 1 should not be editable.");
+                TraceDialog.addTrace("Error: TrackTableModel.setValueAt column 1 should not be editable.");
                 break;
             case 2:
                 // Note
@@ -250,7 +249,7 @@ class TrackTableModel extends DefaultTableModel {
                         updateMessage(ev, command, channel, NoteNames.getNoteNumber((String)value), d2);
                         fireTableDataChanged();
                     } catch(InvalidMidiDataException e) {
-                        System.out.println("Error: setValueAt column 2. " + e.getMessage());
+                        TraceDialog.addTrace("Error: TrackTableModel.setValueAt column 2. " + e.getMessage());
                     }
                 }
                 break;
@@ -296,7 +295,7 @@ class TrackTableModel extends DefaultTableModel {
                         updateMessage(ev, command, channel, d1, d2);
                         fireTableDataChanged();
                     } catch(InvalidMidiDataException e) {
-                        System.out.println("Error: setValueAt column 3. " + e.getMessage());
+                        TraceDialog.addTrace("Error: TrackTableModel.setValueAt column 3. " + e.getMessage());
                     }
                 }
                 break;
@@ -312,7 +311,7 @@ class TrackTableModel extends DefaultTableModel {
                         updateMessage(ev, command, channel, d1, 0);
                         fireTableDataChanged();
                     } catch(InvalidMidiDataException e) {
-                        System.out.println("Error: setValueAt column 4. " + e.getMessage());
+                        TraceDialog.addTrace("Error: setValueAt column 4. " + e.getMessage());
                     }
                 }
                 break;
@@ -342,7 +341,7 @@ class TrackTableModel extends DefaultTableModel {
                             updateMessage(ev, command, channel, d1, d2);
                             fireTableDataChanged();
                         } catch(InvalidMidiDataException e) {
-                            System.out.println("Error: setValueAt column 6. " + e.getMessage());
+                            TraceDialog.addTrace("Error: setValueAt column 6. " + e.getMessage());
                         }
                     }
                 }
@@ -384,7 +383,7 @@ class TrackTableModel extends DefaultTableModel {
     }
     
     public void deleteEvents(int[] rows) {
-        // System.out.println("deleteEvents");
+        // TraceDialog.addTrace("deleteEvents");
         java.util.Vector<MidiEvent> events = new java.util.Vector<MidiEvent>();
         for (int i = 0; i < rows.length; ++i) {
             int eventIndex = rows[i];
@@ -392,7 +391,7 @@ class TrackTableModel extends DefaultTableModel {
             if (!mShowNotes) {
                 eventIndex = ((Integer)mNoNotesRowMap.get(rows[i])).intValue();
             }
-            // System.out.println("Removing event " + eventIndex + " at row " + rows[i]);
+            // TraceDialog.addTrace("Removing event " + eventIndex + " at row " + rows[i]);
             events.add(mTrack.get(eventIndex));
         }
         
@@ -425,7 +424,7 @@ class TrackTableModel extends DefaultTableModel {
                     try {
                         updateMessage(ev, command, channel, d1, d2);
                     } catch(InvalidMidiDataException e) {
-                        System.out.println("Error: setTrackChannel. " + e.getMessage());
+                        TraceDialog.addTrace("Error: setTrackChannel. " + e.getMessage());
                     }
                 }
             }

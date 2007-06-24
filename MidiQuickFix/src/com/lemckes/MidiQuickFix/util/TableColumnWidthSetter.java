@@ -86,7 +86,6 @@ public class TableColumnWidthSetter {
             // touching the edge of the header cell.
             int fudgeFactor = 3;
             int w = Math.max(headerWidth, cellWidth) + fudgeFactor;
-            // System.out.println("Preferred Width of Column " + i + " = " + w);
             column.setPreferredWidth(w);
             ++i;
         }

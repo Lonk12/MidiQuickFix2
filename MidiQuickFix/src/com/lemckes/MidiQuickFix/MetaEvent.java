@@ -23,6 +23,7 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.TraceDialog;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 
@@ -198,16 +199,23 @@ public class MetaEvent {
         return data;
     }
     
+    /**
+     * Parse a tempo string e.g. 88bpm
+     * @param tempoString 
+     * @return 
+     */
     public static int parseTempo(String tempoString) {
-        int bpmPos = tempoString.indexOf("bpm");
-        int t = 0;
+        int bpmPos = tempoString.toLowerCase().indexOf("bpm");
+        
+        // Default value is 60bpm
+        int t = 60;
         if (bpmPos != -1) {
             tempoString = tempoString.substring(0, bpmPos);
         }
         try {
             t = Integer.parseInt(tempoString);
         } catch(NumberFormatException nfe) {
-            nfe.printStackTrace();
+            // DO NOTHING - just use the default
         }
         return t;
     }
@@ -243,7 +251,8 @@ public class MetaEvent {
             try {
                 mess.setMessage(type, data, len);
             } catch(InvalidMidiDataException e) {
-                System.out.println("Error: setMetaData. " + e.getMessage());
+                TraceDialog.addTrace(
+                    "Error: MetaEvent.setMetaData(" + s + ") " + e.getMessage());
             }
         }
     }

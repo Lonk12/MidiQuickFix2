@@ -101,7 +101,6 @@ public class PlayController {
          * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
-            // System.out.println("PlayAction.actionPerformed");
             play();
         }
     }
@@ -130,7 +129,6 @@ public class PlayController {
          * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
-            // System.out.println("PauseAction.actionPerformed");
             pause();
         }
     }
@@ -166,7 +164,6 @@ public class PlayController {
          * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
-            // System.out.println("StopAction.actionPerformed");
             stop();
         }
     }
@@ -198,7 +195,6 @@ public class PlayController {
          * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
-            // System.out.println("RewindAction.actionPerformed");
             rewind();
         }
     }
@@ -227,7 +223,6 @@ public class PlayController {
          * @param e The event that triggered the action.
          */
         public void actionPerformed(java.awt.event.ActionEvent e) {
-            // System.out.println("LoopAction.actionPerformed");
             loop();
         }
     }
@@ -236,7 +231,6 @@ public class PlayController {
     public void loop() {
         MidiSeqPlayer looper = (MidiSeqPlayer)mLoopAction.getValue("looper");
         looping = !looping;
-        //System.out.println(looping ? "Looping" : "Not Looping");
         looper.loop(looping);
     }
     

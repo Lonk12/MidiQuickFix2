@@ -44,16 +44,36 @@ public class Transposer {
     }
     
     /**
-     * Transpose the given sequence by the given number of semitones.
+     * Transpose the given sequence by the given number of semitones
+     * without transposing the drum track.
      * If the transposition would cause a note to be outside the valid range
      * for a midi note [0, 127] then the value is adjusted up or down by
      * enough octaves to bring it back into range.
-     * @param seq the sequence to transpose
-     * @param semitones the number of semitones to transpose
+     *
      * @return <code>true</code> if the value of any note would have
      * over/underflowed the valid range [0, 127]
+     * @param seq the sequence to transpose
+     * @param semitones the number of semitones to transpose
      */
     public static boolean transpose(Sequence seq, int semitones) {
+        return transpose(seq, semitones, false);
+    }
+    
+    /**
+     * Transpose the given sequence by the given number of semitones.
+     * If <code>doDrums</code> is false then note events for the default
+     * drum track, channel 9, are not transposed.
+     * If the transposition would cause a note to be outside the valid range
+     * for a midi note [0, 127] then the value is adjusted up or down by
+     * enough octaves to bring it back into range.
+     *
+     * @return <code>true</code> if the value of any note would have
+     * over/underflowed the valid range [0, 127]
+     * @param doDrums
+     * @param seq the sequence to transpose
+     * @param semitones the number of semitones to transpose
+     */
+    public static boolean transpose(Sequence seq, int semitones, boolean doDrums) {
         boolean overflow = false;
         for (Track t : seq.getTracks()) {
             for (int i = 0; i < t.size(); ++i) {
@@ -65,7 +85,9 @@ public class Transposer {
                     int d2 = mess.getData2();
                     int st = mess.getStatus();
                     
-                    if ((st & 0xf0) <= 0xf0) { // This is a channel message
+                    if (((st & 0xf0) <= 0xf0) && // This is a channel message
+                        (doDrums || mess.getChannel() != 9))
+                    {
                         int cmd = mess.getCommand();
                         switch (cmd) {
                             case ShortMessage.NOTE_OFF:

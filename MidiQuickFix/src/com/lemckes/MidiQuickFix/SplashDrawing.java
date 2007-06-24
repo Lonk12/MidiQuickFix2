@@ -70,7 +70,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         try {
             mt.waitForAll();
         } catch(InterruptedException e) {
-            throw new Error("Could not load image.");
+            // Probably don't care
         }
         
         mImageWidth = mImage.getWidth(null);
@@ -119,7 +119,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         repaint();
         try {
             // Wait a bit so that the message is seen
-            wait(500);
+            wait(300);
         } catch(InterruptedException e) {
             // Do Nothing
         }

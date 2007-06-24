@@ -23,6 +23,7 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.swing.table.*;
 
@@ -64,30 +65,19 @@ class TrackSummaryTableModel extends AbstractTableModel {
     
     /** Creates a new instance of a TrackSummaryTableModel */
     public TrackSummaryTableModel(Sequence s) {
-        // MidiDevice.Info[] mdi = MidiSystem.getMidiDeviceInfo();
-        // for (int i = 0; i < mdi.length; ++i) {
-        //     System.out.println(i + " : " + mdi[i].toString());
-        // }
-        
         try {
             mSynth = MidiSystem.getSynthesizer();
-            //MidiDevice md = MidiSystem.getMidiDevice(mdi[0]);
         } catch(MidiUnavailableException e) {
-            System.out.println("No Synthesiser available." +
+            TraceDialog.addTrace("No Synthesiser available." +
                 " (Could make playing tricky.)");
         }
         
-        // System.out.println("Synth = " + mSynth.toString());
         mChannels = mSynth.getChannels();
         mChannels[0].allSoundOff();
-        //        for (int i = 0; i < mChannels.length; ++i) {
-        //            System.out.println("Ch " + i + " : "
-        //            + mChannels[i]);
-        //        }
         try {
             mSeq = MidiSystem.getSequencer();
         } catch(MidiUnavailableException e) {
-            System.out.println("No Sequencer available." +
+            TraceDialog.addTrace("No Sequencer available." +
                 " (Could make playing tricky.)");
         }
         
@@ -208,9 +198,14 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 mSeq.setTrackSolo(row, mInfo[row].mSolo);
                 boolean soloed = mSeq.getTrackSolo(row);
                 if (soloed != mInfo[row].mSolo) {
-                    System.out.println("Solo not supported. (Set to " + value
+                    TraceDialog.addTrace("Sequencer Solo not supported. (Set to " + value
                         + " is actually " + soloed + ")");
-                    mChannels[mInfo[row].mChannel].setSolo(mInfo[row].mSolo);
+                }
+                mChannels[mInfo[row].mChannel].setSolo(mInfo[row].mSolo);
+                soloed = mChannels[mInfo[row].mChannel].getSolo();
+                if (soloed != mInfo[row].mSolo) {
+                    TraceDialog.addTrace("Channel Solo not supported. (Set to " + value
+                        + " is actually " + soloed + ")");
                 }
                 break;
             case 6:
@@ -219,9 +214,14 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 mSeq.setTrackMute(row, mInfo[row].mMute);
                 boolean muted = mSeq.getTrackMute(row);
                 if (muted != mInfo[row].mMute) {
-                    System.out.println("Mute not supported. (Set to " + value
+                    TraceDialog.addTrace("Sequencer Mute not supported. (Set to " + value
                         + " is actually " + muted + ")");
-                    mChannels[mInfo[row].mChannel].setMute(mInfo[row].mMute);
+                }
+                mChannels[mInfo[row].mChannel].setMute(mInfo[row].mMute);
+                muted = mChannels[mInfo[row].mChannel].getMute();
+                if (muted != mInfo[row].mMute) {
+                    TraceDialog.addTrace("Channel Mute not supported. (Set to " + value
+                        + " is actually " + muted + ")");
                 }
                 break;
             default:
@@ -243,12 +243,12 @@ class TrackSummaryTableModel extends AbstractTableModel {
     
     Class[] types = new Class [] {
         java.lang.Integer.class,
-            java.lang.String.class,
-            java.lang.Object.class,
-            java.lang.Object.class,
-            java.lang.Integer.class,
-            java.lang.Boolean.class,
-            java.lang.Boolean.class
+        java.lang.String.class,
+        java.lang.Object.class,
+        java.lang.Object.class,
+        java.lang.Integer.class,
+        java.lang.Boolean.class,
+        java.lang.Boolean.class
     };
     
     public Class getColumnClass(int columnIndex) {
@@ -257,12 +257,12 @@ class TrackSummaryTableModel extends AbstractTableModel {
     
     String[] columnNames = new String[] {
         UiStrings.getString("no."),
-            UiStrings.getString("name"),
-            UiStrings.getString("start"),
-            UiStrings.getString("end"),
-            UiStrings.getString("channel_abbrev"),
-            UiStrings.getString("solo"),
-            UiStrings.getString("mute")
+        UiStrings.getString("name"),
+        UiStrings.getString("start"),
+        UiStrings.getString("end"),
+        UiStrings.getString("channel_abbrev"),
+        UiStrings.getString("solo"),
+        UiStrings.getString("mute")
     };
     
     public String getColumnName(int col) {
