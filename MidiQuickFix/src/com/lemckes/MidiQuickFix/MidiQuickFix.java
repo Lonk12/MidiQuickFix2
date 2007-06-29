@@ -1124,11 +1124,11 @@ public class MidiQuickFix extends JFrame
             VERSION_1_4_2_BUG = false;
         }
         
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
+//        EventQueue.invokeLater(new Runnable() {
+//            public void run() {
                 new MidiQuickFix().setVisible(true);
-            }
-        });
+//            }
+//        });
     }
     
     /**

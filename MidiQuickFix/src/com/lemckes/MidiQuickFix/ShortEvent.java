@@ -72,7 +72,7 @@ class ShortEvent {
                     break;
                 case javax.sound.midi.ShortMessage.PROGRAM_CHANGE:
                     result[0] = "PATCH ";
-                    result[3] = InstrumentNames.getName(d1);
+                    result[3] = InstrumentNames.getName(d2, d1);
                     break;
                 default:
                     result[0] = "UNKNOWN";

@@ -306,9 +306,10 @@ class TrackTableModel extends DefaultTableModel {
                     int command = (int)(sm.getCommand() & 0xff);
                     int channel = (int)(sm.getChannel() & 0xff);
                     int d1 = (int)(InstrumentNames.getInstrumentNumber((String)value) & 0xff);
-                    int d2 = 0;
+                    int d2 = (int)(InstrumentNames.getInstrumentBank((String)value) & 0xff);
+                    System.out.println("Instrument " + (String)value + " num = " + d1 + " bank = " + d2);
                     try {
-                        updateMessage(ev, command, channel, d1, 0);
+                        updateMessage(ev, command, channel, d1, d2);
                         fireTableDataChanged();
                     } catch(InvalidMidiDataException e) {
                         TraceDialog.addTrace("Error: setValueAt column 4. " + e.getMessage());
@@ -404,7 +405,7 @@ class TrackTableModel extends DefaultTableModel {
     
     void setTrackChannel(int channel) {
         /**
-         * BUG - This will not work with the call to updateMessage()
+         * BUG - This will not work with the call to updateMessage() in Java 1.4.2
          * because the position of the events in the track may be changed
          * and some events missed.
          * This will be fixed when the Java setMessage() bug is fixed.
