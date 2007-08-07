@@ -52,6 +52,13 @@ class Controllers {
         return mNameArray[num];
     }
     
+    /** Get the array of controller names.
+     * @return The names of the controllers.
+     */
+    public static String[] getNameArray() {
+        return mNameArray;
+    }
+    
     /** A String used to display a 'graphical' representation
      * of the controller's value.
      */

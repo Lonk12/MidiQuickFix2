@@ -27,20 +27,23 @@ package com.lemckes.MidiQuickFix;
  * Convert between Midi note numbers and textual note names.
  * @todo This probably should be i18n'd.
  * @version $Id$
- */ 
+ */
 class NoteNames {
     
     static double[] limits =
     { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
-    static String[] sharpNames = {
-        "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
-    };
-    static String[] flatNames = {
-        "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"
-    };
+    
+    static String[] sharpNames =
+    { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    
+    static String[] flatNames =
+    { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
+    
+    static String[] bothNames =
+    { "C", "Db/C#", "D", "Eb/D#", "E", "F", "Gb/F#", "G", "Ab/G#", "A", "Bb/A#", "B" };
     
     static java.text.ChoiceFormat cf =
-    new java.text.ChoiceFormat(limits, sharpNames);
+        new java.text.ChoiceFormat(limits, sharpNames);
     
     static String getNoteName(int note, boolean flats) {
         
@@ -72,7 +75,10 @@ class NoteNames {
                 }
             }
         }
-        
         return noteNum;
+    }
+    
+    public static String[] getNoteNameArray() {
+        return bothNames;
     }
 }

@@ -23,8 +23,7 @@
 
 package com.lemckes.MidiQuickFix;
 
-import javax.sound.midi.*;
-import javax.sound.midi.ShortMessage.*;
+import javax.sound.midi.ShortMessage;
 
 /**
  * Handle Midi Short events.
@@ -42,35 +41,35 @@ class ShortEvent {
         if ((st & 0xf0) <= 0xf0) { // This is a channel message
             int cmd = mess.getCommand();
             switch (cmd) {
-                case javax.sound.midi.ShortMessage.CHANNEL_PRESSURE:
+                case ShortMessage.CHANNEL_PRESSURE:
                     result[0] = "CHANNEL_PRESSURE";
                     result[2] = "" + d1;
                     break;
-                case javax.sound.midi.ShortMessage.CONTROL_CHANGE:
+                case ShortMessage.CONTROL_CHANGE:
                     //result[0] = "CONTROL_CHANGE";
                     result[0] = Controllers.getControlName(d1);
                     result[2] = Controllers.getControlValue(d2, false);
                     break;
-                case javax.sound.midi.ShortMessage.NOTE_OFF:
+                case ShortMessage.NOTE_OFF:
                     result[0] = "NOTE_OFF";
                     result[1] = NoteNames.getNoteName(d1, inFlats);
-                    result[2] = new Integer(d2);
+                    result[2] = Integer.valueOf(d2);
                     break;
-                case javax.sound.midi.ShortMessage.NOTE_ON:
+                case ShortMessage.NOTE_ON:
                     result[0] = "NOTE_ON ";
                     result[1] = NoteNames.getNoteName(d1, inFlats);
-                    result[2] = new Integer(d2);
+                    result[2] = Integer.valueOf(d2);
                     break;
-                case javax.sound.midi.ShortMessage.PITCH_BEND:
+                case ShortMessage.PITCH_BEND:
                     result[0] = "PITCH_BEND";
-                    result[2] = new Integer(d1 + (d2 << 7));
+                    result[2] = Integer.valueOf(d1 + (d2 << 7));
                     break;
-                case javax.sound.midi.ShortMessage.POLY_PRESSURE:
+                case ShortMessage.POLY_PRESSURE:
                     result[0] = "POLY_PRESSURE";
                     result[1] = NoteNames.getNoteName(d1, inFlats);
-                    result[2] = new Integer(d2);
+                    result[2] = Integer.valueOf(d2);
                     break;
-                case javax.sound.midi.ShortMessage.PROGRAM_CHANGE:
+                case ShortMessage.PROGRAM_CHANGE:
                     result[0] = "PATCH ";
                     result[3] = InstrumentNames.getName(d2, d1);
                     break;
@@ -78,42 +77,42 @@ class ShortEvent {
                     result[0] = "UNKNOWN";
             }
             int chan = mess.getChannel();
-            result[5] = new Integer(chan);
+            result[5] = Integer.valueOf(chan);
         } else { // This is a system message
             switch (st) {
-                case javax.sound.midi.ShortMessage.ACTIVE_SENSING:
+                case ShortMessage.ACTIVE_SENSING:
                     result[0] = "ACTIVE_SENSING";
                     break;
-                case javax.sound.midi.ShortMessage.CONTINUE:
+                case ShortMessage.CONTINUE:
                     result[0] = "CONTINUE";
                     break;
-                case javax.sound.midi.ShortMessage.END_OF_EXCLUSIVE:
+                case ShortMessage.END_OF_EXCLUSIVE:
                     result[0] = "END_OF_EXCLUSIVE";
                     break;
-                case javax.sound.midi.ShortMessage.MIDI_TIME_CODE:
+                case ShortMessage.MIDI_TIME_CODE:
                     result[0] = "MIDI_TIME_CODE";
                     break;
-                case javax.sound.midi.ShortMessage.SONG_POSITION_POINTER:
+                case ShortMessage.SONG_POSITION_POINTER:
                     result[0] = "SONG_POSITION_POINTER";
-                    result[2]  = new Integer(d1 + (d2 << 7));
+                    result[2]  = Integer.valueOf(d1 + (d2 << 7));
                     break;
-                case javax.sound.midi.ShortMessage.SONG_SELECT:
+                case ShortMessage.SONG_SELECT:
                     result[0] = "SONG_SELECT";
                     result[2] = "" + d1;
                     break;
-                case javax.sound.midi.ShortMessage.START:
+                case ShortMessage.START:
                     result[0] = "START";
                     break;
-                case javax.sound.midi.ShortMessage.STOP:
+                case ShortMessage.STOP:
                     result[0] = "STOP";
                     break;
-                case javax.sound.midi.ShortMessage.SYSTEM_RESET:
+                case ShortMessage.SYSTEM_RESET:
                     result[0] = "RESET";
                     break;
-                case javax.sound.midi.ShortMessage.TIMING_CLOCK:
+                case ShortMessage.TIMING_CLOCK:
                     result[0] = "TIMING_CLOCK";
                     break;
-                case javax.sound.midi.ShortMessage.TUNE_REQUEST:
+                case ShortMessage.TUNE_REQUEST:
                     result[0] = "TUNE_REQUEST";
                     break;
                 default:

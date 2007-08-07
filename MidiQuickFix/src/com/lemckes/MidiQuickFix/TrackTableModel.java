@@ -26,6 +26,7 @@ package com.lemckes.MidiQuickFix;
 import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
+import java.util.Vector;
 import javax.swing.table.*;
 
 
@@ -80,10 +81,10 @@ class TrackTableModel extends DefaultTableModel {
                     || cmd ==  ShortMessage.NOTE_ON) {
                     mNumNotes++;
                 } else {
-                    mNoNotesRowMap.add(new Integer(i));
+                    mNoNotesRowMap.add(Integer.valueOf(i));
                 }
             } else {
-                mNoNotesRowMap.add(new Integer(i));
+                mNoNotesRowMap.add(Integer.valueOf(i));
             }
         }
     }
@@ -385,7 +386,7 @@ class TrackTableModel extends DefaultTableModel {
     
     public void deleteEvents(int[] rows) {
         // TraceDialog.addTrace("deleteEvents");
-        java.util.Vector<MidiEvent> events = new java.util.Vector<MidiEvent>();
+        Vector<MidiEvent> events = new Vector<MidiEvent>();
         for (int i = 0; i < rows.length; ++i) {
             int eventIndex = rows[i];
             // Adjust the index if notes are not being displayed
@@ -396,9 +397,18 @@ class TrackTableModel extends DefaultTableModel {
             events.add(mTrack.get(eventIndex));
         }
         
-        for (java.util.Enumeration e = events.elements(); e.hasMoreElements(); ) {
-            mTrack.remove((MidiEvent)e.nextElement());
+        for (MidiEvent e : events) {
+            mTrack.remove(e);
         }
+        buildNoNotesRowMap();
+        fireTableDataChanged();
+    }
+    
+    public void insertEvent(MidiEvent event)
+    {
+        event = new MidiEvent(new ShortMessage(), 0);
+        
+        mTrack.add(event);
         buildNoNotesRowMap();
         fireTableDataChanged();
     }

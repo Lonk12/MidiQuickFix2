@@ -23,7 +23,7 @@
 
 package com.lemckes.MidiQuickFix;
 
-import javax.sound.midi.*;
+import javax.sound.midi.SysexMessage;
 
 /**
  * Handle Midi System Exclusive events.
@@ -33,9 +33,9 @@ class SysexEvent {
     static String[] getSysexStrings(SysexMessage mess) {
         String[] result = {"", "", ""};
         int st = mess.getStatus();
-        if (st == javax.sound.midi.SysexMessage.SYSTEM_EXCLUSIVE) {
+        if (st == SysexMessage.SYSTEM_EXCLUSIVE) {
             result[0] = "SYSTEM_EXCLUSIVE";
-        } else if (st == javax.sound.midi.SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
+        } else if (st == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
             result[0] = "SPECIAL_SYSTEM_EXCLUSIVE";
         }
         byte[] data = mess.getData();

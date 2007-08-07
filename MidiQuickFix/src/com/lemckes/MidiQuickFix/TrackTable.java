@@ -79,6 +79,11 @@ public class TrackTable extends javax.swing.JTable {
         ((TrackTableModel)getModel()).deleteEvents(rows);
     }
     
+    public void insertEvent()
+    {
+        ((TrackTableModel)getModel()).insertEvent(null);
+    }
+    
     private void setColumnWidths() {
         int margin = 6;
         FontMetrics fm = getFontMetrics(getFont());

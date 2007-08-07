@@ -137,10 +137,10 @@ class TrackSummaryTableModel extends AbstractTableModel {
     }
     
     public Object getValueAt(int row, int column) {
-        Object result = null;
+        Object result;
         switch (column) {
             case 0:
-                result = new Integer(row);
+                result = Integer.valueOf(row);
                 break;
             case 1:
                 result = mInfo[row].mName;
@@ -166,7 +166,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
                     // Didn't find a channel event
                     result = null;
                 } else {
-                    result = new Integer(mInfo[row].mChannel);
+                    result = Integer.valueOf(mInfo[row].mChannel);
                 }
                 break;
             case 5:

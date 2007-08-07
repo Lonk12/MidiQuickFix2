@@ -133,7 +133,6 @@ public class TrackEditorPanel extends javax.swing.JPanel {
         buttonPanel.setLayout(new java.awt.GridLayout(0, 1, 0, 3));
 
         insertButton.setText(UiStrings.getString("insert")); // NOI18N
-        insertButton.setEnabled(false);
         insertButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         insertButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -199,7 +198,7 @@ public class TrackEditorPanel extends javax.swing.JPanel {
     
     private void insertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertButtonActionPerformed
         //Nothing yet.
-        
+        trackTable.insertEvent();
     }//GEN-LAST:event_insertButtonActionPerformed
     
     private void showNotesCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNotesCheckActionPerformed

@@ -32,6 +32,25 @@ import javax.sound.midi.MetaMessage;
  * @version $Id$
  */
 public class MetaEvent {
+    static String[] typeNames = {
+        "SEQUENCE_NUMBER",
+        "TEXT",
+        "COPYRIGHT",
+        "TRACK_NAME",
+        "INSTRUMENT",
+        "LYRIC",
+        "MARKER",
+        "CUE_POINT",
+        "PROGRAM_NAME",
+        "DEVICE_NAME",
+        "END_OF_TRACK",
+        "TEMPO",
+        "SMPTE_OFFSET",
+        "TIME_SIGNATURE",
+        "KEY_SIGNATURE",
+        "PROPRIETARY_DATA"
+    };
+    
     // META event types
     public static final int SEQUENCE_NUMBER = 0x00; //FF 00 02 ss ss or FF 00 00
     public static final int TEXT            = 0x01; //FF 01 len TEXT (arbitrary TEXT)
@@ -57,6 +76,10 @@ public class MetaEvent {
     
     public static final int PROPRIETARY_DATA = 0x7f; //FF 7F len data
     
+    public static String[] getNameArray() {
+        return typeNames;
+    }
+    
     public static Object[] getMetaStrings(MetaMessage mess) {
         boolean dumpText = false;
         boolean dumpBytes = false;
@@ -68,7 +91,7 @@ public class MetaEvent {
         // The returned Object array
         // { type name, length, value string }
         Object[] result = { "M:", null, "" };
-        result[1] = new Integer(data.length);
+        result[1] = Integer.valueOf(data.length);
         
         switch (type) {
             case SEQUENCE_NUMBER:
