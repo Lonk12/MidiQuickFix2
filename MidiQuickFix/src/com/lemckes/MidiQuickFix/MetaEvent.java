@@ -268,6 +268,17 @@ public class MetaEvent {
             data = bpmToMicroSecs(bpm);
         } else if (type == KEY_SIGNATURE) {
             data = KeySignatures.getKeyValues(s);
+        } else {
+            // treat the string as a space separated list of byte values
+            String[] strings = s.split("\\p{Space}");
+            data = new byte[strings.length];
+            for (int i = 0; i < len; ++i) {
+                try {
+                    data[i] = Byte.decode(strings[i]);
+                } catch (NumberFormatException nfe) {
+                    data[i] = 0;
+                }
+            }
         }
         
         if (data != null) {

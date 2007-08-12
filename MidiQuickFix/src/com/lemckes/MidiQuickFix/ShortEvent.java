@@ -23,6 +23,8 @@
 
 package com.lemckes.MidiQuickFix;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
 
 /**
@@ -120,5 +122,32 @@ class ShortEvent {
             }
         }
         return result;
+    }
+    
+    public static MidiEvent createShortEvent(
+        int status, long tick)
+        throws InvalidMidiDataException {
+        ShortMessage sm = new ShortMessage();
+        sm.setMessage(status);
+        MidiEvent ev = new MidiEvent(sm, tick);
+        return ev;
+    }
+    
+    public static MidiEvent createShortEvent(
+        int status, int d1, int d2, long tick)
+        throws InvalidMidiDataException {
+        ShortMessage sm = new ShortMessage();
+        sm.setMessage(status, d1, d2);
+        MidiEvent ev = new MidiEvent(sm, tick);
+        return ev;
+    }
+    
+    public static MidiEvent createShortEvent(
+        int status, int channel, int d1, int d2, long tick)
+        throws InvalidMidiDataException {
+        ShortMessage sm = new ShortMessage();
+        sm.setMessage(status, channel, d1, d2);
+        MidiEvent ev = new MidiEvent(sm, tick);
+        return ev;
     }
 }
