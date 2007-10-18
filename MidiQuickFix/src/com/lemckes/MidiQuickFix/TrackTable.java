@@ -25,6 +25,7 @@ package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.FontMetrics;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
@@ -79,9 +80,9 @@ public class TrackTable extends javax.swing.JTable {
         ((TrackTableModel)getModel()).deleteEvents(rows);
     }
     
-    public void insertEvent()
+    public void insertEvent(MidiEvent event)
     {
-        ((TrackTableModel)getModel()).insertEvent(null);
+        ((TrackTableModel)getModel()).insertEvent(event);
     }
     
     private void setColumnWidths() {

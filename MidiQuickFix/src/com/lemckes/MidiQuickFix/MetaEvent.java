@@ -269,7 +269,10 @@ public class MetaEvent {
         } else if (type == KEY_SIGNATURE) {
             data = KeySignatures.getKeyValues(s);
         } else {
-            // treat the string as a space separated list of byte values
+            // treat the string as a space separated list of
+            // string representations of byte values 
+            // Should handle decimal, hexadecimal and octal representations
+            // using the java.lang.Byte.decode() method
             String[] strings = s.split("\\p{Space}");
             data = new byte[strings.length];
             for (int i = 0; i < len; ++i) {

@@ -406,8 +406,6 @@ class TrackTableModel extends DefaultTableModel {
     
     public void insertEvent(MidiEvent event)
     {
-        event = new MidiEvent(new ShortMessage(), 0);
-        
         mTrack.add(event);
         buildNoNotesRowMap();
         fireTableDataChanged();

@@ -34,10 +34,15 @@ import java.util.TreeMap;
  * @version $Id$
  */
 class InstrumentNames {
-    
+    /** Map from instrument name to bank and program numbers.
+     * The Integer value is calculated as <code>bank *256 * program</code> */
     static SortedMap<String, Integer> mInstrumentNameMap;
+    /** Map from bank and program numbers to instrument name.
+     * The Integer key is calculated as <code>bank *256 + program</code> */
     static SortedMap<Integer, String> mInstrumentNumberMap;
+    /** Map from bank number to a map from instrument name to program number.*/
     static SortedMap<Integer, SortedMap<String, Integer>> mBankNameMap;
+    /** Map from bank number to a map from program number to instrument name.*/
     static SortedMap<Integer, SortedMap<Integer, String>> mBankNumberMap;
     
     /** Create an InstrumentNames object. */
@@ -59,18 +64,19 @@ class InstrumentNames {
                 int bankProgram = bank * 256 + prog;
                 String name = instruments[j].getName();
                 System.out.println(j + "." + bank + "." + prog + "." + name);
+                
                 mInstrumentNameMap.put(name, bankProgram);
                 mInstrumentNumberMap.put(bankProgram, name);
                 
                 if (mBankNameMap.get(bank) == null) {
                     mBankNameMap.put(bank, new TreeMap<String, Integer>());
                 }
-                mBankNameMap.get(bank).put(name, bankProgram);
+                mBankNameMap.get(bank).put(name, prog);
                 
                 if (mBankNumberMap.get(bank) == null) {
                     mBankNumberMap.put(bank, new TreeMap<Integer, String>());
                 }
-                mBankNumberMap.get(bank).put(bankProgram, name);
+                mBankNumberMap.get(bank).put(prog, name);
             }
         } catch (javax.sound.midi.MidiUnavailableException e) {
             TraceDialog.addTrace("Failed to getSynthesizer()  " + e.getMessage());
@@ -98,7 +104,7 @@ class InstrumentNames {
      * @return The instrument (patch) name.
      */
     static public String getName(int bank, int program) {
-        return mBankNumberMap.get(bank).get(bank * 256 + program);
+        return mBankNumberMap.get(bank).get(program);
     }
     
     /** Get the instrument (patch) name assuming it to be in the first bank.

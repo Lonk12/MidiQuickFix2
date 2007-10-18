@@ -23,22 +23,47 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.Formats;
+import com.lemckes.MidiQuickFix.util.LoopSliderEvent;
+import com.lemckes.MidiQuickFix.util.LoopSliderListener;
+import com.lemckes.MidiQuickFix.util.MidiFile;
+import com.lemckes.MidiQuickFix.util.MidiFileFilter;
+import com.lemckes.MidiQuickFix.util.MidiSeqPlayer;
+import com.lemckes.MidiQuickFix.util.PlayController;
+import com.lemckes.MidiQuickFix.util.SwingWorker;
+import com.lemckes.MidiQuickFix.util.TraceDialog;
+import com.lemckes.MidiQuickFix.util.Transposer;
+import com.lemckes.MidiQuickFix.util.UiStrings;
+import java.awt.Cursor;
 import java.awt.EventQueue;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import javax.sound.midi.*;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import java.util.Properties;
-
-import com.lemckes.MidiQuickFix.util.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import com.lemckes.MidiQuickFix.util.TraceDialog;
-import java.awt.Cursor;
 import java.text.DecimalFormat;
+import java.util.Properties;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.Synthesizer;
+import javax.sound.midi.Track;
+import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 /**
  * A MIDI file editor that works at the Midi event level.
@@ -75,7 +100,6 @@ public class MidiQuickFix extends JFrame
             public void componentResized(ComponentEvent e) {
             }
         });
-        // mTraceDialog.setVisible(true);
         
         Startup startDialog = new Startup(new javax.swing.JFrame(), false);
         startDialog.setVisible(true);
@@ -161,6 +185,25 @@ public class MidiQuickFix extends JFrame
             createTimer(100);
             
             mSequenceModified = false;
+            
+            positionSlider.addLoopSliderListener(this);
+            
+            mSynth = MidiSystem.getSynthesizer();
+            mChannels = mSynth.getChannels();
+            
+            tempoAdjustSlider.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    // the slider range is [0, 200]
+                    // convert the value to the range [-1.0, 1.0]
+                    int val = tempoAdjustSlider.getValue();
+                    float factor = (val - 100) / 100.0f;
+                    
+                    // convert from [-1.0, 1.0] to [0.5, 2.0]
+                    // i.e.  2^-1.0 to 2^1.0
+                    factor = (float)Math.pow(2.0, factor);
+                    setTempoFactor(factor);
+                }
+            });
         } catch(MidiUnavailableException e) {
             startDialog.splash.setStageMessage(
                 UiStrings.getString("no_midi_message"));
@@ -169,30 +212,6 @@ public class MidiQuickFix extends JFrame
             startDialog.splash.setStageMessage(
                 UiStrings.getString("startup_failed"));
         }
-        
-        positionSlider.addLoopSliderListener(this);
-        
-        try {
-            mSynth = MidiSystem.getSynthesizer();
-        } catch(MidiUnavailableException e) {
-            TraceDialog.addTrace("No Synthesiser available." +
-                " (Could make playing tricky.)");
-        }
-        mChannels = mSynth.getChannels();
-        
-        tempoAdjustSlider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // the slider range is [0, 200]
-                // convert the value to the range [-1.0, 1.0]
-                int val = tempoAdjustSlider.getValue();
-                float factor = (val - 100) / 100.0f;
-                
-                // convert from [-1.0, 1.0] to [0.5, 2.0]
-                // i.e.  2^-1.0 to 2^1.0
-                factor = (float)Math.pow(2.0, factor);
-                setTempoFactor(factor);
-            }
-        });
     }
     
     private void setTempoFactor(float factor) {
@@ -1126,7 +1145,7 @@ public class MidiQuickFix extends JFrame
         
 //        EventQueue.invokeLater(new Runnable() {
 //            public void run() {
-                new MidiQuickFix().setVisible(true);
+        new MidiQuickFix().setVisible(true);
 //            }
 //        });
     }

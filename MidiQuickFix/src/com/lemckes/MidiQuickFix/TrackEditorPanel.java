@@ -23,6 +23,8 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.EventCreationEvent;
+import com.lemckes.MidiQuickFix.util.EventCreationListener;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -37,7 +39,14 @@ import javax.swing.event.TableModelListener;
  * The UI for editing track data
  * @version $Id$
  */
-public class TrackEditorPanel extends javax.swing.JPanel {
+public class TrackEditorPanel extends javax.swing.JPanel implements EventCreationListener {
+    private Sequence mSeq;
+    private Track[] mTracks;
+    private int mCurrentTrack;
+    
+    private String mKeySig;
+    
+    private CreateEventDialog mCreateEventDialog;
     
     /** Creates new form TrackEditorPanel */
     public TrackEditorPanel() {
@@ -79,8 +88,7 @@ public class TrackEditorPanel extends javax.swing.JPanel {
                 }
             }
         }
-        trackSelector.setModel(
-            new DefaultComboBoxModel(trackList));
+        trackSelector.setModel(new DefaultComboBoxModel(trackList));
     }
     
     /** Display the selected track in the editor.
@@ -99,6 +107,14 @@ public class TrackEditorPanel extends javax.swing.JPanel {
     
     public void addTableChangeListener(TableModelListener l) {
         trackTable.getModel().addTableModelListener(l);
+    }
+    
+    private void doCreateEvent() {
+        if (mCreateEventDialog == null) {
+            mCreateEventDialog = new CreateEventDialog(mSeq.getResolution(), null, false);
+            mCreateEventDialog.addEventCreationListener(this);
+        }
+        mCreateEventDialog.setVisible(true);
     }
     
     /** This method is called from within the constructor to
@@ -197,8 +213,7 @@ public class TrackEditorPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteButtonActionPerformed
     
     private void insertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertButtonActionPerformed
-        //Nothing yet.
-        trackTable.insertEvent();
+        doCreateEvent();
     }//GEN-LAST:event_insertButtonActionPerformed
     
     private void showNotesCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNotesCheckActionPerformed
@@ -208,6 +223,11 @@ public class TrackEditorPanel extends javax.swing.JPanel {
     private void trackSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackSelectorActionPerformed
         selectTrack(trackSelector.getSelectedIndex());
     }//GEN-LAST:event_trackSelectorActionPerformed
+    
+    public void eventCreated(EventCreationEvent e) {
+        System.out.println("TrackEditorPanel eventCreated " + e);
+        trackTable.insertEvent(e.getEvent());
+    }
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -223,10 +243,4 @@ public class TrackEditorPanel extends javax.swing.JPanel {
     private javax.swing.JPanel trackSelectorPanel;
     private com.lemckes.MidiQuickFix.TrackTable trackTable;
     // End of variables declaration//GEN-END:variables
-    
-    Sequence mSeq;
-    Track[] mTracks;
-    int mCurrentTrack;
-    
-    String mKeySig;
 }
