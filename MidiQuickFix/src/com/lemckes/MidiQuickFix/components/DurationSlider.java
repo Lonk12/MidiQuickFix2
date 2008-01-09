@@ -38,6 +38,13 @@ public class DurationSlider extends javax.swing.JSlider {
         initComponents();
     }
     
+    /**
+     * Set the total duration covered by this slider
+     * @param dur the maximum value
+     * @param ticks if <code>true</code> then the <code>dur</code> value is in
+     * ticks rather than beats
+     * @param resolution the tick resolution to convert ticks to beats
+     */
     public void setDuration(long dur, boolean ticks, int resolution) {
         setMinimum(0);
         setMaximum((int)dur);

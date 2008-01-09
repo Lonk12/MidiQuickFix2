@@ -93,6 +93,7 @@ public class FontSelector extends javax.swing.JDialog {
     
     /**
      * Add a listener that will be notified when a font is selected.
+     * @param l the listener to add
      */
     public void addFontSelectionListener(FontSelectionListener l) {
         mListenerList.add(FontSelectionListener.class, l);

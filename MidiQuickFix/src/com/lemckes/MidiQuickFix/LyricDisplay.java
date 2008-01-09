@@ -49,6 +49,11 @@ public class LyricDisplay extends JPanel
     }
     
     // Implementation of MetaEventListener.meta()
+    /**
+     * Implementation of MetaEventListener.meta() that handles
+     * lyric and text events.
+     * @param metaMessage the META message to handle
+     */
     public void meta(javax.sound.midi.MetaMessage metaMessage) {
         int type = metaMessage.getType();
         

@@ -23,7 +23,6 @@
 
 package com.lemckes.MidiQuickFix.util;
 
-import com.lemckes.MidiQuickFix.KeySignatures;
 import com.lemckes.MidiQuickFix.MetaEvent;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -38,11 +37,11 @@ import javax.sound.midi.Track;
  * @version $Id$
  */
 public class Transposer {
-    
+
     /** Cannot create a new instance of Transposer */
     private Transposer() {
     }
-    
+
     /**
      * Transpose the given sequence by the given number of semitones
      * without transposing the drum track.
@@ -58,7 +57,7 @@ public class Transposer {
     public static boolean transpose(Sequence seq, int semitones) {
         return transpose(seq, semitones, false);
     }
-    
+
     /**
      * Transpose the given sequence by the given number of semitones.
      * If <code>doDrums</code> is false then note events for the default
@@ -84,7 +83,7 @@ public class Transposer {
                     int d1 = mess.getData1();
                     int d2 = mess.getData2();
                     int st = mess.getStatus();
-                    
+
                     if (((st & 0xf0) <= 0xf0) && // This is a channel message
                         (doDrums || mess.getChannel() != 9))
                     {
@@ -102,11 +101,12 @@ public class Transposer {
                                     overflow = true;
                                 }
                                 try {
-                                    int channel = (int)(mess.getChannel() & 0xff);
+                                    int channel = mess.getChannel() & 0xff;
                                     mess.setMessage(cmd, channel, d1, d2);
                                 } catch(InvalidMidiDataException e) {
                                     TraceDialog.addTrace(
-                                        "Transposer invalid note: " + e.getMessage());
+                                        "Transposer invalid note: " +
+                                        e.getMessage());
                                 }
                                 break;
                             default:
@@ -131,27 +131,27 @@ public class Transposer {
         }
         return overflow;
     }
-    
+
     private static byte adjustKeySig(byte sharps, int semitones) {
         byte key = sharpsToKey[sharps + 7];
         key += semitones;
         key %= 12;
-        if (key < 0) key += 12;
+        if (key < 0) {
+            key += 12;
+        }
         return keyToSharps[key];
     }
-    
+
     public static void main(String args[]) {
         // Test the key sig conversion
         byte[] data = new byte[2];
         data[1] = 0;
         for (byte sig = -7; sig < 8; ++sig) {
             data[0] = sig;
-            System.out.print(  "Key " + KeySignatures.getKeyName(data));
             data[0] = adjustKeySig(sig, -3);
-            System.out.println(" -- " + KeySignatures.getKeyName(data));
         }
     }
-    
+
     // Map a key signature to the number of sharps or flats
     // Index 0 = C, 1 = Db ... 11 = Bb, 12 = B
     //                           0   1  2   3  4   5  6  7   8  9  10 11

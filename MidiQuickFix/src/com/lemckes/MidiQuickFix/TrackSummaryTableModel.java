@@ -23,6 +23,7 @@
 
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.swing.table.*;
@@ -34,22 +35,22 @@ import javax.sound.midi.*;
  * @version $Id$
  */
 class TrackSummaryTableModel extends AbstractTableModel {
-    
+
     transient Synthesizer mSynth;
-    
+
     transient MidiChannel[] mChannels;
-    
+
     transient Sequencer mSeq;
-    
+
     /** The Sequence that is loaded. */
     transient Sequence mSequence;
-    
+
     /** The resolution of the sequence */
     int mRes;
-    
+
     /** The tracks in the sequence */
     transient Track[] mTracks;
-    
+
     /** The data about a track */
     static class TrackInfo {
         String mName;
@@ -59,10 +60,10 @@ class TrackSummaryTableModel extends AbstractTableModel {
         boolean mSolo;
         boolean mMute;
     };
-    
+
     /** The track info for each track */
     transient TrackInfo[] mInfo;
-    
+
     /** Creates a new instance of a TrackSummaryTableModel */
     public TrackSummaryTableModel(Sequence s) {
         try {
@@ -71,7 +72,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
             TraceDialog.addTrace("No Synthesiser available." +
                 " (Could make playing tricky.)");
         }
-        
+
         mChannels = mSynth.getChannels();
         mChannels[0].allSoundOff();
         try {
@@ -80,14 +81,14 @@ class TrackSummaryTableModel extends AbstractTableModel {
             TraceDialog.addTrace("No Sequencer available." +
                 " (Could make playing tricky.)");
         }
-        
+
         mSequence = s;
         mRes = s.getResolution();
         mTracks = mSequence.getTracks();
         int numTracks = mTracks.length;
-        
+
         mInfo = new TrackInfo[numTracks];
-        
+
         for (int i = 0; i < numTracks; ++i) {
             mInfo[i] = new TrackInfo();
             mInfo[i].mSolo = false;
@@ -99,7 +100,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
             for (int e = 0; e < t.size(); ++e) {
                 MidiEvent me = t.get(e);
                 long tick = me.getTick();
-                
+
                 MidiMessage mm = me.getMessage();
                 if (mm.getStatus() == MetaMessage.META) {
                     Object[] str = MetaEvent.getMetaStrings((MetaMessage)mm);
@@ -107,15 +108,15 @@ class TrackSummaryTableModel extends AbstractTableModel {
                         mInfo[i].mName = (String)str[2];
                     }
                 }
-                
+
                 if (mm instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)mm;
                     int st = sm.getStatus();
-                    
+
                     // Check that this is a channel message
                     if ((st & 0xf0) <= 0xf0) {
                         mInfo[i].mChannel = sm.getChannel();
-                        
+
                         // The first NOTE_ON is the start of
                         // the track.
                         if (sm.getCommand() == ShortMessage.NOTE_ON) {
@@ -127,15 +128,15 @@ class TrackSummaryTableModel extends AbstractTableModel {
             }
         }
     }
-    
+
     public int getRowCount() {
         return mTracks.length;
     }
-    
+
     public int getColumnCount() {
         return columnNames.length;
     }
-    
+
     public Object getValueAt(int row, int column) {
         Object result;
         switch (column) {
@@ -150,7 +151,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
                     // Didn't find a NOTE_ON event
                     result = null;
                 } else {
-                    result = getTickString(mInfo[row].mStart, mRes);
+                    result = Formats.formatTicks(mInfo[row].mStart, mRes, true);
                 }
                 break;
             case 3:
@@ -158,7 +159,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
                     // Didn't find a NOTE_ON event
                     result = null;
                 } else {
-                    result = getTickString(mInfo[row].mEnd, mRes);
+                    result = Formats.formatTicks(mInfo[row].mEnd, mRes, true);
                 }
                 break;
             case 4:
@@ -180,7 +181,8 @@ class TrackSummaryTableModel extends AbstractTableModel {
         }
         return result;
     }
-    
+
+    @Override
     public void setValueAt(Object value, int row, int column) {
         // Only boolean toggles here so the test is not needed.
         // Don't bother if the value hasn't changed.
@@ -190,7 +192,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
         // {
         //     return;
         // }
-        
+
         switch (column) {
             case 5:
                 // Solo
@@ -198,13 +200,15 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 mSeq.setTrackSolo(row, mInfo[row].mSolo);
                 boolean soloed = mSeq.getTrackSolo(row);
                 if (soloed != mInfo[row].mSolo) {
-                    TraceDialog.addTrace("Sequencer Solo not supported. (Set to " + value
+                    TraceDialog.addTrace(
+                        "Sequencer Solo not supported. (Set to " + value
                         + " is actually " + soloed + ")");
                 }
                 mChannels[mInfo[row].mChannel].setSolo(mInfo[row].mSolo);
                 soloed = mChannels[mInfo[row].mChannel].getSolo();
                 if (soloed != mInfo[row].mSolo) {
-                    TraceDialog.addTrace("Channel Solo not supported. (Set to " + value
+                    TraceDialog.addTrace(
+                        "Channel Solo not supported. (Set to " + value
                         + " is actually " + soloed + ")");
                 }
                 break;
@@ -214,13 +218,15 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 mSeq.setTrackMute(row, mInfo[row].mMute);
                 boolean muted = mSeq.getTrackMute(row);
                 if (muted != mInfo[row].mMute) {
-                    TraceDialog.addTrace("Sequencer Mute not supported. (Set to " + value
+                    TraceDialog.addTrace(
+                        "Sequencer Mute not supported. (Set to " + value
                         + " is actually " + muted + ")");
                 }
                 mChannels[mInfo[row].mChannel].setMute(mInfo[row].mMute);
                 muted = mChannels[mInfo[row].mChannel].getMute();
                 if (muted != mInfo[row].mMute) {
-                    TraceDialog.addTrace("Channel Mute not supported. (Set to " + value
+                    TraceDialog.addTrace(
+                        "Channel Mute not supported. (Set to " + value
                         + " is actually " + muted + ")");
                 }
                 break;
@@ -228,19 +234,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 // Do Nothing
         }
     }
-    
-    
-    String getTickString(long tick, int res) {
-        java.text.DecimalFormat beatF = new java.text.DecimalFormat("00000");
-        java.text.DecimalFormat tickF = new java.text.DecimalFormat("000");
-        
-        String result = "";
-        long beats = tick / res;
-        long ticks = tick % res;
-        result = beatF.format(beats) + ":" + tickF.format(ticks);
-        return result;
-    }
-    
+
     Class[] types = new Class [] {
         java.lang.Integer.class,
         java.lang.String.class,
@@ -250,11 +244,12 @@ class TrackSummaryTableModel extends AbstractTableModel {
         java.lang.Boolean.class,
         java.lang.Boolean.class
     };
-    
+
+    @Override
     public Class getColumnClass(int columnIndex) {
         return types [columnIndex];
     }
-    
+
     String[] columnNames = new String[] {
         UiStrings.getString("no."),
         UiStrings.getString("name"),
@@ -264,15 +259,17 @@ class TrackSummaryTableModel extends AbstractTableModel {
         UiStrings.getString("solo"),
         UiStrings.getString("mute")
     };
-    
+
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
-    
+
     boolean[] canEdit = new boolean [] {
         false, false, false, false, false, true, true
     };
-    
+
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         boolean ret = canEdit[columnIndex];
         if (columnIndex > 4 && mInfo[rowIndex].mChannel == -1) {
@@ -280,5 +277,5 @@ class TrackSummaryTableModel extends AbstractTableModel {
         }
         return ret;
     }
-    
+
 }

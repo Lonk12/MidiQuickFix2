@@ -97,7 +97,8 @@ public class KeySignatures {
         return result;
     }
     
-    /** Check if the notes in the key should be displayed as flats or sharps.
+    /**
+     * Check if the notes in the key should be displayed as flats or sharps.
      * @param keyName The String version of the key signature
      * as returned by getKeyName.
      * @return True if the notes should be displayed as flats.
@@ -112,6 +113,7 @@ public class KeySignatures {
     }
     
     /**
+     * Check if the notes in the key should be displayed as flats or sharps.
      * @param keyNum The key number. Positive values define
      * the number of sharps in the key signature. Negative
      * values define the number of flats.

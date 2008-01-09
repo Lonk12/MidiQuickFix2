@@ -48,7 +48,6 @@ class ShortEvent {
                     result[2] = "" + d1;
                     break;
                 case ShortMessage.CONTROL_CHANGE:
-                    //result[0] = "CONTROL_CHANGE";
                     result[0] = Controllers.getControlName(d1);
                     result[2] = Controllers.getControlValue(d2, false);
                     break;

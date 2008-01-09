@@ -133,6 +133,10 @@ public class SplashDrawing extends javax.swing.JComponent {
         return getSize();
     }
     
+    /**
+     * Get the size of the splash image
+     * @return the size of the splash image
+     */
     public Dimension getSize() {
         return new Dimension(mImageWidth, mImageHeight);
     }

@@ -37,7 +37,11 @@ public class Startup extends javax.swing.JDialog {
     /** The component that displays our splash screen */
     SplashDrawing splash;
     
-    /** Creates new Startup dialog */
+    /**
+     * Creates new Startup dialog
+     * @param parent the Frame parent
+     * @param modal the modality of the dialog
+     */
     public Startup(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         setTitle(UiStrings.getString("startup_initialising"));
@@ -51,7 +55,10 @@ public class Startup extends javax.swing.JDialog {
         setLocation((int)((sd.getWidth() - dd.getWidth()) / 2), (int)((sd.getHeight() - dd.getHeight()) / 2));
     }
     
-    /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
+    /**
+     * test how the user closed the dialog
+     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
+     */
     public int getReturnStatus() {
         return returnStatus;
     }

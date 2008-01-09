@@ -41,7 +41,11 @@ public class AboutDialog extends javax.swing.JDialog {
      */
     SplashDrawing mSplash;
     
-    /** Creates new Startup dialog */
+    /**
+     * Creates an About dialog
+     * @param parent the Frame parent of the dialog
+     * @param modal the modality of the dialog
+     */
     public AboutDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         setTitle("About MidiQuickFix");
@@ -83,7 +87,10 @@ public class AboutDialog extends javax.swing.JDialog {
         mSplash.setStageMessage(osname + " - " + arch + " - " + osversion);
     }
     
-    /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
+    /**
+     * Get the return status based on the button selected
+     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
+     */
     public int getReturnStatus() {
         return returnStatus;
     }

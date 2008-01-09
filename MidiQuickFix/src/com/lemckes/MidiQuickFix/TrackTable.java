@@ -47,6 +47,13 @@ public class TrackTable extends javax.swing.JTable {
         initComponents();
     }
     
+    /**
+     * Set the track that is displayed in the Track Table
+     * @param track the track to display
+     * @param resolution the tick resolution of the track
+     * @param showNotes if <code>false</code> then NOTE_ON/OFF events are not displayed
+     * @param inFlats determines whether notes are displayed as flats or sharps
+     */
     public void setTrack(Track track, int resolution,
       boolean showNotes, boolean inFlats) {
         updateModel(
@@ -55,6 +62,10 @@ public class TrackTable extends javax.swing.JTable {
           showNotes,
           inFlats));
     }
+    /**
+     * Set whether notes are displayed or not
+     * @param show if <code>true</code> notes are shown
+     */
     public void showNotes(boolean show) {
         TableModel model = getModel();
         // Check that the TrackTableModel has been set on the table
@@ -76,10 +87,18 @@ public class TrackTable extends javax.swing.JTable {
         validate();
     }
     
+    /**
+     * Delete the rows specified in the given array of row indexes
+     * @param rows the array of row indexes
+     */
     public void deleteRows(int[] rows) {
         ((TrackTableModel)getModel()).deleteEvents(rows);
     }
     
+    /**
+     * Insert the given event in the track
+     * @param event the event to be inserted
+     */
     public void insertEvent(MidiEvent event)
     {
         ((TrackTableModel)getModel()).insertEvent(event);
@@ -92,7 +111,7 @@ public class TrackTable extends javax.swing.JTable {
         TableColumn tc = cm.getColumn(0);
         tc.setPreferredWidth(fm.stringWidth("00000:000") + margin);
         tc = cm.getColumn(1);
-        tc.setPreferredWidth(fm.stringWidth("A Typical Event") + margin);
+        tc.setPreferredWidth(fm.stringWidth("M:TimeSignature") + margin);
         tc = cm.getColumn(2);
         tc.setPreferredWidth(fm.stringWidth(UiStrings.getString("note")) + margin);
         tc = cm.getColumn(3);

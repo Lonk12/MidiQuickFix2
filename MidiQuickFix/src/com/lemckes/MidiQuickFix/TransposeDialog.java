@@ -35,7 +35,11 @@ public class TransposeDialog extends javax.swing.JDialog {
     
     private int mTransposeBy = 0;
     
-    /** Creates new form TransposeDialog */
+    /**
+     * Creates new form TransposeDialog
+     * @param parent the Frame parent for the dialog
+     * @param modal the modality of the dialog
+     */
     public TransposeDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();

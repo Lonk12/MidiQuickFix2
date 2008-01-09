@@ -36,7 +36,10 @@ public class TrackSummaryTable extends javax.swing.JTable {
         initComponents();
     }
     
-    /** Set the sequence that is to be displayed */
+    /**
+     * Set the sequence that is to be displayed
+     * @param seq the sequence that is to be displayed
+     */
     public void setSequence(javax.sound.midi.Sequence seq) {
         setModel(new TrackSummaryTableModel(seq));
         Object[] widths = { "99", "Cor Anglais or longer", "00000:000", "00000:000", "16",

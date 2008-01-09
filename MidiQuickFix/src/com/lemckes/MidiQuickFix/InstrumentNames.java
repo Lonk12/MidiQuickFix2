@@ -63,7 +63,7 @@ class InstrumentNames {
                 int prog = instruments[j].getPatch().getProgram();
                 int bankProgram = bank * 256 + prog;
                 String name = instruments[j].getName();
-                System.out.println(j + "." + bank + "." + prog + "." + name);
+                // System.out.println(j + "." + bank + "." + prog + "." + name);
                 
                 mInstrumentNameMap.put(name, bankProgram);
                 mInstrumentNumberMap.put(bankProgram, name);

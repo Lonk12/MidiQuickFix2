@@ -43,23 +43,27 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
     private Sequence mSeq;
     private Track[] mTracks;
     private int mCurrentTrack;
-    
+
     private String mKeySig;
-    
+
     private CreateEventDialog mCreateEventDialog;
-    
+
     /** Creates new form TrackEditorPanel */
     public TrackEditorPanel() {
         initComponents();
     }
-    
+
+    /**
+     * Set the sequence that will be edited
+     * @param seq the sequence to edit
+     */
     public void setSequence(Sequence seq) {
         mSeq = seq;
         mTracks = mSeq.getTracks();
         setTrackComboModel(mTracks);
         selectTrack(0);
     }
-    
+
     /**
      * Populate the entries in the track selector combo with
      * the track number and track names from the tracks array.
@@ -75,7 +79,9 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
                 MidiEvent ev = t.get(j);
                 MidiMessage mess = ev.getMessage();
                 // Don't bother looking past events at time zero.
-                if (ev.getTick() > 0) break;
+                if (ev.getTick() > 0) {
+                    break;
+                }
                 if (mess.getStatus() == MetaMessage.META) {
                     int type = ((MetaMessage)mess).getType();
                     Object[] str = MetaEvent.getMetaStrings((MetaMessage)mess);
@@ -90,7 +96,7 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
         }
         trackSelector.setModel(new DefaultComboBoxModel(trackList));
     }
-    
+
     /** Display the selected track in the editor.
      * @param trackNum The index of the track to be displayed.
      */
@@ -104,19 +110,36 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
                 KeySignatures.isInFlats(mKeySig));
         }
     }
-    
+
+    /**
+     * Add a change listener to the Track Table Model
+     * @param l the listener to add
+     */
     public void addTableChangeListener(TableModelListener l) {
         trackTable.getModel().addTableModelListener(l);
     }
-    
+
     private void doCreateEvent() {
         if (mCreateEventDialog == null) {
             mCreateEventDialog = new CreateEventDialog(mSeq.getResolution(), null, false);
             mCreateEventDialog.addEventCreationListener(this);
         }
+        TrackTableModel ttm = (TrackTableModel)trackTable.getModel();
+        int row = trackTable.getSelectedRow();
+        long tick = 0;
+        int channel = 0;
+        if (row > -1) {
+            tick = ttm.getTickForRow(row);
+            Object o = ttm.getValueAt(row, 6);
+            if (o != null) {
+                channel = (Integer)ttm.getValueAt(row, 6);
+            }
+        }
+        mCreateEventDialog.setPosition(tick);
+        mCreateEventDialog.setChannel(channel);
         mCreateEventDialog.setVisible(true);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -206,30 +229,33 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
         add(trackPanel, java.awt.BorderLayout.NORTH);
 
     }// </editor-fold>//GEN-END:initComponents
-    
+
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int[] selRows = trackTable.getSelectedRows();
         trackTable.deleteRows(selRows);
     }//GEN-LAST:event_deleteButtonActionPerformed
-    
+
     private void insertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertButtonActionPerformed
         doCreateEvent();
     }//GEN-LAST:event_insertButtonActionPerformed
-    
+
     private void showNotesCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNotesCheckActionPerformed
         trackTable.showNotes(showNotesCheck.isSelected());
     }//GEN-LAST:event_showNotesCheckActionPerformed
-    
+
     private void trackSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackSelectorActionPerformed
         selectTrack(trackSelector.getSelectedIndex());
     }//GEN-LAST:event_trackSelectorActionPerformed
-    
+
+    /**
+     * Respond to EventCreation events
+     * @param e the EventCreation event
+     */
     public void eventCreated(EventCreationEvent e) {
-        System.out.println("TrackEditorPanel eventCreated " + e);
         trackTable.insertEvent(e.getEvent());
     }
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JPanel controlPanel;

@@ -41,7 +41,7 @@ class TrackTableModel extends DefaultTableModel {
     /** The Track that is being displayed. */
     transient Track mTrack;
     
-    /** The Beats/Tick resolution of this track. */
+    /** The Ticks/Beat resolution of this track. */
     int mResolution;
     
     /** Whether to display notes as flats. */
@@ -61,7 +61,12 @@ class TrackTableModel extends DefaultTableModel {
         mResolution = res;
         mInFlats = inFlats;
         mShowNotes = showNotes;
-        buildNoNotesRowMap();
+
+        mNumNotes = 0;
+        mNoNotesRowMap = new java.util.Vector<Integer>();
+        if (mTrack != null) {
+            buildNoNotesRowMap();
+        }
     }
     
     /**
@@ -70,9 +75,6 @@ class TrackTableModel extends DefaultTableModel {
      * the event in the track.
      */
     private void buildNoNotesRowMap() {
-        mNumNotes = 0;
-        mNoNotesRowMap = new java.util.Vector<Integer>();
-        
         for (int i = 0; i < mTrack.size(); ++i) {
             MidiMessage mess = mTrack.get(i).getMessage();
             if (mess instanceof ShortMessage) {
@@ -95,6 +97,7 @@ class TrackTableModel extends DefaultTableModel {
         fireTableStructureChanged();
     }
     
+    @Override
     public int getRowCount() {
         if (mTrack == null) {
             return 0;
@@ -105,16 +108,27 @@ class TrackTableModel extends DefaultTableModel {
         }
     }
     
+    @Override
     public int getColumnCount() {
         return columnNames.length;
     }
     
+    public long getTickForRow(int row) {
+        int eventIndex = row;
+        // Adjust the index if notes are not being displayed
+        if (!mShowNotes) {
+            eventIndex = mNoNotesRowMap.get(row).intValue();
+        }
+        return mTrack.get(eventIndex).getTick();
+    }
+    
+    @Override
     public Object getValueAt(int row, int column) {
         Object result = null;
         int eventIndex = row;
         // Adjust the index if notes are not being displayed
         if (!mShowNotes) {
-            eventIndex = ((Integer)mNoNotesRowMap.get(row)).intValue();
+            eventIndex = mNoNotesRowMap.get(row).intValue();
         }
         MidiMessage mess = mTrack.get(eventIndex).getMessage();
         long tick = mTrack.get(eventIndex).getTick();
@@ -146,12 +160,13 @@ class TrackTableModel extends DefaultTableModel {
         return result;
     }
     
+    @Override
     public boolean isCellEditable(int row, int column) {
         boolean result = false;
         int eventIndex = row;
         // Adjust the index if notes are not being displayed
         if (!mShowNotes) {
-            eventIndex = ((Integer)mNoNotesRowMap.get(row)).intValue();
+            eventIndex = mNoNotesRowMap.get(row).intValue();
         }
         MidiMessage mess = mTrack.get(eventIndex).getMessage();
         switch (column) {
@@ -212,6 +227,7 @@ class TrackTableModel extends DefaultTableModel {
         return result;
     }
     
+    @Override
     public void setValueAt(Object value, int row, int column) {
         // Don't bother if the value hasn't changed.
         Object oldVal = getValueAt(row, column);
@@ -223,7 +239,7 @@ class TrackTableModel extends DefaultTableModel {
         int eventIndex = row;
         // Adjust the index if notes are not being displayed
         if (!mShowNotes) {
-            eventIndex = ((Integer)mNoNotesRowMap.get(row)).intValue();
+            eventIndex = mNoNotesRowMap.get(row).intValue();
         }
         
         MidiEvent ev = mTrack.get(eventIndex);
@@ -236,21 +252,25 @@ class TrackTableModel extends DefaultTableModel {
                 break;
             case 1:
                 // Event
-                TraceDialog.addTrace("Error: TrackTableModel.setValueAt column 1 should not be editable.");
+                TraceDialog.addTrace(
+                    "Error: TrackTableModel.setValueAt column 1 should not be editable.");
                 break;
             case 2:
                 // Note
                 if (mess instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)mess;
-                    int command = (int)(sm.getCommand() & 0xff);
-                    int channel = (int)(sm.getChannel() & 0xff);
-                    // int d1 = (int)(sm.getData1() & 0xff);
-                    int d2 = (int)(sm.getData2() & 0xff);
+                    int command = sm.getCommand() & 0xff;
+                    int channel = sm.getChannel() & 0xff;
+                    // int d1 = sm.getData1() & 0xff;
+                    int d2 = sm.getData2() & 0xff;
                     try {
-                        updateMessage(ev, command, channel, NoteNames.getNoteNumber((String)value), d2);
+                        updateMessage(ev, command, channel,
+                            NoteNames.getNoteNumber((String)value), d2);
                         fireTableDataChanged();
                     } catch(InvalidMidiDataException e) {
-                        TraceDialog.addTrace("Error: TrackTableModel.setValueAt column 2. " + e.getMessage());
+                        TraceDialog.addTrace(
+                            "Error: TrackTableModel.setValueAt column 2. " +
+                            e.getMessage());
                     }
                 }
                 break;
@@ -262,7 +282,7 @@ class TrackTableModel extends DefaultTableModel {
                     int channel = sm.getChannel();
                     int d1 = sm.getData1();
                     int d2 = sm.getData2();
-                    int command = (int)(sm.getCommand() & 0xff);
+                    int command = sm.getCommand() & 0xff;
                     
                     if ((st & 0xf0) <= 0xf0) { // This is a channel message
                         switch (command) {
@@ -281,14 +301,17 @@ class TrackTableModel extends DefaultTableModel {
                                 d2 = (val - d1) >> 7;
                                 break;
                             case ShortMessage.PROGRAM_CHANGE:
-                                // Should not get here. PROGRAM_CHANGE is handled in the PATCH column
+                                // Should not get here. PROGRAM_CHANGE
+                                // is handled in the PATCH column
                                 TraceDialog.addTrace("TrackTableModel - ");
-                                TraceDialog.addTrace("Got to a PROGRAM_CHANGE event in the value column.");
+                                TraceDialog.addTrace(
+                                    "Got to a PROGRAM_CHANGE event in the value column.");
                                 break;
                             default:
                                 // Should not get here
                                 TraceDialog.addTrace("TrackTableModel - ");
-                                TraceDialog.addTrace("Got to a default case in the value column.");
+                                TraceDialog.addTrace(
+                                    "Got to a default case in the value column.");
                         }
                     }
                     
@@ -296,7 +319,9 @@ class TrackTableModel extends DefaultTableModel {
                         updateMessage(ev, command, channel, d1, d2);
                         fireTableDataChanged();
                     } catch(InvalidMidiDataException e) {
-                        TraceDialog.addTrace("Error: TrackTableModel.setValueAt column 3. " + e.getMessage());
+                        TraceDialog.addTrace(
+                            "Error: TrackTableModel.setValueAt column 3. " +
+                            e.getMessage());
                     }
                 }
                 break;
@@ -304,16 +329,18 @@ class TrackTableModel extends DefaultTableModel {
                 // Patch
                 if (mess instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)mess;
-                    int command = (int)(sm.getCommand() & 0xff);
-                    int channel = (int)(sm.getChannel() & 0xff);
-                    int d1 = (int)(InstrumentNames.getInstrumentNumber((String)value) & 0xff);
-                    int d2 = (int)(InstrumentNames.getInstrumentBank((String)value) & 0xff);
-                    System.out.println("Instrument " + (String)value + " num = " + d1 + " bank = " + d2);
+                    int command = sm.getCommand() & 0xff;
+                    int channel = sm.getChannel() & 0xff;
+                    int d1 =
+                        InstrumentNames.getInstrumentNumber((String)value) & 0xff;
+                    int d2 =
+                        InstrumentNames.getInstrumentBank((String)value) & 0xff;
                     try {
                         updateMessage(ev, command, channel, d1, d2);
                         fireTableDataChanged();
                     } catch(InvalidMidiDataException e) {
-                        TraceDialog.addTrace("Error: setValueAt column 4. " + e.getMessage());
+                        TraceDialog.addTrace("Error: setValueAt column 4. " +
+                            e.getMessage());
                     }
                 }
                 break;
@@ -321,7 +348,7 @@ class TrackTableModel extends DefaultTableModel {
                 // Text
                 if (mess instanceof MetaMessage) {
                     MetaMessage mm = (MetaMessage)mess;
-                    MetaEvent.setMetaData(mm, value.toString());
+                    MetaEvent.setMetaData(mm, value.toString(), mResolution);
                     fireTableCellUpdated(row, column);
                 }
                 break;
@@ -343,7 +370,8 @@ class TrackTableModel extends DefaultTableModel {
                             updateMessage(ev, command, channel, d1, d2);
                             fireTableDataChanged();
                         } catch(InvalidMidiDataException e) {
-                            TraceDialog.addTrace("Error: setValueAt column 6. " + e.getMessage());
+                            TraceDialog.addTrace(
+                                "Error: setValueAt column 6. " + e.getMessage());
                         }
                     }
                 }
@@ -385,15 +413,13 @@ class TrackTableModel extends DefaultTableModel {
     }
     
     public void deleteEvents(int[] rows) {
-        // TraceDialog.addTrace("deleteEvents");
         Vector<MidiEvent> events = new Vector<MidiEvent>();
         for (int i = 0; i < rows.length; ++i) {
             int eventIndex = rows[i];
             // Adjust the index if notes are not being displayed
             if (!mShowNotes) {
-                eventIndex = ((Integer)mNoNotesRowMap.get(rows[i])).intValue();
+                eventIndex = mNoNotesRowMap.get(rows[i]).intValue();
             }
-            // TraceDialog.addTrace("Removing event " + eventIndex + " at row " + rows[i]);
             events.add(mTrack.get(eventIndex));
         }
         
@@ -433,7 +459,8 @@ class TrackTableModel extends DefaultTableModel {
                     try {
                         updateMessage(ev, command, channel, d1, d2);
                     } catch(InvalidMidiDataException e) {
-                        TraceDialog.addTrace("Error: setTrackChannel. " + e.getMessage());
+                        TraceDialog.addTrace("Error: setTrackChannel. " +
+                            e.getMessage());
                     }
                 }
             }
@@ -460,7 +487,8 @@ class TrackTableModel extends DefaultTableModel {
             result[4] = str[2];
         } else {
             // Returns Event, Note, Value, Patch, Text, Channel
-            Object[] str = ShortEvent.getShortStrings((ShortMessage)mess, mInFlats);
+            Object[] str =
+                ShortEvent.getShortStrings((ShortMessage)mess, mInFlats);
             result[0] = str[0];
             result[1] = str[1];
             result[2] = str[2];
@@ -480,6 +508,8 @@ class TrackTableModel extends DefaultTableModel {
             java.lang.Object.class,
             java.lang.Integer.class
     };
+    
+    @Override
     public Class getColumnClass(int columnIndex) {
         return types [columnIndex];
     }
@@ -493,6 +523,8 @@ class TrackTableModel extends DefaultTableModel {
             UiStrings.getString("text"),
             UiStrings.getString("channel_abbrev")
     };
+    
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
