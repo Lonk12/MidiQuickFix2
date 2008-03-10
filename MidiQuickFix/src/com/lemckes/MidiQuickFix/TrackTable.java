@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.UiStrings;
@@ -41,12 +40,13 @@ import javax.swing.table.TableModel;
  * @version $Id$
  */
 public class TrackTable extends javax.swing.JTable {
-    
+    static final long serialVersionUID = -3055797455895279118L;
+
     /** Creates new form BeanForm */
     public TrackTable() {
         initComponents();
     }
-    
+
     /**
      * Set the track that is displayed in the Track Table
      * @param track the track to display
@@ -55,13 +55,14 @@ public class TrackTable extends javax.swing.JTable {
      * @param inFlats determines whether notes are displayed as flats or sharps
      */
     public void setTrack(Track track, int resolution,
-      boolean showNotes, boolean inFlats) {
+                          boolean showNotes, boolean inFlats) {
         updateModel(
-          new TrackTableModel(track,
-          resolution,
-          showNotes,
-          inFlats));
+            new TrackTableModel(track,
+            resolution,
+            showNotes,
+            inFlats));
     }
+
     /**
      * Set whether notes are displayed or not
      * @param show if <code>true</code> notes are shown
@@ -74,10 +75,10 @@ public class TrackTable extends javax.swing.JTable {
             updateModel((TrackTableModel)model);
         }
     }
-    
+
     private void updateModel(TrackTableModel model) {
         TableModelListener[] ls =
-          ((DefaultTableModel)getModel()).getTableModelListeners();
+            ((DefaultTableModel)getModel()).getTableModelListeners();
         for (TableModelListener l : ls) {
             model.addTableModelListener(l);
         }
@@ -86,7 +87,7 @@ public class TrackTable extends javax.swing.JTable {
         setInstrumentEditor();
         validate();
     }
-    
+
     /**
      * Delete the rows specified in the given array of row indexes
      * @param rows the array of row indexes
@@ -94,48 +95,46 @@ public class TrackTable extends javax.swing.JTable {
     public void deleteRows(int[] rows) {
         ((TrackTableModel)getModel()).deleteEvents(rows);
     }
-    
+
     /**
      * Insert the given event in the track
      * @param event the event to be inserted
      */
-    public void insertEvent(MidiEvent event)
-    {
+    public void insertEvent(MidiEvent event) {
         ((TrackTableModel)getModel()).insertEvent(event);
     }
-    
+
     private void setColumnWidths() {
         int margin = 6;
         FontMetrics fm = getFontMetrics(getFont());
         TableColumnModel cm = getColumnModel();
         TableColumn tc = cm.getColumn(0);
-        tc.setPreferredWidth(fm.stringWidth("00000:000") + margin);
+        tc.setPreferredWidth(fm.stringWidth("00000:000") + margin); // NOI18N
         tc = cm.getColumn(1);
-        tc.setPreferredWidth(fm.stringWidth("M:TimeSignature") + margin);
+        tc.setPreferredWidth(fm.stringWidth("M:TimeSignature") + margin); // NOI18N
         tc = cm.getColumn(2);
-        tc.setPreferredWidth(fm.stringWidth(UiStrings.getString("note")) + margin);
+        tc.setPreferredWidth(fm.stringWidth(UiStrings.getString("note")) + margin); // NOI18N
         tc = cm.getColumn(3);
-        tc.setPreferredWidth(fm.stringWidth(UiStrings.getString("value")) + margin);
+        tc.setPreferredWidth(fm.stringWidth(UiStrings.getString("value")) + margin); // NOI18N
         tc = cm.getColumn(4);
-        tc.setPreferredWidth(fm.stringWidth("A Typical Instrument") + margin);
+        tc.setPreferredWidth(fm.stringWidth("A Typical Instrument") + margin); // NOI18N
         tc = cm.getColumn(5);
-        tc.setPreferredWidth(fm.stringWidth("Some Track Name") + margin);
+        tc.setPreferredWidth(fm.stringWidth("Some Track Name") + margin); // NOI18N
         tc = cm.getColumn(6);
-        tc.setPreferredWidth(fm.stringWidth(UiStrings.getString("channel_abbrev")) + margin);
+        tc.setPreferredWidth(fm.stringWidth(UiStrings.getString("channel_abbrev")) + margin); // NOI18N
     }
-    
+
     /** Set the table cell editor for the Patch column. */
     void setInstrumentEditor() {
         //trace("setInstrumentEditor");
         TableColumn instrumentColumn = getColumnModel().getColumn(4);
-        
+
         Object[] s = InstrumentNames.getNameArray();
         JComboBox comboBox =
-          new JComboBox(new DefaultComboBoxModel(s));
+            new JComboBox(new DefaultComboBoxModel(s));
         instrumentColumn.setCellEditor(new DefaultCellEditor(comboBox));
     }
-    
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -147,9 +146,9 @@ public class TrackTable extends javax.swing.JTable {
         setName("trackTable");
     }
     // </editor-fold>//GEN-END:initComponents
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-    
+
 }

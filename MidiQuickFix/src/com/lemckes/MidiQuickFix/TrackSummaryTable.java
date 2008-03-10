@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.TableColumnWidthSetter;
@@ -30,23 +29,25 @@ import com.lemckes.MidiQuickFix.util.TableColumnWidthSetter;
  * @version $Id$
  */
 public class TrackSummaryTable extends javax.swing.JTable {
-    
+    static final long serialVersionUID = 4128873234789727596L;
+
     /** Creates new form BeanForm */
     public TrackSummaryTable() {
         initComponents();
+        Object[] widths =
+            {"99", "Cor Anglais or longer", "00000:000", "00000:000", "16", // NOI18N
+             true, true};
+        TableColumnWidthSetter.setColumnWidths(this, widths);
     }
-    
+
     /**
      * Set the sequence that is to be displayed
      * @param seq the sequence that is to be displayed
      */
     public void setSequence(javax.sound.midi.Sequence seq) {
         setModel(new TrackSummaryTableModel(seq));
-        Object[] widths = { "99", "Cor Anglais or longer", "00000:000", "00000:000", "16",
-        true, true };
-        TableColumnWidthSetter.setColumnWidths(this, widths);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -57,9 +58,9 @@ public class TrackSummaryTable extends javax.swing.JTable {
 
     }
     // </editor-fold>//GEN-END:initComponents
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-    
+
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.4" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.4" maxVersion="1.4" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
       <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -23,10 +23,8 @@
       <Properties>
         <Property name="columns" type="int" value="8"/>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-          <FontInfo relative="false">
-            <Font name="DialogInput" size="14" style="0"/>
-          </FontInfo>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="DialogInput" size="14" style="0"/>
         </Property>
       </Properties>
       <Events>
@@ -43,10 +41,8 @@
       <Properties>
         <Property name="columns" type="int" value="8"/>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-          <FontInfo relative="false">
-            <Font name="DialogInput" size="14" style="0"/>
-          </FontInfo>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="DialogInput" size="14" style="0"/>
         </Property>
       </Properties>
       <Events>
@@ -70,10 +66,8 @@
       <Properties>
         <Property name="columns" type="int" value="8"/>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-          <FontInfo relative="false">
-            <Font name="DialogInput" size="14" style="0"/>
-          </FontInfo>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="DialogInput" size="14" style="0"/>
         </Property>
       </Properties>
       <Events>

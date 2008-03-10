@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix.util;
 
 import com.lemckes.MidiQuickFix.MetaEvent;
@@ -37,7 +36,6 @@ import javax.sound.midi.Track;
  * @version $Id$
  */
 public class Transposer {
-
     /** Cannot create a new instance of Transposer */
     private Transposer() {
     }
@@ -72,7 +70,8 @@ public class Transposer {
      * @param seq the sequence to transpose
      * @param semitones the number of semitones to transpose
      */
-    public static boolean transpose(Sequence seq, int semitones, boolean doDrums) {
+    public static boolean transpose(Sequence seq, int semitones,
+                                      boolean doDrums) {
         boolean overflow = false;
         for (Track t : seq.getTracks()) {
             for (int i = 0; i < t.size(); ++i) {
@@ -85,8 +84,7 @@ public class Transposer {
                     int st = mess.getStatus();
 
                     if (((st & 0xf0) <= 0xf0) && // This is a channel message
-                        (doDrums || mess.getChannel() != 9))
-                    {
+                        (doDrums || mess.getChannel() != 9)) {
                         int cmd = mess.getCommand();
                         switch (cmd) {
                             case ShortMessage.NOTE_OFF:
@@ -103,14 +101,14 @@ public class Transposer {
                                 try {
                                     int channel = mess.getChannel() & 0xff;
                                     mess.setMessage(cmd, channel, d1, d2);
-                                } catch(InvalidMidiDataException e) {
+                                } catch (InvalidMidiDataException e) {
                                     TraceDialog.addTrace(
                                         "Transposer invalid note: " +
                                         e.getMessage());
                                 }
                                 break;
                             default:
-                                // DO NOTHING
+                            // DO NOTHING
                         }
                     }
                 } else if (m instanceof MetaMessage) {
@@ -121,7 +119,7 @@ public class Transposer {
                         data[0] = adjustKeySig(data[0], semitones);
                         try {
                             mess.setMessage(type, data, 2);
-                        } catch(InvalidMidiDataException e) {
+                        } catch (InvalidMidiDataException e) {
                             TraceDialog.addTrace(
                                 "Transposer invalid key sig: " + e.getMessage());
                         }
@@ -159,5 +157,6 @@ public class Transposer {
     // Map the number of sharps or flats to a key signature
     // Index 0 = 7 flats(-7) - 14 = 7 sharps(+7)
     // Convert from midi key sig with idx=data[0]+7
-    static byte[] sharpsToKey = {11, 6, 1, 8, 3, 10, 5, 0, 7, 2, 9, 4, 11, 6, 1};
+    static byte[] sharpsToKey =
+        {11, 6, 1, 8, 3, 10, 5, 0, 7, 2, 9, 4, 11, 6, 1};
 }

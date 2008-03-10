@@ -34,13 +34,13 @@ class NoteNames {
     { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
     
     static String[] sharpNames =
-    { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }; // NOI18N
     
     static String[] flatNames =
-    { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
+    { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" }; // NOI18N
     
     static String[] bothNames =
-    { "C", "Db/C#", "D", "Eb/D#", "E", "F", "Gb/F#", "G", "Ab/G#", "A", "Bb/A#", "B" };
+    { "C", "Db/C#", "D", "Eb/D#", "E", "F", "Gb/F#", "G", "Ab/G#", "A", "Bb/A#", "B" }; // NOI18N
     
     static java.text.ChoiceFormat cf =
         new java.text.ChoiceFormat(limits, sharpNames);

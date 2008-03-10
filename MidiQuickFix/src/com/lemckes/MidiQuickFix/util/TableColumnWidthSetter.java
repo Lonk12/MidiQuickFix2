@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix.util;
 
 import javax.swing.JTable;
@@ -28,13 +27,11 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
-
 /**
  * A utility to set the widths of a JTable's columns.
  * @version $Id$
  */
 public class TableColumnWidthSetter {
-    
     /** This method picks good column sizes.
      * If all column heads are wider than the column's cells'
      * contents, then you can just use column.sizeWidthToFit().
@@ -48,39 +45,39 @@ public class TableColumnWidthSetter {
      * by using the header contents.
      */
     static public void setColumnWidths(JTable table, Object[] longValues) {
-        TableModel model = (TableModel)table.getModel();
+        TableModel model = table.getModel();
         TableColumn column = null;
         java.awt.Component comp = null;
         int headerWidth = 0;
         int cellWidth = 0;
-        
+
         TableCellRenderer defaultHeaderRenderer =
-        table.getTableHeader().getDefaultRenderer();
+            table.getTableHeader().getDefaultRenderer();
         int i = 0;
         java.util.Enumeration e = table.getColumnModel().getColumns();
         while (e.hasMoreElements()) {
             column = (TableColumn)e.nextElement();
-            
+
             TableCellRenderer headerRenderer = column.getHeaderRenderer();
             if (headerRenderer == null) {
                 headerRenderer = defaultHeaderRenderer;
             }
             comp = headerRenderer.getTableCellRendererComponent(
-            table, column.getHeaderValue(),
-            false, false, 0, 0);
+                table, column.getHeaderValue(),
+                false, false, 0, 0);
             java.awt.Dimension d = comp.getPreferredSize();
             headerWidth = d.width;
-            
+
             if (longValues != null && i < longValues.length && longValues[i] != null) {
-                comp = table.getDefaultRenderer(model.getColumnClass(i))
-                .getTableCellRendererComponent(
-                table, longValues[i],
-                false, false, 0, i);
+                comp = table.getDefaultRenderer(model.getColumnClass(i)).
+                    getTableCellRendererComponent(
+                    table, longValues[i],
+                    false, false, 0, i);
                 cellWidth = comp.getPreferredSize().width;
             } else {
                 cellWidth = 0;
             }
-            
+
             // The MultiLineHeader seems to have no right margin
             // so we add a little room to stop the text from
             // touching the edge of the header cell.

@@ -33,8 +33,8 @@ import javax.sound.midi.MidiEvent;
  * @version $Id$
  */
 public class MetaEvent {
-
-    static java.text.DecimalFormat twoDigitFormat = new java.text.DecimalFormat("00");
+    static java.text.DecimalFormat twoDigitFormat =
+        new java.text.DecimalFormat("00"); // NOI18N
     static String[] typeNames = {
         "SEQUENCE_NUMBER",
         "TEXT",
@@ -54,6 +54,7 @@ public class MetaEvent {
         "PROPRIETARY_DATA"
     };
     // META event types
+
     public static final int SEQUENCE_NUMBER = 0x00; //FF 00 02 ss ss or FF 00 00
     public static final int TEXT = 0x01; //FF 01 len TEXT (arbitrary TEXT)
     public static final int COPYRIGHT = 0x02; //FF 02 len TEXT
@@ -74,27 +75,28 @@ public class MetaEvent {
     // 06 03 18 08 is 6/8 time, 24 clocks/metronome, 8 1/32ndnotes/1/4note
     public static final int KEY_SIGNATURE = 0x59; //FF 59 02 sf mi
     // -sf=no. of flats +sf=no. of sharps mi=0=major mi=1=minor
+
     public static final int PROPRIETARY_DATA = 0x7f; //FF 7F len data
     private static HashMap<String, Integer> mTypeNameToValue;
 
     static {
         mTypeNameToValue = new HashMap<String, Integer>();
-        mTypeNameToValue.put("SEQUENCE_NUMBER", 0x00);
-        mTypeNameToValue.put("TEXT", 0x01);
-        mTypeNameToValue.put("COPYRIGHT", 0x02);
-        mTypeNameToValue.put("TRACK_NAME", 0x03);
-        mTypeNameToValue.put("INSTRUMENT", 0x04);
-        mTypeNameToValue.put("LYRIC", 0x05);
-        mTypeNameToValue.put("MARKER", 0x06);
-        mTypeNameToValue.put("CUE_POINT", 0x07);
-        mTypeNameToValue.put("PROGRAM_NAME", 0x08);
-        mTypeNameToValue.put("DEVICE_NAME", 0x09);
-        mTypeNameToValue.put("END_OF_TRACK", 0x2f);
-        mTypeNameToValue.put("TEMPO", 0x51);
-        mTypeNameToValue.put("SMPTE_OFFSET", 0x54);
-        mTypeNameToValue.put("TIME_SIGNATURE", 0x58);
-        mTypeNameToValue.put("KEY_SIGNATURE", 0x59);
-        mTypeNameToValue.put("PROPRIETARY_DATA", 0x7f);
+        mTypeNameToValue.put("SEQUENCE_NUMBER", 0x00); // NOI18N
+        mTypeNameToValue.put("TEXT", 0x01); // NOI18N
+        mTypeNameToValue.put("COPYRIGHT", 0x02); // NOI18N
+        mTypeNameToValue.put("TRACK_NAME", 0x03); // NOI18N
+        mTypeNameToValue.put("INSTRUMENT", 0x04); // NOI18N
+        mTypeNameToValue.put("LYRIC", 0x05); // NOI18N
+        mTypeNameToValue.put("MARKER", 0x06); // NOI18N
+        mTypeNameToValue.put("CUE_POINT", 0x07); // NOI18N
+        mTypeNameToValue.put("PROGRAM_NAME", 0x08); // NOI18N
+        mTypeNameToValue.put("DEVICE_NAME", 0x09); // NOI18N
+        mTypeNameToValue.put("END_OF_TRACK", 0x2f); // NOI18N
+        mTypeNameToValue.put("TEMPO", 0x51); // NOI18N
+        mTypeNameToValue.put("SMPTE_OFFSET", 0x54); // NOI18N
+        mTypeNameToValue.put("TIME_SIGNATURE", 0x58); // NOI18N
+        mTypeNameToValue.put("KEY_SIGNATURE", 0x59); // NOI18N
+        mTypeNameToValue.put("PROPRIETARY_DATA", 0x7f); // NOI18N
     }
 
     /**
@@ -124,88 +126,88 @@ public class MetaEvent {
 
         // The returned Object array
         // { type name, length, value string }
-        Object[] result = {"M:", null, ""};
+        Object[] result = {"M:", null, ""}; // NOI18N
         result[1] = Integer.valueOf(data.length);
 
         switch (type) {
             case SEQUENCE_NUMBER:
-                result[0] = "M:SequenceNumber";
+                result[0] = "M:SequenceNumber"; // NOI18N
                 dumpBytes = true;
                 break;
             case TEXT:
-                result[0] = "M:Text";
+                result[0] = "M:Text"; // NOI18N
                 dumpText = true;
                 break;
             case COPYRIGHT:
-                result[0] = "M:Copyright";
+                result[0] = "M:Copyright"; // NOI18N
                 dumpText = true;
                 break;
             case TRACK_NAME:
-                result[0] = "M:TrackName";
+                result[0] = "M:TrackName"; // NOI18N
                 dumpText = true;
                 break;
             case INSTRUMENT:
-                result[0] = "M:Instrument";
+                result[0] = "M:Instrument"; // NOI18N
                 dumpText = true;
                 break;
             case LYRIC:
-                result[0] = "M:Lyric";
+                result[0] = "M:Lyric"; // NOI18N
                 dumpText = true;
                 break;
             case MARKER:
-                result[0] = "M:Marker";
+                result[0] = "M:Marker"; // NOI18N
                 dumpText = true;
                 break;
             case CUE_POINT:
-                result[0] = "M:CuePoint";
+                result[0] = "M:CuePoint"; // NOI18N
                 dumpText = true;
                 break;
             case PROGRAM_NAME:
-                result[0] = "M:ProgramName";
+                result[0] = "M:ProgramName"; // NOI18N
                 dumpText = true;
                 break;
             case DEVICE_NAME:
-                result[0] = "M:DeviceName";
+                result[0] = "M:DeviceName"; // NOI18N
                 dumpText = true;
                 break;
             case SMPTE_OFFSET:
-                result[0] = "M:SMPTEOffset";
+                result[0] = "M:SMPTEOffset"; // NOI18N
                 //hr mn se fr ff
                 result[2] =
-                        twoDigitFormat.format(data[0] & 0x00ff) + ":" +
-                        twoDigitFormat.format(data[1] & 0x00ff) + ":" +
-                        twoDigitFormat.format(data[2] & 0x00ff) + ":" +
-                        twoDigitFormat.format(data[3] & 0x00ff) + ":" +
-                        twoDigitFormat.format(data[4] & 0x00ff);
+                    twoDigitFormat.format(data[0] & 0x00ff) + ":" + // NOI18N
+                    twoDigitFormat.format(data[1] & 0x00ff) + ":" + // NOI18N
+                    twoDigitFormat.format(data[2] & 0x00ff) + ":" + // NOI18N
+                    twoDigitFormat.format(data[3] & 0x00ff) + ":" + // NOI18N
+                    twoDigitFormat.format(data[4] & 0x00ff);
                 break;
             case TIME_SIGNATURE:
-                result[0] = "M:TimeSignature";
+                result[0] = "M:TimeSignature"; // NOI18N
                 int nn = (data[0] & 0x00ff);
-                int dd = (int) (java.lang.Math.pow(2, (data[1] & 0x00ff)));
+                int dd = (int)(java.lang.Math.pow(2, (data[1] & 0x00ff)));
                 int cc = (data[2] & 0x00ff);
                 int bb = (data[3] & 0x00ff);
-                result[2] = nn + "/" + dd + " " + cc + "Metr. " + bb + "N/q";
+                result[2] = nn + "/" + dd + " " + cc + "Metr. " + bb + "N/q"; // NOI18N
                 //result[2] = nn + "/" + dd;
                 break;
             case KEY_SIGNATURE:
-                result[0] = "M:KeySignature";
+                result[0] = "M:KeySignature"; // NOI18N
                 result[2] = KeySignatures.getKeyName(data);
                 break;
             case TEMPO:
-                result[0] = "M:Tempo";
+                result[0] = "M:Tempo"; // NOI18N
                 int bpm = microSecsToBpm(data);
-                //result[2] = bpm + "bpm";
+                //result[2] = bpm + "bpm"; // NOI18N
                 result[2] = Integer.toString(bpm);
                 break;
             case END_OF_TRACK:
-                result[0] = "M:EndOfTrack";
+                result[0] = "M:EndOfTrack"; // NOI18N
                 break;
             case PROPRIETARY_DATA:
-                result[0] = "M:ProprietaryData";
+                result[0] = "M:ProprietaryData"; // NOI18N
                 dumpBytes = true;
                 break;
             default:
-                result[0] = "" + type;
+                result[0] = "" + type; // NOI18N
                 dumpBytes = true;
         }
 
@@ -215,7 +217,7 @@ public class MetaEvent {
                 byte b = data[k];
                 if (b > 31 && b < 128) {
                     // Printable character.
-                    chars[k] = (char) b;
+                    chars[k] = (char)b;
                 } else {
                     chars[k] = '.';
                 }
@@ -227,18 +229,19 @@ public class MetaEvent {
             result[2] = "";
             for (int k = 0; k < data.length; ++k) {
                 int i = data[k] & 0x00ff;
-                result[2] = result[2] + "0x" + Integer.toHexString(i) + " ";
+                result[2] = result[2] + "0x" + Integer.toHexString(i) + " "; // NOI18N
             }
         }
         return result;
     }
 
     // Methods to handle TEMPO events.
+
     /**
      * Convert the given microsecond period to BeatsPerMinute
      * @param data 3 bytes of data that specifiy the microsecond period.
      * Calculated as <br>
-     * <code>data[0] << 16 + data[1] << 8 + data [2]</code>
+     * <code>data[0] &lt;&lt; 16 + data[1] &lt;&lt; 8 + data[2]</code>
      * @return the BeatsPerMinute equivalent to the given microsecond period
      */
     public static int microSecsToBpm(byte[] data) {
@@ -252,20 +255,22 @@ public class MetaEvent {
         t += ints[1] << 8;
         t += ints[2];
 
-        return (int) (60000000 / t);
+        return (int)(60000000 / t);
     }
 
     /**
      * Convert the given BeatsPerMinute to a microsecond period
      * @param bpm the BeatsPerMinute to convert
-     * @return the microsecond period as described for {@see microSecsToBpm}
+     * @return 3 bytes of data that specifiy the microsecond period.
+     * Calculated as <br>
+     * <code>data[0] &lt;&lt; 16 + data[1] &lt;&lt; 8 + data [2]</code>
      */
     public static byte[] bpmToMicroSecs(int bpm) {
         long t = 60000000 / bpm;
         byte[] data = new byte[3];
-        data[0] = (byte) ((t & 0xff0000) >> 16);
-        data[1] = (byte) ((t & 0xff00) >> 8);
-        data[2] = (byte) ((t & 0xff));
+        data[0] = (byte)((t & 0xff0000) >> 16);
+        data[1] = (byte)((t & 0xff00) >> 8);
+        data[2] = (byte)((t & 0xff));
         return data;
     }
 
@@ -276,7 +281,7 @@ public class MetaEvent {
      * represent a valid integer (with optional 'bpm' suffix)
      */
     public static int parseTempo(String tempoString) {
-        int bpmPos = tempoString.toLowerCase().indexOf("bpm");
+        int bpmPos = tempoString.toLowerCase().indexOf("bpm"); // NOI18N
 
         // Default value is 60bpm
         int t = 60;
@@ -299,8 +304,9 @@ public class MetaEvent {
      * @param ticksPerBeat used to calculate the metronome click
      * @return the data for the event in a byte[]
      */
-    public static byte[] parseTimeSignature(String timeSigString, int ticksPerBeat) {
-        String[] parts = timeSigString.split("/");
+    public static byte[] parseTimeSignature(String timeSigString,
+                                              int ticksPerBeat) {
+        String[] parts = timeSigString.split("/"); // NOI18N
         // default to 4/4 
         byte[] result = {4, 2, (byte)(ticksPerBeat / 4), 8};
         switch (parts.length) {
@@ -315,7 +321,7 @@ public class MetaEvent {
                 result[0] = safeParseByte(parts[0]);
                 byte dur = safeParseByte(parts[1]);
                 double log2 = Math.log(dur) / Math.log(2);
-                result[1] = (byte) Math.round(log2);
+                result[1] = (byte)Math.round(log2);
                 // One metronome click per beat
                 result[2] = (byte)(ticksPerBeat / dur);
 
@@ -325,13 +331,14 @@ public class MetaEvent {
     }
 
     /**
-     * Parse an SMPTE offset string with an optional 'bpm' suffix e.g. 88bpm
-     * @param tempoString the string to parse
-     * @return the integer part of the string or 60 if the string does not
-     * represent a valid integer (with optional 'bpm' suffix)
+     * Parse an SMPTE offset string in the form 
+     * "hours:minutes:seconds:frames:fields"
+     * @param smpteString the string to parse
+     * @return a byte array with elements representing
+     * hours, minutes, seconds, frames, fields
      */
     public static byte[] parseSMPTEOffset(String smpteString) {
-        String[] parts = smpteString.split(":");
+        String[] parts = smpteString.split(":"); // NOI18N
         byte[] result = {0, 0, 0, 0, 0};
         switch (parts.length) {
             case 0:
@@ -394,40 +401,71 @@ public class MetaEvent {
     /**
      * Update the data content of the message
      * @param mess the message to update
-     * @param s a String representation of the data.<br>
-     * This can be just a String for text type messages,
-     * a TEMPO value, a KEY_SIGNATURE value or a space separated
-     * list of byte value strings such as "0x04".
+     * @param value a String that represents the data for the event.<br>
+     * This is parsed into a <code>byte[]</code> that becomes the data of
+     * the MetaMessage.<br>
+     * Most events treat the string as a text value and just convert
+     * each character to a <code>byte</code> in the array but the
+     * following message types are handled specially
+     * <dl>
+     * <dt>TEMPO</dt>
+     * <dd>an integer value with an optional "bpm" suffix. e.g. 120bpm</dd>
+     * <dt>SMPTE_OFFSET</dt>
+     * <dd>a string in the form <code>h:m:s:f:d</code> where<br>
+     * h=hours m=minutes s=seconds f=frames d=fields<br>
+     * If fewer than 5 values are given then the parser treats them as<br>
+     * 1. <b>s</b><br>
+     * 2. <b>m:s</b><br>
+     * 3. <b>h:m:s</b><br>
+     * 4. <b>h:m:s:f</b><br>
+     * 5. <b>h:m:s:f:d</b><br>
+     * and the unspecified values are set to zero.
+     * </dd>
+     * <dt>TIME_SIGNATURE</dt>
+     * <dd>a time signature string in the format <code>n[/d]</code> where<br>
+     * n=numerator d=denominator<br>
+     * If only <code>n</code> is given then <code>d</code> defaults to 4</dd>
+     * <dt>KEY_SIGNATURE</dt>
+     * <dd>one of the following key signature strings<br>
+     * <b>Cb Gb Db Ab Eb Bb F C G D A E B F# C#</b/></dd>
+     * <dt>SEQUENCE_NUMBER and PROPRIETARY_DATA</dt>
+     * <dd>a space-separated list of values that are parsed into
+     * a <code>byte[]</code> using <code>Byte.decode()</code><br>
+     * If any value cannot be parsed into a <code>byte</code>
+     * then it is treated as zero</dd>
+     * </dl>
+     * @param ticksPerBeat the tick resolution of the sequence
      */
-    public static void setMetaData(MetaMessage mess, String s, int ticksPerBeat) {
+    public static void setMetaData(MetaMessage mess, String value,
+                                     int ticksPerBeat) {
         byte[] data = null;
         int type = mess.getType();
         int len = mess.getData().length; // Beware of variable length messages!
         if (isText(mess)) {
-            len = s.length();
+            len = value.length();
             data = new byte[len];
             for (int i = 0; i < len; ++i) {
-                data[i] = (byte) s.charAt(i);
+                data[i] = (byte)value.charAt(i);
             }
         } else if (type == TEMPO) {
-            int bpm = parseTempo(s);
+            int bpm = parseTempo(value);
             data = bpmToMicroSecs(bpm);
             len = data.length;
         } else if (type == TIME_SIGNATURE) {
-            data = parseTimeSignature(s, ticksPerBeat);
+            data = parseTimeSignature(value, ticksPerBeat);
             len = data.length;
         } else if (type == KEY_SIGNATURE) {
-            data = KeySignatures.getKeyValues(s);
+            data = KeySignatures.getKeyValues(value);
             len = data.length;
         } else if (type == SMPTE_OFFSET) {
-            data = parseSMPTEOffset(s);
+            data = parseSMPTEOffset(value);
             len = data.length;
         } else {
             // treat the string as a space separated list of
             // string representations of byte values
             // Should handle decimal, hexadecimal and octal representations
             // using the java.lang.Byte.decode() method
-            String[] strings = s.split("\\p{Space}");
+            String[] strings = value.split("\\p{Space}"); // NOI18N
             data = new byte[strings.length];
             len = strings.length;
             for (int i = 0; i < len; ++i) {
@@ -444,25 +482,26 @@ public class MetaEvent {
                 mess.setMessage(type, data, len);
             } catch (InvalidMidiDataException e) {
                 TraceDialog.addTrace(
-                        "Error: MetaEvent.setMetaData(" + s + ") " + e.getMessage());
+                    "Error: MetaEvent.setMetaData(" + value + ") " + e.getMessage()); // NOI18N
             }
         }
     }
 
     /**
      * Create a Midi Meta event
-     * @param type the type of the event as defined by the array returned from getTypeNames()
-     * @param data the data for the event. This can be a string, for text events such as LYRIC
-     * a TEMPO, a KEY_SIGNATURE or a space-separated list of values that are parsed into
-     * a <code>byte[]</code> using <code>Byte.decode()</code>
+     * @param type the type of the event as defined by the array returned
+     * from getTypeNames()
+     * @param data a String that represents the data for the event.<br>
+     * see {@see #setMetaData} for details.
      * @param tick the position of the event in the sequence
+     * @param ticksPerBeat the tick resolution of the sequence
      * @return the created Midi Meta event
-     * @throws javax.sound.midi.InvalidMidiDataException if the MetaMessage.setMessage()
-     * parameters are not valid
+     * @throws javax.sound.midi.InvalidMidiDataException if the
+     * MetaMessage.setMessage() parameters are not valid
      */
-    public static MidiEvent createMetaEvent(
-            String type, String data, long tick, int ticksPerBeat)
-            throws InvalidMidiDataException {
+    public static MidiEvent createMetaEvent(String type, String data,
+                                              long tick, int ticksPerBeat)
+        throws InvalidMidiDataException {
         MetaMessage mm = new MetaMessage();
         mm.setMessage(mTypeNameToValue.get(type), null, 0);
         setMetaData(mm, data, ticksPerBeat);
@@ -471,7 +510,7 @@ public class MetaEvent {
     }
 
     private static byte safeParseByte(String s) {
-        return safeParseByte(s, (byte) 0);
+        return safeParseByte(s, (byte)0);
     }
 
     private static byte safeParseByte(String s, byte defVal) {

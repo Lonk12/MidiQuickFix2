@@ -20,24 +20,23 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix.components;
 
 import com.lemckes.MidiQuickFix.util.Formats;
-import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.swing.JLabel;
 
 /**
- * A slider that represents a duration in either tick or seconds.
+ * A slider that represents a duration in either ticks or beats.
  * @version $Id$
  */
 public class DurationSlider extends javax.swing.JSlider {
-    
+    static final long serialVersionUID = 6998631897922134763L;
+
     /** Creates new form DurationSlider */
     public DurationSlider() {
         initComponents();
     }
-    
+
     /**
      * Set the total duration covered by this slider
      * @param dur the maximum value
@@ -48,24 +47,29 @@ public class DurationSlider extends javax.swing.JSlider {
     public void setDuration(long dur, boolean ticks, int resolution) {
         setMinimum(0);
         setMaximum((int)dur);
-        
+
         int major;
         int minor;
-        
+
         if (ticks) {
             int beats = (int)(dur / resolution);
             major = beats / 10;
             minor = major / 8;
             if (major < 8) {
-                major = 8; minor = 1;
+                major = 8;
+                minor = 1;
             } else if (major < 16) {
-                major = 16; minor = 1;
+                major = 16;
+                minor = 1;
             } else if (major < 32) {
-                major = 32; minor = 8;
+                major = 32;
+                minor = 8;
             } else if (major < 64) {
-                major = 64; minor = 16;
+                major = 64;
+                minor = 16;
             } else if (major < 128) {
-                major = 128; minor = 32;
+                major = 128;
+                minor = 32;
             }
             major *= resolution;
             minor *= resolution;
@@ -73,17 +77,23 @@ public class DurationSlider extends javax.swing.JSlider {
             major = (int)(dur / 10);
             minor = major / 6;
             if (major < 10) {
-                major = 10; minor = 1;
+                major = 10;
+                minor = 1;
             } else if (major < 15) {
-                major = 15; minor = 1;
+                major = 15;
+                minor = 1;
             } else if (major < 20) {
-                major = 20; minor = 2;
+                major = 20;
+                minor = 2;
             } else if (major < 30) {
-                major = 30; minor = 5;
+                major = 30;
+                minor = 5;
             } else if (major < 60) {
-                major = 60; minor = 10;
+                major = 60;
+                minor = 10;
             } else if (major < 120) {
-                major = 120; minor = 20;
+                major = 120;
+                minor = 20;
             }
         }
         setMajorTickSpacing(major);
@@ -102,9 +112,9 @@ public class DurationSlider extends javax.swing.JSlider {
         setLabelTable(labelTable);
         setPaintLabels(true);
         setPaintTicks(true);
-        
+
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -121,9 +131,6 @@ public class DurationSlider extends javax.swing.JSlider {
         setValue(0);
     }
 // </editor-fold>//GEN-END:initComponents
-    
-    
 // Variables declaration - do not modify//GEN-BEGIN:variables
 // End of variables declaration//GEN-END:variables
-    
 }

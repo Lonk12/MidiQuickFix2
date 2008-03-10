@@ -30,10 +30,8 @@ import com.lemckes.MidiQuickFix.util.UiStrings;
  * @version $Id$
  */
 public class Startup extends javax.swing.JDialog {
-    /** A return status code - returned if Cancel button has been pressed */
-    public static final int RET_CANCEL = 0;
-    /** A return status code - returned if OK button has been pressed */
-    public static final int RET_OK = 1;
+    static final long serialVersionUID = -2431242847368801394L;
+
     /** The component that displays our splash screen */
     SplashDrawing splash;
     
@@ -53,14 +51,6 @@ public class Startup extends javax.swing.JDialog {
         java.awt.Dimension sd = tk.getScreenSize();
         java.awt.Dimension dd = getSize();
         setLocation((int)((sd.getWidth() - dd.getWidth()) / 2), (int)((sd.getHeight() - dd.getHeight()) / 2));
-    }
-    
-    /**
-     * test how the user closed the dialog
-     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
-     */
-    public int getReturnStatus() {
-        return returnStatus;
     }
     
     /** This method is called from within the constructor to
@@ -102,26 +92,16 @@ public class Startup extends javax.swing.JDialog {
     
     /** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
-        doClose(RET_CANCEL);
+        doClose();
     }//GEN-LAST:event_closeDialog
     
-    private void doClose(int retStatus) {
-        returnStatus = retStatus;
+    private void doClose() {
         setVisible(false);
         dispose();
-    }
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        new Startup(new javax.swing.JFrame(), true).setVisible(true);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
     // End of variables declaration//GEN-END:variables
-    
-    private int returnStatus = RET_CANCEL;
 }

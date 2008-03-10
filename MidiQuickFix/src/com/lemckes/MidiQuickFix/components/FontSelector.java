@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix.components;
 
 import com.lemckes.MidiQuickFix.util.FontSelectionEvent;
@@ -34,20 +33,21 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-
 /**
  * A dialog that allows the user to choose a font.
  * @version  $Id$
  */
 public class FontSelector extends javax.swing.JDialog {
+    static final long serialVersionUID = -862613500313024646L;
+
     /**
      * Creates a new FontSelector dialog.
      */
     public FontSelector(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        mModal= modal;
+        mModal = modal;
         initComponents();
-        
+
         if (mModal) {
             okButton.setText(UiStrings.getString("ok"));
             cancelButton.setText(UiStrings.getString("cancel"));
@@ -55,42 +55,48 @@ public class FontSelector extends javax.swing.JDialog {
             okButton.setText(UiStrings.getString("apply"));
             cancelButton.setText(UiStrings.getString("close"));
         }
-        
+
         getRootPane().setDefaultButton(okButton);
-        
+
         mAttributes = new SimpleAttributeSet();
-        
+
         fontList.setModel(new javax.swing.AbstractListModel() {
-            GraphicsEnvironment ge
-              = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            static final long serialVersionUID = -3821347059262633012L;
+            GraphicsEnvironment ge =
+                GraphicsEnvironment.getLocalGraphicsEnvironment();
             String[] fontNames = ge.getAvailableFontFamilyNames();
+
             public int getSize() {
-                return fontNames.length; }
+                return fontNames.length;
+            }
+
             public Object getElementAt(int i) {
-                return fontNames[i]; }
+                return fontNames[i];
+            }
         });
-        
+
         fontList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 StyleConstants.setFontFamily(mAttributes,
-                  (String)fontList.getSelectedValue());
+                    (String)fontList.getSelectedValue());
                 updateFontPreview();
             }
         });
-        
+
         // Set the default values for the font attributes.
         fontList.setSelectedValue("Dialog", true);
-        StyleConstants.setFontFamily(mAttributes, (String)fontList.getSelectedValue());
+        StyleConstants.setFontFamily(mAttributes,
+            (String)fontList.getSelectedValue());
         StyleConstants.setItalic(mAttributes, italicCheckBox.isSelected());
         StyleConstants.setBold(mAttributes, boldCheckBox.isSelected());
         sizeCombo.setSelectedItem("12");
         StyleConstants.setFontSize(mAttributes, 12);
-        
+
         updateFontPreview();
-        
+
         mListenerList = new EventListenerList();
     }
-    
+
     /**
      * Add a listener that will be notified when a font is selected.
      * @param l the listener to add
@@ -98,20 +104,20 @@ public class FontSelector extends javax.swing.JDialog {
     public void addFontSelectionListener(FontSelectionListener l) {
         mListenerList.add(FontSelectionListener.class, l);
     }
-    
+
     private void updateFontPreview() {
         String name = StyleConstants.getFontFamily(mAttributes);
         boolean bold = StyleConstants.isBold(mAttributes);
         boolean ital = StyleConstants.isItalic(mAttributes);
         int size = StyleConstants.getFontSize(mAttributes);
-        
+
         mFont = new Font(name, (bold ? Font.BOLD : 0) +
-          (ital ? Font.ITALIC : 0), size);
+            (ital ? Font.ITALIC : 0), size);
         previewText.setFont(mFont);
-        
+
         this.validate();
     }
-    
+
     /**
      * Get the selected font.
      * @return The selected font.
@@ -119,7 +125,7 @@ public class FontSelector extends javax.swing.JDialog {
     public Font getSelectedFont() {
         return mFont;
     }
-    
+
     /**
      * Set the selected font based on the font attributes
      * @param name The font family name
@@ -127,7 +133,8 @@ public class FontSelector extends javax.swing.JDialog {
      * @param italic true for an italic font
      * @param size the point size of the font
      */
-    public void setSelectedFont(String name, boolean bold, boolean italic, int size) {
+    public void setSelectedFont(String name, boolean bold, boolean italic,
+                                 int size) {
         fontList.setSelectedValue(name, true);
         StyleConstants.setFontFamily(mAttributes, name);
         sizeCombo.setSelectedItem(Integer.toString(size));
@@ -136,10 +143,10 @@ public class FontSelector extends javax.swing.JDialog {
         StyleConstants.setBold(mAttributes, bold);
         italicCheckBox.setSelected(italic);
         StyleConstants.setItalic(mAttributes, italic);
-        
+
         updateFontPreview();
     }
-    
+
     /**
      * Set the selected font to the given font
      * @param font the font to be selected
@@ -151,19 +158,18 @@ public class FontSelector extends javax.swing.JDialog {
         int size = font.getSize();
         setSelectedFont(name, bold, ital, size);
     }
-    
-    
+
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
     public int getReturnStatus() {
         return mReturnStatus;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
      */
-    // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
@@ -184,38 +190,38 @@ public class FontSelector extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
-        getContentPane().setLayout(new java.awt.BorderLayout(12, 12));
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Font Chooser");
-        setName("fontChooserDialog");
+        setTitle(UiStrings.getString("font_chooser")); // NOI18N
+        setName("fontChooserDialog"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }
         });
-
-        insetPanel.setLayout(new java.awt.BorderLayout(0, 12));
+        getContentPane().setLayout(new java.awt.BorderLayout(12, 12));
 
         insetPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 12, 11, 11));
-        insetPanel.setName("insetPanel");
+        insetPanel.setName("insetPanel"); // NOI18N
+        insetPanel.setLayout(new java.awt.BorderLayout(0, 12));
+
+        mainPanel.setName("mainPanel"); // NOI18N
         mainPanel.setLayout(new java.awt.BorderLayout(6, 6));
 
-        mainPanel.setName("mainPanel");
         fontScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         fontScrollPane.setMinimumSize(new java.awt.Dimension(22, 131));
-        fontScrollPane.setName("fontScrollPane");
+        fontScrollPane.setName("fontScrollPane"); // NOI18N
+
         fontList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        fontList.setName("fontList");
+        fontList.setName("fontList"); // NOI18N
         fontScrollPane.setViewportView(fontList);
 
         mainPanel.add(fontScrollPane, java.awt.BorderLayout.CENTER);
 
+        attributesPanel.setName("attributesPanel"); // NOI18N
         attributesPanel.setLayout(new java.awt.GridBagLayout());
 
-        attributesPanel.setName("attributesPanel");
         sizeLabel.setText(UiStrings.getString("size")); // NOI18N
-        sizeLabel.setName("sizeLabel");
+        sizeLabel.setName("sizeLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -224,13 +230,12 @@ public class FontSelector extends javax.swing.JDialog {
         attributesPanel.add(sizeLabel, gridBagConstraints);
 
         boldCheckBox.setText(UiStrings.getString("bold")); // NOI18N
-        boldCheckBox.setName("boldCheckBox");
+        boldCheckBox.setName("boldCheckBox"); // NOI18N
         boldCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 boldCheckBoxActionPerformed(evt);
             }
         });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -240,13 +245,12 @@ public class FontSelector extends javax.swing.JDialog {
 
         italicCheckBox.setFont(new java.awt.Font("Dialog", 3, 12));
         italicCheckBox.setText(UiStrings.getString("italic")); // NOI18N
-        italicCheckBox.setName("italicCheckBox");
+        italicCheckBox.setName("italicCheckBox"); // NOI18N
         italicCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 italicCheckBoxActionPerformed(evt);
             }
         });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -256,7 +260,7 @@ public class FontSelector extends javax.swing.JDialog {
         sizeCombo.setEditable(true);
         sizeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "6", "7", "8", "9", "10", "12", "14", "18", "20", "24", "28", "32", "36", "40", "44", "48", "56", "64", "72" }));
         sizeCombo.setMinimumSize(new java.awt.Dimension(62, 20));
-        sizeCombo.setName("sizeCombo");
+        sizeCombo.setName("sizeCombo"); // NOI18N
         sizeCombo.setPreferredSize(new java.awt.Dimension(62, 20));
         sizeCombo.setPrototypeDisplayValue(italicCheckBox.getPreferredSize());
         sizeCombo.addActionListener(new java.awt.event.ActionListener() {
@@ -264,13 +268,12 @@ public class FontSelector extends javax.swing.JDialog {
                 sizeComboActionPerformed(evt);
             }
         });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         attributesPanel.add(sizeCombo, gridBagConstraints);
 
         styleLabel.setText(UiStrings.getString("style")); // NOI18N
-        styleLabel.setName("styleLabel");
+        styleLabel.setName("styleLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -284,39 +287,37 @@ public class FontSelector extends javax.swing.JDialog {
         previewText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         previewText.setText(UiStrings.getString("sample_text_preview")); // NOI18N
         previewText.setToolTipText(UiStrings.getString("sample_text")); // NOI18N
-        previewText.setName("previewText");
+        previewText.setName("previewText"); // NOI18N
         mainPanel.add(previewText, java.awt.BorderLayout.SOUTH);
 
         familyLabel.setText(UiStrings.getString("family")); // NOI18N
-        familyLabel.setName("familyLabel");
+        familyLabel.setName("familyLabel"); // NOI18N
         mainPanel.add(familyLabel, java.awt.BorderLayout.NORTH);
 
         insetPanel.add(mainPanel, java.awt.BorderLayout.CENTER);
 
+        buttonPanel.setName("buttonPanel"); // NOI18N
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 0, 0));
 
-        buttonPanel.setName("buttonPanel");
+        buttonGrid.setName("buttonGrid"); // NOI18N
         buttonGrid.setLayout(new java.awt.GridLayout(1, 0, 5, 0));
 
-        buttonGrid.setName("buttonGrid");
         okButton.setText(UiStrings.getString("apply")); // NOI18N
-        okButton.setName("okButton");
+        okButton.setName("okButton"); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
-
         buttonGrid.add(okButton);
 
         cancelButton.setText(UiStrings.getString("close")); // NOI18N
-        cancelButton.setName("cancelButton");
+        cancelButton.setName("cancelButton"); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
-
         buttonGrid.add(cancelButton);
 
         buttonPanel.add(buttonGrid);
@@ -327,35 +328,34 @@ public class FontSelector extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
     private void italicCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_italicCheckBoxActionPerformed
         StyleConstants.setItalic(mAttributes, italicCheckBox.isSelected());
         updateFontPreview();
     }//GEN-LAST:event_italicCheckBoxActionPerformed
-    
+
     private void boldCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boldCheckBoxActionPerformed
         StyleConstants.setBold(mAttributes, boldCheckBox.isSelected());
         updateFontPreview();
     }//GEN-LAST:event_boldCheckBoxActionPerformed
-    
+
     private void sizeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sizeComboActionPerformed
         // Default to the previous value if the parseInt fails.
         int size = StyleConstants.getFontSize(mAttributes);
         try {
             size = Integer.parseInt((String)sizeCombo.getSelectedItem());
-        } catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             // Ignore it
             sizeCombo.setSelectedItem(Integer.toString(size));
         }
         StyleConstants.setFontSize(mAttributes, size);
-        
+
         updateFontPreview();
     }//GEN-LAST:event_sizeComboActionPerformed
-    
+
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         doClose(RET_CANCEL);
     }//GEN-LAST:event_cancelButtonActionPerformed
-    
+
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         mReturnStatus = RET_OK;
         fireFontSelected();
@@ -363,34 +363,32 @@ public class FontSelector extends javax.swing.JDialog {
             doClose(RET_OK);
         }
     }//GEN-LAST:event_okButtonActionPerformed
-    
+
     /** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
-    
+
     private void fireFontSelected() {
         FontSelectionListener[] listeners =
-          (FontSelectionListener[])
-          (mListenerList.getListeners(FontSelectionListener.class));
+            (FontSelectionListener[])(mListenerList.getListeners(FontSelectionListener.class));
         FontSelectionEvent e = new FontSelectionEvent(mFont);
         for (int i = listeners.length - 1; i >= 0; --i) {
             listeners[i].fontSelected(e);
         }
     }
-    
+
     private void doClose(int retStatus) {
         mReturnStatus = retStatus;
         setVisible(false);
     }
-    
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         new FontSelector(new javax.swing.JFrame(), true).setVisible(true);
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel attributesPanel;
     private javax.swing.JCheckBox boldCheckBox;
@@ -409,23 +407,19 @@ public class FontSelector extends javax.swing.JDialog {
     private javax.swing.JLabel sizeLabel;
     private javax.swing.JLabel styleLabel;
     // End of variables declaration//GEN-END:variables
-    
+
     /** The font attributes. */
     private SimpleAttributeSet mAttributes;
-    
     /** The selected font. */
     private Font mFont;
-
     /** Is this dialog modal */
     private boolean mModal;
-    
     /** The status to return */
     private int mReturnStatus = RET_CANCEL;
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
-    
     /** The list of registered listeners. */
     protected EventListenerList mListenerList;
 }

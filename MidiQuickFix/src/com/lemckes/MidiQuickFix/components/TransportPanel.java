@@ -39,6 +39,7 @@ import javax.swing.AbstractAction;
  * @version $Id$
  */
 public class TransportPanel extends javax.swing.JPanel {
+    static final long serialVersionUID = 6727747406307178988L;
     
     transient private DrawnIcon pauseIcon;
     transient private DrawnIcon playIcon;

@@ -66,11 +66,11 @@ import javax.swing.event.TableModelListener;
 
 /**
  * A MIDI file editor that works at the Midi event level.
- * @see javax.sound.midi
  * @version $Id$
  */
 public class MidiQuickFix extends JFrame
     implements MidiSeqPlayer, LoopSliderListener, TableModelListener {
+    static final long serialVersionUID = -3768776503290924603L;
 
     /**
      * Creates a new MidiQuickFix instance
@@ -85,7 +85,6 @@ public class MidiQuickFix extends JFrame
      */
     public MidiQuickFix(String fileName) {
         TraceDialog.getInstance().addComponentListener(new ComponentListener() {
-
             public void componentShown(ComponentEvent e) {
                 traceMenuItem.setState(true);
             }
@@ -105,26 +104,26 @@ public class MidiQuickFix extends JFrame
         startDialog.setVisible(true);
 
         try {
-            startDialog.splash.setStageMessage(
-                "Using Java Version " + mJavaVersion);
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("using_java") + mJavaVersion); // NOI18N
 
-            startDialog.splash.setStageMessage(
-                UiStrings.getString("getting_sequencer"));
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("getting_sequencer")); // NOI18N
             mSequencer = MidiSystem.getSequencer();
 
-            startDialog.splash.setStageMessage(
-                UiStrings.getString("get_sequencer_returned"));
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("get_sequencer_returned")); // NOI18N
             if (mSequencer == null) {
                 // Error -- sequencer device is not supported.
-                startDialog.splash.setStageMessage(
-                    UiStrings.getString("get_sequencer_failed"));
+                startDialog.splash.addStageMessage(
+                    UiStrings.getString("get_sequencer_failed")); // NOI18N
             } else {
                 // Acquire resources and make operational.
-                startDialog.splash.setStageMessage(
-                    UiStrings.getString("opening_sequencer"));
+                startDialog.splash.addStageMessage(
+                    UiStrings.getString("opening_sequencer")); // NOI18N
                 mSequencer.open(); // This call blocks the process...
-                startDialog.splash.setStageMessage(
-                    UiStrings.getString("sequencer_opened"));
+                startDialog.splash.addStageMessage(
+                    UiStrings.getString("sequencer_opened")); // NOI18N
             }
 
             mPlayController = new PlayController(mSequencer, mSeq);
@@ -132,28 +131,27 @@ public class MidiQuickFix extends JFrame
             initComponents();
 
             tempoAdjustField.setValue(1.0f);
-            tempoAdjustField.addPropertyChangeListener("value",
+            tempoAdjustField.addPropertyChangeListener("value", // NOI18N
                 new PropertyChangeListener() {
-
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        float val = 1.0f;
+                public void propertyChange(PropertyChangeEvent evt) {
+                    float val = 1.0f;
+                    try {
+                        val = (Float)tempoAdjustField.getValue();
+                    } catch (ClassCastException cce) {
                         try {
-                            val = (Float)tempoAdjustField.getValue();
-                        } catch (ClassCastException cce) {
+                            double d = (Double)tempoAdjustField.getValue();
+                            val = (float)d;
+                        } catch (ClassCastException cce2) {
                             try {
-                                double d = (Double)tempoAdjustField.getValue();
-                                val = (float)d;
-                            } catch (ClassCastException cce2) {
-                                try {
-                                    long l = (Long)tempoAdjustField.getValue();
-                                    val = (float)l;
-                                } catch (ClassCastException cce3) {
-                                // DO NOTHING
-                                }
+                                long l = (Long)tempoAdjustField.getValue();
+                                val = (float)l;
+                            } catch (ClassCastException cce3) {
+                            // DO NOTHING
                             }
                         }
-                        setTempoFactor(val);
                     }
+                    setTempoFactor(val);
+                }
                 });
 
             transportPanel.setActions(
@@ -163,16 +161,16 @@ public class MidiQuickFix extends JFrame
                 mPlayController.mStopAction,
                 mPlayController.mLoopAction);
 
-            mPlayController.mRewindAction.putValue("rewinder", this);
-            mPlayController.mPlayAction.putValue("player", this);
-            mPlayController.mPauseAction.putValue("pauser", this);
-            mPlayController.mStopAction.putValue("stopper", this);
-            mPlayController.mLoopAction.putValue("looper", this);
+            mPlayController.mRewindAction.putValue("rewinder", this); // NOI18N
+            mPlayController.mPlayAction.putValue("player", this); // NOI18N
+            mPlayController.mPauseAction.putValue("pauser", this); // NOI18N
+            mPlayController.mStopAction.putValue("stopper", this); // NOI18N
+            mPlayController.mLoopAction.putValue("looper", this); // NOI18N
             mPlayController.setPlayState(PlayController.PlayState.NO_FILE);
 
             if (fileName != null && fileName.length() > 0) {
-                startDialog.splash.setStageMessage(
-                    UiStrings.getString("opening_file"));
+                startDialog.splash.addStageMessage(
+                    UiStrings.getString("opening_file")); // NOI18N
                 newSequence(fileName);
             }
 
@@ -193,7 +191,6 @@ public class MidiQuickFix extends JFrame
             mChannels = mSynth.getChannels();
 
             tempoAdjustSlider.addChangeListener(new ChangeListener() {
-
                 public void stateChanged(ChangeEvent e) {
                     // the slider range is [0, 200]
                     // convert the value to the range [-1.0, 1.0]
@@ -207,13 +204,14 @@ public class MidiQuickFix extends JFrame
                 }
             });
         } catch (MidiUnavailableException e) {
-            startDialog.splash.setStageMessage(
-                UiStrings.getString("no_midi_message"));
-            startDialog.splash.setStageMessage(
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("no_midi_message")); // NOI18N
+            startDialog.splash.addStageMessage(
                 e.getMessage());
-            startDialog.splash.setStageMessage(
-                UiStrings.getString("startup_failed"));
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("startup_failed")); // NOI18N
         }
+        pack();
     }
 
     private void setTempoFactor(float factor) {
@@ -276,6 +274,7 @@ public class MidiQuickFix extends JFrame
     public void newSequence(final java.io.File file) {
         final SwingWorker worker = new SwingWorker() {
             // Open the file in the worker thread
+
             public Object construct() {
                 try {
                     setBusy(true);
@@ -286,15 +285,17 @@ public class MidiQuickFix extends JFrame
                     mFileName = file.getName();
                     mFilePath = file.getCanonicalPath();
                 } catch (IOException e) {
-                    trace("IOException in newSequence(final java.io.File file) : " + e);
-                    showDialog("<html>There was an error reading the selected file<br>" +
-                        "It may be corrupt or you might not have permission to open it.</html>",
-                        "IO Error", JOptionPane.ERROR_MESSAGE);
+                    trace("IOException in newSequence() : " + e); // NOI18N
+                    showDialog(UiStrings.getString("file_read_error") +
+                        UiStrings.getString("file_read_permission"),
+                        UiStrings.getString("file_io_error"),
+                        JOptionPane.ERROR_MESSAGE);
                 } catch (InvalidMidiDataException e) {
-                    trace("InvalidMidiDataException in newSequence(final java.io.File file) : " + e);
-                    showDialog("<html>There was an error reading the selected file<br>" +
-                        "It may not be a MIDI file.</html>",
-                        "Invalid Data", JOptionPane.ERROR_MESSAGE);
+                    trace("InvalidMidiDataException in newSequence() : " + e); // NOI18N
+                    showDialog(UiStrings.getString("file_read_error") +
+                        UiStrings.getString("file_read_invalid"),
+                        UiStrings.getString("file_invalid_data"),
+                        JOptionPane.ERROR_MESSAGE);
                 } finally {
                     setBusy(false);
                 }
@@ -302,6 +303,7 @@ public class MidiQuickFix extends JFrame
             }
 
             //Build sequence in the event-dispatching thread.
+
             @Override
             public void finished() {
                 if (mSeq != null) {
@@ -393,16 +395,17 @@ public class MidiQuickFix extends JFrame
             mSequenceModified = false;
         } catch (IOException e) {
             trace("IOException in saveFile(java.io.File file) : " + e);
-            showDialog("<html>There was an error saving the file<br>" +
-                "The disk might be full or you might not<br>" +
-                "have permission to write to it.</html>",
-                "IO Error", JOptionPane.ERROR_MESSAGE);
+            showDialog(UiStrings.getString("file_save_error") +
+                UiStrings.getString("file_save_permission"),
+                UiStrings.getString("file_io_error"),
+                JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         } catch (InvalidMidiDataException e) {
             trace("InvalidMidiDataException in saveFile(java.io.File file) : " + e);
-            showDialog("<html>There was an error creating the file to save<br>" +
-                "There are some invalid values in the sequence data.</html>",
-                "Invalid Data", JOptionPane.ERROR_MESSAGE);
+            showDialog(UiStrings.getString("file_create_error") +
+                UiStrings.getString("file_save_invalid"),
+                UiStrings.getString("file_invalid_data"),
+                JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -510,7 +513,8 @@ public class MidiQuickFix extends JFrame
             if (overflowed) {
                 String message = UiStrings.getString("transpose_out_of_range");
                 JOptionPane.showMessageDialog(
-                    this, message, UiStrings.getString("notes_out_of_range_title"),
+                    this, message,
+                    UiStrings.getString("notes_out_of_range_title"),
                     JOptionPane.WARNING_MESSAGE);
             }
         }
@@ -960,7 +964,6 @@ public class MidiQuickFix extends JFrame
             }
             mTrackEditor.addTableChangeListener(this);
             validate();
-            pack();
         }
     }//GEN-LAST:event_editorPanelComponentShown
 
@@ -975,7 +978,6 @@ public class MidiQuickFix extends JFrame
             mTrackSummary.setSequence(mSeq);
         }
         validate();
-        pack();
     }//GEN-LAST:event_summaryPanelComponentShown
 
     private void lyricsPanelComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_lyricsPanelComponentShown
@@ -1057,14 +1059,12 @@ public class MidiQuickFix extends JFrame
     }//GEN-LAST:event_saveAsMenuItemActionPerformed
 
     private void createTimer(int delay) {
-        trace("createTimer");
+        trace("createTimer"); // NOI18N
         java.awt.event.ActionListener taskPerformer =
             new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     //...Perform a task...
                     EventQueue.invokeLater(new Runnable() {
-
                         public void run() {
                             long ticks = mSequencer.getTickPosition();
                             positionSlider.setValue((int)ticks);
@@ -1109,10 +1109,11 @@ public class MidiQuickFix extends JFrame
             try {
                 mSequencer.setSequence(mSeq);
             } catch (javax.sound.midi.InvalidMidiDataException imde) {
-                trace("Exception in tableChanged(TableModelEvent e) " + imde);
-                showDialog("<html>There was an error updating the sequence.<br>" +
-                    "There are some invalid values in the sequence data.</html>",
-                    "Invalid Data", JOptionPane.ERROR_MESSAGE);
+                trace("Exception in tableChanged " + imde); // NOI18N
+                showDialog(UiStrings.getString("edit_sequence_error") +
+                    UiStrings.getString("edit_sequence_invalid"),
+                    UiStrings.getString("file_invalid_data"),
+                    JOptionPane.ERROR_MESSAGE);
                 imde.printStackTrace();
             }
             if (wasPlaying) {
@@ -1147,8 +1148,8 @@ public class MidiQuickFix extends JFrame
     public static void main(String args[]) {
         Properties p = System.getProperties();
         // p.list(System.out);
-        mJavaVersion = p.getProperty("java.version", "No java.version found");
-        if (mJavaVersion.substring(0, 5).equals("1.4.2")) {
+        mJavaVersion = p.getProperty("java.version", "No java.version found"); // NOI18N
+        if (mJavaVersion.substring(0, 5).equals("1.4.2")) { // NOI18N
             VERSION_1_4_2_BUG = true;
         } else {
             VERSION_1_4_2_BUG = false;
@@ -1156,7 +1157,7 @@ public class MidiQuickFix extends JFrame
 
 //        EventQueue.invokeLater(new Runnable() {
 //            public void run() {
-        new MidiQuickFix().setVisible(true);
+                new MidiQuickFix().setVisible(true);
 //            }
 //        });
     }
@@ -1216,6 +1217,7 @@ public class MidiQuickFix extends JFrame
     private javax.swing.JMenuItem transposeMenuItem;
     private javax.swing.JMenu viewMenu;
     // End of variables declaration//GEN-END:variables
+
     /** The system synthesizer. */
     transient Synthesizer mSynth;
     /** The syth's channels. */
@@ -1251,10 +1253,11 @@ public class MidiQuickFix extends JFrame
         try {
             mSequencer.setSequence(mSeq);
         } catch (InvalidMidiDataException imde) {
-            trace("Exception in play() " + imde);
-            showDialog("<html>There was an error playing the sequence.<br>" +
-                "There are some invalid values in the sequence data.</html>",
-                "Invalid Data", JOptionPane.ERROR_MESSAGE);
+            trace("Exception in play() " + imde); // NOI18N
+            showDialog(UiStrings.getString("play_sequence_error") +
+                UiStrings.getString("play_sequence_invalid"),
+                UiStrings.getString("file_invalid_data"),
+                JOptionPane.ERROR_MESSAGE);
         }
 
         // Clear the lyrics, but only if we are playing from the start.
@@ -1326,9 +1329,9 @@ public class MidiQuickFix extends JFrame
      * @param title the title for the dialog window
      * @param messageType one of the JOptionPane.*_MESSAGE constants
      */
-    void showDialog(final String message, final String title, final int messageType) {
+    void showDialog(final String message, final String title,
+                    final int messageType) {
         EventQueue.invokeLater(new Runnable() {
-
             public void run() {
                 JOptionPane.showMessageDialog(
                     mainPanel, message, title, messageType);
@@ -1345,7 +1348,6 @@ public class MidiQuickFix extends JFrame
      * EndOfTrack - stop the sequencer and update the playing state</li></ul>
      */
     public class EventHandler implements MetaEventListener {
-
         /**
          * Handle meta events -<ul><li>
          * TimeSignature - update the displayed time signature</li><li>
@@ -1360,20 +1362,19 @@ public class MidiQuickFix extends JFrame
             // if (!mSequencer.isRunning()) {
             if (type == MetaEvent.END_OF_TRACK) {
                 EventQueue.invokeLater(new Runnable() {
-
                     public void run() {
                         stop();
                         mPlayController.stop();
                     }
                 });
             }
-            if (str[0].equals("M:TimeSignature")) {
+            if (str[0].equals("M:TimeSignature")) { // NOI18N
                 timeSigText.setText(str[2].toString());
             }
-            if (str[0].equals("M:KeySignature")) {
+            if (str[0].equals("M:KeySignature")) { // NOI18N
                 keyText.setText(str[2].toString());
             }
-            if (str[0].equals("M:Tempo")) {
+            if (str[0].equals("M:Tempo")) { // NOI18N
                 tempoText.setText(str[2].toString());
             }
         }

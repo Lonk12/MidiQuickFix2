@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.EventCreationEvent;
@@ -34,18 +33,16 @@ import javax.sound.midi.Track;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.event.TableModelListener;
 
-
 /**
  * The UI for editing track data
  * @version $Id$
  */
 public class TrackEditorPanel extends javax.swing.JPanel implements EventCreationListener {
+    static final long serialVersionUID = 116439713789684943L;
     private Sequence mSeq;
     private Track[] mTracks;
     private int mCurrentTrack;
-
     private String mKeySig;
-
     private CreateEventDialog mCreateEventDialog;
 
     /** Creates new form TrackEditorPanel */
@@ -121,7 +118,8 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
 
     private void doCreateEvent() {
         if (mCreateEventDialog == null) {
-            mCreateEventDialog = new CreateEventDialog(mSeq.getResolution(), null, false);
+            mCreateEventDialog = new CreateEventDialog(mSeq.getResolution(),
+                null, false);
             mCreateEventDialog.addEventCreationListener(this);
         }
         TrackTableModel ttm = (TrackTableModel)trackTable.getModel();
@@ -229,7 +227,6 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
         add(trackPanel, java.awt.BorderLayout.NORTH);
 
     }// </editor-fold>//GEN-END:initComponents
-
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int[] selRows = trackTable.getSelectedRows();
         trackTable.deleteRows(selRows);
@@ -254,8 +251,6 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
     public void eventCreated(EventCreationEvent e) {
         trackTable.insertEvent(e.getEvent());
     }
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JPanel controlPanel;

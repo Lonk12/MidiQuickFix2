@@ -20,36 +20,39 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
-import javax.swing.table.*;
-
-import javax.sound.midi.*;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Synthesizer;
+import javax.sound.midi.Track;
+import javax.swing.table.AbstractTableModel;
 
 /**
  * The model for the track summary table.
  * @version $Id$
  */
 class TrackSummaryTableModel extends AbstractTableModel {
-
-    transient Synthesizer mSynth;
-
-    transient MidiChannel[] mChannels;
-
-    transient Sequencer mSeq;
-
+    static final long serialVersionUID = -5109111307767764175L;
+    transient private Synthesizer mSynth;
+    transient private MidiChannel[] mChannels;
+    transient private Sequencer mSeq;
     /** The Sequence that is loaded. */
-    transient Sequence mSequence;
-
+    transient private Sequence mSequence;
     /** The resolution of the sequence */
-    int mRes;
-
+    private int mRes;
     /** The tracks in the sequence */
-    transient Track[] mTracks;
+    transient private Track[] mTracks;
 
     /** The data about a track */
     static class TrackInfo {
@@ -59,27 +62,26 @@ class TrackSummaryTableModel extends AbstractTableModel {
         int mChannel;
         boolean mSolo;
         boolean mMute;
-    };
-
+    }
     /** The track info for each track */
-    transient TrackInfo[] mInfo;
+    transient private TrackInfo[] mInfo;
 
     /** Creates a new instance of a TrackSummaryTableModel */
     public TrackSummaryTableModel(Sequence s) {
         try {
             mSynth = MidiSystem.getSynthesizer();
-        } catch(MidiUnavailableException e) {
-            TraceDialog.addTrace("No Synthesiser available." +
-                " (Could make playing tricky.)");
+        } catch (MidiUnavailableException e) {
+            TraceDialog.addTrace("No Synthesiser available." + // NOI18N
+                " (Could make playing tricky.)"); // NOI18N
         }
 
         mChannels = mSynth.getChannels();
         mChannels[0].allSoundOff();
         try {
             mSeq = MidiSystem.getSequencer();
-        } catch(MidiUnavailableException e) {
-            TraceDialog.addTrace("No Sequencer available." +
-                " (Could make playing tricky.)");
+        } catch (MidiUnavailableException e) {
+            TraceDialog.addTrace("No Sequencer available." + // NOI18N
+                " (Could make playing tricky.)"); // NOI18N
         }
 
         mSequence = s;
@@ -201,15 +203,15 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 boolean soloed = mSeq.getTrackSolo(row);
                 if (soloed != mInfo[row].mSolo) {
                     TraceDialog.addTrace(
-                        "Sequencer Solo not supported. (Set to " + value
-                        + " is actually " + soloed + ")");
+                        "Sequencer Solo not supported. (Set to " + value // NOI18N
+                        + " is actually " + soloed + ")"); // NOI18N
                 }
                 mChannels[mInfo[row].mChannel].setSolo(mInfo[row].mSolo);
                 soloed = mChannels[mInfo[row].mChannel].getSolo();
                 if (soloed != mInfo[row].mSolo) {
                     TraceDialog.addTrace(
-                        "Channel Solo not supported. (Set to " + value
-                        + " is actually " + soloed + ")");
+                        "Channel Solo not supported. (Set to " + value // NOI18N
+                        + " is actually " + soloed + ")"); // NOI18N
                 }
                 break;
             case 6:
@@ -219,23 +221,22 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 boolean muted = mSeq.getTrackMute(row);
                 if (muted != mInfo[row].mMute) {
                     TraceDialog.addTrace(
-                        "Sequencer Mute not supported. (Set to " + value
-                        + " is actually " + muted + ")");
+                        "Sequencer Mute not supported. (Set to " + value // NOI18N
+                        + " is actually " + muted + ")"); // NOI18N
                 }
                 mChannels[mInfo[row].mChannel].setMute(mInfo[row].mMute);
                 muted = mChannels[mInfo[row].mChannel].getMute();
                 if (muted != mInfo[row].mMute) {
                     TraceDialog.addTrace(
-                        "Channel Mute not supported. (Set to " + value
-                        + " is actually " + muted + ")");
+                        "Channel Mute not supported. (Set to " + value // NOI18N
+                        + " is actually " + muted + ")"); // NOI18N
                 }
                 break;
             default:
-                // Do Nothing
+            // Do Nothing
         }
     }
-
-    Class[] types = new Class [] {
+    Class[] types = new Class[] {
         java.lang.Integer.class,
         java.lang.String.class,
         java.lang.Object.class,
@@ -247,9 +248,8 @@ class TrackSummaryTableModel extends AbstractTableModel {
 
     @Override
     public Class getColumnClass(int columnIndex) {
-        return types [columnIndex];
+        return types[columnIndex];
     }
-
     String[] columnNames = new String[] {
         UiStrings.getString("no."),
         UiStrings.getString("name"),
@@ -264,8 +264,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
     public String getColumnName(int col) {
         return columnNames[col];
     }
-
-    boolean[] canEdit = new boolean [] {
+    boolean[] canEdit = new boolean[] {
         false, false, false, false, false, true, true
     };
 
@@ -277,5 +276,4 @@ class TrackSummaryTableModel extends AbstractTableModel {
         }
         return ret;
     }
-
 }

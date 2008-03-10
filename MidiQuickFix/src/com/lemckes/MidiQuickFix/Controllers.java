@@ -36,7 +36,8 @@ class Controllers {
     
     /** Create an ControllerNames object. */
     static {
-        mControllersBundle = ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/Controllers");
+        mControllersBundle =
+            ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/Controllers"); // NOI18N
         int count = Integer.parseInt(mControllersBundle.getString("count")); // NOI18N
         mNameArray = new String[count];
         for (int i = 0; i < count; ++i) {
@@ -62,7 +63,7 @@ class Controllers {
     /** A String used to display a 'graphical' representation
      * of the controller's value.
      */
-    static String meter = "---------------|---------------";
+    static String meter = "---------------|---------------"; // NOI18N
     /** Get a String representatioin of the controller's value.
      * @param val The controller's value
      * @param graphic If true the returned string is a graphical

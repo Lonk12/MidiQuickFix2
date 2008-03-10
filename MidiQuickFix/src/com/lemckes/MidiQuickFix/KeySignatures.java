@@ -20,14 +20,12 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
 /** Methods associated with key signatures.
  * @version $Id$
  */
 public class KeySignatures {
-    
     /** The names of the key signatures. */
     static String[] keyNames = {
         "Cb",
@@ -44,17 +42,17 @@ public class KeySignatures {
         "E",
         "B",
         "F#",
-        "C#",
+        "C#"
     };
-    
+
     /** Get the name of the key.
      * @return The String representation of the key signature.
-     * e.g. "Ab major"
-     * @param data data[0] defines the number of sharps/ flats.
+     * e.g. "Ab or Dm"
+     * @param data data[0] defines the number of sharps/ flats.<br>
      * Negative values represent flats;
      * Positive values represent sharps.
-     * i.e. -7=7flats +7=7sharps.
-     * data[1] 0=major, 1=minor.
+     * i.e. -7=7flats +7=7sharps.<br>
+     * data[1] defines whether the key is major or minor; 0=major, 1=minor.
      */
     public static String getKeyName(byte data[]) {
         String result = "";
@@ -62,32 +60,30 @@ public class KeySignatures {
         int m = data[1];
         result += keyNames[k];
         if (m == 1) {
-            result += "m";
+            result += "m"; // NOI18N
         }
         return result;
     }
-    
+
     /** Get the key and mode for the given string.
      * @param keyName The String version of the key signature
      * as returned from getKeyName.
-     * @return Return data[0] defines the number of sharps/ flats.
+     * @return data[0] defines the number of sharps/ flats.<br>
      * Negative values represent flats;
      * Positive values represent sharps.
-     * i.e. -7=7flats +7=7sharps.
-     * Return data[1] 0=major, 1=minor.
-     * @see Midi.KeySignatures.getKeyName
-     *
+     * i.e. -7=7flats +7=7sharps.<br>
+     * data[1] whether the key is major or minor; 0=major, 1=minor.
      */
     public static byte[] getKeyValues(String keyName) {
-        byte[] result = { 0, 0 };
+        byte[] result = {0, 0};
         // Check for a minor key
-        int mPos = keyName.indexOf("m");
+        int mPos = keyName.indexOf("m"); // NOI18N
         if (mPos != -1) {
             result[1] = 1;
             // and remove the trailing "m"
             keyName = keyName.substring(0, mPos);
         }
-        
+
         for (byte i = 0; i < keyNames.length; ++i) {
             if (keyName.equals(keyNames[i])) {
                 result[0] = (byte)(i - 7);
@@ -96,7 +92,7 @@ public class KeySignatures {
         }
         return result;
     }
-    
+
     /**
      * Check if the notes in the key should be displayed as flats or sharps.
      * @param keyName The String version of the key signature
@@ -107,11 +103,11 @@ public class KeySignatures {
         if (keyName == null) {
             return false;
         }
-        
+
         byte[] data = getKeyValues(keyName);
         return isInFlats(data[0]);
     }
-    
+
     /**
      * Check if the notes in the key should be displayed as flats or sharps.
      * @param keyNum The key number. Positive values define

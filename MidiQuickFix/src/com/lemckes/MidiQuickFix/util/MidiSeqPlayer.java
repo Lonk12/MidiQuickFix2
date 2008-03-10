@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix.util;
 
 /**
@@ -28,11 +27,34 @@ package com.lemckes.MidiQuickFix.util;
  * @version $Id$
  */
 public interface MidiSeqPlayer {
-    
+    /**
+     * Start playing the sequence
+     */
     public void play();
+
+    /**
+     * Pause the sequence
+     */
     public void pause();
+
+    /**
+     * Play the sequence from the last pause point
+     */
     public void resume();
+
+    /**
+     * Stop playing the sequence
+     */
     public void stop();
+
+    /**
+     * Rewind the sequence to the start
+     */
     public void rewind();
+
+    /**
+     * Enable or disable looping of the sequence
+     * @param loop enable looping if <code>true</code>
+     */
     public void loop(boolean loop);
 }

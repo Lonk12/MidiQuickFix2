@@ -31,7 +31,8 @@ import java.awt.EventQueue;
  * @version $Id$
  */
 public class TraceDialog extends javax.swing.JDialog {
-    
+    static final long serialVersionUID = 5090767651914686108L;
+   
     private static final TraceDialog INSTANCE =
         new TraceDialog(new java.awt.Frame(), false);
     

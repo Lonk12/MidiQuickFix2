@@ -42,6 +42,7 @@ import javax.swing.text.DefaultFormatterFactory;
  * @version $Id$
  */
 public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
+    static final long serialVersionUID = -2520861084060073513L;
 
     transient private DrawnIcon inIcon;
     transient private DrawnIcon outIcon;
@@ -317,27 +318,27 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
 
     }// </editor-fold>//GEN-END:initComponents
     private void loopOutFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopOutFieldActionPerformed
-        setLoopOutPoint((int) Formats.parseTicks(loopOutField.getText(), resolution));
+        setLoopOutPoint(Formats.parseTicks(loopOutField.getText(), resolution));
     }//GEN-LAST:event_loopOutFieldActionPerformed
 
     private void loopOutFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_loopOutFieldFocusLost
-        setLoopOutPoint((int) Formats.parseTicks(loopOutField.getText(), resolution));
+        setLoopOutPoint(Formats.parseTicks(loopOutField.getText(), resolution));
     }//GEN-LAST:event_loopOutFieldFocusLost
 
     private void currPositionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currPositionFieldActionPerformed
-        setValue((int) Formats.parseTicks(currPositionField.getText(), resolution));
+        setValue(Formats.parseTicks(currPositionField.getText(), resolution));
     }//GEN-LAST:event_currPositionFieldActionPerformed
 
     private void currPositionFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_currPositionFieldFocusLost
-        setValue((int) Formats.parseTicks(currPositionField.getText(), resolution));
+        setValue(Formats.parseTicks(currPositionField.getText(), resolution));
     }//GEN-LAST:event_currPositionFieldFocusLost
 
     private void loopInFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_loopInFieldFocusLost
-        setLoopInPoint((int) Formats.parseTicks(loopInField.getText(), resolution));
+        setLoopInPoint(Formats.parseTicks(loopInField.getText(), resolution));
     }//GEN-LAST:event_loopInFieldFocusLost
 
     private void loopInFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopInFieldActionPerformed
-        setLoopInPoint((int) Formats.parseTicks(loopInField.getText(), resolution));
+        setLoopInPoint(Formats.parseTicks(loopInField.getText(), resolution));
     }//GEN-LAST:event_loopInFieldActionPerformed
 
     private void loopOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopOutButtonActionPerformed
@@ -363,7 +364,7 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
      */
     protected void fireLoopSliderChanged(boolean valueIsAdjusting) {
         LoopSliderListener[] keyListeners =
-                (LoopSliderListener[]) (mListenerList.getListeners(LoopSliderListener.class));
+                mListenerList.getListeners(LoopSliderListener.class);
         for (int i = keyListeners.length - 1; i >= 0; --i) {
             keyListeners[i].loopSliderChanged(
                     new LoopSliderEvent(durationSlider.getValue(),
@@ -373,11 +374,10 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
 
     /**
      * Notify listeners that are interested in loop slider events.
-     * @param valueIsAdjusting True if the slider is being adjusted.
      */
     protected void fireLoopPointChanged() {
         LoopSliderListener[] keyListeners =
-                (LoopSliderListener[]) (mListenerList.getListeners(LoopSliderListener.class));
+                mListenerList.getListeners(LoopSliderListener.class);
         for (int i = keyListeners.length - 1; i >= 0; --i) {
             keyListeners[i].loopPointChanged(
                     new LoopSliderEvent(durationSlider.getValue(), loopInPoint, loopOutPoint, false));

@@ -20,59 +20,59 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.*;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
-
 
 /**
  * This class handles the display of the splash screen in the startup dialog.
  * @version $Id$
  */
 public class SplashDrawing extends javax.swing.JComponent {
-    
+    static final long serialVersionUID = 2699979447341049369L;
     transient BufferedImage mBi;
     transient Image mImage;
     int mImageWidth;
     int mImageHeight;
-    
     float mLineHeight;
-    
     boolean mCentred = false;
-    
     //  For java 1.5 ArrayList<String> mStageMessages = new ArrayList<String>();
+
     ArrayList<String> mStageMessages = new ArrayList<String>();
-    
     Font mFont;
     transient FontRenderContext mFrContext;
-    
+
     /** Creates a new instance of SplashDrawing */
     public SplashDrawing() {
         mFont = new java.awt.Font("Dialog", 1, 14);
         setFont(mFont);
         mFrContext = new FontRenderContext(null, true, true);
-        LineMetrics fm = mFont.getLineMetrics("A Typical Message String", mFrContext);
+        LineMetrics fm = mFont.getLineMetrics("A Typical Message String",
+            mFrContext); // NOI18N
         mLineHeight = fm.getHeight();
-        
+
         java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
-        URL url = getClass().getResource("resources/MQFsplash2.png");
+        URL url = getClass().getResource("resources/MQFsplash2.png"); // NOI18N
         mImage = tk.getImage(url);
         MediaTracker mt = new MediaTracker(this);
         mt.addImage(mImage, 1);
         try {
             mt.waitForAll();
-        } catch(InterruptedException e) {
-            // Probably don't care
+        } catch (InterruptedException e) {
+        // Probably don't care
         }
-        
+
         mImageWidth = mImage.getWidth(null);
         mImageHeight = mImage.getHeight(null);
         mBi = new BufferedImage(mImageWidth, mImageHeight,
@@ -81,11 +81,12 @@ public class SplashDrawing extends javax.swing.JComponent {
         g.drawImage(mImage, 0, 0, null);
         g.dispose();
     }
-    
+
     /**
      * Draw the splash image and any messages that need to be displayed.
      * @param g The Graphics to draw into.
      */
+    @Override
     public void paint(java.awt.Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
         g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
@@ -93,50 +94,62 @@ public class SplashDrawing extends javax.swing.JComponent {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.drawImage(mBi, 0, 0, this);
-        
-        int startY = (int)((mImageHeight - mLineHeight * mStageMessages.size()) / 2);
+
+        int startY =
+            (int)((mImageHeight - mLineHeight * mStageMessages.size()) / 2);
         int startX = 20;
         for (int i = 0; i < mStageMessages.size(); ++i) {
             if (!mCentred) {
                 startX = 20;
             } else {
                 Rectangle2D r =
-                    mFont.getStringBounds((String)mStageMessages.get(i), mFrContext);
+                    mFont.getStringBounds(mStageMessages.get(i), mFrContext);
                 double width = r.getWidth();
                 startX = (int)((mImageWidth - width) / 2);
             }
             int y = startY + (int)(i * mLineHeight);
-            g2.drawString((String)mStageMessages.get(i), startX, y);
+            g2.drawString(mStageMessages.get(i), startX, y);
         }
     }
-    
-    void setCentredText(boolean centred) {
+
+    /**
+     * Set whether the messages are centred
+     * @param centred if <code>true</code> the messages are centred
+     * otherwise they are left aligned.
+     */
+    public void setCentredText(boolean centred) {
         mCentred = centred;
     }
-    
-    synchronized void setStageMessage(String message) {
+
+    /**
+     * Add a message string to the display
+     * @param message the new message
+     */
+    public synchronized void addStageMessage(String message) {
         mStageMessages.add(message);
         repaint();
         try {
             // Wait a bit so that the message is seen
             wait(300);
-        } catch(InterruptedException e) {
-            // Do Nothing
+        } catch (InterruptedException e) {
+        // Do Nothing
         }
     }
-    
+
     /**
      * Return the slash screen preferred size
      * @return The preferred size
      */
+    @Override
     public Dimension getPreferredSize() {
         return getSize();
     }
-    
+
     /**
      * Get the size of the splash image
      * @return the size of the splash image
      */
+    @Override
     public Dimension getSize() {
         return new Dimension(mImageWidth, mImageHeight);
     }

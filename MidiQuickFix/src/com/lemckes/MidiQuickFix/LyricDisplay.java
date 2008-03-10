@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.components.FontSelector;
@@ -38,17 +37,22 @@ import javax.swing.text.Document;
  * @version $Id$
  */
 public class LyricDisplay extends JPanel
-  implements MetaEventListener, FontSelectionListener {
-    
+    implements MetaEventListener, FontSelectionListener {
+    static final long serialVersionUID = 4418719983394376657L;
+    transient private Sequencer mSequencer;
+    transient private Sequence mSequence;
+    private FontSelector mFontSelector;
+    private boolean mNewPage = false;
     transient private Document doc;
-    
+
     /** Creates new form LyricDialog */
     public LyricDisplay() {
         initComponents();
         doc = lyricText.getDocument();
     }
-    
+
     // Implementation of MetaEventListener.meta()
+
     /**
      * Implementation of MetaEventListener.meta() that handles
      * lyric and text events.
@@ -56,14 +60,12 @@ public class LyricDisplay extends JPanel
      */
     public void meta(javax.sound.midi.MetaMessage metaMessage) {
         int type = metaMessage.getType();
-        
-        if (
-          ((type == MetaEvent.LYRIC && lyricsCheckBox.isSelected()) ||
-          (type == MetaEvent.TEXT && textCheckBox.isSelected()))
-          ) {
+
+        if (((type == MetaEvent.LYRIC && lyricsCheckBox.isSelected()) ||
+            (type == MetaEvent.TEXT && textCheckBox.isSelected()))) {
             //int len = metaMessage.getLength();
             byte[] data = metaMessage.getData();
-            
+
             StringBuffer sb = new StringBuffer(data.length);
             int charCount = 0;
             for (int k = 0; k < data.length; ++k) {
@@ -72,7 +74,7 @@ public class LyricDisplay extends JPanel
                     // According to midi.org 'paragraphs' should be delimited
                     // with a line-feed but a back-slash is common.
                     mNewPage = true;
-                    //lyricText.setText(null);
+                //lyricText.setText(null);
                 } else if (b == 13 || (char)b == '/') {
                     // According to midi.org 'lines' should be delimited
                     // with a carriage-return but a slash is common.
@@ -95,16 +97,16 @@ public class LyricDisplay extends JPanel
             }
         }
     }
-    
+
     /**
      * Set the Sequencer on which to listen for meta events.
      * @param seq The Sequencer
      */
     public void setSequencer(Sequencer seq) {
-        if (mSequencer != null){
+        if (mSequencer != null) {
             mSequencer.removeMetaEventListener(this);
         }
-        
+
         //TODO
         // Get the sequence and pre-load all the
         // LYRIC/TEXT events.
@@ -112,12 +114,12 @@ public class LyricDisplay extends JPanel
         // 'paragraph' and highlight the current word.
         // (eventually)
         // Sequence mySequence = seq.getSequence();
-        
-        
+
+
         mSequencer = seq;
         mSequencer.addMetaEventListener(this);
     }
-    
+
     /**
      * Called when a font is selected from the FontSelector.
      * @param e the FontSelectionEvent
@@ -125,24 +127,14 @@ public class LyricDisplay extends JPanel
     public void fontSelected(FontSelectionEvent e) {
         lyricText.setFont(e.getSelectedFont());
     }
-    
-    /**
-     * Close the lyrics dialog. Also stops listening for events.
-     */
-    public void close() {
-        if (mSequencer != null) {
-            mSequencer.removeMetaEventListener(this);
-            mSequencer = null;
-        }
-    }
-    
+
     /**
      * Clear the contents of the lyrics display.
      */
     public void clear() {
         lyricText.setText(null);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -220,7 +212,6 @@ public class LyricDisplay extends JPanel
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
     }// </editor-fold>//GEN-END:initComponents
-    
     private void fontSelectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontSelectButtonActionPerformed
         if (mFontSelector == null) {
             mFontSelector = new FontSelector(null, false);
@@ -229,12 +220,10 @@ public class LyricDisplay extends JPanel
         }
         mFontSelector.setVisible(true);
     }//GEN-LAST:event_fontSelectButtonActionPerformed
-    
+
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         clear();
     }//GEN-LAST:event_clearButtonActionPerformed
-    
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton clearButton;
     private javax.swing.JPanel fontPanel;
@@ -247,13 +236,4 @@ public class LyricDisplay extends JPanel
     private javax.swing.JLabel showLabel;
     private javax.swing.JCheckBox textCheckBox;
     // End of variables declaration//GEN-END:variables
-    
-    
-    transient private Sequencer mSequencer;
-    
-    transient private Sequence mSequence;
-    
-    private FontSelector mFontSelector;
-    
-    private boolean mNewPage = false;
 }

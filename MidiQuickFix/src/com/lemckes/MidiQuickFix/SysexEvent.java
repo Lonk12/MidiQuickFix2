@@ -31,18 +31,18 @@ import javax.sound.midi.SysexMessage;
  */
 class SysexEvent {
     static String[] getSysexStrings(SysexMessage mess) {
-        String[] result = {"", "", ""};
+        String[] result = {"", "", ""}; // NOI18N
         int st = mess.getStatus();
         if (st == SysexMessage.SYSTEM_EXCLUSIVE) {
-            result[0] = "SYSTEM_EXCLUSIVE";
+            result[0] = "SYSTEM_EXCLUSIVE"; // NOI18N
         } else if (st == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
-            result[0] = "SPECIAL_SYSTEM_EXCLUSIVE";
+            result[0] = "SPECIAL_SYSTEM_EXCLUSIVE"; // NOI18N
         }
         byte[] data = mess.getData();
         result[1] += data.length;
         for (int i = 0; i < data.length; ++i) {
             if (i > 0) {
-                 result[2] += ",";
+                 result[2] += ","; // NOI18N
             }
             result[2] += data[i] & 0x00ff;
         }
