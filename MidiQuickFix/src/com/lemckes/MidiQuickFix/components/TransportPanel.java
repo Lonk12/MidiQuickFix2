@@ -153,9 +153,9 @@ public class TransportPanel extends javax.swing.JPanel {
         pauseIcon.setFillColour(Color.YELLOW);
         pauseButton.setPreferredSize(buttonSize);
         
-//        recordIcon.setPath(recordPath);
-//        recordButton.setPreferredSize(buttonSize);
-//        recordIcon.setFillColour(Color.RED);
+        //recordIcon.setPath(recordPath);
+        //recordButton.setPreferredSize(buttonSize);
+        //recordIcon.setFillColour(Color.RED);
 
         loopIcon = new DrawnIcon(loopButton, loopPath);
         loopIcon.setPath(loopPath);

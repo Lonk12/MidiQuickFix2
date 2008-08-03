@@ -77,7 +77,8 @@ class TrackTableModel extends DefaultTableModel {
             MidiMessage mess = mTrack.get(i).getMessage();
             if (mess instanceof ShortMessage) {
                 int cmd = ((ShortMessage)mess).getCommand();
-                if (cmd == ShortMessage.NOTE_OFF || cmd == ShortMessage.NOTE_ON) {
+                if (cmd == ShortMessage.NOTE_OFF ||
+                    cmd == ShortMessage.NOTE_ON) {
                     mNumNotes++;
                 } else {
                     mNoNotesRowMap.add(Integer.valueOf(i));
@@ -90,8 +91,8 @@ class TrackTableModel extends DefaultTableModel {
 
     public void setShowNotes(boolean show) {
         mShowNotes = show;
-        //fireTableDataChanged();
-        fireTableStructureChanged();
+        fireTableDataChanged();
+        //fireTableStructureChanged();
     }
 
     @Override
@@ -110,25 +111,26 @@ class TrackTableModel extends DefaultTableModel {
         return columnNames.length;
     }
 
-    public long getTickForRow(int row) {
+    private MidiEvent getEventForRow(int row)
+    {
         int eventIndex = row;
         // Adjust the index if notes are not being displayed
         if (!mShowNotes) {
             eventIndex = mNoNotesRowMap.get(row).intValue();
         }
-        return mTrack.get(eventIndex).getTick();
+        return mTrack.get(eventIndex);
+    }
+    
+    public long getTickForRow(int row) {
+        return getEventForRow(row).getTick();
     }
 
     @Override
     public Object getValueAt(int row, int column) {
         Object result = null;
-        int eventIndex = row;
-        // Adjust the index if notes are not being displayed
-        if (!mShowNotes) {
-            eventIndex = mNoNotesRowMap.get(row).intValue();
-        }
-        MidiMessage mess = mTrack.get(eventIndex).getMessage();
-        long tick = mTrack.get(eventIndex).getTick();
+        MidiEvent event = getEventForRow(row);
+        MidiMessage mess = event.getMessage();
+        long tick = event.getTick();
         switch (column) {
             case 0:
                 result = Formats.formatTicks(tick, mResolution, true);
@@ -160,12 +162,7 @@ class TrackTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int row, int column) {
         boolean result = false;
-        int eventIndex = row;
-        // Adjust the index if notes are not being displayed
-        if (!mShowNotes) {
-            eventIndex = mNoNotesRowMap.get(row).intValue();
-        }
-        MidiMessage mess = mTrack.get(eventIndex).getMessage();
+        MidiMessage mess = getEventForRow(row).getMessage();
         switch (column) {
             case 0:
                 // Tick
@@ -179,7 +176,8 @@ class TrackTableModel extends DefaultTableModel {
                 // Note
                 if (mess instanceof ShortMessage) {
                     int cmd = ((ShortMessage)mess).getCommand();
-                    if (cmd == ShortMessage.NOTE_OFF || cmd == ShortMessage.NOTE_ON) {
+                    if (cmd == ShortMessage.NOTE_OFF ||
+                        cmd == ShortMessage.NOTE_ON) {
                         result = true;
                     }
                 }
@@ -232,13 +230,7 @@ class TrackTableModel extends DefaultTableModel {
             return;
         }
 
-        int eventIndex = row;
-        // Adjust the index if notes are not being displayed
-        if (!mShowNotes) {
-            eventIndex = mNoNotesRowMap.get(row).intValue();
-        }
-
-        MidiEvent ev = mTrack.get(eventIndex);
+        MidiEvent ev = getEventForRow(row);
         MidiMessage mess = ev.getMessage();
         switch (column) {
             case 0:
@@ -411,12 +403,7 @@ class TrackTableModel extends DefaultTableModel {
     public void deleteEvents(int[] rows) {
         Vector<MidiEvent> events = new Vector<MidiEvent>();
         for (int i = 0; i < rows.length; ++i) {
-            int eventIndex = rows[i];
-            // Adjust the index if notes are not being displayed
-            if (!mShowNotes) {
-                eventIndex = mNoNotesRowMap.get(rows[i]).intValue();
-            }
-            events.add(mTrack.get(eventIndex));
+            events.add(getEventForRow(rows[i]));
         }
 
         for (MidiEvent e : events) {
@@ -474,7 +461,8 @@ class TrackTableModel extends DefaultTableModel {
             Object[] str = MetaEvent.getMetaStrings((MetaMessage)mess);
             result[0] = str[0];
             result[4] = str[2];
-        } else if (st == SysexMessage.SYSTEM_EXCLUSIVE || st == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
+        } else if (st == SysexMessage.SYSTEM_EXCLUSIVE ||
+            st == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
             // Returns Event, Length, Text
             Object[] str = SysexEvent.getSysexStrings((SysexMessage)mess);
             result[0] = str[0];

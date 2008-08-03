@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2005 John Lemcke
+ *   Copyright (C) 2004-2008 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -22,7 +22,10 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix.util;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import javax.swing.JTable;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -35,8 +38,10 @@ public class TableColumnWidthSetter {
     /** This method picks good column sizes.
      * If all column heads are wider than the column's cells'
      * contents, then you can just use column.sizeWidthToFit().
+     * calls { @link setTableColumnWidths(JTable, Object[], boolean)}
+     * with a value of false.
      * @param table The table for which to set column widths.
-     * @param longValues An array of objects that represent the longest
+     * @param longValues An array of objects which represent the longest
      * content of each column. If <CODE>null</CODE> then
      * only the header contents will be used to determine the width.
      * The array may contain <CODE>null</CODE> entries in which case
@@ -45,32 +50,59 @@ public class TableColumnWidthSetter {
      * by using the header contents.
      */
     static public void setColumnWidths(JTable table, Object[] longValues) {
+        setColumnWidths(table, longValues, false);
+    }
+
+    /** This method picks good column sizes.
+     * If all column heads are wider than the column's cells'
+     * contents, then you can just use column.sizeWidthToFit().
+     * @param table The table for which to set column widths.
+     * @param longValues An array of objects which represent the longest
+     * content of each column. If <CODE>null</CODE> then
+     * only the header contents will be used to determine the width.
+     * The array may contain <CODE>null</CODE> entries in which case
+     * the header contents are used instead. If the array is shorter
+     * than the number of columns then the remaining columns are sized
+     * by using the header contents.
+     * @param maxLayout If set to true and the table has a parent,
+     * then increase column widths to fill the parent if needed.
+     */
+    static public void setColumnWidths(JTable table, Object[] longValues,
+                                         boolean maxLayout) {
         TableModel model = table.getModel();
-        TableColumn column = null;
-        java.awt.Component comp = null;
+        Component comp = null;
         int headerWidth = 0;
         int cellWidth = 0;
+        int editorWidth = 0;
+        int used = 0;
 
-        TableCellRenderer defaultHeaderRenderer =
-            table.getTableHeader().getDefaultRenderer();
-        int i = 0;
-        java.util.Enumeration e = table.getColumnModel().getColumns();
-        while (e.hasMoreElements()) {
-            column = (TableColumn)e.nextElement();
-
+        for (int i = 0; i < table.getColumnModel().getColumnCount(); ++i) {
+            TableColumn column = table.getColumnModel().getColumn(i);
+            ////////////////////////////////////////////////////
+            // Find the width of the column header.
+            //
             TableCellRenderer headerRenderer = column.getHeaderRenderer();
             if (headerRenderer == null) {
-                headerRenderer = defaultHeaderRenderer;
+                headerRenderer = table.getTableHeader().getDefaultRenderer();
             }
             comp = headerRenderer.getTableCellRendererComponent(
                 table, column.getHeaderValue(),
-                false, false, 0, 0);
-            java.awt.Dimension d = comp.getPreferredSize();
+                false, false, -1, 0);
+            Dimension d = comp.getPreferredSize();
             headerWidth = d.width;
 
-            if (longValues != null && i < longValues.length && longValues[i] != null) {
-                comp = table.getDefaultRenderer(model.getColumnClass(i)).
-                    getTableCellRendererComponent(
+            ////////////////////////////////////////////////////
+            // Find the width of the column's cell renderer.
+            //
+            if (longValues != null &&
+                i < longValues.length &&
+                longValues[i] != null) {
+                TableCellRenderer cellRenderer = column.getCellRenderer();
+                if (cellRenderer == null) {
+                    cellRenderer =
+                        table.getDefaultRenderer(model.getColumnClass(i));
+                }
+                comp = cellRenderer.getTableCellRendererComponent(
                     table, longValues[i],
                     false, false, 0, i);
                 cellWidth = comp.getPreferredSize().width;
@@ -78,13 +110,103 @@ public class TableColumnWidthSetter {
                 cellWidth = 0;
             }
 
+            ////////////////////////////////////////////////////
+            // Find the width of the column's cell editor.
+            //
+            if (longValues != null &&
+                i < longValues.length &&
+                longValues[i] != null) {
+                TableCellEditor cellEditor = column.getCellEditor();
+                if (cellEditor == null) {
+                    cellEditor =
+                        table.getDefaultEditor(model.getColumnClass(i));
+                }
+                comp = cellEditor.getTableCellEditorComponent(
+                    table, longValues[i],
+                    false, 0, i);
+                editorWidth = comp.getPreferredSize().width;
+            } else {
+                editorWidth = 0;
+            }
+
             // The MultiLineHeader seems to have no right margin
             // so we add a little room to stop the text from
             // touching the edge of the header cell.
             int fudgeFactor = 3;
-            int w = Math.max(headerWidth, cellWidth) + fudgeFactor;
-            column.setPreferredWidth(w);
+
+            ////////////////////////////////////////////////////
+            // Set the width to the maximum of the 3 widths.
+            //
+            int colWidth =
+                Math.max(Math.max(headerWidth, cellWidth), editorWidth) +
+                fudgeFactor;
+            column.setPreferredWidth(colWidth);
+            column.setWidth(colWidth);
+            used += column.getPreferredWidth();
             ++i;
         }
+
+        if (maxLayout && table.getParent() != null) {
+            int insetwidth = table.getParent().getInsets().right +
+                table.getParent().getInsets().left;
+            int tot = (table.getColumnCount() + 1) *
+                table.getIntercellSpacing().width +
+                used + insetwidth;
+            if (table.getParent().getWidth() > tot) {
+                int sizeleft = table.getParent().getWidth() - tot +
+                    table.getColumnCount() + 1;
+                for (int i = 0; i < table.getColumnCount(); ++i) {
+                    int give = sizeleft / (table.getColumnCount() - i);
+                    sizeleft -= give;
+                    TableColumn col = table.getColumnModel().getColumn(i);
+                    col.setPreferredWidth(col.getPreferredWidth() + give);
+                }
+                if (table.getColumnCount() > 0) {
+                    assert sizeleft == 0 : sizeleft;
+                }
+            }
+        }
+    }
+
+    /**Set the tables column widths. Reads all cells of the table that return
+     * the column class <code>String.class</code>,
+     * and picks the longest string to pass to
+     * {@link #setColumnWidths(JTable, Object[], boolean) }
+     * @param table The table for which to set column widths.
+     * @param maxValue If set to true and the table has a parent, then increase column widths
+     * to fill the parent if needed.
+     */
+    static public void setColumnWidths(JTable table, boolean maxValue) {
+        TableModel model = table.getModel();
+        Object[] longestVals = new Object[model.getColumnCount()];
+        for (int col = 0; col < longestVals.length; ++col) {
+            Object longest = null;
+            int maxWidth = 0;
+            for (int row = 0; row < table.getRowCount(); ++row) {
+                Object val = model.getValueAt(row, col);
+                Component renderComp =
+                    table.getDefaultRenderer(model.getColumnClass(col)).
+                    getTableCellRendererComponent(
+                    table, val,
+                    false, false, 0, col);
+                int cellWidth = renderComp.getPreferredSize().width;
+
+                Component editorComp =
+                    table.getDefaultEditor(model.getColumnClass(col)).
+                    getTableCellEditorComponent(
+                    table, val,
+                    false, 0, col);
+                int editorWidth = editorComp.getPreferredSize().width;
+
+                // Pick the widest
+                cellWidth = Math.max(cellWidth, editorWidth);
+                if (cellWidth > maxWidth) {
+                    maxWidth = cellWidth;
+                    longest = val;
+                }
+            }
+            longestVals[col] = longest;
+        }
+        setColumnWidths(table, longestVals, maxValue);
     }
 }

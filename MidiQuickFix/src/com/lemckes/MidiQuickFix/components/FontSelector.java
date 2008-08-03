@@ -371,7 +371,7 @@ public class FontSelector extends javax.swing.JDialog {
 
     private void fireFontSelected() {
         FontSelectionListener[] listeners =
-            (FontSelectionListener[])(mListenerList.getListeners(FontSelectionListener.class));
+            mListenerList.getListeners(FontSelectionListener.class);
         FontSelectionEvent e = new FontSelectionEvent(mFont);
         for (int i = listeners.length - 1; i >= 0; --i) {
             listeners[i].fontSelected(e);
