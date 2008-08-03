@@ -40,6 +40,7 @@ import java.util.ArrayList;
  * @version $Id$
  */
 public class SplashDrawing extends javax.swing.JComponent {
+
     static final long serialVersionUID = 2699979447341049369L;
     transient BufferedImage mBi;
     transient Image mImage;
@@ -48,7 +49,6 @@ public class SplashDrawing extends javax.swing.JComponent {
     float mLineHeight;
     boolean mCentred = false;
     //  For java 1.5 ArrayList<String> mStageMessages = new ArrayList<String>();
-
     ArrayList<String> mStageMessages = new ArrayList<String>();
     Font mFont;
     transient FontRenderContext mFrContext;
@@ -59,7 +59,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         setFont(mFont);
         mFrContext = new FontRenderContext(null, true, true);
         LineMetrics fm = mFont.getLineMetrics("A Typical Message String",
-            mFrContext); // NOI18N
+                mFrContext); // NOI18N
         mLineHeight = fm.getHeight();
 
         java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
@@ -70,13 +70,13 @@ public class SplashDrawing extends javax.swing.JComponent {
         try {
             mt.waitForAll();
         } catch (InterruptedException e) {
-        // Probably don't care
+            // Probably don't care
         }
 
         mImageWidth = mImage.getWidth(null);
         mImageHeight = mImage.getHeight(null);
         mBi = new BufferedImage(mImageWidth, mImageHeight,
-            BufferedImage.TYPE_INT_RGB);
+                BufferedImage.TYPE_INT_RGB);
         Graphics2D g = mBi.createGraphics();
         g.drawImage(mImage, 0, 0, null);
         g.dispose();
@@ -88,27 +88,30 @@ public class SplashDrawing extends javax.swing.JComponent {
      */
     @Override
     public void paint(java.awt.Graphics g) {
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-            RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.drawImage(mBi, 0, 0, this);
 
         int startY =
-            (int)((mImageHeight - mLineHeight * mStageMessages.size()) / 2);
+                (int) ((mImageHeight - mLineHeight * mStageMessages.size()) / 2);
         int startX = 20;
-        for (int i = 0; i < mStageMessages.size(); ++i) {
+        int i = 0;
+        for (String s : mStageMessages) {
             if (!mCentred) {
                 startX = 20;
             } else {
                 Rectangle2D r =
-                    mFont.getStringBounds(mStageMessages.get(i), mFrContext);
+                        mFont.getStringBounds(s, mFrContext);
                 double width = r.getWidth();
-                startX = (int)((mImageWidth - width) / 2);
+                startX = (int) ((mImageWidth - width) / 2);
             }
-            int y = startY + (int)(i * mLineHeight);
-            g2.drawString(mStageMessages.get(i), startX, y);
+            int y = startY + (int) (i++ * mLineHeight);
+            if (s != null) {
+                g2.drawString(s, startX, y);
+            }
         }
     }
 
@@ -126,13 +129,15 @@ public class SplashDrawing extends javax.swing.JComponent {
      * @param message the new message
      */
     public synchronized void addStageMessage(String message) {
-        mStageMessages.add(message);
-        repaint();
-        try {
-            // Wait a bit so that the message is seen
-            wait(300);
-        } catch (InterruptedException e) {
-        // Do Nothing
+        if (message != null) {
+            mStageMessages.add(message);
+            repaint();
+            try {
+                // Wait a bit so that the message is seen
+                wait(300);
+            } catch (InterruptedException e) {
+                // Do Nothing
+            }
         }
     }
 
