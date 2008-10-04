@@ -23,14 +23,14 @@
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.TableColumnWidthSetter;
-import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
@@ -40,8 +40,9 @@ import javax.swing.table.TableModel;
  */
 public class TrackTable extends javax.swing.JTable {
     static final long serialVersionUID = -3055797455895279118L;
+    private EventListenerList mListeners = new EventListenerList();
 
-    /** Creates new form BeanForm */
+    /** Creates a new TrackTable */
     public TrackTable() {
         initComponents();
         updateModel(new TrackTableModel(null, 96, true, true));
@@ -55,7 +56,7 @@ public class TrackTable extends javax.swing.JTable {
      * @param inFlats determines whether notes are displayed as flats or sharps
      */
     public void setTrack(Track track, int resolution,
-                          boolean showNotes, boolean inFlats) {
+                         boolean showNotes, boolean inFlats) {
         updateModel(
             new TrackTableModel(track,
             resolution,
@@ -76,23 +77,30 @@ public class TrackTable extends javax.swing.JTable {
         }
     }
 
-    private void updateModel(TrackTableModel model) {
-        TableModelListener[] ls =
-            ((DefaultTableModel)getModel()).getTableModelListeners();
-        for (TableModelListener l : ls) {
-            model.addTableModelListener(l);
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        super.tableChanged(e);
+        if (mListeners != null) {
+            TableModelListener[] ls =
+                mListeners.getListeners(TableModelListener.class);
+            for (TableModelListener l : ls) {
+                l.tableChanged(e);
+            }
         }
+    }
+
+    public void addTrackEditedListener(TableModelListener l) {
+        mListeners.add(TableModelListener.class, l);
+    }
+
+    public void removeTrackEditedListener(TableModelListener l) {
+        mListeners.remove(TableModelListener.class, l);
+    }
+
+    private void updateModel(TrackTableModel model) {
         setModel(model);
-        Object[] widths =
-            {"00000:000",
-             "M:TimeSignature",
-             UiStrings.getString("note"),
-             UiStrings.getString("value"),
-             "A Typical Instrument",
-             "Some Track Name",
-             UiStrings.getString("channel_abbrev")};// NOI18N
-        TableColumnWidthSetter.setColumnWidths(this, widths, true);
         setInstrumentEditor();
+        TableColumnWidthSetter.setColumnWidths(this, false);
     }
 
     /**
@@ -130,7 +138,7 @@ public class TrackTable extends javax.swing.JTable {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setFont(new java.awt.Font("DialogInput", 0, 12));
+        setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         setName("trackTable"); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

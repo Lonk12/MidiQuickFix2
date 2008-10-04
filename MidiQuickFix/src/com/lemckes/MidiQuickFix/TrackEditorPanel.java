@@ -113,7 +113,7 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
      * @param l the listener to add
      */
     public void addTableChangeListener(TableModelListener l) {
-        trackTable.getModel().addTableModelListener(l);
+        trackTable.addTrackEditedListener(l);
     }
 
     private void doCreateEvent() {

@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
 /**
@@ -29,34 +28,39 @@ package com.lemckes.MidiQuickFix;
  * @version $Id$
  */
 class NoteNames {
-    
-    static double[] limits =
-    { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
-    
-    static String[] sharpNames =
-    { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }; // NOI18N
-    
-    static String[] flatNames =
-    { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" }; // NOI18N
-    
-    static String[] bothNames =
-    { "C", "Db/C#", "D", "Eb/D#", "E", "F", "Gb/F#", "G", "Ab/G#", "A", "Bb/A#", "B" }; // NOI18N
-    
+    static double[] limits = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    static String[] sharpNames = {
+        "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+    }; // NOI18N
+    static String[] flatNames = {
+        "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"
+    }; // NOI18N
+    static String[] bothNames = {
+        "C", "Db/C#", "D", "Eb/D#", "E", "F", "Gb/F#", "G", "Ab/G#", "A",
+        "Bb/A#", "B"
+    }; // NOI18N
     static java.text.ChoiceFormat cf =
         new java.text.ChoiceFormat(limits, sharpNames);
-    
+
     static String getNoteName(int note, boolean flats) {
-        
+
         if (flats) {
             cf.setChoices(limits, flatNames);
         } else {
             cf.setChoices(limits, sharpNames);
         }
-        return cf.format(note % 12) + (int)(note / 12);
+        return cf.format(note % 12) + (note / 12);
     }
-    
+
+    static String getBothNoteNames(int note) {
+
+        cf.setChoices(limits, bothNames);
+        return cf.format(note % 12) + (note / 12);
+    }
+
     public static int getNoteNumber(String name) {
-        int octave = Integer.parseInt(name.substring(name.length() - 1, name.length()));
+        int octave = Integer.parseInt(name.substring(name.length() - 1, name.
+            length()));
         int noteNum = octave * 12;
         String note = name.substring(0, name.length() - 1);
         boolean found = false;
@@ -77,7 +81,7 @@ class NoteNames {
         }
         return noteNum;
     }
-    
+
     public static String[] getNoteNameArray() {
         return bothNames;
     }

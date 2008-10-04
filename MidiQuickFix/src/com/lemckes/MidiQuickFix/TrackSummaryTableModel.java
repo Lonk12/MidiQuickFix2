@@ -59,6 +59,8 @@ class TrackSummaryTableModel extends AbstractTableModel {
         String mName;
         long mStart;
         long mEnd;
+        int mLowNote;
+        int mHighNote;
         int mChannel;
         boolean mSolo;
         boolean mMute;
@@ -98,6 +100,8 @@ class TrackSummaryTableModel extends AbstractTableModel {
             Track t = mTracks[i];
             mInfo[i].mEnd = t.ticks();
             mInfo[i].mStart = -1;
+            mInfo[i].mLowNote = Integer.MAX_VALUE;
+            mInfo[i].mHighNote = Integer.MIN_VALUE;
             mInfo[i].mChannel = -1;
             for (int e = 0; e < t.size(); ++e) {
                 MidiEvent me = t.get(e);
@@ -122,8 +126,14 @@ class TrackSummaryTableModel extends AbstractTableModel {
                         // The first NOTE_ON is the start of
                         // the track.
                         if (sm.getCommand() == ShortMessage.NOTE_ON) {
-                            mInfo[i].mStart = tick;
-                            break;
+                            if (mInfo[i].mStart == -1) {
+                                mInfo[i].mStart = tick;
+                            }
+                            int noteNum = sm.getData1();
+                            mInfo[i].mLowNote =
+                                Math.min(noteNum, mInfo[i].mLowNote);
+                            mInfo[i].mHighNote =
+                                Math.max(noteNum, mInfo[i].mHighNote);
                         }
                     }
                 }
@@ -165,6 +175,24 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 }
                 break;
             case 4:
+                if (mInfo[row].mLowNote == Integer.MAX_VALUE) {
+                    // Didn't find a NOTE_ON event
+                    result = null;
+                } else {
+                    result = NoteNames.getBothNoteNames(
+                        mInfo[row].mLowNote);
+                }
+                break;
+            case 5:
+                if (mInfo[row].mHighNote == Integer.MIN_VALUE) {
+                    // Didn't find a NOTE_ON event
+                    result = null;
+                } else {
+                    result = NoteNames.getBothNoteNames(
+                        mInfo[row].mHighNote);
+                }
+                break;
+            case 6:
                 if (mInfo[row].mChannel == -1) {
                     // Didn't find a channel event
                     result = null;
@@ -172,10 +200,10 @@ class TrackSummaryTableModel extends AbstractTableModel {
                     result = Integer.valueOf(mInfo[row].mChannel);
                 }
                 break;
-            case 5:
+            case 7:
                 result = Boolean.valueOf(mInfo[row].mSolo);
                 break;
-            case 6:
+            case 8:
                 result = Boolean.valueOf(mInfo[row].mMute);
                 break;
             default:
@@ -196,7 +224,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
         // }
 
         switch (column) {
-            case 5:
+            case 7:
                 // Solo
                 mInfo[row].mSolo = ((Boolean)value).booleanValue();
                 mSeq.setTrackSolo(row, mInfo[row].mSolo);
@@ -214,7 +242,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
                         + " is actually " + soloed + ")"); // NOI18N
                 }
                 break;
-            case 6:
+            case 8:
                 // Mute
                 mInfo[row].mMute = ((Boolean)value).booleanValue();
                 mSeq.setTrackMute(row, mInfo[row].mMute);
@@ -241,6 +269,8 @@ class TrackSummaryTableModel extends AbstractTableModel {
         java.lang.String.class,
         java.lang.Object.class,
         java.lang.Object.class,
+        java.lang.Object.class,
+        java.lang.Object.class,
         java.lang.Integer.class,
         java.lang.Boolean.class,
         java.lang.Boolean.class
@@ -255,6 +285,8 @@ class TrackSummaryTableModel extends AbstractTableModel {
         UiStrings.getString("name"),
         UiStrings.getString("start"),
         UiStrings.getString("end"),
+        UiStrings.getString("low_note"),
+        UiStrings.getString("high_note"),
         UiStrings.getString("channel_abbrev"),
         UiStrings.getString("solo"),
         UiStrings.getString("mute")
@@ -265,13 +297,13 @@ class TrackSummaryTableModel extends AbstractTableModel {
         return columnNames[col];
     }
     boolean[] canEdit = new boolean[] {
-        false, false, false, false, false, true, true
+        false, false, false, false, false, false, false, true, true
     };
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         boolean ret = canEdit[columnIndex];
-        if (columnIndex > 4 && mInfo[rowIndex].mChannel == -1) {
+        if (columnIndex > 6 && mInfo[rowIndex].mChannel == -1) {
             ret = false;
         }
         return ret;

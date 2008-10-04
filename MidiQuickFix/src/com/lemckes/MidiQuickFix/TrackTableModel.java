@@ -91,8 +91,7 @@ class TrackTableModel extends DefaultTableModel {
 
     public void setShowNotes(boolean show) {
         mShowNotes = show;
-        fireTableDataChanged();
-        //fireTableStructureChanged();
+        fireTableStructureChanged();
     }
 
     @Override

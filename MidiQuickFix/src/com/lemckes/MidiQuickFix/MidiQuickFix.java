@@ -207,6 +207,7 @@ public class MidiQuickFix extends JFrame
             summaryScrollPane.setViewportView(mTrackSummary);
             mTrackEditor = new TrackEditorPanel();
             editorPanel.add(mTrackEditor);
+            mTrackEditor.addTableChangeListener(this);
             mLyricDisplay = new LyricDisplay();
             lyricsPanel.add(mLyricDisplay);
             mLyricDisplay.setSequencer(mSequencer);
@@ -353,6 +354,7 @@ public class MidiQuickFix extends JFrame
             setInfoLabels();
         } finally {
             setBusy(false);
+            pack();
         }
     }
 
