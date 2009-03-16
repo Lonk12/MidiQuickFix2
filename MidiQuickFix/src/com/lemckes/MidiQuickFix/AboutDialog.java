@@ -48,6 +48,7 @@ public class AboutDialog extends javax.swing.JDialog {
         mSplash = new SplashDrawing();
         mSplash.setCentredText(true);
         mSplash.addStageMessage(UiStrings.getString("about_message")); // NOI18N
+        mSplash.addStageMessage(UiStrings.getString("version_string")); // NOI18N
         mSplash.addStageMessage("http://midiquickfix.sourceforge.net"); // NOI18N
         mSplash.addStageMessage(""); // NOI18N
         mSplash.addStageMessage(UiStrings.getString("copyright")); // NOI18N

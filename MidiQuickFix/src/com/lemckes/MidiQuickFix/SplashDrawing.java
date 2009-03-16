@@ -23,7 +23,6 @@
 package com.lemckes.MidiQuickFix;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -41,7 +40,6 @@ import java.util.ArrayList;
  * @version $Id$
  */
 public class SplashDrawing extends javax.swing.JComponent {
-    static final long serialVersionUID = 2699979447341049369L;
     transient BufferedImage mBi;
     transient Image mImage;
     int mImageWidth;
@@ -95,7 +93,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         g2.drawImage(mBi, 0, 0, this);
 
         int startY =
-            (int)((mImageHeight - mLineHeight * mStageMessages.size()) / 2);
+            (int)((mImageHeight / 2.0) - (mLineHeight * (mStageMessages.size() - 1) / 2.0));
         int startX = 20;
         int i = 0;
         for (String s : mStageMessages) {
