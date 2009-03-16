@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2008 John Lemcke
+ *   Copyright (C) 2004-2009 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -23,6 +23,7 @@
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.TableColumnWidthSetter;
+import java.awt.Dimension;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 import javax.swing.DefaultCellEditor;
@@ -46,6 +47,9 @@ public class TrackTable extends javax.swing.JTable {
     public TrackTable() {
         initComponents();
         updateModel(new TrackTableModel(null, 96, true, true));
+        // Position, Event, Note, Value, Patch, Text, Channel
+        Dimension pd = getPreferredSize();
+        setPreferredScrollableViewportSize(pd);
     }
 
     /**
@@ -100,7 +104,10 @@ public class TrackTable extends javax.swing.JTable {
     private void updateModel(TrackTableModel model) {
         setModel(model);
         setInstrumentEditor();
-        TableColumnWidthSetter.setColumnWidths(this, false);
+        Object[] widths = {
+            "00000:000", "M:TimeSignature", "G#", "127", // NOI18N
+            "Cor___Anglais", "ABCDEFGHIJKL", "16"}; // NOI18N
+        TableColumnWidthSetter.setColumnWidths(this, widths, true);
     }
 
     /**

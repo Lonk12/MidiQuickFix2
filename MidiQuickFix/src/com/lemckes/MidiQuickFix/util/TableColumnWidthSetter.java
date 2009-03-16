@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2008 John Lemcke
+ *   Copyright (C) 2004-2009 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -68,15 +68,15 @@ public class TableColumnWidthSetter {
      * then increase column widths to fill the parent if needed.
      */
     static public void setColumnWidths(JTable table, Object[] longValues,
-                                         boolean maxLayout) {
+                                       boolean maxLayout) {
         TableModel model = table.getModel();
         Component comp = null;
-        int headerWidth = 0;
-        int cellWidth = 0;
-        int editorWidth = 0;
         int used = 0;
 
         for (int i = 0; i < table.getColumnModel().getColumnCount(); ++i) {
+            int headerWidth = 0;
+            int cellWidth = 0;
+            int editorWidth = 0;
             TableColumn column = table.getColumnModel().getColumn(i);
             ////////////////////////////////////////////////////
             // Find the width of the column header.
@@ -124,7 +124,9 @@ public class TableColumnWidthSetter {
                 comp = cellEditor.getTableCellEditorComponent(
                     table, longValues[i],
                     false, 0, i);
-                editorWidth = comp.getPreferredSize().width;
+                if (comp != null) {
+                    editorWidth = comp.getPreferredSize().width;
+                }
             } else {
                 editorWidth = 0;
             }
@@ -143,7 +145,6 @@ public class TableColumnWidthSetter {
             column.setPreferredWidth(colWidth);
             column.setWidth(colWidth);
             used += column.getPreferredWidth();
-            ++i;
         }
 
         if (maxLayout && table.getParent() != null) {

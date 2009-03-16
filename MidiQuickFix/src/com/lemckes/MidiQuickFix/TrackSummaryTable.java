@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2005 John Lemcke
+ *   Copyright (C) 2004-2009 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -24,6 +24,7 @@ package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.TableColumnWidthSetter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
+import java.awt.Dimension;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
 
@@ -39,6 +40,8 @@ public class TrackSummaryTable extends javax.swing.JTable {
         try {
             initComponents();
             setSequence(new Sequence(Sequence.PPQ, 92));
+            Dimension pd = getPreferredSize();
+            setPreferredScrollableViewportSize(pd);
         } catch (InvalidMidiDataException ex) {
             TraceDialog.addTrace("TrackSummaryTable new Sequence failed." +
                 ex.getMessage());
@@ -51,10 +54,12 @@ public class TrackSummaryTable extends javax.swing.JTable {
      */
     public void setSequence(Sequence seq) {
         setModel(new TrackSummaryTableModel(seq));
-        Object[] widths =
-            {"99", "Cor Anglais or longer", "00000:000", "00000:000", "16", // NOI18N
-             true, true};
-        TableColumnWidthSetter.setColumnWidths(this, widths, true);
+            Object[] widths = {
+                "99", "The Track Name", // NOI18N
+                "00000:000", "00000:000", // NOI18N
+                "G#3", "G#3", // NOI18N
+                "16", true, true}; // NOI18N
+            TableColumnWidthSetter.setColumnWidths(this, widths, true);
     }
 
     /** This method is called from within the constructor to
@@ -65,11 +70,8 @@ public class TrackSummaryTable extends javax.swing.JTable {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setFont(new java.awt.Font("DialogInput", 0, 12));
+        setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-
 }
