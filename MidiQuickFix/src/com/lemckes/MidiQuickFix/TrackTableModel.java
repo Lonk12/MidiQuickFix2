@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2005 John Lemcke
+ *   Copyright (C) 2004-2009 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -110,8 +110,7 @@ class TrackTableModel extends DefaultTableModel {
         return columnNames.length;
     }
 
-    private MidiEvent getEventForRow(int row)
-    {
+    private MidiEvent getEventForRow(int row) {
         int eventIndex = row;
         // Adjust the index if notes are not being displayed
         if (!mShowNotes) {
@@ -119,7 +118,7 @@ class TrackTableModel extends DefaultTableModel {
         }
         return mTrack.get(eventIndex);
     }
-    
+
     public long getTickForRow(int row) {
         return getEventForRow(row).getTick();
     }
@@ -451,8 +450,7 @@ class TrackTableModel extends DefaultTableModel {
 
     Object[] getMessageArray(MidiMessage mess) {
         // "0 Event", "1 Note", "2 Value", "3 Patch", "4 Text", "5 Channel"
-        Object result[] =
-            {null, null, null, null, null, null};
+        Object result[] = {null, null, null, null, null, null};
 
         int st = mess.getStatus();
         if (st == MetaMessage.META) {

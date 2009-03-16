@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2008 John Lemcke
+ *   Copyright (C) 2004-2009 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -31,14 +31,17 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelListener;
 
 /**
  * The UI for editing track data
  * @version $Id$
  */
-public class TrackEditorPanel extends javax.swing.JPanel implements EventCreationListener {
-    static final long serialVersionUID = 116439713789684943L;
+public class TrackEditorPanel extends javax.swing.JPanel
+    implements EventCreationListener, ListSelectionListener {
+    private static final long serialVersionUID = -3117013688244779503L;
     private Sequence mSeq;
     private Track[] mTracks;
     private int mCurrentTrack;
@@ -48,6 +51,16 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
     /** Creates new form TrackEditorPanel */
     public TrackEditorPanel() {
         initComponents();
+        tableScrollPane.setViewportView(trackTable);
+        trackTable.getSelectionModel().addListSelectionListener(this);
+    }
+
+    public void valueChanged(ListSelectionEvent e) {
+        if (!e.getValueIsAdjusting()) {
+            boolean haveSelection = trackTable.getSelectedRowCount() > 0;
+            deleteButton.setEnabled(haveSelection);
+            insertButton.setEnabled(haveSelection);
+        }
     }
 
     /**
@@ -56,9 +69,17 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
      */
     public void setSequence(Sequence seq) {
         mSeq = seq;
-        mTracks = mSeq.getTracks();
-        setTrackComboModel(mTracks);
-        selectTrack(0);
+        boolean haveTracks = false;
+        if (mSeq != null) {
+            mTracks = mSeq.getTracks();
+            if (mTracks.length > 0) {
+                setTrackComboModel(mTracks);
+                selectTrack(0);
+                haveTracks = true;
+            }
+        }
+        trackSelector.setEnabled(haveTracks);
+        showNotesCheck.setEnabled(haveTracks);
     }
 
     /**
@@ -161,6 +182,7 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
         setLayout(new java.awt.BorderLayout());
 
         tableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         tableScrollPane.setViewportView(trackTable);
 
         add(tableScrollPane, java.awt.BorderLayout.CENTER);
@@ -170,6 +192,7 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
         buttonPanel.setLayout(new java.awt.GridLayout(0, 1, 0, 3));
 
         insertButton.setText(UiStrings.getString("insert")); // NOI18N
+        insertButton.setEnabled(false);
         insertButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         insertButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -179,6 +202,7 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
         buttonPanel.add(insertButton);
 
         deleteButton.setText(UiStrings.getString("delete")); // NOI18N
+        deleteButton.setEnabled(false);
         deleteButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -196,6 +220,7 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
 
         showNotesCheck.setSelected(true);
         showNotesCheck.setText(UiStrings.getString("show_notes")); // NOI18N
+        showNotesCheck.setEnabled(false);
         showNotesCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showNotesCheckActionPerformed(evt);
@@ -210,6 +235,7 @@ public class TrackEditorPanel extends javax.swing.JPanel implements EventCreatio
 
         trackSelector.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0" }));
         trackSelector.setAlignmentX(0.0F);
+        trackSelector.setEnabled(false);
         trackSelector.setName("trackSelector"); // NOI18N
         trackSelector.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

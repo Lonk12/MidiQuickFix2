@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2005 John Lemcke
+ *   Copyright (C) 2004-2009 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -105,8 +105,8 @@ public class AboutDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(UiStrings.getString("mqf")); // NOI18N
-        setFont(new java.awt.Font("Dialog", 1, 14));
+        setTitle(UiStrings.getString("about_mqf")); // NOI18N
+        setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         setName("aboutDialog"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {

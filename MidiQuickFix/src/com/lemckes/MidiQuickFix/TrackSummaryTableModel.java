@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2005 John Lemcke
+ *   Copyright (C) 2004-2009 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -179,8 +179,9 @@ class TrackSummaryTableModel extends AbstractTableModel {
                     // Didn't find a NOTE_ON event
                     result = null;
                 } else {
-                    result = NoteNames.getBothNoteNames(
-                        mInfo[row].mLowNote);
+                    // Display the lowest note in flats
+                    result = NoteNames.getNoteName(
+                        mInfo[row].mLowNote, true);
                 }
                 break;
             case 5:
@@ -188,8 +189,9 @@ class TrackSummaryTableModel extends AbstractTableModel {
                     // Didn't find a NOTE_ON event
                     result = null;
                 } else {
-                    result = NoteNames.getBothNoteNames(
-                        mInfo[row].mHighNote);
+                    // Display the highest note in sharps
+                    result = NoteNames.getNoteName(
+                        mInfo[row].mHighNote, false);
                 }
                 break;
             case 6:
@@ -214,15 +216,6 @@ class TrackSummaryTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object value, int row, int column) {
-        // Only boolean toggles here so the test is not needed.
-        // Don't bother if the value hasn't changed.
-        // Object oldVal = getValueAt(row, column);
-        // Need to compare String versions of the Objects
-        // if (value.toString().equals(oldVal.toString()))
-        // {
-        //     return;
-        // }
-
         switch (column) {
             case 7:
                 // Solo

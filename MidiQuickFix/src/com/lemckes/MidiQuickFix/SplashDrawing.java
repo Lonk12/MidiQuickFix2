@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2005 John Lemcke
+ *   Copyright (C) 2004-2009 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -23,6 +23,7 @@
 package com.lemckes.MidiQuickFix;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -40,7 +41,6 @@ import java.util.ArrayList;
  * @version $Id$
  */
 public class SplashDrawing extends javax.swing.JComponent {
-
     static final long serialVersionUID = 2699979447341049369L;
     transient BufferedImage mBi;
     transient Image mImage;
@@ -48,7 +48,6 @@ public class SplashDrawing extends javax.swing.JComponent {
     int mImageHeight;
     float mLineHeight;
     boolean mCentred = false;
-    //  For java 1.5 ArrayList<String> mStageMessages = new ArrayList<String>();
     ArrayList<String> mStageMessages = new ArrayList<String>();
     Font mFont;
     transient FontRenderContext mFrContext;
@@ -59,7 +58,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         setFont(mFont);
         mFrContext = new FontRenderContext(null, true, true);
         LineMetrics fm = mFont.getLineMetrics("A Typical Message String",
-                mFrContext); // NOI18N
+            mFrContext); // NOI18N
         mLineHeight = fm.getHeight();
 
         java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
@@ -76,7 +75,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         mImageWidth = mImage.getWidth(null);
         mImageHeight = mImage.getHeight(null);
         mBi = new BufferedImage(mImageWidth, mImageHeight,
-                BufferedImage.TYPE_INT_RGB);
+            BufferedImage.TYPE_INT_RGB);
         Graphics2D g = mBi.createGraphics();
         g.drawImage(mImage, 0, 0, null);
         g.dispose();
@@ -88,15 +87,15 @@ public class SplashDrawing extends javax.swing.JComponent {
      */
     @Override
     public void paint(java.awt.Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D)g;
         g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.drawImage(mBi, 0, 0, this);
 
         int startY =
-                (int) ((mImageHeight - mLineHeight * mStageMessages.size()) / 2);
+            (int)((mImageHeight - mLineHeight * mStageMessages.size()) / 2);
         int startX = 20;
         int i = 0;
         for (String s : mStageMessages) {
@@ -104,11 +103,11 @@ public class SplashDrawing extends javax.swing.JComponent {
                 startX = 20;
             } else {
                 Rectangle2D r =
-                        mFont.getStringBounds(s, mFrContext);
+                    mFont.getStringBounds(s, mFrContext);
                 double width = r.getWidth();
-                startX = (int) ((mImageWidth - width) / 2);
+                startX = (int)((mImageWidth - width) / 2);
             }
-            int y = startY + (int) (i++ * mLineHeight);
+            int y = startY + (int)(i++ * mLineHeight);
             if (s != null) {
                 g2.drawString(s, startX, y);
             }
@@ -131,7 +130,8 @@ public class SplashDrawing extends javax.swing.JComponent {
     public synchronized void addStageMessage(String message) {
         if (message != null) {
             mStageMessages.add(message);
-            repaint();
+            paintImmediately(getBounds());
+
             try {
                 // Wait a bit so that the message is seen
                 wait(300);

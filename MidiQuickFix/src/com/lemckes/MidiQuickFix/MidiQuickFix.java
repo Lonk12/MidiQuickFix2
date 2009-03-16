@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2005 John Lemcke
+ *   Copyright (C) 2004-2009 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -584,12 +584,6 @@ public class MidiQuickFix extends JFrame
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
-        sequenceChooser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sequenceChooserActionPerformed(evt);
-            }
-        });
-
         setTitle(UiStrings.getString("mqf")); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -599,13 +593,12 @@ public class MidiQuickFix extends JFrame
 
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        mainSplitPane.setDividerSize(9);
+        mainSplitPane.setDividerSize(11);
         mainSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         mainSplitPane.setOneTouchExpandable(true);
 
         topPanel.setLayout(new java.awt.BorderLayout());
 
-        playControlPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 6, 0));
         playControlPanel.setLayout(new java.awt.GridBagLayout());
 
         transportPanel.setAlignmentX(1.0F);
@@ -620,9 +613,11 @@ public class MidiQuickFix extends JFrame
 
         topPanel.add(playControlPanel, java.awt.BorderLayout.CENTER);
 
+        controlPanel.setBackground(new java.awt.Color(211, 225, 237));
+        controlPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 6, 6, 6));
         controlPanel.setLayout(new java.awt.GridBagLayout());
 
-        progressPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2), javax.swing.BorderFactory.createEtchedBorder()));
+        progressPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2)));
         progressPanel.setLayout(new java.awt.GridBagLayout());
 
         positionSlider.setBorder(null);
@@ -639,8 +634,10 @@ public class MidiQuickFix extends JFrame
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
         controlPanel.add(progressPanel, gridBagConstraints);
 
+        tempoAdjustPanel.setOpaque(false);
         tempoAdjustPanel.setLayout(new java.awt.GridBagLayout());
 
         tempoAdjustLabel.setText(UiStrings.getString("tempo_adjust")); // NOI18N
@@ -649,11 +646,9 @@ public class MidiQuickFix extends JFrame
         gridBagConstraints.gridy = 0;
         tempoAdjustPanel.add(tempoAdjustLabel, gridBagConstraints);
 
-        tempoAdjustSlider.setMajorTickSpacing(10);
         tempoAdjustSlider.setMaximum(200);
-        tempoAdjustSlider.setMinorTickSpacing(1);
-        tempoAdjustSlider.setSnapToTicks(true);
         tempoAdjustSlider.setValue(100);
+        tempoAdjustSlider.setOpaque(false);
         tempoAdjustSlider.setPreferredSize(new java.awt.Dimension(100, 16));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -677,10 +672,10 @@ public class MidiQuickFix extends JFrame
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 9);
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 16);
         controlPanel.add(tempoAdjustPanel, gridBagConstraints);
 
-        seqInfoPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2), javax.swing.BorderFactory.createEtchedBorder()));
+        seqInfoPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2)));
         seqInfoPanel.setLayout(new java.awt.GridBagLayout());
 
         lengthLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -768,6 +763,7 @@ public class MidiQuickFix extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
         controlPanel.add(seqInfoPanel, gridBagConstraints);
 
         transposeButton.setText(UiStrings.getString("transpose")); // NOI18N
@@ -779,6 +775,7 @@ public class MidiQuickFix extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(6, 3, 0, 0);
         controlPanel.add(transposeButton, gridBagConstraints);
 
         topPanel.add(controlPanel, java.awt.BorderLayout.SOUTH);
@@ -791,7 +788,7 @@ public class MidiQuickFix extends JFrame
         detailsTabbedPane.addTab(UiStrings.getString("track_summary"), summaryPanel); // NOI18N
 
         editorPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 0, 3, 0));
-        editorPanel.setLayout(new java.awt.BorderLayout());
+        editorPanel.setLayout(new javax.swing.BoxLayout(editorPanel, javax.swing.BoxLayout.LINE_AXIS));
         detailsTabbedPane.addTab(UiStrings.getString("editor"), editorPanel); // NOI18N
 
         lyricsPanel.setLayout(new java.awt.BorderLayout());
@@ -1029,9 +1026,6 @@ public class MidiQuickFix extends JFrame
         }
     }//GEN-LAST:event_openMenuItemActionPerformed
 
-    private void sequenceChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceChooserActionPerformed
-            }//GEN-LAST:event_sequenceChooserActionPerformed
-
     /** Called on a change to the table
      * @param e The event
      */
@@ -1101,11 +1095,12 @@ public class MidiQuickFix extends JFrame
         if (args.length > 0 && args[0] != null) {
             filename = args[0];
         }
-//        EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-        new MidiQuickFix(filename).setVisible(true);
-//            }
-//        });
+        final String finalName = filename;
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+        new MidiQuickFix(finalName).setVisible(true);
+            }
+        });
     }
     /**
      * Flag if we need to work around the bug in 1.4.2

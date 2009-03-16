@@ -1,8 +1,25 @@
-/*
- * TransposeDialog.java
+/**************************************************************
  *
- * Created on 19 June 2007, 23:30
- */
+ *   MidiQuickFix - A Simple Midi file editor and player
+ *
+ *   Copyright (C) 2004-2009 John Lemcke
+ *   jostle@users.sourceforge.net
+ *
+ *   This program is free software; you can redistribute it
+ *   and/or modify it under the terms of the Artistic License
+ *   as published by Larry Wall, either version 2.0,
+ *   or (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *   See the Artistic License for more details.
+ *
+ *   You should have received a copy of the Artistic License with this Kit,
+ *   in the file named "Artistic.clarified".
+ *   If not, I'll be glad to provide one.
+ *
+ **************************************************************/
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.EventCreationEvent;
@@ -11,7 +28,10 @@ import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.RegexDocumentFilter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
+import java.awt.Component;
 import java.awt.Frame;
+import java.util.ArrayList;
+import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
@@ -92,23 +112,29 @@ public class CreateEventDialog extends javax.swing.JDialog {
         RegexDocumentFilter wordFilter =
             new RegexDocumentFilter("\\p{Digit}{0,5}"); // NOI18N
 
-        bendField.setText("8192"); // NOI18N
-        ((AbstractDocument)bendField.getDocument()).setDocumentFilter(wordFilter);
+        bendField.setText(DEFAULT_PITCH_BEND);
+        doc = (AbstractDocument)bendField.getDocument();
+        doc.setDocumentFilter(wordFilter);
 
-        channelField.setText("0"); // NOI18N
-        ((AbstractDocument)channelField.getDocument()).setDocumentFilter(byteFilter);
+        channelField.setText(DEFAULT_CHANNEL);
+        doc = (AbstractDocument)channelField.getDocument();
+        doc.setDocumentFilter(byteFilter);
 
-        channelPressureField.setText("127"); // NOI18N
-        ((AbstractDocument)channelPressureField.getDocument()).setDocumentFilter(byteFilter);
+        channelPressureField.setText(DEFAULT_PRESSURE);
+        doc = (AbstractDocument)channelPressureField.getDocument();
+        doc.setDocumentFilter(byteFilter);
 
-        controlValueField.setText("64"); // NOI18N
-        ((AbstractDocument)controlValueField.getDocument()).setDocumentFilter(byteFilter);
+        controlValueField.setText(DEFAULT_CONTROL_VALUE);
+        doc = (AbstractDocument)controlValueField.getDocument();
+        doc.setDocumentFilter(byteFilter);
 
-        noteValueField.setText("127"); // NOI18N
-        ((AbstractDocument)noteValueField.getDocument()).setDocumentFilter(byteFilter);
+        noteValueField.setText(DEFAULT_NOTE_VALUE);
+        doc = (AbstractDocument)noteValueField.getDocument();
+        doc.setDocumentFilter(byteFilter);
 
-        octaveField.setText("5"); // NOI18N
-        ((AbstractDocument)octaveField.getDocument()).setDocumentFilter(byteFilter);
+        octaveField.setText(DEFAULT_OCTAVE);
+        doc = (AbstractDocument)octaveField.getDocument();
+        doc.setDocumentFilter(byteFilter);
     }
 
     /**
@@ -141,6 +167,20 @@ public class CreateEventDialog extends javax.swing.JDialog {
         for (int i = listeners.length - 1; i >= 0; --i) {
             listeners[i].eventCreated(new EventCreationEvent(e));
         }
+    }
+
+    private void enableFields(List<Component> components) {
+        noteCombo.setEnabled(components.contains(noteCombo));
+        octaveField.setEnabled(components.contains(octaveField));
+        noteValueField.setEnabled(components.contains(noteValueField));
+        patchCombo.setEnabled(components.contains(patchCombo));
+        controlChangeCombo.setEnabled(components.contains(controlChangeCombo));
+        controlValueField.setEnabled(components.contains(controlValueField));
+        bendField.setEnabled(components.contains(bendField));
+        channelPressureField.setEnabled(
+            components.contains(channelPressureField));
+        metaEventCombo.setEnabled(components.contains(metaEventCombo));
+        metaDataField.setEnabled(components.contains(metaDataField));
     }
 
     /** This method is called from within the constructor to
@@ -345,14 +385,14 @@ public class CreateEventDialog extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 9, 0);
         jPanel1.add(controlChangeCombo, gridBagConstraints);
 
         controlValueLabel.setText(UiStrings.getString("value")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
@@ -361,7 +401,7 @@ public class CreateEventDialog extends javax.swing.JDialog {
         controlValueField.setColumns(3);
         controlValueField.setText(DEFAULT_CONTROL_VALUE);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 9, 0);
@@ -512,72 +552,31 @@ public class CreateEventDialog extends javax.swing.JDialog {
     private void radioSelected(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioSelected
         String cmd = evt.getActionCommand();
 
-        if (NOTE_ON.equals(cmd) || NOTE_OFF.equals(cmd) || POLY_PRESSURE.equals(cmd)) {
-            noteCombo.setEnabled(true);
-            octaveField.setEnabled(true);
-            noteValueField.setEnabled(true);
-            patchCombo.setEnabled(false);
-            controlChangeCombo.setEnabled(false);
-            controlValueField.setEnabled(false);
-            bendField.setEnabled(false);
-            channelPressureField.setEnabled(false);
-            metaEventCombo.setEnabled(false);
-            metaDataField.setEnabled(false);
+        List<Component> enabled = new ArrayList<Component>();
+        if (NOTE_ON.equals(cmd) ||
+            NOTE_OFF.equals(cmd) ||
+            POLY_PRESSURE.equals(cmd)) {
+            enabled.add(noteCombo);
+            enabled.add(octaveField);
+            enabled.add(noteValueField);
+            enableFields(enabled);
         } else if (PATCH.equals(cmd)) {
-            noteCombo.setEnabled(false);
-            octaveField.setEnabled(false);
-            noteValueField.setEnabled(false);
-            patchCombo.setEnabled(true);
-            controlChangeCombo.setEnabled(false);
-            controlValueField.setEnabled(false);
-            bendField.setEnabled(false);
-            channelPressureField.setEnabled(false);
-            metaEventCombo.setEnabled(false);
-            metaDataField.setEnabled(false);
+            enabled.add(patchCombo);
+            enableFields(enabled);
         } else if (CONTROL_CHANGE.equals(cmd)) {
-            noteCombo.setEnabled(false);
-            octaveField.setEnabled(false);
-            noteValueField.setEnabled(false);
-            patchCombo.setEnabled(false);
-            controlChangeCombo.setEnabled(true);
-            controlValueField.setEnabled(true);
-            bendField.setEnabled(false);
-            channelPressureField.setEnabled(false);
-            metaEventCombo.setEnabled(false);
-            metaDataField.setEnabled(false);
+            enabled.add(controlChangeCombo);
+            enabled.add(controlValueField);
+            enableFields(enabled);
         } else if (PITCH_BEND.equals(cmd)) {
-            noteCombo.setEnabled(false);
-            octaveField.setEnabled(false);
-            noteValueField.setEnabled(false);
-            patchCombo.setEnabled(false);
-            controlChangeCombo.setEnabled(false);
-            controlValueField.setEnabled(false);
-            bendField.setEnabled(true);
-            channelPressureField.setEnabled(false);
-            metaEventCombo.setEnabled(false);
-            metaDataField.setEnabled(false);
+            enabled.add(bendField);
+            enableFields(enabled);
         } else if (CHANNEL_PRESSURE.equals(cmd)) {
-            noteCombo.setEnabled(false);
-            octaveField.setEnabled(false);
-            noteValueField.setEnabled(false);
-            patchCombo.setEnabled(false);
-            controlChangeCombo.setEnabled(false);
-            controlValueField.setEnabled(false);
-            bendField.setEnabled(false);
-            channelPressureField.setEnabled(true);
-            metaEventCombo.setEnabled(false);
-            metaDataField.setEnabled(false);
+            enabled.add(channelPressureField);
+            enableFields(enabled);
         } else if (META_EVENT.equals(cmd)) {
-            noteCombo.setEnabled(false);
-            octaveField.setEnabled(false);
-            noteValueField.setEnabled(false);
-            patchCombo.setEnabled(false);
-            controlChangeCombo.setEnabled(false);
-            controlValueField.setEnabled(false);
-            bendField.setEnabled(false);
-            channelPressureField.setEnabled(false);
-            metaEventCombo.setEnabled(true);
-            metaDataField.setEnabled(true);
+            enabled.add(metaEventCombo);
+            enabled.add(metaDataField);
+            enableFields(enabled);
         }
     }//GEN-LAST:event_radioSelected
 
@@ -803,7 +802,7 @@ public class CreateEventDialog extends javax.swing.JDialog {
         try {
             i = Integer.parseInt(s);
         } catch (NumberFormatException nfe) {
-        // DO NOTHING
+            // DO NOTHING
         }
         return i;
     }
