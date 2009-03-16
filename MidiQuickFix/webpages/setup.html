@@ -1,196 +1,228 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-       "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
 >
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>Midi Quick Fix</title>
-    <meta name="generator" content="amaya 8.0, see http://www.w3.org/Amaya/" />
-    <link href="MQF.css" rel="stylesheet" type="text/css" />
-  </head>
-  <body>
-    <div class="full_page">
-      <div class="title_bar">
-        <img src="MQFTitleBlue.png" alt="MidiQuickFix"/>
-      </div>
-      <div class="left_column">
-        <div class="link_box">
-          <span class="menu_title">MidiQuickFix</span>
-          <br />
-          <p>
-            <a href="index.html">Home</a>
-          </p>
-        </div>
-        <div class="link_box">
-          <span class="menu_title">Screenshots</span>
-          <br />
-          <p>
-            <a href="MQF-Main.png">Main Window</a>
-          </p>
-          <p>
-            <a href="MQF-TrackSummary.png">Track Summary</a>
-          </p>
-        </div>
-        <div class="link_box">
-          <span class="menu_title">Documentation</span>
-          <br />
-          <p>
-             Installation 
-          </p>
-        </div>
-        <div class="link_box">
-          <span class="menu_title">SourceForge project links</span>
-          <br />
-          <p>
-            <a href="http://sourceforge.net/projects/midiquickfix"> Project Page</a>
-          </p>
-          <p>
-            <a href="http://sourceforge.net/project/showfiles.php?group_id=124029"> Downloads</a>
-          </p>
-          <p>
-            <a href="http://sourceforge.net/cvs/?group_id=124029"> CVS</a>
-          </p>
-          <p>
-            <a href="http://cvs.sourceforge.net/viewcvs.py/midiquickfix/"> CVS Web</a>
-          </p>
-        </div>
-        <a href="http://sourceforge.net">
-                    <img src="http://sourceforge.net/sflogo.php?group_id=124029&amp;type=4"
-                    style="width: 125px; height: 37px; border: 0" alt="SourceForge.net Logo" />
-                </a>
-      </div>
-      <div class="centre_column">
-        <span class="proj_name">MidiQuickFix</span> is available both as source code and a pre-built executable jar file from the <a href="http://sourceforge.net/project/showfiles.php?group_id=124029"> downloads</a> page and also as source code from <a href="http://sourceforge.net/cvs/?group_id=124029">CVS</a> (for those who want the latest <span style="text-decoration : line-through">bugs</span> fixes) 
-        <br />
-        <br />
-        <span class="section_head">Prerequisites</span>
-        <ul>
-          <li>
-             A properly installed j2re version 1.5 or greater is all that is needed to run <span class="proj_name">MidiQuickFix</span>. 
-            <br />
-          </li>
-          <li>
-             For development you will need j2sdk 1.5 or greater installed. 
-            <br />
-             Apache ant can be used with the supplied build scripts. 
-            <br />
-             I use <a href="http://www.netbeans.org">NetBeans 6.1</a> as my development environment so, if you would like to work on the code, it would probably be worth installing that too. 
-          </li>
-        </ul>
-        <br />
-        <span class="section_head">Jar file install and use</span>
-        <ul>
-          <li>
-             Download the jar file from the <a href="http://sourceforge.net/project/showfiles.php?group_id=124029"> downloads</a> page. 
-            <br />
-          </li>
-          <li>
-             Run the program with 
-            <br />
-            <code>java -jar MidiQuickFix-n.n.n.jar</code>
-          </li>
-        </ul>
-        <br />
-        <span class="section_head">Source code install and run</span>
-        <ul>
-          <li>
-             Download the source code from the <a href="http://sourceforge.net/project/showfiles.php?group_id=124029"> downloads</a> page or from <a href="http://sourceforge.net/cvs/?group_id=124029">CVS</a>
-            <br />
-          </li>
-          <li>
-             Extract the files from the archive using either 
-            <br />
-            <code>unzip MidiQuickFix-n.n.n.zip</code>
-            <br />
-             or 
-            <br />
-            <code>tar xzvf MidiQuickFix-n.n.n.tgz</code>
-            <br />
-          </li>
-          <li>
-             For a plain <code>javac</code> build 
-            <ul>
-              <li>
-                <code>cd</code> to the extracted <code>MidiQuickFix-n.n.n/src</code> directory. 
-                <br />
-              </li>
-              <li>
-                 Compile the java source with 
-                <br />
-                <code>javac com/lemckes/MidiQuickFix/*java</code>
-              </li>
-              <li>
-                 Run the program with 
-                <br />
-                <code>java com.lemckes.MidiQuickFix.MidiQuickFix</code>
-              </li>
-            </ul>
-          </li>
-          <li>
-             For a stand-alone <code>ant</code> build 
-            <ul>
-              <li>
-                <code>cd</code> to the extracted <code>MidiQuickFix-n.n.n</code> directory. 
-                <br />
-              </li>
-              <li>
-                 Build the jar file with 
-                <br />
-                <code>ant -f simple_build.xml</code>
-              </li>
-              <li>
-                 Run the program with 
-                <br />
-                <code>java -jar dist/MidiQuickFix.jar</code>
-              </li>
-            </ul>
-          </li>
-          <li>
-             For a NetBeans build 
-            <ul>
-              <li>
-                 Start NetBeans 
-                <br />
-              </li>
-              <li>
-                 Open the MidiQuickFix project with 
-                <br />
-                <code>File -> Open Project...</code>
-                <br />
-                 and select the extracted <code>MidiQuickFix-n.n.n</code> directory. 
-                <br />
-                 Make MidiQuickFix the 'Main Project'. 
-              </li>
-              <li>
-                 Build the jar file with 
-                <br />
-                <code>Build -> Build Main Project</code>
-              </li>
-              <li>
-                 Run the program with 
-                <br />
-                <code>Run -> Run Main Project</code>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-      <div class="right_column">
-        <div class="link_box">
-          <span class="menu_title">Related links</span>
-          <br />
-          <div class="link_box">
-            <span class="menu_title">Midi Files</span>
-            <br />
-            <p>
-              <a href="http://www.cyberbass.com">CyberBass</a>
-            </p>
-            <p>
-              <a href="http://www.choirmidi.nl/choirmidi1e.html">ChoirMidi</a>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
+	<head>
+		<title>Midi Quick Fix</title>
+		<meta name="generator" content="amaya 8.0, see http://www.w3.org/Amaya/" />
+		<link href="MQF.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<div class="full_page">
+			<div class="title_bar">
+				<img src="MQFTitleBlue.png" alt="MidiQuickFix"/>
+			</div>
+			<div class="left_column">
+				<div class="link_box">
+					<span class="proj_name">MidiQuickFix</span>
+					<br />
+					<p>
+						<a href="index.html">Home</a>
+					</p>
+				</div>
+				<div class="link_box">
+					<span class="menu_title">Screenshots</span>
+					<br />
+					<p>
+						<a href="MQF-TrackSummary.png">Track Summary</a>
+					</p>
+					<p>
+						<a href="MQF-TrackEditor.png">Track Editor</a>
+					</p>
+					<p>
+						<a href="MQF-Lyrics.png">Lyrics Display</a>
+					</p>
+				</div>
+				<div class="link_box">
+					<span class="menu_title">Documentation</span>
+					<br />
+					<p>
+						Installation
+					</p>
+				</div>
+				<div class="link_box">
+					<span class="menu_title">SourceForge project links</span>
+					<br />
+					<p>
+						<a href="http://sourceforge.net/projects/midiquickfix"> Project Page</a>
+					</p>
+					<p>
+						<a href="http://sourceforge.net/project/showfiles.php?group_id=124029"> Downloads</a>
+					</p>
+					<p>
+						<a href="http://sourceforge.net/cvs/?group_id=124029"> CVS</a>
+					</p>
+					<p>
+						<a href="http://cvs.sourceforge.net/viewcvs.py/midiquickfix/"> CVS Web</a>
+					</p>
+				</div>
+				<a href="http://sourceforge.net/projects/midiquickfix">
+					<img src="http://sflogo.sourceforge.net/sflogo.php?group_id=124029&type=12"
+					  width="120" height="30" border="0"
+					  alt="Get MidiQuickFix at SourceForge.net. Fast, secure and Free Open Source software downloads" />
+				</a>
+			</div>
+			<div class="centre_column">
+				<span class="proj_name">MidiQuickFix</span> is available both as
+				source code and a pre-built executable jar file from the
+				<a href="http://sourceforge.net/project/showfiles.php?group_id=124029">
+					downloads</a> page and also as source code from
+					<a href="http://sourceforge.net/cvs/?group_id=124029">CVS</a>
+					(for those who want the latest
+					<span style="text-decoration : line-through">bugs</span> fixes)
+				<br />
+				<br />
+				<span class="section_head">Prerequisites</span>
+				<ul>
+					<li>
+						A properly installed j2re version 1.5 or greater is all
+						that is needed to run
+						<span class="proj_name">MidiQuickFix</span>.
+						<br />
+					</li>
+					<li>
+						For development you will need j2sdk 1.5 or greater installed.
+						<br />
+						Apache ant can be used with the supplied build scripts.
+						<br />
+						I use <a href="http://www.netbeans.org">NetBeans</a>
+						as my development environment so, if you would like to work
+						on the code, it would probably be worth installing that too.
+					</li>
+				</ul>
+				<br />
+				<span class="section_head">Jar file install and use</span>
+				<ul>
+					<li>
+						Download the jar file from the
+						<a href="http://sourceforge.net/project/showfiles.php?group_id=124029">
+							downloads</a> page.
+						<br />
+					</li>
+					<li>
+						On most systems you should be able to run the program
+						by double-clicking its icon in your file browser or from
+						the command line with
+						<br />
+						<code>java -jar MidiQuickFix-n.n.n.jar</code>
+					</li>
+				</ul>
+				<br />
+				<span class="section_head">Source code install and run</span>
+				<ul>
+					<li>
+						Download the source code from the <a href="http://sourceforge.net/project/showfiles.php?group_id=124029"> downloads</a> page or from <a href="http://sourceforge.net/cvs/?group_id=124029">CVS</a>
+						<br />
+					</li>
+					<li>
+						Extract the files from the archive using either
+						<br />
+						<code>unzip MidiQuickFix-n.n.n.zip</code>
+						<br />
+						or
+						<br />
+						<code>tar xzvf MidiQuickFix-n.n.n.tgz</code>
+						<br />
+					</li>
+					<li>
+						For a plain <code>javac</code> build
+						<ul>
+							<li>
+								<code>cd</code> to the extracted <code>MidiQuickFix-n.n.n/src</code> directory.
+								<br />
+							</li>
+							<li>
+								Compile the java source with
+								<br />
+								<code>javac com/lemckes/MidiQuickFix/*java</code>
+							</li>
+							<li>
+								Run the program with
+								<br />
+								<code>java com.lemckes.MidiQuickFix.MidiQuickFix</code>
+							</li>
+						</ul>
+					</li>
+					<li>
+						For a stand-alone <code>ant</code> build
+						<ul>
+							<li>
+								<code>cd</code> to the extracted <code>MidiQuickFix-n.n.n</code> directory.
+								<br />
+							</li>
+							<li>
+								Build the jar file with
+								<br />
+								<code>ant -f simple_build.xml</code>
+							</li>
+							<li>
+								Run the program with
+								<br />
+								<code>java -jar dist/MidiQuickFix.jar</code>
+							</li>
+						</ul>
+					</li>
+					<li>
+						For a NetBeans build
+						<ul>
+							<li>
+								Start NetBeans
+								<br />
+							</li>
+							<li>
+								Open the MidiQuickFix project with
+								<br />
+								<code>File -> Open Project...</code>
+								<br />
+								and select the extracted <code>MidiQuickFix-n.n.n</code> directory.
+								<br />
+								Make MidiQuickFix the 'Main Project'.
+							</li>
+							<li>
+								Build the jar file with
+								<br />
+								<code>Build -> Build Main Project</code>
+							</li>
+							<li>
+								Run the program with
+								<br />
+								<code>Run -> Run Main Project</code>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="right_column">
+				<div class="link_box">
+					<span class="menu_title">Related links</span>
+					<br />
+					<div class="link_box">
+						<span class="menu_title">Midi Files</span>
+						<br />
+						<p>
+							<a href="http://www.cyberbass.com">
+								CyberBass</a>
+						</p>
+						<p>
+							<a href="http://www.cipoo.net/index.html">
+								cipoo.net</a>
+						</p>
+						<p>
+							<a href="http://www.cpdl.org/wiki/index.php/Main_Page">
+								cdpl.org</a>
+						</p>
+						<p>
+							<a href="http://www.thehoopers.demon.co.uk">
+								John's Midi Choral Music</a>
+						</p>
+						<p>
+							<a href="http://midiworld.com/midifile.htm">
+								Midi Files at MidiWorld</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>
