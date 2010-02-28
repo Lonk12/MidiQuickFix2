@@ -45,7 +45,9 @@ public class MidiFileFilter extends javax.swing.filechooser.FileFilter {
                 ext = s.substring(i + 1).toLowerCase();
             }
             if (ext != null) {
-                if (ext.equals("mid") || ext.equals("kar")) {
+                if (ext.equals("mid") ||
+                    ext.equals("midi") ||
+                    ext.equals("kar")) {
                     acc = true;
                 }
             }

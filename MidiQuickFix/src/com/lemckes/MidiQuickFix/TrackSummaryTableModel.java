@@ -42,7 +42,8 @@ import javax.swing.table.AbstractTableModel;
  * The model for the track summary table.
  * @version $Id$
  */
-class TrackSummaryTableModel extends AbstractTableModel {
+class TrackSummaryTableModel
+    extends AbstractTableModel {
     static final long serialVersionUID = -5109111307767764175L;
     transient private Synthesizer mSynth;
     transient private MidiChannel[] mChannels;
@@ -69,7 +70,7 @@ class TrackSummaryTableModel extends AbstractTableModel {
     transient private TrackInfo[] mInfo;
 
     /** Creates a new instance of a TrackSummaryTableModel */
-    public TrackSummaryTableModel(Sequence s) {
+    public TrackSummaryTableModel(Sequence s, Sequencer sequencer) {
         try {
             mSynth = MidiSystem.getSynthesizer();
         } catch (MidiUnavailableException e) {
@@ -79,13 +80,8 @@ class TrackSummaryTableModel extends AbstractTableModel {
 
         mChannels = mSynth.getChannels();
         mChannels[0].allSoundOff();
-        try {
-            mSeq = MidiSystem.getSequencer();
-        } catch (MidiUnavailableException e) {
-            TraceDialog.addTrace("No Sequencer available." + // NOI18N
-                " (Could make playing tricky.)"); // NOI18N
-        }
 
+        mSeq = sequencer;
         mSequence = s;
         mRes = s.getResolution();
         mTracks = mSequence.getTracks();
@@ -141,14 +137,17 @@ class TrackSummaryTableModel extends AbstractTableModel {
         }
     }
 
+    @Override
     public int getRowCount() {
         return mTracks.length;
     }
 
+    @Override
     public int getColumnCount() {
         return columnNames.length;
     }
 
+    @Override
     public Object getValueAt(int row, int column) {
         Object result;
         switch (column) {
@@ -227,13 +226,6 @@ class TrackSummaryTableModel extends AbstractTableModel {
                         "Sequencer Solo not supported. (Set to " + value // NOI18N
                         + " is actually " + soloed + ")"); // NOI18N
                 }
-                mChannels[mInfo[row].mChannel].setSolo(mInfo[row].mSolo);
-                soloed = mChannels[mInfo[row].mChannel].getSolo();
-                if (soloed != mInfo[row].mSolo) {
-                    TraceDialog.addTrace(
-                        "Channel Solo not supported. (Set to " + value // NOI18N
-                        + " is actually " + soloed + ")"); // NOI18N
-                }
                 break;
             case 8:
                 // Mute
@@ -243,13 +235,6 @@ class TrackSummaryTableModel extends AbstractTableModel {
                 if (muted != mInfo[row].mMute) {
                     TraceDialog.addTrace(
                         "Sequencer Mute not supported. (Set to " + value // NOI18N
-                        + " is actually " + muted + ")"); // NOI18N
-                }
-                mChannels[mInfo[row].mChannel].setMute(mInfo[row].mMute);
-                muted = mChannels[mInfo[row].mChannel].getMute();
-                if (muted != mInfo[row].mMute) {
-                    TraceDialog.addTrace(
-                        "Channel Mute not supported. (Set to " + value // NOI18N
                         + " is actually " + muted + ")"); // NOI18N
                 }
                 break;
@@ -290,7 +275,15 @@ class TrackSummaryTableModel extends AbstractTableModel {
         return columnNames[col];
     }
     boolean[] canEdit = new boolean[] {
-        false, false, false, false, false, false, false, true, true
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
     };
 
     @Override

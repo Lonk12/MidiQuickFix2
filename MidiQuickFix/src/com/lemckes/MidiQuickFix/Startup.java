@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.UiStrings;
@@ -29,12 +28,12 @@ import com.lemckes.MidiQuickFix.util.UiStrings;
  * Show a splash screen and startup progress.
  * @version $Id$
  */
-public class Startup extends javax.swing.JDialog {
+public class Startup
+    extends javax.swing.JDialog {
     static final long serialVersionUID = -2431242847368801394L;
-
     /** The component that displays our splash screen */
     SplashDrawing splash;
-    
+
     /**
      * Creates new Startup dialog
      * @param parent the Frame parent
@@ -50,9 +49,14 @@ public class Startup extends javax.swing.JDialog {
         java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
         java.awt.Dimension sd = tk.getScreenSize();
         java.awt.Dimension dd = getSize();
-        setLocation((int)((sd.getWidth() - dd.getWidth()) / 2), (int)((sd.getHeight() - dd.getHeight()) / 2));
+        setLocation((int)((sd.getWidth() - dd.getWidth()) / 2), (int)((sd.
+            getHeight() - dd.getHeight()) / 2));
     }
-    
+
+    public SplashDrawing getSplash() {
+        return splash;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -85,21 +89,20 @@ public class Startup extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         System.exit(1);
     }//GEN-LAST:event_cancelButtonActionPerformed
-    
+
     /** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose();
     }//GEN-LAST:event_closeDialog
-    
+
     private void doClose() {
         setVisible(false);
         dispose();
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;

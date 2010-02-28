@@ -27,6 +27,7 @@ import com.lemckes.MidiQuickFix.util.TraceDialog;
 import java.awt.Dimension;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
 
 /**
  * A table that displays summary info about each track in a sequence.
@@ -35,10 +36,12 @@ import javax.sound.midi.Sequence;
 public class TrackSummaryTable extends javax.swing.JTable {
     static final long serialVersionUID = 4128873234789727596L;
 
+    private Sequencer mSequencer;
     /** Creates new form BeanForm */
-    public TrackSummaryTable() {
+    public TrackSummaryTable(Sequencer sequencer) {
         try {
             initComponents();
+            mSequencer = sequencer;
             setSequence(new Sequence(Sequence.PPQ, 92));
             Dimension pd = getPreferredSize();
             setPreferredScrollableViewportSize(pd);
@@ -53,7 +56,7 @@ public class TrackSummaryTable extends javax.swing.JTable {
      * @param seq the sequence that is to be displayed
      */
     public void setSequence(Sequence seq) {
-        setModel(new TrackSummaryTableModel(seq));
+        setModel(new TrackSummaryTableModel(seq, mSequencer));
             Object[] widths = {
                 "99", "The Track Name", // NOI18N
                 "00000:000", "00000:000", // NOI18N

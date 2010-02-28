@@ -59,6 +59,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
@@ -68,9 +70,47 @@ import javax.swing.event.TableModelListener;
  * A MIDI file editor that works at the Midi event level.
  * @version $Id$
  */
-public class MidiQuickFix extends JFrame
+public class MidiQuickFix
+    extends JFrame
     implements MidiSeqPlayer, LoopSliderListener, TableModelListener {
     static final long serialVersionUID = -3768776503290924603L;
+    /**
+     * Flag if we need to work around the bug in 1.4.2
+     * that does not allow us to update the values of a
+     * ShortEvent.
+     */
+    static boolean VERSION_1_4_2_BUG;
+    static String mJavaVersion;
+    /** The system synthesizer. */
+    transient Synthesizer mSynth;
+    /** The syth's channels. */
+    transient MidiChannel[] mChannels;
+    /** The default sequencer. */
+    transient Sequencer mSequencer;
+    /** The sequence from the current file. */
+    transient Sequence mSeq;
+    /** The array of tracks from the sequence. */
+    transient Track[] mTracks;
+    /** The index of the currently display track. */
+    int mCurrentTrack;
+    /** The resolution in Ticks/Beat of the file. */
+    int mResolution;
+    /** The key signature string. */
+    String mKeySig;
+    /** The short name of the current file. */
+    String mFileName;
+    /** The full name and path of the current file. */
+    String mFilePath;
+    /** The timer that drives the position indicator during play. */
+    Timer mTimer;
+    /** True if the sequence has been modified. */
+    boolean mSequenceModified;
+    TrackEditorPanel mTrackEditor;
+    TrackSummaryTable mTrackSummary;
+    LyricDisplay mLyricDisplay;
+    AboutDialog mAboutDialog = null;
+    TransposeDialog mTransposeDialog;
+    transient PlayController mPlayController;
 
     /**
      * Creates a new MidiQuickFix instance
@@ -85,17 +125,21 @@ public class MidiQuickFix extends JFrame
      */
     public MidiQuickFix(String fileName) {
         TraceDialog.getInstance().addComponentListener(new ComponentListener() {
+            @Override
             public void componentShown(ComponentEvent e) {
                 traceMenuItem.setState(true);
             }
 
+            @Override
             public void componentHidden(ComponentEvent e) {
                 traceMenuItem.setState(false);
             }
 
+            @Override
             public void componentMoved(ComponentEvent e) {
             }
 
+            @Override
             public void componentResized(ComponentEvent e) {
             }
         });
@@ -133,6 +177,7 @@ public class MidiQuickFix extends JFrame
             tempoAdjustField.setValue(1.0f);
             tempoAdjustField.addPropertyChangeListener("value", // NOI18N
                 new PropertyChangeListener() {
+                @Override
                 public void propertyChange(PropertyChangeEvent evt) {
                     float val = 1.0f;
                     try {
@@ -146,13 +191,13 @@ public class MidiQuickFix extends JFrame
                                 long l = (Long)tempoAdjustField.getValue();
                                 val = (float)l;
                             } catch (ClassCastException cce3) {
-                            // DO NOTHING
+                                // DO NOTHING
                             }
                         }
                     }
                     setTempoFactor(val);
                 }
-                });
+            });
 
             transportPanel.setActions(
                 mPlayController.mRewindAction,
@@ -191,6 +236,7 @@ public class MidiQuickFix extends JFrame
             mChannels = mSynth.getChannels();
 
             tempoAdjustSlider.addChangeListener(new ChangeListener() {
+                @Override
                 public void stateChanged(ChangeEvent e) {
                     // the slider range is [0, 200]
                     // convert the value to the range [-1.0, 1.0]
@@ -203,13 +249,14 @@ public class MidiQuickFix extends JFrame
                     setTempoFactor(factor);
                 }
             });
-            mTrackSummary = new TrackSummaryTable();
+            mTrackSummary = new TrackSummaryTable(mSequencer);
             summaryScrollPane.setViewportView(mTrackSummary);
             mTrackEditor = new TrackEditorPanel();
             editorPanel.add(mTrackEditor);
             mTrackEditor.addTableChangeListener(this);
             mLyricDisplay = new LyricDisplay();
             lyricsPanel.add(mLyricDisplay);
+
             mLyricDisplay.setSequencer(mSequencer);
             pack();
         } catch (MidiUnavailableException e) {
@@ -220,6 +267,25 @@ public class MidiQuickFix extends JFrame
             startDialog.splash.addStageMessage(
                 UiStrings.getString("startup_failed")); // NOI18N
         }
+    }
+
+    private void createTimer(int delay) {
+        trace("createTimer"); // NOI18N
+        java.awt.event.ActionListener taskPerformer =
+            new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    //...Perform a task...
+                    EventQueue.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            long ticks = mSequencer.getTickPosition();
+                            positionSlider.setValue((int)ticks);
+                        }
+                    });
+                }
+            };
+        mTimer = new Timer(delay, taskPerformer);
     }
 
     private void setTempoFactor(float factor) {
@@ -239,6 +305,7 @@ public class MidiQuickFix extends JFrame
         }
     }
 
+    @Override
     public void loopSliderChanged(LoopSliderEvent evt) {
         if (evt.getValueIsAdjusting()) {
             long pos = (long)evt.getValue();
@@ -249,6 +316,7 @@ public class MidiQuickFix extends JFrame
         }
     }
 
+    @Override
     public void loopPointChanged(LoopSliderEvent evt) {
         int inPoint = evt.getInPoint();
         int outPoint = evt.getOutPoint();
@@ -282,6 +350,7 @@ public class MidiQuickFix extends JFrame
     public void newSequence(final java.io.File file) {
         final SwingWorker worker = new SwingWorker() {
             // Open the file in the worker thread
+            @Override
             public Object construct() {
                 try {
                     setBusy(true);
@@ -350,6 +419,8 @@ public class MidiQuickFix extends JFrame
 
             mPlayController.setPlayState(PlayController.PlayState.STOPPED);
 
+            mLyricDisplay.loadSequence(mSeq);
+
             setTitle(mFileName);
             setInfoLabels();
         } finally {
@@ -376,7 +447,7 @@ public class MidiQuickFix extends JFrame
                 java.io.File myMidiFile = new java.io.File(mFilePath);
                 saveAs(myMidiFile);
             } else if (answer == JOptionPane.NO_OPTION) {
-            // Do nothing
+                // Do nothing
             } else if (answer == JOptionPane.CANCEL_OPTION) {
                 continueAction = false;
             }
@@ -408,7 +479,8 @@ public class MidiQuickFix extends JFrame
                 JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         } catch (InvalidMidiDataException e) {
-            trace("InvalidMidiDataException in saveFile(java.io.File file) : " + e);
+            trace(
+                "InvalidMidiDataException in saveFile(java.io.File file) : " + e);
             showDialog(UiStrings.getString("file_create_error") +
                 UiStrings.getString("file_save_invalid"),
                 UiStrings.getString("file_invalid_data"),
@@ -511,6 +583,10 @@ public class MidiQuickFix extends JFrame
         mTransposeDialog.setTransposeBy(0);
         mTransposeDialog.setVisible(true);
         if (mTransposeDialog.getReturnStatus() == TransposeDialog.RET_OK) {
+            boolean running = mSequencer.isRunning();
+            if (running) {
+                mSequencer.stop();
+            }
             boolean overflowed =
                 Transposer.transpose(
                 mSeq,
@@ -523,6 +599,199 @@ public class MidiQuickFix extends JFrame
                     this, message,
                     UiStrings.getString("notes_out_of_range_title"),
                     JOptionPane.WARNING_MESSAGE);
+            }
+            if (running) {
+                mSequencer.start();
+            }
+        }
+    }
+
+    /** Called on a change to the table
+     * @param e The event
+     */
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        // Hide Notes fires a Table Structure Changed event that has
+        // e.getColumn() == e.ALL_COLUMNS && e.getFirstRow() == e.HEADER_ROW
+        // We do not want this treated as an edit to the actual sequence.
+        if (e.getColumn() != TableModelEvent.ALL_COLUMNS ||
+            e.getFirstRow() != TableModelEvent.HEADER_ROW) {
+            mSequenceModified = true;
+            boolean wasPlaying =
+                (mPlayController.getPlayState() == PlayController.PlayState.PLAYING);
+            if (wasPlaying) {
+                mTimer.stop();
+                mPlayController.pause();
+            }
+            try {
+                mSequencer.setSequence(mSeq);
+            } catch (javax.sound.midi.InvalidMidiDataException imde) {
+                trace("Exception in tableChanged " + imde); // NOI18N
+                showDialog(UiStrings.getString("edit_sequence_error") +
+                    UiStrings.getString("edit_sequence_invalid"),
+                    UiStrings.getString("file_invalid_data"),
+                    JOptionPane.ERROR_MESSAGE);
+                imde.printStackTrace();
+            }
+            if (wasPlaying) {
+                mTimer.start();
+                mPlayController.play();
+            }
+        }
+    }
+
+    /** Get the nominal key signature for the sequence.
+     * @return The first key signature found.
+     */
+    String getKeySig() {
+        return mKeySig;
+    }
+
+    @Override
+    public void play() {
+        try {
+            mSequencer.setSequence(mSeq);
+        } catch (InvalidMidiDataException imde) {
+            trace("Exception in play() " + imde); // NOI18N
+            showDialog(UiStrings.getString("play_sequence_error") +
+                UiStrings.getString("play_sequence_invalid"),
+                UiStrings.getString("file_invalid_data"),
+                JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Clear the lyrics, but only if we are playing from the start.
+        if (mPlayController.getPausedPosition() == 0 && mLyricDisplay != null) {
+            mLyricDisplay.reset();
+        }
+
+        mSequencer.setTickPosition(mPlayController.getPausedPosition());
+        mSequencer.start();
+        mTimer.start();
+    }
+
+    ////////////////////////////////////////////////
+    //
+    // MidiSeqPlayer implementation
+    //
+    @Override
+    public void pause() {
+        mSequencer.stop();
+        mTimer.stop();
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void stop() {
+        mSequencer.stop();
+        mSequencer.setTickPosition(0);
+        mTimer.stop();
+        positionSlider.setValue(0);
+    }
+
+    @Override
+    public void rewind() {
+        // Turn off all notes
+        // Does not work!!
+        for (int i = 0; i < mChannels.length; ++i) {
+            mChannels[i].allNotesOff();
+            mChannels[i].allSoundOff();
+        }
+        mSequencer.setTickPosition(0);
+        positionSlider.setValue(0);
+
+        // Workaround to turn off the sound ...
+        if (mPlayController.getPlayState() == PlayController.PlayState.PLAYING) {
+            mSequencer.stop();
+            mSequencer.start();
+        }
+    }
+
+    @Override
+    public void loop(boolean loop) {
+        positionSlider.setIsLooping(loop);
+        if (loop) {
+            int inPoint = positionSlider.getLoopInPoint();
+            int outPoint = positionSlider.getLoopOutPoint();
+            mSequencer.setLoopStartPoint(inPoint);
+            mSequencer.setLoopEndPoint(outPoint);
+            mSequencer.setLoopCount(javax.sound.midi.Sequencer.LOOP_CONTINUOUSLY);
+        } else {
+            mSequencer.setLoopCount(0);
+        }
+    }
+
+    //
+    // END -  MidiSeqPlayer implementation
+    //
+    ////////////////////////////////////////////////
+    /**
+     * Send a trace message to the trace window
+     * @param s the message to display
+     */
+    public void trace(final String s) {
+        TraceDialog.addTrace(s);
+    }
+
+    /**
+     * A wrapper to call JOptionPane.showMessageDialog using EventQueue.invokeLater
+     * @param message the message to display
+     * @param title the title for the dialog window
+     * @param messageType one of the JOptionPane.*_MESSAGE constants
+     */
+    void showDialog(final String message, final String title,
+        final int messageType) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(
+                    mainPanel, message, title, messageType);
+            }
+        });
+
+    }
+
+    /**
+     * A class to handle meta events -<ul><li>
+     * TimeSignature - update the displayed time signature</li><li>
+     * KeySignature - update the displayed key signature</li><li>
+     * Tempo - update the displayed tempo</li><li>
+     * EndOfTrack - stop the sequencer and update the playing state</li></ul>
+     */
+    public class EventHandler
+        implements MetaEventListener {
+        /**
+         * Handle meta events -<ul><li>
+         * TimeSignature - update the displayed time signature</li><li>
+         * KeySignature - update the displayed key signature</li><li>
+         * Tempo - update the displayed tempo</li><li>
+         * EndOfTrack - stop the sequencer and update the playing state</li></ul>
+         * @param metaMessage the MetaMessage to handle
+         */
+        @Override
+        public void meta(final MetaMessage metaMessage) {
+            int type = metaMessage.getType();
+            Object[] str = MetaEvent.getMetaStrings(metaMessage);
+            // if (!mSequencer.isRunning()) {
+            if (type == MetaEvent.END_OF_TRACK) {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        stop();
+                        mPlayController.stop();
+                    }
+                });
+            }
+            if (str[0].equals("M:TimeSignature")) { // NOI18N
+                timeSigText.setText(str[2].toString());
+            }
+            if (str[0].equals("M:KeySignature")) { // NOI18N
+                keyText.setText(str[2].toString());
+            }
+            if (str[0].equals("M:Tempo")) { // NOI18N
+                tempoText.setText(str[2].toString());
             }
         }
     }
@@ -943,42 +1212,42 @@ public class MidiQuickFix extends JFrame
             JOptionPane.ERROR_MESSAGE);
         return;
 
-    /*
-    Track t[] = new Track[16];
-    Track t0 = mTracks[0];
-    for (int i = 0; i < 16; ++i) {
-    t[i] = mSeq.createTrack();
-    MetaMessage mm = new MetaMessage();
-    String name = "Channel" + String.valueOf(i);
-    char[] cName = name.toCharArray();
-    byte[] bName = new byte[cName.length];
-    for (int j = 0; j < cName.length; ++j) {
-    bName[j] = (byte)cName[j];
-    }
-    try {
-    mm.setMessage(MetaEvent.trackName, bName, bName.length);
-    } catch (InvalidMidiDataException imde) {
-    imde.printStackTrace();
-    }
-    t[i].add(new MidiEvent(mm, 0));
-    }
-    for (int i = 0; i < t0.size(); ++i) {
-    MidiEvent ev = t0.get(i);
-    MidiMessage mess = ev.getMessage();
-    if (mess instanceof ShortMessage) {
-    int st = ((ShortMessage)mess).getStatus();
-    // Check that this is a channel message
-    if ((st & 0xf0) <= 0xf0) {
-    ShortMessage sm = (ShortMessage)mess;
-    //int command = sm.getCommand();
-    int channel = sm.getChannel();
-    //int d1 = sm.getData1();
-    //int d2 = sm.getData2();
-    t[channel].add(ev);
-    }
-    }
-    }
-     */
+        /*
+        Track t[] = new Track[16];
+        Track t0 = mTracks[0];
+        for (int i = 0; i < 16; ++i) {
+        t[i] = mSeq.createTrack();
+        MetaMessage mm = new MetaMessage();
+        String name = "Channel" + String.valueOf(i);
+        char[] cName = name.toCharArray();
+        byte[] bName = new byte[cName.length];
+        for (int j = 0; j < cName.length; ++j) {
+        bName[j] = (byte)cName[j];
+        }
+        try {
+        mm.setMessage(MetaEvent.trackName, bName, bName.length);
+        } catch (InvalidMidiDataException imde) {
+        imde.printStackTrace();
+        }
+        t[i].add(new MidiEvent(mm, 0));
+        }
+        for (int i = 0; i < t0.size(); ++i) {
+        MidiEvent ev = t0.get(i);
+        MidiMessage mess = ev.getMessage();
+        if (mess instanceof ShortMessage) {
+        int st = ((ShortMessage)mess).getStatus();
+        // Check that this is a channel message
+        if ((st & 0xf0) <= 0xf0) {
+        ShortMessage sm = (ShortMessage)mess;
+        //int command = sm.getCommand();
+        int channel = sm.getChannel();
+        //int d1 = sm.getData1();
+        //int d2 = sm.getData2();
+        t[channel].add(ev);
+        }
+        }
+        }
+         */
     }//GEN-LAST:event_splitMenuItemActionPerformed
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
@@ -997,74 +1266,15 @@ public class MidiQuickFix extends JFrame
         saveAs(null);
     }//GEN-LAST:event_saveAsMenuItemActionPerformed
 
-    private void createTimer(int delay) {
-        trace("createTimer"); // NOI18N
-        java.awt.event.ActionListener taskPerformer =
-            new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    //...Perform a task...
-                    EventQueue.invokeLater(new Runnable() {
-                        public void run() {
-                            long ticks = mSequencer.getTickPosition();
-                            positionSlider.setValue((int)ticks);
-                        }
-                    });
-                }
-            };
-        mTimer = new Timer(delay, taskPerformer);
-    }
-
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
         boolean canContinue = checkForSave();
-        if (canContinue != true) {
-            return;
-        }
-
-        int open = sequenceChooser.showOpenDialog(this);
-        if (open == JFileChooser.APPROVE_OPTION) {
-            newSequence(sequenceChooser.getSelectedFile());
+        if (canContinue) {
+            int open = sequenceChooser.showOpenDialog(this);
+            if (open == JFileChooser.APPROVE_OPTION) {
+                newSequence(sequenceChooser.getSelectedFile());
+            }
         }
     }//GEN-LAST:event_openMenuItemActionPerformed
-
-    /** Called on a change to the table
-     * @param e The event
-     */
-    public void tableChanged(TableModelEvent e) {
-        // Hide Notes fires a Table Structure Changed event that has
-        // e.getColumn() == e.ALL_COLUMNS && e.getFirstRow() == e.HEADER_ROW
-        // We do not want this treated as an edit to the actual sequence.
-        if (e.getColumn() != TableModelEvent.ALL_COLUMNS ||
-            e.getFirstRow() != TableModelEvent.HEADER_ROW) {
-            mSequenceModified = true;
-            boolean wasPlaying =
-                (mPlayController.getPlayState() == PlayController.PlayState.PLAYING);
-            if (wasPlaying) {
-                mTimer.stop();
-                mPlayController.pause();
-            }
-            try {
-                mSequencer.setSequence(mSeq);
-            } catch (javax.sound.midi.InvalidMidiDataException imde) {
-                trace("Exception in tableChanged " + imde); // NOI18N
-                showDialog(UiStrings.getString("edit_sequence_error") +
-                    UiStrings.getString("edit_sequence_invalid"),
-                    UiStrings.getString("file_invalid_data"),
-                    JOptionPane.ERROR_MESSAGE);
-                imde.printStackTrace();
-            }
-            if (wasPlaying) {
-                mTimer.start();
-                mPlayController.play();
-            }
-        }
-    }
-
-    /** Get the nominal key signature for the sequence.
-     * @return The first key signature found.
-     */
-    String getKeySig() {
-        return mKeySig;
-    }
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
         exitForm(null);
@@ -1082,6 +1292,17 @@ public class MidiQuickFix extends JFrame
      * @param args The command line arguments
      */
     public static void main(String args[]) {
+        try {
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // Nimbus is not available, use the default look and feel.
+        }
+
         Properties p = System.getProperties();
         // p.list(System.out);
         mJavaVersion = p.getProperty("java.version", "No java.version found"); // NOI18N
@@ -1097,18 +1318,12 @@ public class MidiQuickFix extends JFrame
         }
         final String finalName = filename;
         EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-        new MidiQuickFix(finalName).setVisible(true);
+                new MidiQuickFix(finalName).setVisible(true);
             }
         });
     }
-    /**
-     * Flag if we need to work around the bug in 1.4.2
-     * that does not allow us to update the values of a
-     * ShortEvent.
-     */
-    static boolean VERSION_1_4_2_BUG;
-    static String mJavaVersion;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JPanel controlPanel;
@@ -1158,166 +1373,4 @@ public class MidiQuickFix extends JFrame
     private javax.swing.JMenuItem transposeMenuItem;
     private javax.swing.JMenu viewMenu;
     // End of variables declaration//GEN-END:variables
-
-    /** The system synthesizer. */
-    transient Synthesizer mSynth;
-    /** The syth's channels. */
-    transient MidiChannel[] mChannels;
-    /** The default sequencer. */
-    transient Sequencer mSequencer;
-    /** The sequence from the current file. */
-    transient Sequence mSeq;
-    /** The array of tracks from the sequence. */
-    transient Track[] mTracks;
-    /** The index of the currently display track. */
-    int mCurrentTrack;
-    /** The resolution in Ticks/Beat of the file. */
-    int mResolution;
-    /** The key signature string. */
-    String mKeySig;
-    /** The short name of the current file. */
-    String mFileName;
-    /** The full name and path of the current file. */
-    String mFilePath;
-    /** The timer that drives the position indicator during play. */
-    Timer mTimer;
-    /** True if the sequence has been modified. */
-    boolean mSequenceModified;
-    TrackEditorPanel mTrackEditor;
-    TrackSummaryTable mTrackSummary;
-    LyricDisplay mLyricDisplay;
-    AboutDialog mAboutDialog = null;
-    TransposeDialog mTransposeDialog;
-    transient PlayController mPlayController;
-
-    public void play() {
-        try {
-            mSequencer.setSequence(mSeq);
-        } catch (InvalidMidiDataException imde) {
-            trace("Exception in play() " + imde); // NOI18N
-            showDialog(UiStrings.getString("play_sequence_error") +
-                UiStrings.getString("play_sequence_invalid"),
-                UiStrings.getString("file_invalid_data"),
-                JOptionPane.ERROR_MESSAGE);
-        }
-
-        // Clear the lyrics, but only if we are playing from the start.
-        if (mPlayController.getPausedPosition() == 0 && mLyricDisplay != null) {
-            mLyricDisplay.clear();
-        }
-
-        mSequencer.setTickPosition(mPlayController.getPausedPosition());
-        mSequencer.start();
-        mTimer.start();
-    }
-
-    public void pause() {
-        mSequencer.stop();
-        mTimer.stop();
-    }
-
-    public void resume() {
-    }
-
-    public void stop() {
-        mSequencer.stop();
-        mSequencer.setTickPosition(0);
-        mTimer.stop();
-        positionSlider.setValue(0);
-    }
-
-    public void rewind() {
-        // Turn off all notes
-        // Does not work!!
-        for (int i = 0; i < mChannels.length; ++i) {
-            mChannels[i].allNotesOff();
-            mChannels[i].allSoundOff();
-        }
-        mSequencer.setTickPosition(0);
-        positionSlider.setValue(0);
-
-        // Workaround to turn off the sound ...
-        if (mPlayController.getPlayState() == PlayController.PlayState.PLAYING) {
-            mSequencer.stop();
-            mSequencer.start();
-        }
-    }
-
-    public void loop(boolean loop) {
-        positionSlider.setIsLooping(loop);
-        if (loop) {
-            int inPoint = positionSlider.getLoopInPoint();
-            int outPoint = positionSlider.getLoopOutPoint();
-            mSequencer.setLoopStartPoint(inPoint);
-            mSequencer.setLoopEndPoint(outPoint);
-            mSequencer.setLoopCount(javax.sound.midi.Sequencer.LOOP_CONTINUOUSLY);
-        } else {
-            mSequencer.setLoopCount(0);
-        }
-    }
-
-    /**
-     * Send a trace message to the trace window
-     * @param s the message to display
-     */
-    public void trace(final String s) {
-        TraceDialog.addTrace(s);
-    }
-
-    /**
-     * A wrapper to call JOptionPane.showMessageDialog using EventQueue.invokeLater
-     * @param message the message to display
-     * @param title the title for the dialog window
-     * @param messageType one of the JOptionPane.*_MESSAGE constants
-     */
-    void showDialog(final String message, final String title,
-                    final int messageType) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                JOptionPane.showMessageDialog(
-                    mainPanel, message, title, messageType);
-            }
-        });
-
-    }
-
-    /**
-     * A class to handle meta events -<ul><li>
-     * TimeSignature - update the displayed time signature</li><li>
-     * KeySignature - update the displayed key signature</li><li>
-     * Tempo - update the displayed tempo</li><li>
-     * EndOfTrack - stop the sequencer and update the playing state</li></ul>
-     */
-    public class EventHandler implements MetaEventListener {
-        /**
-         * Handle meta events -<ul><li>
-         * TimeSignature - update the displayed time signature</li><li>
-         * KeySignature - update the displayed key signature</li><li>
-         * Tempo - update the displayed tempo</li><li>
-         * EndOfTrack - stop the sequencer and update the playing state</li></ul>
-         * @param metaMessage the MetaMessage to handle
-         */
-        public void meta(final MetaMessage metaMessage) {
-            int type = metaMessage.getType();
-            Object[] str = MetaEvent.getMetaStrings(metaMessage);
-            // if (!mSequencer.isRunning()) {
-            if (type == MetaEvent.END_OF_TRACK) {
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        stop();
-                        mPlayController.stop();
-                    }
-                });
-            }
-            if (str[0].equals("M:TimeSignature")) { // NOI18N
-                timeSigText.setText(str[2].toString());
-            }
-            if (str[0].equals("M:KeySignature")) { // NOI18N
-                keyText.setText(str[2].toString());
-            }
-            if (str[0].equals("M:Tempo")) { // NOI18N
-                tempoText.setText(str[2].toString());
-            }
-        }
-    }
 }
