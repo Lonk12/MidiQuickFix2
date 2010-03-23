@@ -27,6 +27,7 @@ import com.lemckes.MidiQuickFix.util.FontSelectionEvent;
 import com.lemckes.MidiQuickFix.util.FontSelectionListener;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -51,29 +52,36 @@ import javax.swing.text.Highlighter;
 public class LyricDisplay
     extends JPanel
     implements MetaEventListener,
-    FontSelectionListener {
+    FontSelectionListener
+{
     static final long serialVersionUID = 4418719983394376657L;
     private TreeMap<Long, String> mWords = new TreeMap<Long, String>();
     private TreeMap<Long, WordPlace> mPlaces = new TreeMap<Long, WordPlace>();
     private Sequencer mSequencer;
     private Sequence mSequence;
+    /**
+     * The TrackSummaryTableModel contains the settings for the
+     * tracks that are selected to display lyrics.
+     */
+    private TrackSummaryTableModel mTrackSelector;
     private FontSelector mFontSelector;
-    private boolean mNewPage = false;
     Highlighter mHighlighter;
     Object mHighlightTag;
     // An instance of the private subclass of the default highlight painter
     Highlighter.HighlightPainter myHighlightPainter = new MyHighlightPainter(
-        Color.red);
+        Color.green.darker());
 
     // A private subclass of the default highlight painter
     class MyHighlightPainter
-        extends DefaultHighlighter.DefaultHighlightPainter {
+        extends DefaultHighlighter.DefaultHighlightPainter
+    {
         public MyHighlightPainter(Color color) {
             super(color);
         }
     }
 
-    private class WordPlace {
+    private class WordPlace
+    {
         private int startPos;
         private int length;
 
@@ -99,9 +107,12 @@ public class LyricDisplay
         }
     }
 
-    /** Creates new form LyricDialog */
-    public LyricDisplay() {
+    /** Creates new form LyricDialog
+     * @param trackSelector determines which tracks to display lyrics from
+     */
+    public LyricDisplay(TrackSummaryTableModel trackSelector) {
         initComponents();
+        mTrackSelector = trackSelector;
         mHighlighter = lyricText.getHighlighter();
         try {
             mHighlightTag = mHighlighter.addHighlight(0, 0, myHighlightPainter);
@@ -119,46 +130,51 @@ public class LyricDisplay
 //        Logger.getLogger("LYRICS").log(Level.INFO, "LyricPanel {0}", "meta");
         long tick = mSequencer.getTickPosition();
         int type = metaMessage.getType();
-        if (type == MetaEvent.LYRIC || type == MetaEvent.TEXT) {
+        if (type == MetaEvent.LYRIC && lyricsCheckBox.isSelected()
+            || type == MetaEvent.TEXT && textCheckBox.isSelected()) {
             updateHighlight(tick);
         }
     }
 
     public void updateHighlight(final long tick) {
-//        System.err.println("Display recieved event at " + tick);
         WordPlace wp = mPlaces.get(tick);
 
         // Fudge to find an entry close to the given tick
-        int offset = -2;
-        while (wp == null && offset < 3) {
-            wp = mPlaces.get(tick + offset++);
+        int offset = -1;
+        while (wp == null && offset > -12) {
+            wp = mPlaces.get(tick + offset--);
         }
         if (wp != null) {
-            int start = wp.getStartPos();
-            int len = wp.getLength();
-            try {
-                // Get the location of the current text
-                Rectangle r = lyricText.modelToView(start + len);
-                // Make the rectangle 2/3 the height of the scroll pane
-                // so that the current line stays near the top of the window
-                int height = jScrollPane1.getHeight() * 2 / 3;
-                r.height = height;
-                // Scroll so that the 2/3 height rectangle is visible
-                lyricText.scrollRectToVisible(r);
-
-                // Move the highlight
-                mHighlighter.changeHighlight(mHighlightTag, start, start + len);
-            } catch (BadLocationException ex) {
-                Logger.getLogger("LYRICS").log(Level.SEVERE, null, ex);
-            }
-//                    System.out.println(" " + tick + " - " +
-//                        wp.getStartPos() + ", " +
-//                        wp.getLength() + " - " +
-//                        mWords.get(tick));
-//                    System.out.flush();
+            final int start = wp.getStartPos();
+            final int len = wp.getLength();
+            EventQueue.invokeLater(new Runnable()
+            {
+                @Override
+                public void run() {
+                    try {
+                        // Get the location of the current text
+                        final Rectangle r = lyricText.modelToView(start + len);
+                        // Make the rectangle 2/3 the height of the scroll pane
+                        // so that the current line stays near the top of the window
+                        int height = jScrollPane1.getHeight() * 2 / 3;
+                        r.height = height;
+                        // Scroll so that the 2/3 height rectangle is visible
+                        lyricText.scrollRectToVisible(r);
+                        // Move the highlight
+                        mHighlighter.changeHighlight(mHighlightTag, start,
+                            start + len);
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger("LYRICS").log(Level.WARNING, null, ex);
+                    }
+                }
+            });
         } else {
-            System.err.println("No wordplace at tick " + tick);
+//            System.err.println("No wordplace at tick " + tick);
         }
+    }
+
+    public void setTrackSelector(TrackSummaryTableModel trackSelector) {
+        mTrackSelector = trackSelector;
     }
 
     /**
@@ -182,46 +198,56 @@ public class LyricDisplay
     public void loadSequence(Sequence seq) {
         Logger.getLogger("LYRICS").log(Level.INFO, "LyricPanel {0}",
             "loadSequence");
-        mSequence = seq;
-        Track[] tracks = seq.getTracks();
         mWords.clear();
         mPlaces.clear();
-        for (Track t : tracks) {
-            for (int e = 0; e < t.size(); ++e) {
-                MidiEvent ev = t.get(e);
-                MidiMessage mess = ev.getMessage();
-                long tick = ev.getTick();
-                int st = mess.getStatus();
-                if (st == MetaMessage.META) {
-                    MetaMessage metaMessage = (MetaMessage)mess;
-                    int type = metaMessage.getType();
+        mSequence = seq;
+        if (mSequence != null) {
+            Track[] tracks = mSequence.getTracks();
+            for (int i = 0; i < tracks.length; ++i) {
+                Track t = tracks[i];
+                if (mTrackSelector.showLyrics(i)) {
+                    for (int e = 0; e < t.size(); ++e) {
+                        MidiEvent ev = t.get(e);
+                        MidiMessage mess = ev.getMessage();
+                        long tick = ev.getTick();
+                        int st = mess.getStatus();
+                        if (st == MetaMessage.META) {
+                            MetaMessage metaMessage = (MetaMessage)mess;
+                            int type = metaMessage.getType();
 
-                    if (type == MetaEvent.LYRIC && lyricsCheckBox.isSelected() ||
-                        type == MetaEvent.TEXT && textCheckBox.isSelected()) {
-                        byte[] data = metaMessage.getData();
+                            if (type == MetaEvent.LYRIC && lyricsCheckBox.isSelected()
+                                || type == MetaEvent.TEXT && textCheckBox.isSelected()) {
+                                byte[] data = metaMessage.getData();
 
-                        StringBuffer sb = new StringBuffer(data.length);
-                        for (int k = 0; k < data.length; ++k) {
-                            byte b = data[k];
-                            if (b == 10 || (char)b == '\\') {
-                                // According to midi.org 'paragraphs' should be delimited
-                                // with a line-feed but a back-slash is common.
-                                sb.append("\n\n");
-                            } else if (b == 13 || (char)b == '/') {
-                                // According to midi.org 'lines' should be delimited
-                                // with a carriage-return but a slash is common.
-                                sb.append('\n');
-                            } else if (b > 31 && b < 128) {
-                                // Printable character.
-                                sb.append((char)b);
-                            } else {
-                                if (b > 0) {
-                                    sb.append('?');
+                                StringBuffer sb = new StringBuffer(data.length);
+                                for (int k = 0; k < data.length; ++k) {
+                                    byte b = data[k];
+                                    if (b == 10 || (char)b == '\\') {
+                                        // According to midi.org 'paragraphs' should be delimited
+                                        // with a line-feed but a back-slash is common.
+                                        sb.append("\n\n");
+                                    } else if (b == 13 || (char)b == '/') {
+                                        // According to midi.org 'lines' should be delimited
+                                        // with a carriage-return but a slash is common.
+                                        sb.append('\n');
+                                    } else if (b > 31 && b < 128) {
+                                        // Printable character.
+                                        sb.append((char)b);
+                                    } else {
+                                        if (b > 0) {
+                                            sb.append('?');
+                                        }
+                                    }
+                                }
+                                if (sb.length() > 0) {
+                                    // if there is already a word at this location
+                                    // then append the new word to it
+                                    if (mWords.containsKey(tick)) {
+                                        sb.insert(0, mWords.get(tick));
+                                    }
+                                    mWords.put(tick, sb.toString());
                                 }
                             }
-                        }
-                        if (sb.length() > 0) {
-                            mWords.put(tick, sb.toString());
                         }
                     }
                 }
@@ -241,9 +267,11 @@ public class LyricDisplay
         Logger.getLogger("LYRICS").log(Level.INFO, "LyricPanel {0}",
             "displayText");
         for (Entry<Long, String> e : mWords.entrySet()) {
+            System.err.print(e.getValue());
             lyricText.setCaretPosition(lyricText.getDocument().getLength());
             lyricText.replaceSelection(e.getValue());
         }
+        System.err.println("");
         lyricText.setCaretPosition(0);
     }
 
@@ -271,7 +299,7 @@ public class LyricDisplay
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
+        
         jScrollPane1 = new javax.swing.JScrollPane();
         lyricText = new javax.swing.JTextPane();
         jPanel1 = new javax.swing.JPanel();
@@ -279,54 +307,45 @@ public class LyricDisplay
         showLabel = new javax.swing.JLabel();
         lyricsCheckBox = new javax.swing.JCheckBox();
         textCheckBox = new javax.swing.JCheckBox();
-        resetButton = new javax.swing.JButton();
-        fontPanel = new javax.swing.JPanel();
+        buttonPanel = new javax.swing.JPanel();
         fontSelectButton = new javax.swing.JButton();
-
+        resetButton = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        
         setLayout(new java.awt.BorderLayout());
-
+        
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
+        
         lyricText.setFont(new java.awt.Font("Dialog", 0, 24));
         lyricText.setPreferredSize(new java.awt.Dimension(400, 300));
         jScrollPane1.setViewportView(lyricText);
-
+        
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
+        
         jPanel1.setLayout(new java.awt.BorderLayout());
-
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 0));
-
+        
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+        
         showLabel.setText(UiStrings.getString("show")); // NOI18N
-        jPanel2.add(showLabel);
-
+        jPanel2.add(showLabel, new java.awt.GridBagConstraints());
+        
         lyricsCheckBox.setMnemonic('L');
         lyricsCheckBox.setSelected(true);
         lyricsCheckBox.setText(UiStrings.getString("lyrics")); // NOI18N
         lyricsCheckBox.setToolTipText(UiStrings.getString("show_lyric_events")); // NOI18N
-        jPanel2.add(lyricsCheckBox);
-
+        jPanel2.add(lyricsCheckBox, new java.awt.GridBagConstraints());
+        
         textCheckBox.setMnemonic('T');
         textCheckBox.setSelected(true);
         textCheckBox.setText(UiStrings.getString("text")); // NOI18N
         textCheckBox.setToolTipText(UiStrings.getString("show_text_events")); // NOI18N
-        jPanel2.add(textCheckBox);
-
+        jPanel2.add(textCheckBox, new java.awt.GridBagConstraints());
+        
         jPanel1.add(jPanel2, java.awt.BorderLayout.WEST);
-
-        resetButton.setText(UiStrings.getString("reset")); // NOI18N
-        resetButton.setToolTipText(UiStrings.getString("reset_lyrics")); // NOI18N
-        resetButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        resetButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetButtonActionPerformed(evt);
-            }
-        });
-        jPanel1.add(resetButton, java.awt.BorderLayout.EAST);
-
-        fontPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
-
+        
+        buttonPanel.setLayout(new java.awt.GridLayout(1, 0, 4, 0));
+        
         fontSelectButton.setText(UiStrings.getString("font")); // NOI18N
         fontSelectButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         fontSelectButton.addActionListener(new java.awt.event.ActionListener() {
@@ -334,10 +353,21 @@ public class LyricDisplay
                 fontSelectButtonActionPerformed(evt);
             }
         });
-        fontPanel.add(fontSelectButton);
-
-        jPanel1.add(fontPanel, java.awt.BorderLayout.CENTER);
-
+        buttonPanel.add(fontSelectButton);
+        
+        resetButton.setText(UiStrings.getString("reload")); // NOI18N
+        resetButton.setToolTipText(UiStrings.getString("reset_lyrics")); // NOI18N
+        resetButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(resetButton);
+        
+        jPanel1.add(buttonPanel, java.awt.BorderLayout.LINE_END);
+        jPanel1.add(jPanel3, java.awt.BorderLayout.CENTER);
+        
         add(jPanel1, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
     private void fontSelectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontSelectButtonActionPerformed
@@ -353,10 +383,11 @@ public class LyricDisplay
         reset();
 }//GEN-LAST:event_resetButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel fontPanel;
+    private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton fontSelectButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane lyricText;
     private javax.swing.JCheckBox lyricsCheckBox;

@@ -61,7 +61,7 @@ public class TrackSummaryTable extends javax.swing.JTable {
                 "99", "The Track Name", // NOI18N
                 "00000:000", "00000:000", // NOI18N
                 "G#3", "G#3", // NOI18N
-                "16", true, true}; // NOI18N
+                "16", true, true, true}; // NOI18N
             TableColumnWidthSetter.setColumnWidths(this, widths, true);
     }
 
