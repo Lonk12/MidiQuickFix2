@@ -31,8 +31,6 @@ import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -164,12 +162,12 @@ public class LyricDisplay
                         mHighlighter.changeHighlight(mHighlightTag, start,
                             start + len);
                     } catch (BadLocationException ex) {
-                        Logger.getLogger("LYRICS").log(Level.WARNING, null, ex);
+                        // What a pity.
                     }
                 }
             });
         } else {
-//            System.err.println("No wordplace at tick " + tick);
+            // Shame really.
         }
     }
 
@@ -196,8 +194,6 @@ public class LyricDisplay
     }
 
     public void loadSequence(Sequence seq) {
-        Logger.getLogger("LYRICS").log(Level.INFO, "LyricPanel {0}",
-            "loadSequence");
         mWords.clear();
         mPlaces.clear();
         mSequence = seq;
@@ -264,14 +260,10 @@ public class LyricDisplay
 
     public void displayText() {
         lyricText.setText(null);
-        Logger.getLogger("LYRICS").log(Level.INFO, "LyricPanel {0}",
-            "displayText");
         for (Entry<Long, String> e : mWords.entrySet()) {
-            System.err.print(e.getValue());
             lyricText.setCaretPosition(lyricText.getDocument().getLength());
             lyricText.replaceSelection(e.getValue());
         }
-        System.err.println("");
         lyricText.setCaretPosition(0);
     }
 

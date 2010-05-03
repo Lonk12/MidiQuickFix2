@@ -73,6 +73,8 @@ class TrackTableModel extends DefaultTableModel {
      * the event in the track.
      */
     private void buildNoNotesRowMap() {
+        mNumNotes = 0;
+        mNoNotesRowMap = new java.util.Vector<Integer>();
         for (int i = 0; i < mTrack.size(); ++i) {
             MidiMessage mess = mTrack.get(i).getMessage();
             if (mess instanceof ShortMessage) {

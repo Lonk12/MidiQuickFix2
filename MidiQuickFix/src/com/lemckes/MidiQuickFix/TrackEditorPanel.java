@@ -55,6 +55,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
         trackTable.getSelectionModel().addListSelectionListener(this);
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
             boolean haveSelection = trackTable.getSelectedRowCount() > 0;

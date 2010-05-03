@@ -22,6 +22,7 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.TraceDialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -129,6 +130,7 @@ public class SplashDrawing extends javax.swing.JComponent {
         if (message != null) {
             mStageMessages.add(message);
             paintImmediately(getBounds());
+            TraceDialog.addTrace(message);
 
             try {
                 // Wait a bit so that the message is seen
