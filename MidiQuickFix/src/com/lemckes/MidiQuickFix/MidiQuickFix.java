@@ -492,6 +492,11 @@ public class MidiQuickFix
             int type = types[types.length - 1];
             int res = MidiSystem.write(mSeq, type, file);
             mSequenceModified = false;
+
+            // Remember the file name for later
+            mFileName = file.getName();
+            mFilePath = file.getCanonicalPath();
+            setTitle(mFileName);
         } catch (IOException e) {
             trace("IOException in saveFile(java.io.File file) : " + e);
             showDialog(UiStrings.getString("file_save_error")
