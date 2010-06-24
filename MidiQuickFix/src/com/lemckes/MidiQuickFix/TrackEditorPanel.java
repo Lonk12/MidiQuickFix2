@@ -43,7 +43,6 @@ public class TrackEditorPanel extends javax.swing.JPanel
     implements EventCreationListener, ListSelectionListener {
     private static final long serialVersionUID = -3117013688244779503L;
     private Sequence mSeq;
-    private Track[] mTracks;
     private int mCurrentTrack;
     private String mKeySig;
     private CreateEventDialog mCreateEventDialog;
@@ -72,9 +71,8 @@ public class TrackEditorPanel extends javax.swing.JPanel
         mSeq = seq;
         boolean haveTracks = false;
         if (mSeq != null) {
-            mTracks = mSeq.getTracks();
-            if (mTracks.length > 0) {
-                setTrackComboModel(mTracks);
+            if (mSeq.getTracks().length > 0) {
+                setTrackComboModel(mSeq.getTracks());
                 selectTrack(0);
                 haveTracks = true;
             }
@@ -123,7 +121,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
         mCurrentTrack = trackNum;
         if (mSeq != null) {
             trackTable.setTrack(
-                mTracks[mCurrentTrack],
+                mSeq.getTracks()[mCurrentTrack],
                 mSeq.getResolution(),
                 showNotesCheck.isSelected(),
                 KeySignatures.isInFlats(mKeySig));

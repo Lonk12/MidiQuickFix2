@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2010 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -154,7 +154,7 @@ public class CreateEventDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Add a listener that will be notified when an event is created.
+     * Remove an EventCreationListener
      * @param l the EventCreationListerner to be removed
      */
     public void removeEventCreationListener(EventCreationListener l) {
@@ -273,7 +273,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         noteOnRadio.setText(UiStrings.getString("note_on")); // NOI18N
         noteOnRadio.setActionCommand(NOTE_ON);
         noteOnRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        noteOnRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
         noteOnRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioSelected(evt);
@@ -289,7 +288,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         noteOffRadio.setText(UiStrings.getString("note_off")); // NOI18N
         noteOffRadio.setActionCommand(NOTE_OFF);
         noteOffRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        noteOffRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
         noteOffRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioSelected(evt);
@@ -305,7 +303,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         polyRadio.setText(UiStrings.getString("poly_pressure")); // NOI18N
         polyRadio.setActionCommand(POLY_PRESSURE);
         polyRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        polyRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
         polyRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioSelected(evt);
@@ -346,7 +343,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         patchRadio.setText(UiStrings.getString("patch")); // NOI18N
         patchRadio.setActionCommand(PATCH);
         patchRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        patchRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
         patchRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioSelected(evt);
@@ -370,7 +366,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         controlRadio.setText(UiStrings.getString("control_change")); // NOI18N
         controlRadio.setActionCommand(CONTROL_CHANGE);
         controlRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        controlRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
         controlRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioSelected(evt);
@@ -411,7 +406,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         bendRadio.setText(UiStrings.getString("pitch_bend")); // NOI18N
         bendRadio.setActionCommand(PITCH_BEND);
         bendRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        bendRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
         bendRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioSelected(evt);
@@ -437,7 +431,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         channelPressureRadio.setText(UiStrings.getString("channel_pressure")); // NOI18N
         channelPressureRadio.setActionCommand(CHANNEL_PRESSURE);
         channelPressureRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        channelPressureRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
         channelPressureRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioSelected(evt);
@@ -484,7 +477,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         eventTypeGroup.add(metaEventRadio);
         metaEventRadio.setActionCommand(META_EVENT);
         metaEventRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        metaEventRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
         metaEventRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioSelected(evt);
@@ -696,8 +688,8 @@ public class CreateEventDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Create a PROGRAM_CHAGE (patch) event from the dialog values
-     * @return a PROGRAM_CHAGE (patch) event
+     * Create a PROGRAM_CHANGE (patch) event from the dialog values
+     * @return a PROGRAM_CHANGE (patch) event
      */
     public MidiEvent getPatch() {
         int command = ShortMessage.PROGRAM_CHANGE;

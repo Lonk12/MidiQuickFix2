@@ -33,11 +33,16 @@ import javax.sound.midi.Sequencer;
  * A table that displays summary info about each track in a sequence.
  * @version $Id$
  */
-public class TrackSummaryTable extends javax.swing.JTable {
-    static final long serialVersionUID = 4128873234789727596L;
+public class TrackSummaryTable extends javax.swing.JTable
+{
 
+    static final long serialVersionUID = 4128873234789727596L;
     private Sequencer mSequencer;
-    /** Creates new form BeanForm */
+
+    /**
+     * Create a new TrackSummaryTable
+     * @param sequencer
+     */
     public TrackSummaryTable(Sequencer sequencer) {
         try {
             initComponents();
@@ -45,9 +50,10 @@ public class TrackSummaryTable extends javax.swing.JTable {
             setSequence(new Sequence(Sequence.PPQ, 92));
             Dimension pd = getPreferredSize();
             setPreferredScrollableViewportSize(pd);
-        } catch (InvalidMidiDataException ex) {
-            TraceDialog.addTrace("TrackSummaryTable new Sequence failed." +
-                ex.getMessage());
+        }
+        catch (InvalidMidiDataException ex) {
+            TraceDialog.addTrace("TrackSummaryTable new Sequence failed."
+                + ex.getMessage());
         }
     }
 
@@ -57,12 +63,12 @@ public class TrackSummaryTable extends javax.swing.JTable {
      */
     public void setSequence(Sequence seq) {
         setModel(new TrackSummaryTableModel(seq, mSequencer));
-            Object[] widths = {
-                "99", "The Track Name", // NOI18N
-                "00000:000", "00000:000", // NOI18N
-                "G#3", "G#3", // NOI18N
-                "16", true, true, true}; // NOI18N
-            TableColumnWidthSetter.setColumnWidths(this, widths, true);
+        Object[] widths = {
+            "99", "The Track Name", // NOI18N
+            "00000:000", "00000:000", // NOI18N
+            "G#3", "G#3", // NOI18N
+            "16", true, true, true}; // NOI18N
+        TableColumnWidthSetter.setColumnWidths(this, widths, true);
     }
 
     /** This method is called from within the constructor to

@@ -580,12 +580,6 @@
                   </Constraints>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                  <SubComponents>
-                    <Container class="javax.swing.JScrollPane" name="summaryScrollPane">
-
-                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                    </Container>
-                  </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="editorPanel">
                   <Properties>

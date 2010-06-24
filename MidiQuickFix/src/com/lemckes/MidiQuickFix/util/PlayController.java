@@ -100,6 +100,7 @@ public class PlayController {
          * Performs the functions required for Playing
          * @param e The event that triggered the action.
          */
+        @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
             play();
         }
@@ -130,6 +131,7 @@ public class PlayController {
          * Performs the functions required for Playing
          * @param e The event that triggered the action.
          */
+        @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
             pause();
         }
@@ -168,6 +170,7 @@ public class PlayController {
          * Performs the functions required for Stopping
          * @param e The event that triggered the action.
          */
+        @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
             stop();
         }
@@ -202,6 +205,7 @@ public class PlayController {
          * Performs the functions required for Rewinding
          * @param e The event that triggered the action.
          */
+        @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
             rewind();
         }
@@ -234,6 +238,7 @@ public class PlayController {
          * Performs the functions required for Looping
          * @param e The event that triggered the action.
          */
+        @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
             loop();
         }
