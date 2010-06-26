@@ -8,15 +8,20 @@ package com.lemckes.MidiQuickFix;
 import com.lemckes.MidiQuickFix.util.TracksChangedEvent;
 import com.lemckes.MidiQuickFix.util.TracksChangedEvent.TrackChangeType;
 import com.lemckes.MidiQuickFix.util.TracksChangedListener;
+import com.lemckes.MidiQuickFix.util.UiStrings;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import javax.sound.midi.Sequence;
+import javax.swing.JOptionPane;
 import javax.swing.event.EventListenerList;
 
 /**
  *
  */
-public class TrackSummaryPanel extends javax.swing.JPanel
+public class TrackSummaryPanel
+    extends javax.swing.JPanel
 {
-
     private Sequence mSequence;
     private TrackSummaryTable mTrackSummaryTable;
     /** The list of registered listeners. */
@@ -41,12 +46,33 @@ public class TrackSummaryPanel extends javax.swing.JPanel
     private void createTrack() {
         CreateTrackDialog ctd = new CreateTrackDialog(mSequence, null, true);
         ctd.setVisible(true);
-        if(ctd.wasTrackCreated()){
+        if (ctd.wasTrackCreated()) {
             fireTracksChanged(TrackChangeType.TRACK_ADDED);
         }
     }
 
+    private void copyTrack()
+    {
+
+    }
+
     private void deleteTrack() {
+        int numRows = mTrackSummaryTable.getSelectedRowCount();
+        if (numRows > 0) {
+            int[] selectedRows = mTrackSummaryTable.getSelectedRows();
+            String message = UiStrings.getString("TrackSummaryPanel.deleteTrackMessage");
+            String formattedMessage = MessageFormat.format(message, numRows);
+            int reply = JOptionPane.showConfirmDialog(
+                this, formattedMessage, "Delete Tracks",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (reply == JOptionPane.OK_OPTION) {
+                Arrays.sort(selectedRows);
+                for (int track = numRows - 1; track >= 0; --track) {
+                    mSequence.deleteTrack(mSequence.getTracks()[selectedRows[track]]);
+                }
+                fireTracksChanged(TrackChangeType.TRACK_DELETED);
+            }
+        }
     }
 
     /**
@@ -143,7 +169,6 @@ public class TrackSummaryPanel extends javax.swing.JPanel
     private void deleteTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteTrackButtonActionPerformed
         deleteTrack();
     }//GEN-LAST:event_deleteTrackButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addTrackButton;
     private javax.swing.JPanel buttonPanel;
