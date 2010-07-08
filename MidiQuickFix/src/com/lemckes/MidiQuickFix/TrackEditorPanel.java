@@ -40,7 +40,9 @@ import javax.swing.event.TableModelListener;
  * @version $Id$
  */
 public class TrackEditorPanel extends javax.swing.JPanel
-    implements EventCreationListener, ListSelectionListener {
+    implements EventCreationListener, ListSelectionListener
+{
+
     private static final long serialVersionUID = -3117013688244779503L;
     private Sequence mSeq;
     private int mCurrentTrack;
@@ -69,11 +71,14 @@ public class TrackEditorPanel extends javax.swing.JPanel
      */
     public void setSequence(Sequence seq) {
         mSeq = seq;
+        int currentTrack = mCurrentTrack;
         boolean haveTracks = false;
         if (mSeq != null) {
-            if (mSeq.getTracks().length > 0) {
+            int numTracks = mSeq.getTracks().length;
+            if (numTracks > 0) {
                 setTrackComboModel(mSeq.getTracks());
-                selectTrack(0);
+                mCurrentTrack = currentTrack < numTracks ? currentTrack : 0;
+                trackSelector.setSelectedIndex(mCurrentTrack);
                 haveTracks = true;
             }
         }

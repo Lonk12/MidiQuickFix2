@@ -11,10 +11,16 @@ import com.lemckes.MidiQuickFix.util.TracksChangedListener;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Comparator;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
+import javax.sound.midi.Track;
 import javax.swing.JOptionPane;
 import javax.swing.event.EventListenerList;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
@@ -22,6 +28,7 @@ import javax.swing.event.EventListenerList;
 public class TrackSummaryPanel
     extends javax.swing.JPanel
 {
+
     private Sequence mSequence;
     private TrackSummaryTable mTrackSummaryTable;
     /** The list of registered listeners. */
@@ -36,10 +43,26 @@ public class TrackSummaryPanel
     public void setSequence(Sequence seq) {
         mSequence = seq;
         mTrackSummaryTable.setSequence(seq);
+
+        addTrackButton.setEnabled(mSequence != null);
     }
 
     public void setSummaryTable(TrackSummaryTable table) {
         mTrackSummaryTable = table;
+        mTrackSummaryTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+        {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                Object source = e.getSource();
+                if (source == mTrackSummaryTable.getSelectionModel()) {
+                    int numSelectedRows =
+                        mTrackSummaryTable.getSelectedRowCount();
+                    copyTrackButton.setEnabled(numSelectedRows == 1);
+                    deleteTrackButton.setEnabled(numSelectedRows > 0);
+                }
+            }
+        });
         jScrollPane1.setViewportView(table);
     }
 
@@ -48,15 +71,45 @@ public class TrackSummaryPanel
         ctd.setVisible(true);
         if (ctd.wasTrackCreated()) {
             fireTracksChanged(TrackChangeType.TRACK_ADDED);
+            ((TrackSummaryTableModel)mTrackSummaryTable.getModel()).updateInfo();
         }
     }
 
-    private void copyTrack()
-    {
+    private void copyTrack() {
+        int row = mTrackSummaryTable.getSelectedRow();
+        Track newTrack = mSequence.createTrack();
+        Track oldTrack = mSequence.getTracks()[row];
+        for (int i = 0; i < oldTrack.size(); ++i) {
+            MidiEvent oldEvent = oldTrack.get(i);
+            MidiMessage oldMess = oldEvent.getMessage();
 
+            MidiMessage newMess = (MidiMessage)oldMess.clone();
+            // Change the track name
+            if (newMess.getStatus() == MetaMessage.META) {
+                Object[] str = MetaEvent.getMetaStrings((MetaMessage)newMess);
+                if (str[0].equals("M:TrackName")) {
+                    // get the old name
+                    String name = "COPY_" + (String)str[2];
+                    try {
+                        // Create a new event with the new name
+                        MidiEvent me =
+                            MetaEvent.createMetaEvent("TRACK_NAME", name, 0, 0);
+                        // and extract the updated message
+                        newMess = me.getMessage();
+                    }
+                    catch (InvalidMidiDataException ex) {
+                    }
+                }
+            }
+
+            MidiEvent newEvent = new MidiEvent(newMess, oldEvent.getTick());
+            newTrack.add(newEvent);
+        }
+        fireTracksChanged(TrackChangeType.TRACK_ADDED);
+        ((TrackSummaryTableModel)mTrackSummaryTable.getModel()).updateInfo();
     }
 
-    private void deleteTrack() {
+    private void deleteTracks() {
         int numRows = mTrackSummaryTable.getSelectedRowCount();
         if (numRows > 0) {
             int[] selectedRows = mTrackSummaryTable.getSelectedRows();
@@ -71,6 +124,8 @@ public class TrackSummaryPanel
                     mSequence.deleteTrack(mSequence.getTracks()[selectedRows[track]]);
                 }
                 fireTracksChanged(TrackChangeType.TRACK_DELETED);
+                ((TrackSummaryTableModel)mTrackSummaryTable.getModel()).
+                    updateInfo();
             }
         }
     }
@@ -115,6 +170,7 @@ public class TrackSummaryPanel
         jPanel1 = new javax.swing.JPanel();
         buttonPanel = new javax.swing.JPanel();
         addTrackButton = new javax.swing.JButton();
+        copyTrackButton = new javax.swing.JButton();
         deleteTrackButton = new javax.swing.JButton();
 
         setName("Form"); // NOI18N
@@ -138,6 +194,7 @@ public class TrackSummaryPanel
         buttonPanel.setLayout(new java.awt.GridLayout(0, 1, 0, 3));
 
         addTrackButton.setText(bundle.getString("TrackSummaryPanel.addTrackButton.text")); // NOI18N
+        addTrackButton.setEnabled(false);
         addTrackButton.setName("addTrackButton"); // NOI18N
         addTrackButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -146,7 +203,18 @@ public class TrackSummaryPanel
         });
         buttonPanel.add(addTrackButton);
 
+        copyTrackButton.setText(bundle.getString("TrackSummaryPanel.copyTrackButton.text")); // NOI18N
+        copyTrackButton.setEnabled(false);
+        copyTrackButton.setName("copyTrackButton"); // NOI18N
+        copyTrackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyTrackButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(copyTrackButton);
+
         deleteTrackButton.setText(bundle.getString("TrackSummaryPanel.deleteTrackButton.text")); // NOI18N
+        deleteTrackButton.setEnabled(false);
         deleteTrackButton.setName("deleteTrackButton"); // NOI18N
         deleteTrackButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,13 +235,18 @@ public class TrackSummaryPanel
     }//GEN-LAST:event_addTrackButtonActionPerformed
 
     private void deleteTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteTrackButtonActionPerformed
-        deleteTrack();
+        deleteTracks();
     }//GEN-LAST:event_deleteTrackButtonActionPerformed
+
+    private void copyTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyTrackButtonActionPerformed
+        copyTrack();
+    }//GEN-LAST:event_copyTrackButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addTrackButton;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JLabel controlLabel;
     private javax.swing.JPanel controlPanel;
+    private javax.swing.JButton copyTrackButton;
     private javax.swing.JButton deleteTrackButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

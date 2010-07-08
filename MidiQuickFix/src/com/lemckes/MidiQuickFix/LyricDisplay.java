@@ -251,9 +251,12 @@ public class LyricDisplay
         }
         int wordstart = 0;
         for (Entry<Long, String> e : mWords.entrySet()) {
-            int len = e.getValue().length();
-            mPlaces.put(e.getKey(), new WordPlace(wordstart, len));
-            wordstart += len;
+            String word = e.getValue();
+            String trim = word.trim();
+            int start = word.indexOf(trim);
+            int trimLen = trim.length();
+            mPlaces.put(e.getKey(), new WordPlace(wordstart + start, trimLen));
+            wordstart += word.length();
         }
         displayText();
     }

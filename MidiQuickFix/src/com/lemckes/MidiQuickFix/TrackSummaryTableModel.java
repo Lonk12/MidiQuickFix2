@@ -45,6 +45,7 @@ import javax.swing.table.AbstractTableModel;
 public class TrackSummaryTableModel
     extends AbstractTableModel
 {
+
     static final long serialVersionUID = -5109111307767764175L;
     transient private Synthesizer mSynth;
     transient private MidiChannel[] mChannels;
@@ -59,6 +60,7 @@ public class TrackSummaryTableModel
     /** The data about a track */
     static class TrackInfo
     {
+
         String mName;
         long mStart;
         long mEnd;
@@ -76,7 +78,8 @@ public class TrackSummaryTableModel
     public TrackSummaryTableModel(Sequence s, Sequencer sequencer) {
         try {
             mSynth = MidiSystem.getSynthesizer();
-        } catch (MidiUnavailableException e) {
+        }
+        catch (MidiUnavailableException e) {
             TraceDialog.addTrace("No Synthesiser available." + // NOI18N
                 " (Could make playing tricky.)"); // NOI18N
         }
@@ -87,6 +90,11 @@ public class TrackSummaryTableModel
         mSeq = sequencer;
         mSequence = s;
         mRes = s.getResolution();
+
+        updateInfo();
+    }
+
+    public void updateInfo() {
         mTracks = mSequence.getTracks();
         int numTracks = mTracks.length;
 
@@ -269,7 +277,7 @@ public class TrackSummaryTableModel
             // Do Nothing
         }
     }
-    Class[] types = new Class[]{
+    Class[] types = new Class[] {
         java.lang.Integer.class,
         java.lang.String.class,
         java.lang.Object.class,
@@ -286,7 +294,7 @@ public class TrackSummaryTableModel
     public Class getColumnClass(int columnIndex) {
         return types[columnIndex];
     }
-    String[] columnNames = new String[]{
+    String[] columnNames = new String[] {
         UiStrings.getString("no."),
         UiStrings.getString("name"),
         UiStrings.getString("start"),
@@ -303,7 +311,7 @@ public class TrackSummaryTableModel
     public String getColumnName(int col) {
         return columnNames[col];
     }
-    boolean[] canEdit = new boolean[]{
+    boolean[] canEdit = new boolean[] {
         false,
         false,
         false,

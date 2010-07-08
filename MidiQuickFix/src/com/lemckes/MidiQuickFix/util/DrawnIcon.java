@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix.util;
 
 import java.awt.BasicStroke;
@@ -39,174 +38,183 @@ import javax.swing.Icon;
  * An Icon that draws itself using a GeneralPath.
  * @version $Id$
  */
-public class DrawnIcon implements Icon {
-    
-    private AbstractButton parent;
-    
-    private GeneralPath path;
-    
-    private Color fillColour = Color.GRAY;
-    private Color borderColour = Color.BLACK;
-    private Color activeBorderColour = Color.WHITE;
-    
-    private boolean active = false;
-    
-    private boolean filled;
-    private boolean bordered;
-    
+public class DrawnIcon implements Icon
+{
+
+    private AbstractButton mParent;
+    private GeneralPath mPath;
+    private Color mFillColour = Color.GRAY;
+    private Color mBorderColour = Color.BLACK;
+    private Color mActiveBorderColour = Color.WHITE;
+    private boolean mActive = false;
+    private boolean mFilled;
+    private boolean mBordered;
+
+    /**
+     * Create a new instance of DrawnIcon with the default shape
+     * @param parent the AbstractButton on which this icon is drawn
+     */
     public DrawnIcon(AbstractButton parent) {
-        this(parent, 
+        this(parent,
             new GeneralPath(new Rectangle2D.Double(0.3, 0.3, 0.4, 0.4)));
     }
-    
-    /** Creates a new instance of DrawnIcon */
-    public DrawnIcon(AbstractButton parent, GeneralPath path) {
-        this.parent = parent;
-        this.path = path;
-        filled = true;
-        bordered = true;
+
+    /**
+     * Create a new instance of DrawnIcon with the given shape
+     * @param parent the AbstractButton on which this icon is drawn
+     * @param shape the GeneralPath used to draw this icon
+     */
+    public DrawnIcon(AbstractButton parent, GeneralPath shape) {
+        this.mParent = parent;
+        this.mPath = shape;
+        mFilled = true;
+        mBordered = true;
     }
 
+    @Override
     public int getIconHeight() {
         return 12;
     }
 
+    @Override
     public int getIconWidth() {
         return 12;
     }
 
+    @Override
     public void paintIcon(Component component, Graphics g, int x, int y) {
         Graphics2D g2 = (Graphics2D)g;
         AffineTransform savedAT = g2.getTransform();
         double xScale = component.getWidth();
         double yScale = component.getHeight();
-        
+
         // Maintain a square aspect ratio for the icon.
         double scale = Math.min(xScale, yScale);
+        // Set the scale to give the smallest dimension a size of 1.0
         AffineTransform at =
             AffineTransform.getScaleInstance(scale, scale);
-        
+
+        // Translate either X or Y to centre the icon in the largest dimension
         double xTrans = xScale > yScale ? (xScale - yScale) / (2 * yScale) : 0;
         double yTrans = yScale > xScale ? (yScale - xScale) / (2 * xScale) : 0;
-        
+
         at.translate(xTrans, yTrans);
-        
+
         g2.setRenderingHint(
             RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.transform(at);
-        
-        if (filled) {
+
+        if (mFilled) {
             drawFill(g2);
         }
-        
-        if (bordered) {
+
+        if (mBordered) {
             drawBorder(g2);
         }
-        
+
         g2.setTransform(savedAT);
     }
-    
-    void drawFill(Graphics2D g2) {
-        boolean enabled = parent.isEnabled();
-        
-        g2.setColor(enabled ? fillColour : Color.GRAY);
-        g2.fill(path);
+
+    private void drawFill(Graphics2D g2) {
+        boolean enabled = mParent.isEnabled();
+
+        g2.setColor(enabled ? mFillColour : Color.GRAY);
+        g2.fill(mPath);
     }
-    
-    void drawBorder(Graphics2D g2) {
-        boolean pressed = parent.getModel().isArmed();
-        boolean selected = parent.isSelected();
-        
-        if (active || pressed || selected) {
-            g2.setColor(activeBorderColour);
+
+    private void drawBorder(Graphics2D g2) {
+        boolean pressed = mParent.getModel().isArmed();
+        boolean selected = mParent.isSelected();
+
+        if (mActive || pressed || selected) {
+            g2.setColor(mActiveBorderColour);
         } else {
-            g2.setColor(borderColour);
+            g2.setColor(mBorderColour);
         }
         g2.setStroke(new BasicStroke(0.02f));
-        g2.draw(path);
+        g2.draw(mPath);
     }
-    
-    
+
     public GeneralPath getPath() {
-        return path;
+        return mPath;
     }
-    
+
     public void setPath(GeneralPath path) {
-        this.path = path;
+        this.mPath = path;
     }
-    
+
     public Color getFillColour() {
-        return fillColour;
+        return mFillColour;
     }
-    
+
     public void setFillColour(Color colour) {
-        this.fillColour = colour;
+        this.mFillColour = colour;
     }
-    
+
     public Color getBorderColour() {
-        return borderColour;
+        return mBorderColour;
     }
-    
+
     public void setBorderColour(Color borderColour) {
-        this.borderColour = borderColour;
-        
+        this.mBorderColour = borderColour;
+
         // Calculate a contrasting colour for the activeBorderColour
         float hue =
-            (borderColour.RGBtoHSB(borderColour.getRed(),
+            (Color.RGBtoHSB(borderColour.getRed(),
             borderColour.getGreen(), borderColour.getBlue(), null))[0];
         float sat =
-            (borderColour.RGBtoHSB(borderColour.getRed(),
+            (Color.RGBtoHSB(borderColour.getRed(),
             borderColour.getGreen(), borderColour.getBlue(), null))[1];
         float bri =
-            (borderColour.RGBtoHSB(borderColour.getRed(),
+            (Color.RGBtoHSB(borderColour.getRed(),
             borderColour.getGreen(), borderColour.getBlue(), null))[2];
         if (sat < 0.2) {
             // This is a grey or close to it so adjust the brightness
             if (bri > 0.4 && bri < 0.6) {
                 // Just brighten mid-tones
-                bri = bri + 0.4f;
+                bri += 0.4f;
             } else {
                 // otherwise invert the brightness
                 bri = 1.0f - bri;
             }
-            this.activeBorderColour =
+            this.mActiveBorderColour =
                 Color.getHSBColor(hue, sat, bri);
         } else {
             // This is not grey so adjust the hue.
-            this.activeBorderColour =
+            this.mActiveBorderColour =
                 Color.getHSBColor(hue + 0.5f, sat, bri);
         }
     }
-    
+
     public boolean isFilled() {
-        return filled;
+        return mFilled;
     }
-    
+
     public void setFilled(boolean filled) {
-        this.filled = filled;
+        this.mFilled = filled;
     }
-    
+
     public boolean isBordered() {
-        return bordered;
+        return mBordered;
     }
-    
+
     public void setBordered(boolean bordered) {
-        this.bordered = bordered;
+        this.mBordered = bordered;
     }
 
     public boolean isActive() {
-        return active;
+        return mActive;
     }
 
     public void setActive(boolean active) {
-        this.active = active;
+        this.mActive = active;
     }
-    
+
     public AbstractButton getParent() {
-        return parent;
+        return mParent;
     }
 
     public void setParent(AbstractButton parent) {
-        this.parent = parent;
+        this.mParent = parent;
     }
 }

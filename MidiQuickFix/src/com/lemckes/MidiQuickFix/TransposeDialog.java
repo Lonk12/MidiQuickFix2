@@ -267,19 +267,6 @@ public class TransposeDialog extends javax.swing.JDialog {
         dispose();
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                javax.swing.JFrame f = new javax.swing.JFrame();
-                f.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-                new TransposeDialog(f, true).setVisible(true);
-                System.exit(0);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;

@@ -22,6 +22,7 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix.util;
 
+import com.lemckes.MidiQuickFix.KeySignatures;
 import com.lemckes.MidiQuickFix.MetaEvent;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -66,7 +67,7 @@ public class Transposer {
      *
      * @return <code>true</code> if the value of any note would have
      * over/underflowed the valid range [0, 127]
-     * @param doDrums
+     * @param doDrums if <code>true</code> then the drum track, channel 9, will be transposed
      * @param seq the sequence to transpose
      * @param semitones the number of semitones to transpose
      */
@@ -146,7 +147,9 @@ public class Transposer {
         data[1] = 0;
         for (byte sig = -7; sig < 8; ++sig) {
             data[0] = sig;
+            System.out.print("From " + KeySignatures.getKeyName(data) + " to ");
             data[0] = adjustKeySig(sig, -3);
+            System.out.println(KeySignatures.getKeyName(data));
         }
     }
 

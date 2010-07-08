@@ -22,6 +22,7 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix.util;
 
+import java.util.regex.Pattern;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
@@ -32,7 +33,7 @@ import javax.swing.text.DocumentFilter;
  * @author john
  */
 public class RegexDocumentFilter extends DocumentFilter {
-    private final String mPattern;
+    private final Pattern mPattern;
 
     /**
      * Creates a new instance of RegexDocumentFilter
@@ -40,7 +41,7 @@ public class RegexDocumentFilter extends DocumentFilter {
      */
     public RegexDocumentFilter() {
         super();
-        mPattern = ".*";
+        mPattern = Pattern.compile(".*");
     }
 
     /**
@@ -50,7 +51,7 @@ public class RegexDocumentFilter extends DocumentFilter {
      */
     public RegexDocumentFilter(String pattern) {
         super();
-        mPattern = pattern;
+        mPattern = Pattern.compile(pattern);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class RegexDocumentFilter extends DocumentFilter {
         String s = prev.substring(0, offset) +
             (text == null ? "" : text) +
             prev.substring(offset + length);
-        if (s.matches(mPattern)) {
+        if (mPattern.matcher(s).matches()) {
             // update the value in the bypass
             fb.replace(offset, length, text, attrs);
         }

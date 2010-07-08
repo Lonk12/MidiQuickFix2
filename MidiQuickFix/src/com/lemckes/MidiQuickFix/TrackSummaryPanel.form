@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
@@ -85,10 +85,23 @@
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="TrackSummaryPanel.addTrackButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                     </Property>
+                    <Property name="enabled" type="boolean" value="false"/>
                     <Property name="name" type="java.lang.String" value="addTrackButton" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addTrackButtonActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="copyTrackButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="TrackSummaryPanel.copyTrackButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
+                    <Property name="enabled" type="boolean" value="false"/>
+                    <Property name="name" type="java.lang.String" value="copyTrackButton" noResource="true"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="copyTrackButtonActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="deleteTrackButton">
@@ -96,6 +109,7 @@
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="TrackSummaryPanel.deleteTrackButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                     </Property>
+                    <Property name="enabled" type="boolean" value="false"/>
                     <Property name="name" type="java.lang.String" value="deleteTrackButton" noResource="true"/>
                   </Properties>
                   <Events>

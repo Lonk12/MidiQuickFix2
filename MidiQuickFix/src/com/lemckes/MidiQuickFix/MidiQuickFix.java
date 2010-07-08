@@ -30,7 +30,6 @@ import com.lemckes.MidiQuickFix.util.MidiFileFilter;
 import com.lemckes.MidiQuickFix.util.MidiSeqPlayer;
 import com.lemckes.MidiQuickFix.util.MqfProperties;
 import com.lemckes.MidiQuickFix.util.PlayController;
-import com.lemckes.MidiQuickFix.util.SwingWorker;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.TracksChangedEvent;
 import com.lemckes.MidiQuickFix.util.TracksChangedListener;
@@ -62,6 +61,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -90,7 +90,7 @@ public class MidiQuickFix
     static String mJavaVersion;
     /** The system synthesizer. */
     transient Synthesizer mSynth;
-    /** The syth's channels. */
+    /** The synth's channels. */
     transient MidiChannel[] mChannels;
     /** The default sequencer. */
     transient Sequencer mSequencer;
@@ -365,7 +365,7 @@ public class MidiQuickFix
      * Currently does not validate that the file is a midi file.
      * @param fileName The full path name of the midi file to open.
      */
-    public void newSequence(String fileName) {
+    private void newSequence(String fileName) {
         java.io.File myMidiFile = new java.io.File(fileName);
         newSequence(myMidiFile);
     }
@@ -379,51 +379,52 @@ public class MidiQuickFix
      * <code>buildNewSequence()</code>
      * @param file The midi file to open.
      */
-    public void newSequence(final java.io.File file) {
-        final SwingWorker worker = new SwingWorker()
-        {
-            // Open the file in the worker thread
+    private void newSequence(final java.io.File file) {
+        final SwingWorker<Object, Object> worker =
+            new SwingWorker<Object, Object>()
+            {
+                // Open the file in the worker thread
 
-            @Override
-            public Object construct() {
-                try {
-                    setBusy(true);
-                    // Construct a Sequence object
-                    mSeq = MidiFile.openSequenceFile(file);
+                @Override
+                public Object doInBackground() {
+                    try {
+                        setBusy(true);
+                        // Construct a Sequence object
+                        mSeq = MidiFile.openSequenceFile(file);
 
-                    // Remember the file name for later
-                    mFileName = file.getName();
-                    mFilePath = file.getCanonicalPath();
+                        // Remember the file name for later
+                        mFileName = file.getName();
+                        mFilePath = file.getCanonicalPath();
+                    }
+                    catch (IOException e) {
+                        trace("IOException in newSequence() : " + e); // NOI18N
+                        showDialog(UiStrings.getString("file_read_error")
+                            + UiStrings.getString("file_read_permission"),
+                            UiStrings.getString("file_io_error"),
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                    catch (InvalidMidiDataException e) {
+                        trace("InvalidMidiDataException in newSequence() : " + e); // NOI18N
+                        showDialog(UiStrings.getString("file_read_error")
+                            + UiStrings.getString("file_read_invalid"),
+                            UiStrings.getString("file_invalid_data"),
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                    finally {
+                        setBusy(false);
+                    }
+                    return null;
                 }
-                catch (IOException e) {
-                    trace("IOException in newSequence() : " + e); // NOI18N
-                    showDialog(UiStrings.getString("file_read_error")
-                        + UiStrings.getString("file_read_permission"),
-                        UiStrings.getString("file_io_error"),
-                        JOptionPane.ERROR_MESSAGE);
-                }
-                catch (InvalidMidiDataException e) {
-                    trace("InvalidMidiDataException in newSequence() : " + e); // NOI18N
-                    showDialog(UiStrings.getString("file_read_error")
-                        + UiStrings.getString("file_read_invalid"),
-                        UiStrings.getString("file_invalid_data"),
-                        JOptionPane.ERROR_MESSAGE);
-                }
-                finally {
-                    setBusy(false);
-                }
-                return null;
-            }
 
-            //Build sequence in the event-dispatching thread.
-            @Override
-            public void finished() {
-                if (mSeq != null) {
-                    buildNewSequence();
+                //Build sequence in the event-dispatching thread.
+                @Override
+                public void done() {
+                    if (mSeq != null) {
+                        buildNewSequence();
+                    }
                 }
-            }
-        };
-        worker.start();
+            };
+        worker.execute();
     }
 
     /**
@@ -532,7 +533,8 @@ public class MidiQuickFix
             setTitle(mFileName);
         }
         catch (IOException e) {
-            trace("IOException in saveFile(java.io.File file) : " + e);
+            trace("IOException in saveFile(java.io.File file) : "
+                + e.getLocalizedMessage());
             showDialog(UiStrings.getString("file_save_error")
                 + UiStrings.getString("file_save_permission"),
                 UiStrings.getString("file_io_error"),
@@ -541,7 +543,8 @@ public class MidiQuickFix
         }
         catch (InvalidMidiDataException e) {
             trace(
-                "InvalidMidiDataException in saveFile(java.io.File file) : " + e);
+                "InvalidMidiDataException in saveFile(java.io.File file) : "
+                + e.getLocalizedMessage());
             showDialog(UiStrings.getString("file_create_error")
                 + UiStrings.getString("file_save_invalid"),
                 UiStrings.getString("file_invalid_data"),
@@ -642,6 +645,7 @@ public class MidiQuickFix
         }
         // Reset the transpose dialog to zero
         mTransposeDialog.setTransposeBy(0);
+        mTransposeDialog.pack();
         mTransposeDialog.setVisible(true);
         if (mTransposeDialog.getReturnStatus() == TransposeDialog.RET_OK) {
             boolean running = mSequencer.isRunning();
@@ -653,6 +657,9 @@ public class MidiQuickFix
                 mSeq,
                 mTransposeDialog.getTransposeBy(),
                 mTransposeDialog.getDoDrums());
+            mTrackEditor.setSequence(mSeq);
+            mTrackSummaryPanel.setSequence(mSeq);
+            mSequenceModified = true;
 
             if (overflowed) {
                 String message = UiStrings.getString("transpose_out_of_range");
@@ -688,7 +695,7 @@ public class MidiQuickFix
                 mSequencer.setSequence(mSeq);
             }
             catch (javax.sound.midi.InvalidMidiDataException imde) {
-                trace("Exception in tableChanged " + imde); // NOI18N
+                trace("Exception in tableChanged " + imde.getLocalizedMessage()); // NOI18N
                 showDialog(UiStrings.getString("edit_sequence_error")
                     + UiStrings.getString("edit_sequence_invalid"),
                     UiStrings.getString("file_invalid_data"),
