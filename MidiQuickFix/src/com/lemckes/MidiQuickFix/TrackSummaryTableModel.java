@@ -327,7 +327,7 @@ public class TrackSummaryTableModel
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         boolean ret = canEdit[columnIndex];
-        if (columnIndex > 6 && mInfo[rowIndex].mChannel == -1) {
+        if (columnIndex > 6 && columnIndex < 8 && mInfo[rowIndex].mChannel == -1) {
             ret = false;
         }
         return ret;
