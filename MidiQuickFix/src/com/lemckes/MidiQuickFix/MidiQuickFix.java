@@ -29,6 +29,7 @@ import com.lemckes.MidiQuickFix.util.MidiFile;
 import com.lemckes.MidiQuickFix.util.MidiFileFilter;
 import com.lemckes.MidiQuickFix.util.MidiSeqPlayer;
 import com.lemckes.MidiQuickFix.util.MqfProperties;
+import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.PlayController;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.TracksChangedEvent;
@@ -53,7 +54,6 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
@@ -95,7 +95,7 @@ public class MidiQuickFix
     /** The default sequencer. */
     transient Sequencer mSequencer;
     /** The sequence from the current file. */
-    transient Sequence mSeq;
+    transient MqfSequence mSeq;
     /** The index of the currently display track. */
     int mCurrentTrack;
     /** The resolution in Ticks/Beat of the file. */
@@ -285,13 +285,19 @@ public class MidiQuickFix
             lyricsPanel.add(mLyricDisplay);
 
             mLyricDisplay.setSequencer(mSequencer);
+
             pack();
+            setLocationRelativeTo(null);
         }
         catch (MidiUnavailableException e) {
             startDialog.splash.addStageMessage(
                 UiStrings.getString("no_midi_message")); // NOI18N
             startDialog.splash.addStageMessage(
                 e.getMessage());
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("check_other_apps1")); // NOI18N
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("check_other_apps2")); // NOI18N
             startDialog.splash.addStageMessage(
                 UiStrings.getString("startup_failed")); // NOI18N
         }
@@ -479,6 +485,12 @@ public class MidiQuickFix
 
         if (mTrackSummaryPanel != null) {
             mTrackSummaryPanel.setSequence(mSeq);
+        }
+
+        if (mLyricDisplay != null) {
+            mLyricDisplay.setTrackSelector(
+                (TrackSummaryTableModel)mTrackSummary.getModel());
+            mLyricDisplay.loadSequence(mSeq);
         }
 
         mSequenceModified = true;
@@ -915,13 +927,7 @@ public class MidiQuickFix
         saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         exitMenuItem = new javax.swing.JMenuItem();
-        editMenu = new javax.swing.JMenu();
-        cutMenuItem = new javax.swing.JMenuItem();
-        copyMenuItem = new javax.swing.JMenuItem();
-        pasteMenuItem = new javax.swing.JMenuItem();
-        deleteMenuItem = new javax.swing.JMenuItem();
         sequenceMenu = new javax.swing.JMenu();
-        splitMenuItem = new javax.swing.JMenuItem();
         transposeMenuItem = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
         traceMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -978,7 +984,7 @@ public class MidiQuickFix
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
         controlPanel.add(progressPanel, gridBagConstraints);
 
         tempoAdjustPanel.setOpaque(false);
@@ -1015,7 +1021,7 @@ public class MidiQuickFix
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 16);
+        gridBagConstraints.insets = new java.awt.Insets(6, 16, 0, 16);
         controlPanel.add(tempoAdjustPanel, gridBagConstraints);
 
         seqInfoPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2)));
@@ -1106,7 +1112,8 @@ public class MidiQuickFix
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 0);
         controlPanel.add(seqInfoPanel, gridBagConstraints);
 
         transposeButton.setText(UiStrings.getString("transpose")); // NOI18N
@@ -1186,42 +1193,8 @@ public class MidiQuickFix
 
         menuBar.add(fileMenu);
 
-        editMenu.setMnemonic('E');
-        editMenu.setText(UiStrings.getString("edit")); // NOI18N
-        editMenu.setEnabled(false);
-
-        cutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
-        cutMenuItem.setMnemonic('C');
-        cutMenuItem.setText(UiStrings.getString("cut")); // NOI18N
-        editMenu.add(cutMenuItem);
-
-        copyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        copyMenuItem.setMnemonic('o');
-        copyMenuItem.setText(UiStrings.getString("copy")); // NOI18N
-        editMenu.add(copyMenuItem);
-
-        pasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
-        pasteMenuItem.setMnemonic('P');
-        pasteMenuItem.setText(UiStrings.getString("paste")); // NOI18N
-        editMenu.add(pasteMenuItem);
-
-        deleteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
-        deleteMenuItem.setMnemonic('D');
-        deleteMenuItem.setText(UiStrings.getString("delete")); // NOI18N
-        editMenu.add(deleteMenuItem);
-
-        menuBar.add(editMenu);
-
         sequenceMenu.setMnemonic('S');
         sequenceMenu.setText(UiStrings.getString("sequence")); // NOI18N
-
-        splitMenuItem.setText(UiStrings.getString("split")); // NOI18N
-        splitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                splitMenuItemActionPerformed(evt);
-            }
-        });
-        sequenceMenu.add(splitMenuItem);
 
         transposeMenuItem.setText(UiStrings.getString("transpose")); // NOI18N
         transposeMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1275,52 +1248,6 @@ public class MidiQuickFix
     private void traceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_traceMenuItemActionPerformed
         TraceDialog.getInstance().setVisible(traceMenuItem.getState());
     }//GEN-LAST:event_traceMenuItemActionPerformed
-
-    private void splitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_splitMenuItemActionPerformed
-
-        JOptionPane.showMessageDialog(this,
-            UiStrings.getString("not_implemented_message"),
-            UiStrings.getString("not_implemented_title"),
-            JOptionPane.ERROR_MESSAGE);
-        return;
-
-        /*
-        Track t[] = new Track[16];
-        Track t0 = mTracks[0];
-        for (int i = 0; i < 16; ++i) {
-        t[i] = mSeq.createTrack();
-        MetaMessage mm = new MetaMessage();
-        String name = "Channel" + String.valueOf(i);
-        char[] cName = name.toCharArray();
-        byte[] bName = new byte[cName.length];
-        for (int j = 0; j < cName.length; ++j) {
-        bName[j] = (byte)cName[j];
-        }
-        try {
-        mm.setMessage(MetaEvent.trackName, bName, bName.length);
-        } catch (InvalidMidiDataException imde) {
-        imde.printStackTrace();
-        }
-        t[i].add(new MidiEvent(mm, 0));
-        }
-        for (int i = 0; i < t0.size(); ++i) {
-        MidiEvent ev = t0.get(i);
-        MidiMessage mess = ev.getMessage();
-        if (mess instanceof ShortMessage) {
-        int st = ((ShortMessage)mess).getStatus();
-        // Check that this is a channel message
-        if ((st & 0xf0) <= 0xf0) {
-        ShortMessage sm = (ShortMessage)mess;
-        //int command = sm.getCommand();
-        int channel = sm.getChannel();
-        //int d1 = sm.getData1();
-        //int d2 = sm.getData2();
-        t[channel].add(ev);
-        }
-        }
-        }
-         */
-    }//GEN-LAST:event_splitMenuItemActionPerformed
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
         if (mAboutDialog == null) {
@@ -1406,11 +1333,7 @@ public class MidiQuickFix
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JPanel controlPanel;
-    private javax.swing.JMenuItem copyMenuItem;
-    private javax.swing.JMenuItem cutMenuItem;
-    private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JTabbedPane detailsTabbedPane;
-    private javax.swing.JMenu editMenu;
     private javax.swing.JPanel editorPanel;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
@@ -1425,7 +1348,6 @@ public class MidiQuickFix
     private javax.swing.JSplitPane mainSplitPane;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
-    private javax.swing.JMenuItem pasteMenuItem;
     private javax.swing.JPanel playControlPanel;
     private com.lemckes.MidiQuickFix.components.LoopSlider positionSlider;
     private javax.swing.JPanel progressPanel;
@@ -1434,7 +1356,6 @@ public class MidiQuickFix
     private javax.swing.JPanel seqInfoPanel;
     private javax.swing.JFileChooser sequenceChooser;
     private javax.swing.JMenu sequenceMenu;
-    private javax.swing.JMenuItem splitMenuItem;
     private javax.swing.JPanel summaryPanel;
     private javax.swing.JFormattedTextField tempoAdjustField;
     private javax.swing.JLabel tempoAdjustLabel;

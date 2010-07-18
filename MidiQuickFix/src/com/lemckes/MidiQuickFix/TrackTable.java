@@ -145,6 +145,7 @@ public class TrackTable extends javax.swing.JTable {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setAutoCreateRowSorter(true);
         setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         setName("trackTable"); // NOI18N
     }// </editor-fold>//GEN-END:initComponents

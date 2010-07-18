@@ -22,11 +22,11 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.TableColumnWidthSetter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import java.awt.Dimension;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
 /**
@@ -47,7 +47,7 @@ public class TrackSummaryTable extends javax.swing.JTable
         try {
             initComponents();
             mSequencer = sequencer;
-            setSequence(new Sequence(Sequence.PPQ, 92));
+            setSequence(new MqfSequence(MqfSequence.PPQ, 92));
             Dimension pd = getPreferredSize();
             setPreferredScrollableViewportSize(pd);
         }
@@ -61,7 +61,7 @@ public class TrackSummaryTable extends javax.swing.JTable
      * Set the sequence that is to be displayed
      * @param seq the sequence that is to be displayed
      */
-    public void setSequence(Sequence seq) {
+    public void setSequence(MqfSequence seq) {
         setModel(new TrackSummaryTableModel(seq, mSequencer));
         Object[] widths = {
             "99", "The Track Name", // NOI18N
@@ -79,6 +79,7 @@ public class TrackSummaryTable extends javax.swing.JTable
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setAutoCreateRowSorter(true);
         setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

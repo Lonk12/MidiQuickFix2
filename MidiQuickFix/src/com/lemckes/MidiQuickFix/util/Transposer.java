@@ -53,7 +53,7 @@ public class Transposer {
      * @param seq the sequence to transpose
      * @param semitones the number of semitones to transpose
      */
-    public static boolean transpose(Sequence seq, int semitones) {
+    public static boolean transpose(MqfSequence seq, int semitones) {
         return transpose(seq, semitones, false);
     }
 
@@ -71,7 +71,7 @@ public class Transposer {
      * @param seq the sequence to transpose
      * @param semitones the number of semitones to transpose
      */
-    public static boolean transpose(Sequence seq, int semitones,
+    public static boolean transpose(MqfSequence seq, int semitones,
                                       boolean doDrums) {
         boolean overflow = false;
         for (Track t : seq.getTracks()) {

@@ -27,7 +27,6 @@ package com.lemckes.MidiQuickFix.util;
 import java.io.IOException;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Sequence;
 
 /**
  * Get a javax.sound.midi.Sequence from a file
@@ -35,15 +34,15 @@ import javax.sound.midi.Sequence;
  */
 public class MidiFile {
     
-    static public Sequence openSequenceFile(String fileName)
+    static public MqfSequence openSequenceFile(String fileName)
     throws InvalidMidiDataException, IOException {
         java.io.File myMidiFile = new java.io.File(fileName);
         return openSequenceFile(myMidiFile);
     }
     
-    static public Sequence openSequenceFile(java.io.File file)
+    static public MqfSequence openSequenceFile(java.io.File file)
     throws InvalidMidiDataException, IOException {
         // Construct a Sequence object
-        return MidiSystem.getSequence(file);
+        return new MqfSequence().createMqfSequence(MidiSystem.getSequence(file));
     }
 }

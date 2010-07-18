@@ -25,17 +25,20 @@ package com.lemckes.MidiQuickFix;
 import com.lemckes.MidiQuickFix.components.FontSelector;
 import com.lemckes.MidiQuickFix.util.FontSelectionEvent;
 import com.lemckes.MidiQuickFix.util.FontSelectionListener;
+import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
 import javax.swing.JPanel;
@@ -52,11 +55,12 @@ public class LyricDisplay
     implements MetaEventListener,
     FontSelectionListener
 {
+
     static final long serialVersionUID = 4418719983394376657L;
     private TreeMap<Long, String> mWords = new TreeMap<Long, String>();
     private TreeMap<Long, WordPlace> mPlaces = new TreeMap<Long, WordPlace>();
     private Sequencer mSequencer;
-    private Sequence mSequence;
+    private MqfSequence mSequence;
     /**
      * The TrackSummaryTableModel contains the settings for the
      * tracks that are selected to display lyrics.
@@ -73,6 +77,7 @@ public class LyricDisplay
     class MyHighlightPainter
         extends DefaultHighlighter.DefaultHighlightPainter
     {
+
         public MyHighlightPainter(Color color) {
             super(color);
         }
@@ -80,6 +85,7 @@ public class LyricDisplay
 
     private class WordPlace
     {
+
         private int startPos;
         private int length;
 
@@ -114,7 +120,8 @@ public class LyricDisplay
         mHighlighter = lyricText.getHighlighter();
         try {
             mHighlightTag = mHighlighter.addHighlight(0, 0, myHighlightPainter);
-        } catch (BadLocationException e) {
+        }
+        catch (BadLocationException e) {
         }
     }
 
@@ -147,6 +154,7 @@ public class LyricDisplay
             final int len = wp.getLength();
             EventQueue.invokeLater(new Runnable()
             {
+
                 @Override
                 public void run() {
                     try {
@@ -161,7 +169,8 @@ public class LyricDisplay
                         // Move the highlight
                         mHighlighter.changeHighlight(mHighlightTag, start,
                             start + len);
-                    } catch (BadLocationException ex) {
+                    }
+                    catch (BadLocationException ex) {
                         // What a pity.
                     }
                 }
@@ -185,15 +194,24 @@ public class LyricDisplay
         }
 
         mSequencer = seq;
-        Sequence mySequence = seq.getSequence();
-        if (mySequence != null) {
-            loadSequence(mySequence);
+        MqfSequence mySequence;
+        if (seq.getSequence() != null) {
+            try {
+                mySequence =
+                    new MqfSequence().createMqfSequence(seq.getSequence());
+                if (mySequence != null) {
+                    loadSequence(mySequence);
+                }
+            }
+            catch (InvalidMidiDataException ex) {
+                Logger.getLogger(LyricDisplay.class.getName()).
+                    log(Level.SEVERE, null, ex);
+            }
         }
-
         mSequencer.addMetaEventListener(this);
     }
 
-    public void loadSequence(Sequence seq) {
+    public void loadSequence(MqfSequence seq) {
         mWords.clear();
         mPlaces.clear();
         mSequence = seq;
@@ -211,11 +229,13 @@ public class LyricDisplay
                             MetaMessage metaMessage = (MetaMessage)mess;
                             int type = metaMessage.getType();
 
-                            if (type == MetaEvent.LYRIC && lyricsCheckBox.isSelected()
-                                || type == MetaEvent.TEXT && textCheckBox.isSelected()) {
+                            if (type == MetaEvent.LYRIC && lyricsCheckBox.
+                                isSelected()
+                                || type == MetaEvent.TEXT && textCheckBox.
+                                isSelected()) {
                                 byte[] data = metaMessage.getData();
 
-                                StringBuffer sb = new StringBuffer(data.length);
+                                StringBuilder sb = new StringBuilder(data.length);
                                 for (int k = 0; k < data.length; ++k) {
                                     byte b = data[k];
                                     if (b == 10 || (char)b == '\\') {

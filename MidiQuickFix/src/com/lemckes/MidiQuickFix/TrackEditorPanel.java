@@ -24,11 +24,11 @@ package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.EventCreationEvent;
 import com.lemckes.MidiQuickFix.util.EventCreationListener;
+import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.event.ListSelectionEvent;
@@ -44,7 +44,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
 {
 
     private static final long serialVersionUID = -3117013688244779503L;
-    private Sequence mSeq;
+    private MqfSequence mSeq;
     private int mCurrentTrack;
     private String mKeySig;
     private CreateEventDialog mCreateEventDialog;
@@ -69,7 +69,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
      * Set the sequence that will be edited
      * @param seq the sequence to edit
      */
-    public void setSequence(Sequence seq) {
+    public void setSequence(MqfSequence seq) {
         mSeq = seq;
         int currentTrack = mCurrentTrack;
         boolean haveTracks = false;

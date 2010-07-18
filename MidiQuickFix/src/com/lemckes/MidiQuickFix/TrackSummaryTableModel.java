@@ -23,6 +23,7 @@
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.Formats;
+import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.sound.midi.MetaMessage;
@@ -31,7 +32,6 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
@@ -51,7 +51,7 @@ public class TrackSummaryTableModel
     transient private MidiChannel[] mChannels;
     transient private Sequencer mSeq;
     /** The Sequence that is loaded. */
-    transient private Sequence mSequence;
+    transient private MqfSequence mSequence;
     /** The resolution of the sequence */
     private int mRes;
     /** The tracks in the sequence */
@@ -75,7 +75,7 @@ public class TrackSummaryTableModel
     transient private TrackInfo[] mInfo;
 
     /** Creates a new instance of a TrackSummaryTableModel */
-    public TrackSummaryTableModel(Sequence s, Sequencer sequencer) {
+    public TrackSummaryTableModel(MqfSequence s, Sequencer sequencer) {
         try {
             mSynth = MidiSystem.getSynthesizer();
         }

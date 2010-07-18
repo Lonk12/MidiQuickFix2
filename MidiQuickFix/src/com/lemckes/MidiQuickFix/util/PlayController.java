@@ -43,13 +43,13 @@ public class PlayController {
     /** The tick position at which the sequence was paused. */
     long mPausedPos;
     Sequencer mSequencer;
-    Sequence mSeq;
+    MqfSequence mSeq;
 
     /** Creates a new instance of PlayController
      * @param sqr the sequencer to control
      * @param seq the sequence to control
      */
-    public PlayController(Sequencer sqr, Sequence seq) {
+    public PlayController(Sequencer sqr, MqfSequence seq) {
         mSequencer = sqr;
         mSeq = seq;
     }
@@ -78,7 +78,7 @@ public class PlayController {
         mPausedPos = pos;
     }
 
-    public void setSequence(Sequence seq) {
+    public void setSequence(MqfSequence seq) {
         mSeq = seq;
     }
 

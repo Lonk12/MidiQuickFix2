@@ -22,20 +22,14 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.RegexDocumentFilter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
-import com.lemckes.MidiQuickFix.util.TracksChangedEvent;
-import com.lemckes.MidiQuickFix.util.TracksChangedEvent.TrackChangeType;
-import com.lemckes.MidiQuickFix.util.TracksChangedListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
-import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.event.EventListenerList;
 import javax.swing.text.AbstractDocument;
 
 /**
@@ -46,22 +40,27 @@ public class CreateTrackDialog extends javax.swing.JDialog
 
     private final String DEFAULT_CONTROL_VALUE = "64"; // NOI18N
     private final String DEFAULT_CHANNEL = "0"; // NOI18N
-    private Sequence mSequence;
+    private MqfSequence mSequence;
     private boolean mTrackCreated = false;
 
     /**
      * Create a new CreateTrackDialog for the given Sequence
-     * @param seq
+     * @param seq the sequence in which to create the track
+     * @param index the position of the track in the sequence
      * @param parent
      * @param modal
      */
-    public CreateTrackDialog(Sequence seq, java.awt.Frame parent, boolean modal) {
+    public CreateTrackDialog(
+        MqfSequence seq, Integer index, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        setLocationRelativeTo(parent);
+
+        initComponents();
+
+        indexField.setValue(index);
 
         mSequence = seq;
         mTrackCreated = false;
-
-        initComponents();
 
         setFormats();
 
@@ -70,7 +69,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
     }
 
     private void createTrack() {
-        Track track = mSequence.createTrack();
+        Track track = mSequence.createTrack((Integer)indexField.getValue());
         track.add(getTrackName());
         track.add(getPatch());
         track.add(getVolume());
@@ -227,6 +226,8 @@ public class CreateTrackDialog extends javax.swing.JDialog
         volumeField = new javax.swing.JFormattedTextField();
         panLabel = new javax.swing.JLabel();
         panField = new javax.swing.JFormattedTextField();
+        indexLabel = new javax.swing.JLabel();
+        indexField = new javax.swing.JFormattedTextField();
         jPanel2 = new javax.swing.JPanel();
         buttonPanel = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
@@ -253,9 +254,6 @@ public class CreateTrackDialog extends javax.swing.JDialog
         trackNameField.setColumns(20);
         trackNameField.setName("trackNameField"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 9, 0);
         mainPanel.add(trackNameField, gridBagConstraints);
 
@@ -263,7 +261,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         channelLabel.setName("channelLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 9, 0);
         mainPanel.add(channelLabel, gridBagConstraints);
@@ -273,7 +271,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         channelField.setName("channelField"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 9, 0);
         mainPanel.add(channelField, gridBagConstraints);
@@ -282,7 +280,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         patchLabel.setName("patchLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 9, 0);
         mainPanel.add(patchLabel, gridBagConstraints);
@@ -290,7 +288,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         patchCombo.setName("patchCombo"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 9, 0);
         mainPanel.add(patchCombo, gridBagConstraints);
@@ -299,7 +297,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         volumeLabel.setName("volumeLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 9, 0);
         mainPanel.add(volumeLabel, gridBagConstraints);
@@ -309,7 +307,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         volumeField.setName("volumeField"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 9, 0);
         mainPanel.add(volumeField, gridBagConstraints);
@@ -318,7 +316,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         panLabel.setName("panLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 9, 0);
         mainPanel.add(panLabel, gridBagConstraints);
@@ -328,10 +326,29 @@ public class CreateTrackDialog extends javax.swing.JDialog
         panField.setName("panField"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 9, 0);
         mainPanel.add(panField, gridBagConstraints);
+
+        indexLabel.setText(bundle.getString("CreateTrackDialog.indexLabel.text")); // NOI18N
+        indexLabel.setName("indexLabel"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 9, 0);
+        mainPanel.add(indexLabel, gridBagConstraints);
+
+        indexField.setColumns(3);
+        indexField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        indexField.setName("indexField"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 9, 0);
+        mainPanel.add(indexField, gridBagConstraints);
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
@@ -375,38 +392,13 @@ public class CreateTrackDialog extends javax.swing.JDialog
         doClose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-
-            public void run() {
-                try {
-                    CreateTrackDialog dialog = new CreateTrackDialog(
-                        new Sequence(Sequence.PPQ, 92), new javax.swing.JFrame(), true);
-                    dialog.addWindowListener(new java.awt.event.WindowAdapter()
-                    {
-
-                        public void windowClosing(java.awt.event.WindowEvent e) {
-                            System.exit(0);
-                        }
-                    });
-                    dialog.setVisible(true);
-                }
-                catch (InvalidMidiDataException ex) {
-                    Logger.getLogger(CreateTrackDialog.class.getName()).
-                        log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JFormattedTextField channelField;
     private javax.swing.JLabel channelLabel;
+    private javax.swing.JFormattedTextField indexField;
+    private javax.swing.JLabel indexLabel;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton okButton;
