@@ -28,7 +28,7 @@ package com.lemckes.MidiQuickFix;
 public class KeySignatures {
     /** The names of the key signatures. */
     static String[] keyNames = {
-        "Cb",
+        "B",
         "Gb",
         "Db",
         "Ab",

@@ -22,8 +22,12 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.StringConverter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -32,7 +36,9 @@ import javax.sound.midi.MidiEvent;
  * Handle Midi Meta events.
  * @version $Id$
  */
-public class MetaEvent {
+public class MetaEvent
+{
+
     static java.text.DecimalFormat twoDigitFormat =
         new java.text.DecimalFormat("00"); // NOI18N
     static String[] typeNames = {
@@ -54,7 +60,6 @@ public class MetaEvent {
         "PROPRIETARY_DATA"
     };
     // META event types
-
     public static final int SEQUENCE_NUMBER = 0x00; //FF 00 02 ss ss or FF 00 00
     public static final int TEXT = 0x01; //FF 01 len TEXT (arbitrary TEXT)
     public static final int COPYRIGHT = 0x02; //FF 02 len TEXT
@@ -75,7 +80,6 @@ public class MetaEvent {
     // 06 03 18 08 is 6/8 time, 24 clocks/metronome, 8 1/32ndnotes/1/4note
     public static final int KEY_SIGNATURE = 0x59; //FF 59 02 sf mi
     // -sf=no. of flats +sf=no. of sharps mi=0=major mi=1=minor
-
     public static final int PROPRIETARY_DATA = 0x7f; //FF 7F len data
     private static HashMap<String, Integer> mTypeNameToValue;
 
@@ -118,6 +122,7 @@ public class MetaEvent {
      * @return the representation of the message
      */
     public static Object[] getMetaStrings(MetaMessage mess) {
+        // Some data is String some is a series of bytes others are neither
         boolean dumpText = false;
         boolean dumpBytes = false;
 
@@ -172,6 +177,7 @@ public class MetaEvent {
                 break;
             case SMPTE_OFFSET:
                 result[0] = "M:SMPTEOffset"; // NOI18N
+                // Hour, Minute, Second, Frame, Field
                 //hr mn se fr ff
                 result[2] =
                     twoDigitFormat.format(data[0] & 0x00ff) + ":" + // NOI18N
@@ -207,39 +213,38 @@ public class MetaEvent {
                 dumpBytes = true;
                 break;
             default:
-                result[0] = "" + type; // NOI18N
+                result[0] = "M:" + type; // NOI18N
                 dumpBytes = true;
         }
 
         if (dumpText) {
-            char chars[] = new char[data.length];
-            for (int k = 0; k < data.length; ++k) {
-                byte b = data[k];
-                if (b > 31 && b < 128) {
-                    // Printable character.
-                    chars[k] = (char)b;
-                } else {
-                    chars[k] = '.';
-                }
+            try {
+                result[2] = StringConverter.convertBytesToString(data);
             }
-            result[2] = new String(chars);
+            catch (UnsupportedEncodingException ex) {
+                result[2] = "Unsupported Character Encoding";
+            }
         }
 
         if (dumpBytes) {
-            result[2] = "";
+            StringBuilder sb = new StringBuilder(data.length * 6);
             for (int k = 0; k < data.length; ++k) {
                 int i = data[k] & 0x00ff;
-                result[2] = result[2] + "0x" + Integer.toHexString(i) + " "; // NOI18N
+                if (i > 0) {
+                    sb.append(" "); // NOI18N
+                }
+                sb.append("0x"); // NOI18N
+                sb.append(Integer.toHexString(i)); // NOI18N
             }
+            result[2] = sb.toString();
         }
         return result;
     }
 
     // Methods to handle TEMPO events.
-
     /**
      * Convert the given microsecond period to BeatsPerMinute
-     * @param data 3 bytes of data that specifiy the microsecond period.
+     * @param data 3 bytes of data that specify the microsecond period.
      * Calculated as <br>
      * <code>data[0] &lt;&lt; 16 + data[1] &lt;&lt; 8 + data[2]</code>
      * @return the BeatsPerMinute equivalent to the given microsecond period
@@ -261,7 +266,7 @@ public class MetaEvent {
     /**
      * Convert the given BeatsPerMinute to a microsecond period
      * @param bpm the BeatsPerMinute to convert
-     * @return 3 bytes of data that specifiy the microsecond period.
+     * @return 3 bytes of data that specify the microsecond period.
      * Calculated as <br>
      * <code>data[0] &lt;&lt; 16 + data[1] &lt;&lt; 8 + data [2]</code>
      */
@@ -290,8 +295,9 @@ public class MetaEvent {
         }
         try {
             t = Integer.parseInt(tempoString);
-        } catch (NumberFormatException nfe) {
-        // DO NOTHING - just use the default
+        }
+        catch (NumberFormatException nfe) {
+            // DO NOTHING - just use the default
         }
         return t;
     }
@@ -305,7 +311,7 @@ public class MetaEvent {
      * @return the data for the event in a byte[]
      */
     public static byte[] parseTimeSignature(String timeSigString,
-                                              int ticksPerBeat) {
+        int ticksPerBeat) {
         String[] parts = timeSigString.split("/"); // NOI18N
         // default to 4/4 
         byte[] result = {4, 2, (byte)(ticksPerBeat / 4), 8};
@@ -379,7 +385,7 @@ public class MetaEvent {
 
     /**
      * test if the message data should be treated as a string
-     * @param mess the messaage to test
+     * @param mess the message to test
      * @return <code>true</code> if the message data should be
      * represented as a string
      */
@@ -437,15 +443,17 @@ public class MetaEvent {
      * @param ticksPerBeat the tick resolution of the sequence
      */
     public static void setMetaData(MetaMessage mess, String value,
-                                     int ticksPerBeat) {
+        int ticksPerBeat) {
         byte[] data = null;
         int type = mess.getType();
         int len = mess.getData().length; // Beware of variable length messages!
         if (isText(mess)) {
-            len = value.length();
-            data = new byte[len];
-            for (int i = 0; i < len; ++i) {
-                data[i] = (byte)value.charAt(i);
+            try {
+                data = StringConverter.convertStringToBytes(value);
+            }
+            catch (UnsupportedEncodingException ex) {
+                // Use the system default encoding
+                data = value.getBytes();
             }
         } else if (type == TEMPO) {
             int bpm = parseTempo(value);
@@ -471,7 +479,8 @@ public class MetaEvent {
             for (int i = 0; i < len; ++i) {
                 try {
                     data[i] = Byte.decode(strings[i]);
-                } catch (NumberFormatException nfe) {
+                }
+                catch (NumberFormatException nfe) {
                     data[i] = 0;
                 }
             }
@@ -480,9 +489,11 @@ public class MetaEvent {
         if (data != null) {
             try {
                 mess.setMessage(type, data, len);
-            } catch (InvalidMidiDataException e) {
+            }
+            catch (InvalidMidiDataException e) {
                 TraceDialog.addTrace(
-                    "Error: MetaEvent.setMetaData(" + value + ") " + e.getMessage()); // NOI18N
+                    "Error: MetaEvent.setMetaData(" + value + ") " + e.
+                    getMessage()); // NOI18N
             }
         }
     }
@@ -500,7 +511,7 @@ public class MetaEvent {
      * MetaMessage.setMessage() parameters are not valid
      */
     public static MidiEvent createMetaEvent(String type, String data,
-                                              long tick, int ticksPerBeat)
+        long tick, int ticksPerBeat)
         throws InvalidMidiDataException {
         MetaMessage mm = new MetaMessage();
         mm.setMessage(mTypeNameToValue.get(type), null, 0);
@@ -515,11 +526,11 @@ public class MetaEvent {
 
     private static byte safeParseByte(String s, byte defVal) {
         byte t = defVal;
-        // Default value is 60bpm
         try {
             t = Byte.parseByte(s);
-        } catch (NumberFormatException nfe) {
-        // DO NOTHING - just use the default
+        }
+        catch (NumberFormatException nfe) {
+            // DO NOTHING - just use the default
         }
         return t;
     }

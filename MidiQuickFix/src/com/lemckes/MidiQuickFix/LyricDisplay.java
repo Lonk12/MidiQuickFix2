@@ -26,10 +26,12 @@ import com.lemckes.MidiQuickFix.components.FontSelector;
 import com.lemckes.MidiQuickFix.util.FontSelectionEvent;
 import com.lemckes.MidiQuickFix.util.FontSelectionListener;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
+import com.lemckes.MidiQuickFix.util.StringConverter;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
+import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -42,6 +44,7 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
 import javax.swing.JPanel;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
@@ -229,40 +232,69 @@ public class LyricDisplay
                             MetaMessage metaMessage = (MetaMessage)mess;
                             int type = metaMessage.getType();
 
-                            if (type == MetaEvent.LYRIC && lyricsCheckBox.
-                                isSelected()
-                                || type == MetaEvent.TEXT && textCheckBox.
-                                isSelected()) {
+                            if (type == MetaEvent.LYRIC
+                                && lyricsCheckBox.isSelected()
+                                || type == MetaEvent.TEXT
+                                && textCheckBox.isSelected()) {
                                 byte[] data = metaMessage.getData();
 
-                                StringBuilder sb = new StringBuilder(data.length);
-                                for (int k = 0; k < data.length; ++k) {
-                                    byte b = data[k];
-                                    if (b == 10 || (char)b == '\\') {
-                                        // According to midi.org 'paragraphs' should be delimited
-                                        // with a line-feed but a back-slash is common.
-                                        sb.append("\n\n");
-                                    } else if (b == 13 || (char)b == '/') {
-                                        // According to midi.org 'lines' should be delimited
-                                        // with a carriage-return but a slash is common.
-                                        sb.append('\n');
-                                    } else if (b > 31 && b < 128) {
-                                        // Printable character.
-                                        sb.append((char)b);
-                                    } else {
-                                        if (b > 0) {
-                                            sb.append('?');
+                                try {
+                                    String utf8String =
+                                        StringConverter.convertBytesToString(data);
+//                                    byte[] bytes =
+//                                        StringConverter.convertStringToBytes(utf8String);
+//                                    String utf8String2 =
+//                                        StringConverter.convertBytesToString(bytes);
+//                                    System.out.println("From Data = :" + utf8String + ":");
+//                                    System.out.println("Converted = :" + utf8String2 + ":");
+                                    if (utf8String.length() > 0) {
+//                                    System.out.println("From Data = :" + utf8String + ":");
+                                        utf8String = utf8String.replaceAll("\\\\r", "\n");
+                                        utf8String = utf8String.replaceAll("\\\\n", "\n\n");
+                                        utf8String = utf8String.replaceAll("\\\\t", "\t");
+                                        utf8String = utf8String.replaceAll("\\{\\@.*\\}", "");
+                                        // if there is already a word at this location
+                                        // then append the new word to it
+                                        if (mWords.containsKey(tick)) {
+                                            utf8String = mWords.get(tick) + utf8String;
                                         }
+                                        mWords.put(tick, utf8String);
                                     }
                                 }
-                                if (sb.length() > 0) {
-                                    // if there is already a word at this location
-                                    // then append the new word to it
-                                    if (mWords.containsKey(tick)) {
-                                        sb.insert(0, mWords.get(tick));
-                                    }
-                                    mWords.put(tick, sb.toString());
+                                catch (UnsupportedEncodingException uee) {
+                                    System.out.println("an exception "
+                                        + uee.getLocalizedMessage());
                                 }
+//                                StringBuilder sb = new StringBuilder(data.length);
+//                                for (int k = 0; k < data.length; ++k) {
+//                                    int b = data[k] & 0x00ff;
+//                                    if (b == 10 || (char)b == '\\') {
+//                                        // According to midi.org 'paragraphs' should be delimited
+//                                        // with a line-feed but a back-slash is common.
+//                                        sb.append("\n\n");
+//                                    } else if (b == 13 || (char)b == '/') {
+//                                        // According to midi.org 'lines' should be delimited
+//                                        // with a carriage-return but a slash is common.
+//                                        sb.append('\n');
+//                                    } else if (b > 31 && b < 256) {
+//                                        // Printable character.
+//                                        sb.append((char)b);
+//                                    } else {
+////                                        if (b > 0) {
+//                                        sb.append('?');
+////                                        }
+//                                    }
+//                                }
+//                                if (sb.length() > 0) {
+//                                    System.out.println("From Data = :" + sb.
+//                                        toString() + ":");
+//                                    // if there is already a word at this location
+//                                    // then append the new word to it
+//                                    if (mWords.containsKey(tick)) {
+//                                        sb.insert(0, mWords.get(tick));
+//                                    }
+//                                    mWords.put(tick, sb.toString());
+//                                }
                             }
                         }
                     }

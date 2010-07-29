@@ -36,7 +36,21 @@ import javax.sound.midi.Track;
  * Transpose a midi Sequence
  * @version $Id$
  */
-public class Transposer {
+public class Transposer
+{
+
+    /** Map a key signature to the number of sharps or flats
+     * Index 0 = C, 1 = Db ... 11 = Bb, 12 = B
+     *                           0   1  2   3  4   5  6  7   8  9  10 11  */
+    static byte[] keyToSharps = {0, -5, 2, -3, 4, -1, 6, 1, -4, 3, -2, 5};
+    /**
+     *
+     * Map the number of sharps or flats to a key signature
+     * Index 0 = 7 flats(-7)p; 14 = 7 sharps(+7)
+     * Convert from midi key sig with idx=data[0]+7
+     */
+    static byte[] sharpsToKey = {11, 6, 1, 8, 3, 10, 5, 0, 7, 2, 9, 4, 11, 6, 1};
+
     /** Cannot create a new instance of Transposer */
     private Transposer() {
     }
@@ -72,7 +86,7 @@ public class Transposer {
      * @param semitones the number of semitones to transpose
      */
     public static boolean transpose(MqfSequence seq, int semitones,
-                                      boolean doDrums) {
+        boolean doDrums) {
         boolean overflow = false;
         for (Track t : seq.getTracks()) {
             for (int i = 0; i < t.size(); ++i) {
@@ -102,10 +116,11 @@ public class Transposer {
                                 try {
                                     int channel = mess.getChannel() & 0xff;
                                     mess.setMessage(cmd, channel, d1, d2);
-                                } catch (InvalidMidiDataException e) {
+                                }
+                                catch (InvalidMidiDataException e) {
                                     TraceDialog.addTrace(
-                                        "Transposer invalid note: " +
-                                        e.getMessage());
+                                        "Transposer invalid note: "
+                                        + e.getMessage());
                                 }
                                 break;
                             default:
@@ -120,7 +135,8 @@ public class Transposer {
                         data[0] = adjustKeySig(data[0], semitones);
                         try {
                             mess.setMessage(type, data, 2);
-                        } catch (InvalidMidiDataException e) {
+                        }
+                        catch (InvalidMidiDataException e) {
                             TraceDialog.addTrace(
                                 "Transposer invalid key sig: " + e.getMessage());
                         }
@@ -131,7 +147,7 @@ public class Transposer {
         return overflow;
     }
 
-    private static byte adjustKeySig(byte sharps, int semitones) {
+    static byte adjustKeySig(byte sharps, int semitones) {
         byte key = sharpsToKey[sharps + 7];
         key += semitones;
         key %= 12;
@@ -152,14 +168,4 @@ public class Transposer {
             System.out.println(KeySignatures.getKeyName(data));
         }
     }
-
-    // Map a key signature to the number of sharps or flats
-    // Index 0 = C, 1 = Db ... 11 = Bb, 12 = B
-    //                           0   1  2   3  4   5  6  7   8  9  10 11
-    static byte[] keyToSharps = {0, -5, 2, -3, 4, -1, 6, 1, -4, 3, -2, 5};
-    // Map the number of sharps or flats to a key signature
-    // Index 0 = 7 flats(-7) - 14 = 7 sharps(+7)
-    // Convert from midi key sig with idx=data[0]+7
-    static byte[] sharpsToKey =
-        {11, 6, 1, 8, 3, 10, 5, 0, 7, 2, 9, 4, 11, 6, 1};
 }

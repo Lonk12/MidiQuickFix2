@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix;
 
 import javax.sound.midi.SysexMessage;
@@ -29,7 +28,9 @@ import javax.sound.midi.SysexMessage;
  * Handle Midi System Exclusive events.
  * @version $Id$
  */
-class SysexEvent {
+class SysexEvent
+{
+
     static String[] getSysexStrings(SysexMessage mess) {
         String[] result = {"", "", ""}; // NOI18N
         int st = mess.getStatus();
@@ -40,12 +41,22 @@ class SysexEvent {
         }
         byte[] data = mess.getData();
         result[1] += data.length;
-        for (int i = 0; i < data.length; ++i) {
+        StringBuilder sb = new StringBuilder(data.length * 6);
+        for (int k = 0; k < data.length; ++k) {
+            int i = data[k] & 0x00ff;
             if (i > 0) {
-                 result[2] += ","; // NOI18N
+                sb.append(" "); // NOI18N
             }
-            result[2] += data[i] & 0x00ff;
+            sb.append("0x"); // NOI18N
+            sb.append(Integer.toHexString(i)); // NOI18N
         }
+        result[2] = sb.toString();
+//       for (int i = 0; i < data.length; ++i) {
+//            if (i > 0) {
+//                 result[2] += ","; // NOI18N
+//            }
+//            result[2] += data[i] & 0x00ff;
+//        }
         return result;
     }
 }
