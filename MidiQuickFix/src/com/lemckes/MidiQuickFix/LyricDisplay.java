@@ -27,6 +27,7 @@ import com.lemckes.MidiQuickFix.util.FontSelectionEvent;
 import com.lemckes.MidiQuickFix.util.FontSelectionListener;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.StringConverter;
+import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -36,6 +37,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
@@ -58,7 +61,6 @@ public class LyricDisplay
     implements MetaEventListener,
     FontSelectionListener
 {
-
     static final long serialVersionUID = 4418719983394376657L;
     private TreeMap<Long, String> mWords = new TreeMap<Long, String>();
     private TreeMap<Long, WordPlace> mPlaces = new TreeMap<Long, WordPlace>();
@@ -80,7 +82,6 @@ public class LyricDisplay
     class MyHighlightPainter
         extends DefaultHighlighter.DefaultHighlightPainter
     {
-
         public MyHighlightPainter(Color color) {
             super(color);
         }
@@ -88,7 +89,6 @@ public class LyricDisplay
 
     private class WordPlace
     {
-
         private int startPos;
         private int length;
 
@@ -123,8 +123,7 @@ public class LyricDisplay
         mHighlighter = lyricText.getHighlighter();
         try {
             mHighlightTag = mHighlighter.addHighlight(0, 0, myHighlightPainter);
-        }
-        catch (BadLocationException e) {
+        } catch (BadLocationException e) {
         }
     }
 
@@ -157,7 +156,6 @@ public class LyricDisplay
             final int len = wp.getLength();
             EventQueue.invokeLater(new Runnable()
             {
-
                 @Override
                 public void run() {
                     try {
@@ -172,8 +170,7 @@ public class LyricDisplay
                         // Move the highlight
                         mHighlighter.changeHighlight(mHighlightTag, start,
                             start + len);
-                    }
-                    catch (BadLocationException ex) {
+                    } catch (BadLocationException ex) {
                         // What a pity.
                     }
                 }
@@ -205,8 +202,7 @@ public class LyricDisplay
                 if (mySequence != null) {
                     loadSequence(mySequence);
                 }
-            }
-            catch (InvalidMidiDataException ex) {
+            } catch (InvalidMidiDataException ex) {
                 Logger.getLogger(LyricDisplay.class.getName()).
                     log(Level.SEVERE, null, ex);
             }
@@ -215,6 +211,10 @@ public class LyricDisplay
     }
 
     public void loadSequence(MqfSequence seq) {
+        int patternFlags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
+        Pattern charsetPattern =
+            Pattern.compile("\\{\\@(.*)\\}", patternFlags);
+
         mWords.clear();
         mPlaces.clear();
         mSequence = seq;
@@ -240,19 +240,34 @@ public class LyricDisplay
 
                                 try {
                                     String utf8String =
-                                        StringConverter.convertBytesToString(data);
-//                                    byte[] bytes =
-//                                        StringConverter.convertStringToBytes(utf8String);
-//                                    String utf8String2 =
-//                                        StringConverter.convertBytesToString(bytes);
-//                                    System.out.println("From Data = :" + utf8String + ":");
-//                                    System.out.println("Converted = :" + utf8String2 + ":");
+                                        StringConverter.convertBytesToString(
+                                        data);
                                     if (utf8String.length() > 0) {
-//                                    System.out.println("From Data = :" + utf8String + ":");
-                                        utf8String = utf8String.replaceAll("\\\\r", "\n");
-                                        utf8String = utf8String.replaceAll("\\\\n", "\n\n");
-                                        utf8String = utf8String.replaceAll("\\\\t", "\t");
-                                        utf8String = utf8String.replaceAll("\\{\\@.*\\}", "");
+                                        Matcher m =
+                                            charsetPattern.matcher(utf8String);
+                                        if (m.find() && m.groupCount() > 0) {
+                                            String cSet = m.group(1);
+                                            boolean wasSet =
+                                                StringConverter.setCharsetName(
+                                                cSet);
+                                            if (!wasSet) {
+                                                TraceDialog.addTrace(
+                                                    "Failed to se characterSet "
+                                                    + cSet);
+                                            }
+                                        }
+                                        utf8String = utf8String.replaceAll(
+                                            "\\\\r", "\n");
+                                        utf8String = utf8String.replaceAll(
+                                            "\\\\n", "\n\n");
+                                        utf8String = utf8String.replaceAll(
+                                            "\\\\t", "\t");
+                                        utf8String = utf8String.replaceAll(
+                                            "\\{\\@.*\\}", "");
+                                        utf8String = utf8String.replaceAll("\\\\",
+                                            "\n\n");
+                                        utf8String = utf8String.replaceAll("/",
+                                            "\n\n");
                                         // if there is already a word at this location
                                         // then append the new word to it
                                         if (mWords.containsKey(tick)) {
@@ -260,8 +275,7 @@ public class LyricDisplay
                                         }
                                         mWords.put(tick, utf8String);
                                     }
-                                }
-                                catch (UnsupportedEncodingException uee) {
+                                } catch (UnsupportedEncodingException uee) {
                                     System.out.println("an exception "
                                         + uee.getLocalizedMessage());
                                 }

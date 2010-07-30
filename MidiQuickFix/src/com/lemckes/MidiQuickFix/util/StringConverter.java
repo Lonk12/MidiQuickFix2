@@ -29,7 +29,8 @@ public class StringConverter
         return charset.name();
     }
 
-    public static void setCharsetName(String charsetName) {
+    public static boolean setCharsetName(String charsetName) {
+        boolean ok = false;
         if ("LATIN".equalsIgnoreCase(charsetName)) {
             charsetName = "ISO-8859-1";
         } else if ("JP".equalsIgnoreCase(charsetName)) {
@@ -38,7 +39,9 @@ public class StringConverter
         if (Charset.isSupported(charsetName)) {
             StringConverter.charsetName = charsetName;
             StringConverter.charset = Charset.forName(charsetName);
+            ok = true;
         }
+        return ok;
     }
 
     static public String convertBytesToString(byte[] bytes) throws
