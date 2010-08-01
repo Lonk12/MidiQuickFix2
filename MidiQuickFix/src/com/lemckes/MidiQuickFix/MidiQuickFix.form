@@ -101,7 +101,9 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="songInfoMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jMenuItem1"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="SongInfoMenuItem.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="songInfoMenuItemActionPerformed"/>

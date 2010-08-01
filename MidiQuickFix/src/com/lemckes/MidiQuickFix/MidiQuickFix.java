@@ -1236,7 +1236,8 @@ public class MidiQuickFix
         viewMenu.setMnemonic('V');
         viewMenu.setText(UiStrings.getString("view")); // NOI18N
 
-        songInfoMenuItem.setText("jMenuItem1");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle"); // NOI18N
+        songInfoMenuItem.setText(bundle.getString("SongInfoMenuItem.text")); // NOI18N
         songInfoMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 songInfoMenuItemActionPerformed(evt);
