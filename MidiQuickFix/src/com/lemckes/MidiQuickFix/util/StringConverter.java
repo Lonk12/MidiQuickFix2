@@ -13,7 +13,7 @@ public class StringConverter
     private static Charset charset;
 
     static {
-        charsetName = "UTF-8";
+        charsetName = "ISO-8859-1";
         charset = Charset.forName(charsetName);
     }
 
@@ -34,7 +34,7 @@ public class StringConverter
         if ("LATIN".equalsIgnoreCase(charsetName)) {
             charsetName = "ISO-8859-1";
         } else if ("JP".equalsIgnoreCase(charsetName)) {
-            charsetName = "UTF-8";
+            charsetName = "Shift-JIS";
         }
         if (Charset.isSupported(charsetName)) {
             StringConverter.charsetName = charsetName;

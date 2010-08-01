@@ -446,7 +446,6 @@ public class MetaEvent
         int ticksPerBeat) {
         byte[] data = null;
         int type = mess.getType();
-        int len = mess.getData().length; // Beware of variable length messages!
         if (isText(mess)) {
             try {
                 data = StringConverter.convertStringToBytes(value);
@@ -458,24 +457,20 @@ public class MetaEvent
         } else if (type == TEMPO) {
             int bpm = parseTempo(value);
             data = bpmToMicroSecs(bpm);
-            len = data.length;
         } else if (type == TIME_SIGNATURE) {
             data = parseTimeSignature(value, ticksPerBeat);
-            len = data.length;
         } else if (type == KEY_SIGNATURE) {
             data = KeySignatures.getKeyValues(value);
-            len = data.length;
         } else if (type == SMPTE_OFFSET) {
             data = parseSMPTEOffset(value);
-            len = data.length;
         } else {
             // treat the string as a space separated list of
             // string representations of byte values
             // Should handle decimal, hexadecimal and octal representations
             // using the java.lang.Byte.decode() method
             String[] strings = value.split("\\p{Space}"); // NOI18N
-            data = new byte[strings.length];
-            len = strings.length;
+            int len = strings.length;
+            data = new byte[len];
             for (int i = 0; i < len; ++i) {
                 try {
                     data[i] = Byte.decode(strings[i]);
@@ -488,7 +483,7 @@ public class MetaEvent
 
         if (data != null) {
             try {
-                mess.setMessage(type, data, len);
+                mess.setMessage(type, data, data.length);
             }
             catch (InvalidMidiDataException e) {
                 TraceDialog.addTrace(

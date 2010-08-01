@@ -22,6 +22,8 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix.util;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Vector;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
@@ -35,9 +37,13 @@ import javax.sound.midi.Track;
  * containing the Tracks. This prevents any manipulation of the order
  * of Tracks in the Sequence. I would like to be able to, for instance,
  * insert a new Track at a specific place in the order.
+ * Any Song Information (as defined by http://www.midi.org/techspecs/rp26.php)
+ * is also stored in this class.
  */
 public class MqfSequence extends Sequence
 {
+
+    private Map<String, String> mSongInfo = new LinkedHashMap<String, String>(4);
 
     public MqfSequence() throws InvalidMidiDataException {
         this(Sequence.PPQ, 96);
@@ -86,5 +92,17 @@ public class MqfSequence extends Sequence
             tracks.remove(tracks.size() - 1);
             return track;
         }
+    }
+
+    public void putSongInfo(String key, String value) {
+        mSongInfo.put(key, value);
+    }
+
+    public String getSongInfoItem(String key) {
+        return mSongInfo.get(key);
+    }
+
+    public Map<String, String> getSongInfo() {
+        return mSongInfo;
     }
 }

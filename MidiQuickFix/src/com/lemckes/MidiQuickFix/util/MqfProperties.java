@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- *
+ * A class to persist any user preference properties.
  */
 public class MqfProperties
 {

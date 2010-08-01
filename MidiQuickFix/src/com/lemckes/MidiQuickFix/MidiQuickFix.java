@@ -109,7 +109,7 @@ public class MidiQuickFix
     /** The timer that drives the position indicator during play. */
     Timer mTimer;
     /** True if the sequence has been modified. */
-    boolean mSequenceModified;
+    boolean mSequenceModified = false;
     TrackEditorPanel mTrackEditor;
     TrackSummaryPanel mTrackSummaryPanel;
     TrackSummaryTable mTrackSummary;
@@ -122,15 +122,15 @@ public class MidiQuickFix
     /**
      * Creates a new MidiQuickFix instance
      */
+//    public MidiQuickFix() {
+//        this("");
+//    }
+//
+//    /**
+//     * Creates a new MidiQuickFix instance and opens the given midi file.
+//     * @param fileName The midi file to be opened.
+//     */
     public MidiQuickFix() {
-        this("");
-    }
-
-    /**
-     * Creates a new MidiQuickFix instance and opens the given midi file.
-     * @param fileName The midi file to be opened.
-     */
-    public MidiQuickFix(String fileName) {
         TraceDialog.getInstance().addComponentListener(new ComponentListener()
         {
 
@@ -227,11 +227,11 @@ public class MidiQuickFix
             mPlayController.mLoopAction.putValue("looper", this); // NOI18N
             mPlayController.setPlayState(PlayController.PlayState.NO_FILE);
 
-            if (fileName != null && fileName.length() > 0) {
-                startDialog.splash.addStageMessage(
-                    UiStrings.getString("opening_file")); // NOI18N
-                newSequence(fileName);
-            }
+//            if (fileName != null && fileName.length() > 0) {
+//                startDialog.splash.addStageMessage(
+//                    UiStrings.getString("opening_file")); // NOI18N
+//                newSequence(fileName);
+//            }
 
             MqfProperties.readProperties();
             String lastPath = MqfProperties.getProperty(
@@ -288,6 +288,14 @@ public class MidiQuickFix
 
             pack();
             setLocationRelativeTo(null);
+
+            EventQueue.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    openFile();
+                }
+            });
         }
         catch (MidiUnavailableException e) {
             startDialog.splash.addStageMessage(
@@ -494,6 +502,19 @@ public class MidiQuickFix
         }
 
         mSequenceModified = true;
+    }
+
+    private void openFile() {
+        boolean canContinue = checkForSave();
+        if (canContinue) {
+            int open = sequenceChooser.showOpenDialog(this);
+            if (open == JFileChooser.APPROVE_OPTION) {
+                File file = sequenceChooser.getSelectedFile();
+                String path = file.getParent();
+                MqfProperties.setProperty(MqfProperties.LAST_PATH_KEY, path);
+                newSequence(file);
+            }
+        }
     }
 
     /**
@@ -728,6 +749,10 @@ public class MidiQuickFix
         return mKeySig;
     }
 
+    private void showSongInfo() {
+        new SongInfoDialog(mSeq, this, false).setVisible(true);
+    }
+
     ////////////////////////////////////////////////
     //
     // MidiSeqPlayer implementation
@@ -930,6 +955,8 @@ public class MidiQuickFix
         sequenceMenu = new javax.swing.JMenu();
         transposeMenuItem = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
+        songInfoMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         traceMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -1209,6 +1236,15 @@ public class MidiQuickFix
         viewMenu.setMnemonic('V');
         viewMenu.setText(UiStrings.getString("view")); // NOI18N
 
+        songInfoMenuItem.setText("jMenuItem1");
+        songInfoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                songInfoMenuItemActionPerformed(evt);
+            }
+        });
+        viewMenu.add(songInfoMenuItem);
+        viewMenu.add(jSeparator2);
+
         traceMenuItem.setMnemonic('r');
         traceMenuItem.setText(UiStrings.getString("trace_window")); // NOI18N
         traceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1266,16 +1302,7 @@ public class MidiQuickFix
     }//GEN-LAST:event_saveAsMenuItemActionPerformed
 
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
-        boolean canContinue = checkForSave();
-        if (canContinue) {
-            int open = sequenceChooser.showOpenDialog(this);
-            if (open == JFileChooser.APPROVE_OPTION) {
-                File file = sequenceChooser.getSelectedFile();
-                String path = file.getParent();
-                MqfProperties.setProperty(MqfProperties.LAST_PATH_KEY, path);
-                newSequence(file);
-            }
-        }
+        openFile();
     }//GEN-LAST:event_openMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
@@ -1289,6 +1316,10 @@ public class MidiQuickFix
             System.exit(0);
         }
     }//GEN-LAST:event_exitForm
+
+    private void songInfoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_songInfoMenuItemActionPerformed
+        showSongInfo();
+    }//GEN-LAST:event_songInfoMenuItemActionPerformed
 
     /**
      * <B>main</B>
@@ -1316,17 +1347,17 @@ public class MidiQuickFix
             VERSION_1_4_2_BUG = false;
         }
 
-        String filename = "";
-        if (args.length > 0 && args[0] != null) {
-            filename = args[0];
-        }
-        final String finalName = filename;
+//        String filename = "";
+//        if (args.length > 0 && args[0] != null) {
+//            filename = args[0];
+//        }
+//        final String finalName = filename;
         EventQueue.invokeLater(new Runnable()
         {
 
             @Override
             public void run() {
-                new MidiQuickFix(finalName).setVisible(true);
+                new MidiQuickFix().setVisible(true);
             }
         });
     }
@@ -1339,6 +1370,7 @@ public class MidiQuickFix
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JLabel keyLabel;
     private javax.swing.JLabel keyText;
     private javax.swing.JLabel lengthLabel;
@@ -1356,6 +1388,7 @@ public class MidiQuickFix
     private javax.swing.JPanel seqInfoPanel;
     private javax.swing.JFileChooser sequenceChooser;
     private javax.swing.JMenu sequenceMenu;
+    private javax.swing.JMenuItem songInfoMenuItem;
     private javax.swing.JPanel summaryPanel;
     private javax.swing.JFormattedTextField tempoAdjustField;
     private javax.swing.JLabel tempoAdjustLabel;
