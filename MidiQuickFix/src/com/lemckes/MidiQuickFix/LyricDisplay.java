@@ -25,6 +25,7 @@ package com.lemckes.MidiQuickFix;
 import com.lemckes.MidiQuickFix.components.FontSelector;
 import com.lemckes.MidiQuickFix.util.FontSelectionEvent;
 import com.lemckes.MidiQuickFix.util.FontSelectionListener;
+import com.lemckes.MidiQuickFix.util.MqfProperties;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.StringConverter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
@@ -64,7 +65,6 @@ public class LyricDisplay
     implements MetaEventListener,
     FontSelectionListener
 {
-
     static final long serialVersionUID = 4418719983394376657L;
     private TreeMap<Long, String> mWords = new TreeMap<Long, String>();
     private TreeMap<Long, WordPlace> mPlaces = new TreeMap<Long, WordPlace>();
@@ -76,17 +76,17 @@ public class LyricDisplay
      */
     private TrackSummaryTableModel mTrackSelector;
     private FontSelector mFontSelector;
-    Highlighter mHighlighter;
-    Object mHighlightTag;
+    private Highlighter mHighlighter;
+    private Object mHighlightTag;
     // An instance of the private subclass of the default highlight painter
-    Highlighter.HighlightPainter myHighlightPainter = new MyHighlightPainter(
-        Color.green.darker());
+    private Highlighter.HighlightPainter myHighlightPainter;
+    private Color mForeground;
+    private Color mRubyForeground;
 
     // A private subclass of the default highlight painter
     class MyHighlightPainter
         extends DefaultHighlighter.DefaultHighlightPainter
     {
-
         public MyHighlightPainter(Color color) {
             super(color);
         }
@@ -94,7 +94,6 @@ public class LyricDisplay
 
     private class WordPlace
     {
-
         private int startPos;
         private int length;
 
@@ -127,12 +126,15 @@ public class LyricDisplay
         initComponents();
         mTrackSelector = trackSelector;
         mHighlighter = lyricText.getHighlighter();
+        myHighlightPainter = new MyHighlightPainter(
+            MqfProperties.getColourProperty(
+            MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.green.darker()));
         try {
             mHighlightTag = mHighlighter.addHighlight(0, 0, myHighlightPainter);
+        } catch (BadLocationException e) {
         }
-        catch (BadLocationException e) {
-        }
-        setStyles();
+        createStyles();
+        updatePreferences();
     }
 
     /**
@@ -142,7 +144,6 @@ public class LyricDisplay
      */
     @Override
     public void meta(javax.sound.midi.MetaMessage metaMessage) {
-//        Logger.getLogger("LYRICS").log(Level.INFO, "LyricPanel {0}", "meta");
         long tick = mSequencer.getTickPosition();
         int type = metaMessage.getType();
         if (type == MetaEvent.LYRIC && lyricsCheckBox.isSelected()
@@ -164,7 +165,6 @@ public class LyricDisplay
             final int len = wp.getLength();
             EventQueue.invokeLater(new Runnable()
             {
-
                 @Override
                 public void run() {
                     try {
@@ -179,8 +179,7 @@ public class LyricDisplay
                         // Move the highlight
                         mHighlighter.changeHighlight(mHighlightTag, start,
                             start + len);
-                    }
-                    catch (BadLocationException ex) {
+                    } catch (BadLocationException ex) {
                         // What a pity.
                     }
                 }
@@ -212,8 +211,7 @@ public class LyricDisplay
                 if (mySequence != null) {
                     loadSequence(mySequence);
                 }
-            }
-            catch (InvalidMidiDataException ex) {
+            } catch (InvalidMidiDataException ex) {
                 Logger.getLogger(LyricDisplay.class.getName()).
                     log(Level.SEVERE, null, ex);
             }
@@ -222,9 +220,9 @@ public class LyricDisplay
     }
 
     public void loadSequence(MqfSequence seq) {
-
         mWords.clear();
         mPlaces.clear();
+        StringConverter.resetDefaultCharset();
         mSequence = seq;
         if (mSequence != null) {
             Track[] tracks = mSequence.getTracks();
@@ -258,7 +256,7 @@ public class LyricDisplay
             String text = e.getValue();
             StyledDocument doc = lyricText.getStyledDocument();
             Style regularStyle = doc.getStyle("regular");
-            Style rubyStyle = doc.getStyle("small");
+            Style rubyStyle = doc.getStyle("ruby");
             if (text.contains("[")) {
                 Matcher m = rubyPattern.matcher(text);
                 int nonRubyStartPos = 0;
@@ -287,22 +285,9 @@ public class LyricDisplay
     private void appendText(StyledDocument doc, String text, Style style) {
         try {
             doc.insertString(doc.getLength(), text, style);
-        }
-        catch (BadLocationException ex) {
+        } catch (BadLocationException ex) {
             TraceDialog.addTrace("displayText : " + ex.getLocalizedMessage());
         }
-    }
-
-    private void setStyles() {
-        StyledDocument doc = lyricText.getStyledDocument();
-        Style defaultStyle = StyleContext.getDefaultStyleContext().
-            getStyle(StyleContext.DEFAULT_STYLE);
-
-        Style regular = doc.addStyle("regular", defaultStyle);
-
-        Style s = doc.addStyle("small", regular);
-        float size = lyricText.getFont().getSize() * 0.6f;
-        StyleConstants.setFontSize(s, Math.round(size));
     }
 
     private void findLyrics(Track t) {
@@ -326,8 +311,10 @@ public class LyricDisplay
                             lyricString = lyricString.replaceAll("\\\\r", "\n");
                             lyricString = lyricString.replaceAll("\\\\n", "\n\n");
                             lyricString = lyricString.replaceAll("\\\\t", "\t");
-                            lyricString = lyricString.replaceAll("\\{\\@.*?\\}", "");
-                            lyricString = lyricString.replaceAll("\\{\\#.*?\\}", "");
+                            lyricString = lyricString.replaceAll("\\{\\@.*?\\}",
+                                "");
+                            lyricString = lyricString.replaceAll("\\{\\#.*?\\}",
+                                "");
                             lyricString = lyricString.replaceAll("\\\\\\[", "[");
                             lyricString = lyricString.replaceAll("\\\\]", "]");
                             lyricString = lyricString.replaceAll("\\\\\\{", "{");
@@ -344,8 +331,7 @@ public class LyricDisplay
                                 mWords.put(tick, lyricString);
                             }
                         }
-                    }
-                    catch (UnsupportedEncodingException uee) {
+                    } catch (UnsupportedEncodingException uee) {
                         TraceDialog.addTrace("findLyrics exception "
                             + uee.getLocalizedMessage());
                     }
@@ -394,10 +380,72 @@ public class LyricDisplay
     public void fontSelected(FontSelectionEvent e) {
         Font font = e.getSelectedFont();
         lyricText.setFont(font);
-        Style s = lyricText.getStyle("small");
-        float size = font.getSize() * 0.6f;
+        MqfProperties.setFontProperty(MqfProperties.LYRIC_FONT, font);
+
+        float scale = MqfProperties.getFloatProperty(
+            MqfProperties.LYRIC_RUBY_FONT_SCALE, 1.0f);
+        Style s = lyricText.getStyle("ruby");
+        float size = font.getSize() * scale;
         StyleConstants.setFontSize(s, Math.round(size));
+
         reset();
+    }
+
+    private void createStyles() {
+        StyledDocument doc = lyricText.getStyledDocument();
+        Style defaultStyle = StyleContext.getDefaultStyleContext().
+            getStyle(StyleContext.DEFAULT_STYLE);
+
+        Style regular = doc.addStyle("regular", defaultStyle);
+        StyleConstants.setForeground(regular, Color.BLACK);
+
+        Style ruby = doc.addStyle("ruby", regular);
+        float size = lyricText.getFont().getSize() * 0.6f;
+        StyleConstants.setFontSize(ruby, Math.round(size));
+        StyleConstants.setForeground(ruby, Color.BLACK);
+    }
+
+    /**
+     *
+     */
+    public void updatePreferences() {
+        myHighlightPainter = new MyHighlightPainter(
+            MqfProperties.getColourProperty(
+            MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.green.darker()));
+        try {
+            mHighlighter = lyricText.getHighlighter();
+            mHighlighter.removeAllHighlights();
+            mHighlightTag =
+                mHighlighter.addHighlight(0, 0, myHighlightPainter);
+        } catch (BadLocationException e) {
+        } catch (Exception ex) {
+            System.err.println("an exception " + ex);
+        }
+
+        lyricText.setBackground(MqfProperties.getColourProperty(
+            MqfProperties.LYRIC_BACKGROUND_COLOUR, Color.WHITE));
+
+        mForeground = MqfProperties.getColourProperty(
+            MqfProperties.LYRIC_FOREGROUND_COLOUR, Color.BLACK);
+
+        mRubyForeground = MqfProperties.getColourProperty(
+            MqfProperties.LYRIC_RUBY_FG_COLOUR, Color.BLACK);
+
+        lyricText.setFont(MqfProperties.getFontProperty(
+            MqfProperties.LYRIC_FONT, new java.awt.Font("Dialog", 0, 24)));
+
+        StyledDocument doc = lyricText.getStyledDocument();
+        Style regular = doc.getStyle("regular");
+        StyleConstants.setForeground(regular, MqfProperties.getColourProperty(
+            MqfProperties.LYRIC_FOREGROUND_COLOUR, Color.BLACK));
+
+        Style ruby = doc.getStyle("ruby");
+        float size =
+            lyricText.getFont().getSize() * MqfProperties.getFloatProperty(
+            MqfProperties.LYRIC_RUBY_FONT_SCALE, 0.8f);
+        StyleConstants.setFontSize(ruby, Math.round(size));
+        StyleConstants.setForeground(ruby, MqfProperties.getColourProperty(
+            MqfProperties.LYRIC_RUBY_FG_COLOUR, Color.BLACK));
     }
 
     /**

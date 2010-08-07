@@ -20,24 +20,30 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix.util;
+
 import java.util.ResourceBundle;
 
 /**
- * Provide access to the UIStrings resouces bundle.
+ * Provide access to the UIStrings resources bundle.
  * @version $Id$
  */
-public class UiStrings {
-    
+public class UiStrings
+{
     static ResourceBundle mStringBundle;
-    
+
     static {
         mStringBundle = java.util.ResourceBundle.getBundle(
             "com/lemckes/MidiQuickFix/resources/UIStrings");
     }
-    
+
     static public String getString(String key) {
-        return mStringBundle.getString(key);
+        String value = key;
+        try {
+            value = mStringBundle.getString(key);
+        } catch (Exception ignore) {
+            // Ignore the exception
+        }
+        return value;
     }
 }

@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
  */
 public class StringConverter
 {
-
     private static String charsetName;
     private static Charset charset;
 
@@ -42,6 +41,10 @@ public class StringConverter
             ok = true;
         }
         return ok;
+    }
+
+    public static void resetDefaultCharset() {
+        StringConverter.setCharsetName("ISO-8859-1");
     }
 
     static public String convertBytesToString(byte[] bytes) throws

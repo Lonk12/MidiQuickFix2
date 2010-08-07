@@ -22,10 +22,13 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix.util;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.Properties;
 
 /**
@@ -33,13 +36,19 @@ import java.util.Properties;
  */
 public class MqfProperties
 {
-    static String mPropertiesFileName =
+    private static String mPropertiesFileName =
         System.getProperty("user.home")
         + System.getProperty("file.separator")
         + "MQF.properties";
-    static Properties mProps = new Properties();
-
+    private static Properties mProps = new Properties();
     public static final String LAST_PATH_KEY = "lastpath";
+    public static final String LOOK_AND_FEEL_NAME = "laf_name";
+    public static final String LYRIC_FONT = "lyric_font";
+    public static final String LYRIC_RUBY_FONT_SCALE = "lyric_ruby_font_scale";
+    public static final String LYRIC_BACKGROUND_COLOUR = "lyric_bg";
+    public static final String LYRIC_FOREGROUND_COLOUR = "lyric_fg";
+    public static final String LYRIC_RUBY_FG_COLOUR = "lyric_ruby_fg";
+    public static final String LYRIC_HIGHLIGHT_COLOUR = "lyric_highlight";
 
     public static String getProperty(String key) {
         return mProps.getProperty(key);
@@ -47,6 +56,154 @@ public class MqfProperties
 
     public static void setProperty(String key, String value) {
         mProps.setProperty(key, value);
+    }
+
+    public static Color getColourProperty(String key, Color defaultColour) {
+        Color colour = defaultColour;
+        String prop = MqfProperties.getProperty(key);
+        if (prop != null) {
+            try {
+                int c = Integer.parseInt(prop, 16);
+                colour = new Color(c);
+            } catch (NumberFormatException nfe) {
+                setColourProperty(key, defaultColour);
+            }
+        } else {
+            setColourProperty(key, defaultColour);
+        }
+
+        return colour;
+    }
+
+    public static void setColourProperty(String key, Color colour) {
+        MqfProperties.setProperty(key, encodeColourValue(colour));
+    }
+
+    private static String encodeColourValue(Color colour) {
+        int r = colour.getRed();
+        String red = Integer.toHexString(r);
+        if (r < 16) {
+            red = "0" + red;
+        }
+        int g = colour.getGreen();
+        String green = Integer.toHexString(g);
+        if (g < 16) {
+            green = "0" + green;
+        }
+        int b = colour.getBlue();
+        String blue = Integer.toHexString(b);
+        if (b < 16) {
+            blue = "0" + blue;
+        }
+        return red + green + blue;
+    }
+
+    public static Font getFontProperty(String key, Font defaultFont) {
+        Font font = defaultFont;
+        String prop = MqfProperties.getProperty(key);
+        if (prop != null) {
+            try {
+                font = Font.decode(prop);
+            } catch (NumberFormatException nfe) {
+                setFontProperty(key, defaultFont);
+            }
+        } else {
+            setFontProperty(key, defaultFont);
+        }
+        return font;
+    }
+
+    public static void setFontProperty(String key, Font font) {
+        MqfProperties.setProperty(key, encodeFontName(font));
+    }
+
+    private static String encodeFontName(Font font) {
+        String name = font.getName();
+        String style = "";
+        if (font.isBold()) {
+            style = "BOLD";
+        }
+        if (font.isItalic()) {
+            style += "ITALIC";
+        }
+        if (font.isPlain()) {
+            style = "PLAIN";
+        }
+        String size = Integer.toString(font.getSize());
+        return name + "-" + style + "-" + size;
+    }
+
+    public static float getFloatProperty(String key, float defaultVal) {
+        float val = defaultVal;
+        String prop = MqfProperties.getProperty(key);
+        if (prop != null) {
+            try {
+                val = Float.parseFloat(prop);
+            } catch (NumberFormatException nfe) {
+                setFloatProperty(key, defaultVal);
+            }
+        } else {
+            setFloatProperty(key, defaultVal);
+        }
+        return val;
+    }
+
+    public static void setFloatProperty(String key, float value) {
+        MqfProperties.setProperty(key, encodeFloatValue(value));
+    }
+
+    private static String encodeFloatValue(float value) {
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        nf.setGroupingUsed(false);
+        nf.setMaximumFractionDigits(3);
+        nf.setMinimumFractionDigits(1);
+        nf.setMinimumIntegerDigits(1);
+        return nf.format(value);
+    }
+
+    public static int getIntegerProperty(String key, int defaultVal) {
+        int val = defaultVal;
+        String prop = MqfProperties.getProperty(key);
+        if (prop != null) {
+            try {
+                val = Integer.parseInt(prop);
+            } catch (NumberFormatException nfe) {
+                setIntegerProperty(key, defaultVal);
+            }
+        } else {
+            setIntegerProperty(key, defaultVal);
+        }
+        return val;
+    }
+
+    public static void setIntegerProperty(String key, int value) {
+        MqfProperties.setProperty(key, encodeIntegerValue(value));
+    }
+
+    public static String getStringProperty(String key, String defaultVal) {
+        String val = defaultVal;
+        String prop = MqfProperties.getProperty(key);
+        if (prop != null) {
+            val = prop;
+        } else {
+            setStringProperty(key, defaultVal);
+        }
+        return val;
+    }
+
+    public static void setStringProperty(String key, String value) {
+        MqfProperties.setProperty(key, value);
+    }
+
+    private static String encodeIntegerValue(int value) {
+        NumberFormat nf = NumberFormat.getIntegerInstance();
+        nf.setGroupingUsed(false);
+        nf.setMinimumIntegerDigits(1);
+        return nf.format(value);
+    }
+
+    public static String getPropertiesFileName() {
+        return mPropertiesFileName;
     }
 
     public static void readProperties() {

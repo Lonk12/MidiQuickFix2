@@ -145,6 +145,7 @@ public class FontSelector extends javax.swing.JDialog {
         StyleConstants.setItalic(mAttributes, italic);
 
         updateFontPreview();
+        fontList.ensureIndexIsVisible(fontList.getSelectedIndex());
     }
 
     /**
