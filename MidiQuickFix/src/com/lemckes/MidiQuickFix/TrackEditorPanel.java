@@ -273,6 +273,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
      * Respond to EventCreation events
      * @param e the EventCreation event
      */
+    @Override
     public void eventCreated(EventCreationEvent e) {
         trackTable.insertEvent(e.getEvent());
     }

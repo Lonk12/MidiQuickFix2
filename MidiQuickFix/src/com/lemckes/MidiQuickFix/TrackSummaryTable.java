@@ -28,6 +28,7 @@ import com.lemckes.MidiQuickFix.util.TraceDialog;
 import java.awt.Dimension;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequencer;
+import javax.swing.event.TableModelEvent;
 
 /**
  * A table that displays summary info about each track in a sequence.
@@ -55,6 +56,11 @@ public class TrackSummaryTable extends javax.swing.JTable
             TraceDialog.addTrace("TrackSummaryTable new Sequence failed."
                 + ex.getMessage());
         }
+    }
+
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        super.tableChanged(e);
     }
 
     /**

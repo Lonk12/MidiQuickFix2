@@ -77,6 +77,7 @@ public class TransposeDialog extends javax.swing.JDialog {
         kh1.addComponent(jTextField1);
         kh1.addComponent(toKeyField);
 
+        setLocationRelativeTo(parent);
         pack();
     }
 

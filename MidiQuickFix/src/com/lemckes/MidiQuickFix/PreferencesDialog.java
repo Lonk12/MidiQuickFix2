@@ -30,8 +30,10 @@ import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
+import java.io.File;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
@@ -51,6 +53,7 @@ public class PreferencesDialog
     extends javax.swing.JDialog
     implements FontSelectionListener
 {
+
     MidiQuickFix mMQF;
     private FontSelector mFontSelector;
     private Frame mParentFrame;
@@ -87,6 +90,7 @@ public class PreferencesDialog
     class MyHighlightPainter
         extends DefaultHighlighter.DefaultHighlightPainter
     {
+
         public MyHighlightPainter(Color color) {
             super(color);
         }
@@ -172,7 +176,7 @@ public class PreferencesDialog
                 // now update our components
                 SwingUtilities.updateComponentTreeUI(this);
                 pack();
-                if (mFontSelector != null){
+                if (mFontSelector != null) {
                     // and update the font selector if needed
                     SwingUtilities.updateComponentTreeUI(mFontSelector);
                     mFontSelector.pack();
@@ -203,7 +207,8 @@ public class PreferencesDialog
                 doc.insertString(doc.getLength(), sampleText[i],
                     doc.getStyle(sampleStyles[i]));
             }
-        } catch (BadLocationException ble) {
+        }
+        catch (BadLocationException ble) {
             System.err.println("Couldn't insert initial text into text pane.");
         }
     }
@@ -246,7 +251,8 @@ public class PreferencesDialog
                     break;
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // Nimbus is not available, use the default look and feel.
         }
         MqfProperties.readProperties();
@@ -262,7 +268,7 @@ public class PreferencesDialog
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
-        
+
         mainPanel = new javax.swing.JPanel();
         lyricsDisplayPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -291,22 +297,22 @@ public class PreferencesDialog
         okButton = new javax.swing.JButton();
         applyButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle"); // NOI18N
         setTitle(bundle.getString("PreferencesDialog.title")); // NOI18N
         setName("Form"); // NOI18N
-        
+
         mainPanel.setName("mainPanel"); // NOI18N
         mainPanel.setLayout(new java.awt.GridBagLayout());
-        
+
         lyricsDisplayPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("PreferencesDialog.LyricDisplay.border.title"))); // NOI18N
         lyricsDisplayPanel.setName("lyricsDisplayPanel"); // NOI18N
         lyricsDisplayPanel.setLayout(new java.awt.BorderLayout());
-        
+
         jPanel1.setName("jPanel1"); // NOI18N
         jPanel1.setLayout(new java.awt.GridBagLayout());
-        
+
         lyricBgLabel.setText(bundle.getString("PreferencesDialog.lyricBgLabel.text")); // NOI18N
         lyricBgLabel.setName("lyricBgLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -315,7 +321,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 0);
         jPanel1.add(lyricBgLabel, gridBagConstraints);
-        
+
         lyricBgButton.setText(bundle.getString("PreferencesDialog.lyricBgButton.text")); // NOI18N
         lyricBgButton.setDefaultCapable(false);
         lyricBgButton.setMargin(new java.awt.Insets(1, 3, 1, 3));
@@ -335,7 +341,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 6);
         jPanel1.add(lyricBgButton, gridBagConstraints);
-        
+
         lyricFgLabel.setText(bundle.getString("PreferencesDialog.lyricFgLabel.text")); // NOI18N
         lyricFgLabel.setName("lyricFgLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -344,7 +350,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 0);
         jPanel1.add(lyricFgLabel, gridBagConstraints);
-        
+
         lyricFgButton.setText(bundle.getString("PreferencesDialog.lyricFgButton.text")); // NOI18N
         lyricFgButton.setDefaultCapable(false);
         lyricFgButton.setMargin(new java.awt.Insets(1, 3, 1, 3));
@@ -364,7 +370,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 6);
         jPanel1.add(lyricFgButton, gridBagConstraints);
-        
+
         rubyFgLabel.setText(bundle.getString("PreferencesDialog.rubyFgLabel.text")); // NOI18N
         rubyFgLabel.setName("rubyFgLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -373,7 +379,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 0);
         jPanel1.add(rubyFgLabel, gridBagConstraints);
-        
+
         rubyFgButton.setText(bundle.getString("PreferencesDialog.rubyFgButton.text")); // NOI18N
         rubyFgButton.setDefaultCapable(false);
         rubyFgButton.setMargin(new java.awt.Insets(1, 3, 1, 3));
@@ -393,7 +399,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 6);
         jPanel1.add(rubyFgButton, gridBagConstraints);
-        
+
         highlightLabel.setText(bundle.getString("PreferencesDialog.highlightLabel.text")); // NOI18N
         highlightLabel.setName("highlightLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -402,7 +408,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 0);
         jPanel1.add(highlightLabel, gridBagConstraints);
-        
+
         highlightButton.setText(bundle.getString("PreferencesDialog.highlightButton.text")); // NOI18N
         highlightButton.setDefaultCapable(false);
         highlightButton.setMargin(new java.awt.Insets(1, 3, 1, 3));
@@ -422,7 +428,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 6);
         jPanel1.add(highlightButton, gridBagConstraints);
-        
+
         fontLabel.setText(bundle.getString("PreferencesDialog.fontLabel.text")); // NOI18N
         fontLabel.setName("fontLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -431,7 +437,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 0);
         jPanel1.add(fontLabel, gridBagConstraints);
-        
+
         fontButton.setText(bundle.getString("PreferencesDialog.fontButton.text")); // NOI18N
         fontButton.setDefaultCapable(false);
         fontButton.setMargin(new java.awt.Insets(1, 3, 1, 3));
@@ -451,7 +457,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 6);
         jPanel1.add(fontButton, gridBagConstraints);
-        
+
         rubyScaleLabel.setText(bundle.getString("PreferencesDialog.rubyScaleLabel.text")); // NOI18N
         rubyScaleLabel.setName("rubyScaleLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -460,7 +466,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 6, 0);
         jPanel1.add(rubyScaleLabel, gridBagConstraints);
-        
+
         rubyScaleSpinner.setModel(new javax.swing.SpinnerNumberModel(100, 10, 200, 1));
         rubyScaleSpinner.setName("rubyScaleSpinner"); // NOI18N
         rubyScaleSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -474,7 +480,7 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 9, 6, 0);
         jPanel1.add(rubyScaleSpinner, gridBagConstraints);
-        
+
         jLabel1.setText("%"); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -483,17 +489,17 @@ public class PreferencesDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
         jPanel1.add(jLabel1, gridBagConstraints);
-        
+
         lyricsDisplayPanel.add(jPanel1, java.awt.BorderLayout.LINE_START);
-        
+
         jScrollPane1.setName("jScrollPane1"); // NOI18N
-        
+
         lyricsTextPane.setFont(new java.awt.Font("Dialog", 0, 24));
         lyricsTextPane.setName("lyricsTextPane"); // NOI18N
         jScrollPane1.setViewportView(lyricsTextPane);
-        
+
         lyricsDisplayPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -501,37 +507,47 @@ public class PreferencesDialog
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         mainPanel.add(lyricsDisplayPanel, gridBagConstraints);
-        
+
         defaultFolderPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("PreferencesDialog.DefaultFolder.border.title"))); // NOI18N
         defaultFolderPanel.setName("defaultFolderPanel"); // NOI18N
         defaultFolderPanel.setLayout(new java.awt.GridBagLayout());
-        
+
         defaultFolderField.setColumns(24);
         defaultFolderField.setName("defaultFolderField"); // NOI18N
+        defaultFolderField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                defaultFolderFieldActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
         defaultFolderPanel.add(defaultFolderField, gridBagConstraints);
-        
+
         browseButton.setText(bundle.getString("PreferencesDialog.browseButton.text")); // NOI18N
         browseButton.setDefaultCapable(false);
         browseButton.setMargin(new java.awt.Insets(1, 3, 1, 3));
         browseButton.setName("browseButton"); // NOI18N
+        browseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
         defaultFolderPanel.add(browseButton, gridBagConstraints);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         mainPanel.add(defaultFolderPanel, gridBagConstraints);
-        
+
         lookAndFeelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("PreferencesDialog.LookAndFeel.border.title"))); // NOI18N
         lookAndFeelPanel.setName("lookAndFeelPanel"); // NOI18N
         lookAndFeelPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
-        
+
         lookAndFeelCombo.setName("lookAndFeelCombo"); // NOI18N
         lookAndFeelCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -539,21 +555,21 @@ public class PreferencesDialog
             }
         });
         lookAndFeelPanel.add(lookAndFeelCombo);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         mainPanel.add(lookAndFeelPanel, gridBagConstraints);
-        
+
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
-        
+
         controlPanel.setName("controlPanel"); // NOI18N
         controlPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.TRAILING));
-        
+
         buttonPanel.setName("buttonPanel"); // NOI18N
         buttonPanel.setLayout(new java.awt.GridLayout(1, 0, 5, 0));
-        
+
         okButton.setText(bundle.getString("PreferencesDialog.okButton.text")); // NOI18N
         okButton.setName("okButton"); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -562,7 +578,7 @@ public class PreferencesDialog
             }
         });
         buttonPanel.add(okButton);
-        
+
         applyButton.setText(bundle.getString("PreferencesDialog.applyButton.text")); // NOI18N
         applyButton.setName("applyButton"); // NOI18N
         applyButton.addActionListener(new java.awt.event.ActionListener() {
@@ -571,7 +587,7 @@ public class PreferencesDialog
             }
         });
         buttonPanel.add(applyButton);
-        
+
         cancelButton.setText(bundle.getString("PreferencesDialog.cancelButton.text")); // NOI18N
         cancelButton.setName("cancelButton"); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -580,11 +596,11 @@ public class PreferencesDialog
             }
         });
         buttonPanel.add(cancelButton);
-        
+
         controlPanel.add(buttonPanel);
-        
+
         getContentPane().add(controlPanel, java.awt.BorderLayout.PAGE_END);
-        
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -681,6 +697,27 @@ public class PreferencesDialog
     private void lookAndFeelComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lookAndFeelComboActionPerformed
         mLafName = lookAndFeelCombo.getSelectedItem().toString();
     }//GEN-LAST:event_lookAndFeelComboActionPerformed
+
+    private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setCurrentDirectory(new File(defaultFolderField.getText()));
+        int open = fileChooser.showDialog(
+            this, UiStrings.getString("PreferencesDialog.AcceptDefaultPath.text"));
+        if (open == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            String path = file.getAbsolutePath();
+            mDefaultPath = path;
+        }
+
+
+    }//GEN-LAST:event_browseButtonActionPerformed
+
+    private void defaultFolderFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultFolderFieldActionPerformed
+        mDefaultPath = defaultFolderField.getText();
+    }//GEN-LAST:event_defaultFolderFieldActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JButton browseButton;

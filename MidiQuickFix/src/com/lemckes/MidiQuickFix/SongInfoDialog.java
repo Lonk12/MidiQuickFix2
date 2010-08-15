@@ -23,6 +23,7 @@
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.MqfSequence;
+import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.util.Map.Entry;
@@ -69,6 +70,12 @@ public class SongInfoDialog extends javax.swing.JDialog
             valueGBC.anchor = java.awt.GridBagConstraints.WEST;
             valueGBC.insets = new java.awt.Insets(0, 3, 0, 0);
 
+            if (seq.getSongInfo().isEmpty())
+            {
+                JLabel keyLabel = new javax.swing.JLabel(
+                    UiStrings.getString("SongInfoDialog.noInfoMessage"));
+                mainPanel.add(keyLabel, keyGBC);
+            }
             for (Entry<String, String> e : seq.getSongInfo().entrySet()) {
                 JLabel keyLabel = new javax.swing.JLabel(e.getKey());
                 JLabel separatorLabel = new javax.swing.JLabel(":");

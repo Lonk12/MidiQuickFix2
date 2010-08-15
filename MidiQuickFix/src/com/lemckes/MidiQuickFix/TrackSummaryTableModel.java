@@ -272,6 +272,7 @@ public class TrackSummaryTableModel
             case 9:
                 // Show Lyrics
                 mInfo[row].mLyrics = ((Boolean)value).booleanValue();
+                fireTableCellUpdated(row, column);
                 break;
             default:
             // Do Nothing

@@ -100,6 +100,7 @@ public class CreateEventDialog extends javax.swing.JDialog {
         // Initialise the enabled state of the controls
         noteOnRadio.doClick();
 
+        setLocationRelativeTo(parent);
         pack();
     }
 
@@ -617,20 +618,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                javax.swing.JFrame f = new javax.swing.JFrame();
-                f.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-                new CreateEventDialog(192, f, true).setVisible(true);
-                System.exit(0);
-            }
-        });
     }
 
     private long getTick() {

@@ -286,7 +286,7 @@ public class LyricDisplay
         try {
             doc.insertString(doc.getLength(), text, style);
         } catch (BadLocationException ex) {
-            TraceDialog.addTrace("displayText : " + ex.getLocalizedMessage());
+            TraceDialog.addTrace("appendText : " + ex.getLocalizedMessage());
         }
     }
 
@@ -308,8 +308,10 @@ public class LyricDisplay
                         if (lyricString.length() > 0) {
                             checkForCharsetChange(lyricString);
                             checkForSongInfo(lyricString);
-                            lyricString = lyricString.replaceAll("\\\\r", "\n");
+                            lyricString = lyricString.replaceAll("\n", "\n\n");
+                            lyricString = lyricString.replaceAll("\r", "\n");
                             lyricString = lyricString.replaceAll("\\\\n", "\n\n");
+                            lyricString = lyricString.replaceAll("\\\\r", "\n");
                             lyricString = lyricString.replaceAll("\\\\t", "\t");
                             lyricString = lyricString.replaceAll("\\{\\@.*?\\}",
                                 "");
@@ -463,7 +465,7 @@ public class LyricDisplay
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        
+
         jScrollPane1 = new javax.swing.JScrollPane();
         lyricText = new javax.swing.JTextPane();
         jPanel1 = new javax.swing.JPanel();
@@ -473,43 +475,52 @@ public class LyricDisplay
         textCheckBox = new javax.swing.JCheckBox();
         buttonPanel = new javax.swing.JPanel();
         fontSelectButton = new javax.swing.JButton();
-        resetButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        
+
         setLayout(new java.awt.BorderLayout());
-        
+
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        
+
         lyricText.setFont(new java.awt.Font("Dialog", 0, 24));
         lyricText.setPreferredSize(new java.awt.Dimension(400, 300));
         jScrollPane1.setViewportView(lyricText);
-        
+
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
-        
+
         jPanel1.setLayout(new java.awt.BorderLayout());
-        
+
         jPanel2.setLayout(new java.awt.GridBagLayout());
-        
+
         showLabel.setText(UiStrings.getString("show")); // NOI18N
         jPanel2.add(showLabel, new java.awt.GridBagConstraints());
-        
+
         lyricsCheckBox.setMnemonic('L');
         lyricsCheckBox.setSelected(true);
         lyricsCheckBox.setText(UiStrings.getString("lyrics")); // NOI18N
         lyricsCheckBox.setToolTipText(UiStrings.getString("show_lyric_events")); // NOI18N
+        lyricsCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lyricsCheckBoxActionPerformed(evt);
+            }
+        });
         jPanel2.add(lyricsCheckBox, new java.awt.GridBagConstraints());
-        
+
         textCheckBox.setMnemonic('T');
         textCheckBox.setSelected(true);
         textCheckBox.setText(UiStrings.getString("text")); // NOI18N
         textCheckBox.setToolTipText(UiStrings.getString("show_text_events")); // NOI18N
+        textCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textCheckBoxActionPerformed(evt);
+            }
+        });
         jPanel2.add(textCheckBox, new java.awt.GridBagConstraints());
-        
+
         jPanel1.add(jPanel2, java.awt.BorderLayout.WEST);
-        
+
         buttonPanel.setLayout(new java.awt.GridLayout(1, 0, 4, 0));
-        
+
         fontSelectButton.setText(UiStrings.getString("font")); // NOI18N
         fontSelectButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         fontSelectButton.addActionListener(new java.awt.event.ActionListener() {
@@ -518,20 +529,10 @@ public class LyricDisplay
             }
         });
         buttonPanel.add(fontSelectButton);
-        
-        resetButton.setText(UiStrings.getString("reload")); // NOI18N
-        resetButton.setToolTipText(UiStrings.getString("reset_lyrics")); // NOI18N
-        resetButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        resetButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetButtonActionPerformed(evt);
-            }
-        });
-        buttonPanel.add(resetButton);
-        
+
         jPanel1.add(buttonPanel, java.awt.BorderLayout.LINE_END);
         jPanel1.add(jPanel3, java.awt.BorderLayout.CENTER);
-        
+
         add(jPanel1, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
     private void fontSelectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontSelectButtonActionPerformed
@@ -543,9 +544,14 @@ public class LyricDisplay
         mFontSelector.setVisible(true);
     }//GEN-LAST:event_fontSelectButtonActionPerformed
 
-    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+    private void lyricsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lyricsCheckBoxActionPerformed
+       reset();
+    }//GEN-LAST:event_lyricsCheckBoxActionPerformed
+
+    private void textCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textCheckBoxActionPerformed
         reset();
-}//GEN-LAST:event_resetButtonActionPerformed
+    }//GEN-LAST:event_textCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton fontSelectButton;
@@ -555,7 +561,6 @@ public class LyricDisplay
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane lyricText;
     private javax.swing.JCheckBox lyricsCheckBox;
-    private javax.swing.JButton resetButton;
     private javax.swing.JLabel showLabel;
     private javax.swing.JCheckBox textCheckBox;
     // End of variables declaration//GEN-END:variables

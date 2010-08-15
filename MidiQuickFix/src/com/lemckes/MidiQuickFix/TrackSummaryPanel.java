@@ -23,12 +23,15 @@ import javax.swing.JOptionPane;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 /**
  *
  */
 public class TrackSummaryPanel
     extends javax.swing.JPanel
+    implements TableModelListener
 {
 
     private MqfSequence mSequence;
@@ -45,6 +48,7 @@ public class TrackSummaryPanel
     public void setSequence(MqfSequence seq) {
         mSequence = seq;
         mTrackSummaryTable.setSequence(seq);
+        mTrackSummaryTable.getModel().addTableModelListener(this);
 
         addTrackButton.setEnabled(mSequence != null);
     }
@@ -66,6 +70,7 @@ public class TrackSummaryPanel
                 }
             }
         });
+        mTrackSummaryTable.getModel().addTableModelListener(this);
         jScrollPane1.setViewportView(table);
     }
 
@@ -74,7 +79,7 @@ public class TrackSummaryPanel
         if (row < 0) {
             row = mTrackSummaryTable.getRowCount();
         }
-        CreateTrackDialog ctd = new CreateTrackDialog(mSequence, row,  null, true);
+        CreateTrackDialog ctd = new CreateTrackDialog(mSequence, row, null, true);
         ctd.setVisible(true);
         if (ctd.wasTrackCreated()) {
             fireTracksChanged(TrackChangeType.TRACK_ADDED);
@@ -188,6 +193,14 @@ public class TrackSummaryPanel
                 ((TrackSummaryTableModel)mTrackSummaryTable.getModel()).
                     updateInfo();
             }
+        }
+    }
+
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        int column = e.getColumn();
+        if (column == 9){
+            fireTracksChanged(TrackChangeType.TRACK_CHANGED);
         }
     }
 

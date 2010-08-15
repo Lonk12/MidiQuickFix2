@@ -34,8 +34,18 @@ public class TracksChangedEvent
     public enum TrackChangeType
     {
 
+        /**
+         * A track has been added to the Sequence
+         */
         TRACK_ADDED,
-        TRACK_DELETED
+        /**
+         * A track has been deleted from the sequence
+         */
+        TRACK_DELETED,
+        /**
+         * A track in the sequence has changed (initially its Lyrics status)
+         */
+        TRACK_CHANGED
     }
     private TrackChangeType mChangeType;
 

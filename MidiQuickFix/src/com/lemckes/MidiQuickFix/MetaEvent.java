@@ -26,8 +26,6 @@ import com.lemckes.MidiQuickFix.util.StringConverter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -81,10 +79,10 @@ public class MetaEvent
     public static final int KEY_SIGNATURE = 0x59; //FF 59 02 sf mi
     // -sf=no. of flats +sf=no. of sharps mi=0=major mi=1=minor
     public static final int PROPRIETARY_DATA = 0x7f; //FF 7F len data
-    private static HashMap<String, Integer> mTypeNameToValue;
+    private static final HashMap<String, Integer> mTypeNameToValue;
 
     static {
-        mTypeNameToValue = new HashMap<String, Integer>();
+        mTypeNameToValue = new HashMap<String, Integer>(20);
         mTypeNameToValue.put("SEQUENCE_NUMBER", 0x00); // NOI18N
         mTypeNameToValue.put("TEXT", 0x01); // NOI18N
         mTypeNameToValue.put("COPYRIGHT", 0x02); // NOI18N
@@ -178,7 +176,7 @@ public class MetaEvent
             case SMPTE_OFFSET:
                 result[0] = "M:SMPTEOffset"; // NOI18N
                 // Hour, Minute, Second, Frame, Field
-                //hr mn se fr ff
+                // hr mn se fr ff
                 result[2] =
                     twoDigitFormat.format(data[0] & 0x00ff) + ":" + // NOI18N
                     twoDigitFormat.format(data[1] & 0x00ff) + ":" + // NOI18N
