@@ -124,6 +124,7 @@ public class MidiQuickFix
     TransposeDialog mTransposeDialog;
     transient PlayController mPlayController;
     transient Properties mMqfProps;
+    private static JFrame mMainFrame;
 
     /**
      * Creates a new MidiQuickFix instance
@@ -302,6 +303,11 @@ public class MidiQuickFix
             startDialog.splash.addStageMessage(
                 UiStrings.getString("startup_failed")); // NOI18N
         }
+        mMainFrame = this;
+    }
+
+    public static JFrame getMainFrame(){
+        return mMainFrame;
     }
 
     private void createTimer(int delay) {
@@ -720,7 +726,8 @@ public class MidiQuickFix
         }
     }
 
-    /** Called on a change to the table
+    /**
+     * Called on a change to the track editor table
      * @param e The event
      */
     @Override

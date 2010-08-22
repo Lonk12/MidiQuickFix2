@@ -22,6 +22,7 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.TrackUpdateUtils;
 import com.lemckes.MidiQuickFix.util.EventCreationEvent;
 import com.lemckes.MidiQuickFix.util.EventCreationListener;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
@@ -31,6 +32,7 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Track;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelListener;
@@ -48,10 +50,12 @@ public class TrackEditorPanel extends javax.swing.JPanel
     private int mCurrentTrack;
     private String mKeySig;
     private CreateEventDialog mCreateEventDialog;
+    private TrackTable trackTable;
 
     /** Creates new form TrackEditorPanel */
     public TrackEditorPanel() {
         initComponents();
+        trackTable = new TrackTable();
         tableScrollPane.setViewportView(trackTable);
         trackTable.getSelectionModel().addListSelectionListener(this);
     }
@@ -163,6 +167,33 @@ public class TrackEditorPanel extends javax.swing.JPanel
         mCreateEventDialog.setVisible(true);
     }
 
+    public void convertNoteOn() {
+        TrackUpdateUtils.convertNoteOnZeroToNoteOff(mSeq.getTracks()[mCurrentTrack]);
+        trackTable.trackModified();
+    }
+
+    public void convertText() {
+        if (trackTable.getSelectedRowCount() == 0) {
+            String message = UiStrings.getString("ConvertAllTextQuestion");
+            String title = UiStrings.getString("ConvertAllTextTitle");
+            int answer = JOptionPane.showConfirmDialog(controlPanel, message, title,
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (answer == JOptionPane.YES_OPTION) {
+                trackTable.selectAll();
+            }
+        }
+        if (trackTable.getSelectedRowCount() > 0) {
+            int[] rows = trackTable.getSelectedRows();
+            TrackUpdateUtils.convertTextToLyric(mSeq.getTracks()[mCurrentTrack], rows);
+        }
+        trackTable.trackModified();
+    }
+
+    public void removeNotes() {
+        TrackUpdateUtils.removeNotesFromTrack(mSeq.getTracks()[mCurrentTrack]);
+        trackTable.trackModified();
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -172,11 +203,11 @@ public class TrackEditorPanel extends javax.swing.JPanel
     private void initComponents() {
 
         tableScrollPane = new javax.swing.JScrollPane();
-        trackTable = new com.lemckes.MidiQuickFix.TrackTable();
         controlPanel = new javax.swing.JPanel();
         buttonPanel = new javax.swing.JPanel();
         insertButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
+        moreButton = new javax.swing.JButton();
         trackPanel = new javax.swing.JPanel();
         showNotesCheck = new javax.swing.JCheckBox();
         trackSelectorPanel = new javax.swing.JPanel();
@@ -186,9 +217,6 @@ public class TrackEditorPanel extends javax.swing.JPanel
         setLayout(new java.awt.BorderLayout());
 
         tableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        tableScrollPane.setViewportView(trackTable);
-
         add(tableScrollPane, java.awt.BorderLayout.CENTER);
 
         controlPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 3, 3));
@@ -214,6 +242,14 @@ public class TrackEditorPanel extends javax.swing.JPanel
             }
         });
         buttonPanel.add(deleteButton);
+
+        moreButton.setText(UiStrings.getString("more")); // NOI18N
+        moreButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moreButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(moreButton);
 
         controlPanel.add(buttonPanel);
 
@@ -269,6 +305,10 @@ public class TrackEditorPanel extends javax.swing.JPanel
         selectTrack(trackSelector.getSelectedIndex());
     }//GEN-LAST:event_trackSelectorActionPerformed
 
+    private void moreButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreButtonActionPerformed
+        new TrackUpdateUtilDialog(this, moreButton, true).setVisible(true);
+    }//GEN-LAST:event_moreButtonActionPerformed
+
     /**
      * Respond to EventCreation events
      * @param e the EventCreation event
@@ -282,12 +322,12 @@ public class TrackEditorPanel extends javax.swing.JPanel
     private javax.swing.JPanel controlPanel;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton insertButton;
+    private javax.swing.JButton moreButton;
     private javax.swing.JCheckBox showNotesCheck;
     private javax.swing.JScrollPane tableScrollPane;
     private javax.swing.JLabel trackLabel;
     private javax.swing.JPanel trackPanel;
     private javax.swing.JComboBox trackSelector;
     private javax.swing.JPanel trackSelectorPanel;
-    private com.lemckes.MidiQuickFix.TrackTable trackTable;
     // End of variables declaration//GEN-END:variables
 }

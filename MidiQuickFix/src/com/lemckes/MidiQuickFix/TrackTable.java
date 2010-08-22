@@ -68,6 +68,10 @@ public class TrackTable extends javax.swing.JTable {
             inFlats));
     }
 
+    public void trackModified(){
+        ((TrackTableModel)getModel()).trackModified();
+    }
+
     /**
      * Set whether notes are displayed or not
      * @param show if <code>true</code> notes are shown
