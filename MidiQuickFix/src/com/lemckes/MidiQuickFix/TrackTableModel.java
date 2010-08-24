@@ -26,7 +26,6 @@ import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.util.ArrayList;
-import java.util.Vector;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -76,6 +75,7 @@ class TrackTableModel extends DefaultTableModel
      * by one of the methods in TrackUpdateUtils
      */
     public void trackModified() {
+        buildNoNotesRowMap();
         fireTableDataChanged();
     }
 
@@ -418,7 +418,7 @@ class TrackTableModel extends DefaultTableModel
     }
 
     public void deleteEvents(int[] rows) {
-        Vector<MidiEvent> events = new Vector<MidiEvent>();
+        ArrayList<MidiEvent> events = new ArrayList<MidiEvent>(rows.length);
         for (int i = 0; i < rows.length; ++i) {
             events.add(getEventForRow(rows[i]));
         }
@@ -426,14 +426,12 @@ class TrackTableModel extends DefaultTableModel
         for (MidiEvent e : events) {
             mTrack.remove(e);
         }
-        buildNoNotesRowMap();
-        fireTableDataChanged();
+        trackModified();
     }
 
     public void insertEvent(MidiEvent event) {
         mTrack.add(event);
-        buildNoNotesRowMap();
-        fireTableDataChanged();
+        trackModified();
     }
 
     void setTrackChannel(int channel) {
