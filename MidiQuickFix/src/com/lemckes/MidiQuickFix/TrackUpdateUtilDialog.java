@@ -69,9 +69,12 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         jSeparator1 = new javax.swing.JSeparator();
         convertTextLabel = new javax.swing.JLabel();
         convertTextButton = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
         deleteNotesLabel = new javax.swing.JLabel();
         removeNotesButton = new javax.swing.JButton();
-        jSeparator2 = new javax.swing.JSeparator();
+        jSeparator3 = new javax.swing.JSeparator();
+        convertTypeZeroLabel = new javax.swing.JLabel();
+        convertTypeZeroButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         buttonPanel = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
@@ -138,6 +141,15 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         mainPanel.add(convertTextButton, gridBagConstraints);
 
+        jSeparator2.setName("jSeparator2"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
+        mainPanel.add(jSeparator2, gridBagConstraints);
+
         deleteNotesLabel.setText(UiStrings.getString("TrackUpdateUtilDialog.deleteNotesLabel.text")); // NOI18N
         deleteNotesLabel.setName("deleteNotesLabel"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -161,14 +173,31 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         mainPanel.add(removeNotesButton, gridBagConstraints);
 
-        jSeparator2.setName("jSeparator2"); // NOI18N
+        jSeparator3.setName("jSeparator3"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
-        mainPanel.add(jSeparator2, gridBagConstraints);
+        mainPanel.add(jSeparator3, gridBagConstraints);
+
+        convertTypeZeroLabel.setText(UiStrings.getString("TrackUpdateUtilDialog.convertTypeZeroLabel.text")); // NOI18N
+        convertTypeZeroLabel.setName("convertTypeZeroLabel"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
+        mainPanel.add(convertTypeZeroLabel, gridBagConstraints);
+
+        convertTypeZeroButton.setText(UiStrings.getString("TrackUpdateUtilDialog.convertTypeZeroButton.text")); // NOI18N
+        convertTypeZeroButton.setName("convertTypeZeroButton"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        mainPanel.add(convertTypeZeroButton, gridBagConstraints);
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
@@ -216,10 +245,13 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
     private javax.swing.JLabel convertNoteOnLabel;
     private javax.swing.JButton convertTextButton;
     private javax.swing.JLabel convertTextLabel;
+    private javax.swing.JButton convertTypeZeroButton;
+    private javax.swing.JLabel convertTypeZeroLabel;
     private javax.swing.JLabel deleteNotesLabel;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton removeNotesButton;
     // End of variables declaration//GEN-END:variables
