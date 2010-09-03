@@ -193,6 +193,11 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
 
         convertTypeZeroButton.setText(UiStrings.getString("TrackUpdateUtilDialog.convertTypeZeroButton.text")); // NOI18N
         convertTypeZeroButton.setName("convertTypeZeroButton"); // NOI18N
+        convertTypeZeroButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                convertTypeZeroButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 6;
@@ -238,6 +243,10 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
     private void removeNotesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeNotesButtonActionPerformed
         mEditor.removeNotes();
 }//GEN-LAST:event_removeNotesButtonActionPerformed
+
+    private void convertTypeZeroButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertTypeZeroButtonActionPerformed
+        mEditor.splitTrack();
+    }//GEN-LAST:event_convertTypeZeroButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;

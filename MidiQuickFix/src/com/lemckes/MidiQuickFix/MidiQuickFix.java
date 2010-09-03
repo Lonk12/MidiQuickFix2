@@ -744,6 +744,9 @@ public class MidiQuickFix
                 mTimer.stop();
                 mPlayController.pause();
             }
+            mTrackSummary.setSequence(mSeq);
+            mLyricDisplay.setTrackSelector(
+                (TrackSummaryTableModel)mTrackSummary.getModel());
             try {
                 mSequencer.setSequence(mSeq);
                 if (e.getColumn() == 5 || e.getColumn() == TableModelEvent.ALL_COLUMNS) {

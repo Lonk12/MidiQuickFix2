@@ -26,10 +26,14 @@ import com.lemckes.MidiQuickFix.util.TrackUpdateUtils;
 import com.lemckes.MidiQuickFix.util.EventCreationEvent;
 import com.lemckes.MidiQuickFix.util.EventCreationListener;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
+import com.lemckes.MidiQuickFix.util.TraceDialog;
+import com.lemckes.MidiQuickFix.util.TracksChangedEvent.TrackChangeType;
 import com.lemckes.MidiQuickFix.util.UiStrings;
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -191,6 +195,57 @@ public class TrackEditorPanel extends javax.swing.JPanel
 
     public void removeNotes() {
         TrackUpdateUtils.removeNotesFromTrack(mSeq.getTracks()[mCurrentTrack]);
+        trackTable.trackModified();
+    }
+
+    public void splitTrack() {
+        Track t[] = new Track[17];
+        Track originalTrack = mSeq.getTracks()[mCurrentTrack];
+
+        // First create the control track to take all the non-channel events
+        t[0] = mSeq.createTrack();
+        String type = "TRACK_NAME";
+        try {
+            MidiEvent me = MetaEvent.createMetaEvent(
+                type, "Control Track", 0, 92);
+            t[0].add(me);
+        }
+        catch (InvalidMidiDataException ex) {
+            TraceDialog.addTrace(ex.getMessage());
+        }
+
+        // Then create a track to take the events for each channel
+        for (int i = 1; i < 17; ++i) {
+            t[i] = mSeq.createTrack();
+            try {
+                MidiEvent me = MetaEvent.createMetaEvent(
+                    type, "Channel " + String.valueOf(i), 0, 92);
+                t[i].add(me);
+            }
+            catch (InvalidMidiDataException ex) {
+                TraceDialog.addTrace(ex.getMessage());
+            }
+        }
+
+        // Now copy the events to their new track
+        for (int i = 0; i < originalTrack.size(); ++i) {
+            MidiEvent ev = originalTrack.get(i);
+            MidiMessage mess = ev.getMessage();
+            if (mess instanceof ShortMessage) {
+                int st = ((ShortMessage)mess).getStatus();
+                // Check that this is a channel message
+                if ((st & 0xf0) <= 0xf0) {
+                    ShortMessage sm = (ShortMessage)mess;
+                    int channel = sm.getChannel();
+                    t[channel + 1].add(ev);
+                } else {
+                    t[0].add(ev);
+                }
+            } else {
+                t[0].add(ev);
+            }
+        }
+
         trackTable.trackModified();
     }
 

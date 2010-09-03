@@ -31,11 +31,15 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 /**
- *
+ * Utility methods to change a track
  */
 public class TrackUpdateUtils
 {
 
+    /**
+     * Convert all NOTE_ON events with a velocity of zero to NOTE_OFF events
+     * @param track the track to convert
+     */
     public static void convertNoteOnZeroToNoteOff(Track track) {
         for (int e = 0; e < track.size(); ++e) {
             MidiEvent event = track.get(e);
@@ -65,8 +69,14 @@ public class TrackUpdateUtils
         }
     }
 
-    public static void convertTextToLyric(Track track, int[] rows) {
-        for (int e : rows) {
+    /**
+     * Convert any TEXT events at the positions in <code>eventIndices</code>
+     * into LYRIC events
+     * @param track the track to convert
+     * @param eventIndices the event indices in <code>track</code>
+     */
+    public static void convertTextToLyric(Track track, int[] eventIndices) {
+        for (int e : eventIndices) {
             MidiEvent event = track.get(e);
 
             MidiMessage message = event.getMessage();
@@ -86,6 +96,10 @@ public class TrackUpdateUtils
         }
     }
 
+    /**
+     * Remove all NOTE_ON and NOTE_OFF events from the <code>track</code>
+     * @param track the track from which to remove the notes
+     */
     public static void removeNotesFromTrack(Track track) {
         for (int e = track.size() -1; e >= 0; --e) {
             MidiEvent event = track.get(e);
