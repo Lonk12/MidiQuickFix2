@@ -91,8 +91,8 @@ public class SongInfoDialog extends javax.swing.JDialog
                 ++valueGBC.gridy;
             }
 
-            setLocationRelativeTo(parent);
             pack();
+            setLocationRelativeTo(parent);
         }
     }
 

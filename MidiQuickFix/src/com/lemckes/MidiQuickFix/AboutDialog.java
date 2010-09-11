@@ -29,9 +29,10 @@ import java.util.Properties;
  * Show the About dialog.
  * @version $Id$
  */
-public class AboutDialog extends javax.swing.JDialog {
-    static final long serialVersionUID = 934886629248418748L;
+public class AboutDialog extends javax.swing.JDialog
+{
 
+    static final long serialVersionUID = 934886629248418748L;
     /**
      * The component that displays our splash screen
      */
@@ -59,14 +60,10 @@ public class AboutDialog extends javax.swing.JDialog {
         initComponents();
         getContentPane().add(mSplash, java.awt.BorderLayout.CENTER);
         pack();
-        java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
-        java.awt.Dimension sd = tk.getScreenSize();
-        java.awt.Dimension dd = getSize();
-        setLocation((int)((sd.getWidth() - dd.getWidth()) / 2),
-            (int)((sd.getHeight() - dd.getHeight()) / 2));
+        setLocationRelativeTo(parent);
     }
 
-    void showSystemInfo() {
+    private void showSystemInfo() {
         Properties p = System.getProperties();
 
         String name =
@@ -92,6 +89,11 @@ public class AboutDialog extends javax.swing.JDialog {
 
         mSplash.addStageMessage("");
         mSplash.addStageMessage(osname + " - " + arch + " - " + osversion);
+    }
+
+    private void doClose() {
+        setVisible(false);
+        dispose();
     }
 
     /** This method is called from within the constructor to
@@ -130,22 +132,13 @@ public class AboutDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        setVisible(false);
-        dispose();
+        doClose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     /** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
-        setVisible(false);
-        dispose();
+        doClose();
     }//GEN-LAST:event_closeDialog
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        new AboutDialog(new javax.swing.JFrame(), true).setVisible(true);
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton okButton;

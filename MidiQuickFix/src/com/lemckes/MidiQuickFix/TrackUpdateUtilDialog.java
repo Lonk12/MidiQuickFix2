@@ -24,6 +24,7 @@ package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Component;
+import javax.swing.border.TitledBorder;
 
 /**
  * Allow the user to create a new track
@@ -44,6 +45,8 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         super(MidiQuickFix.getMainFrame(), modal);
         initComponents();
         mEditor = editor;
+        String title = UiStrings.getString("track") + " : " +mEditor.getCurrentTrackTitle();
+        ((TitledBorder)mainPanel.getBorder()).setTitle(title);
         setLocationRelativeTo(parent);
         pack();
     }
@@ -84,7 +87,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         setTitle(bundle.getString("TrackUpdateUtilDialog.title")); // NOI18N
         setName("Form"); // NOI18N
 
-        mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("TrackUpdateUtilDialog.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("DejaVu Sans", 1, 12), new java.awt.Color(0, 0, 0))); // NOI18N
+        mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("TrackUpdateUtilDialog.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("DejaVu Sans", 1, 12), new java.awt.Color(0, 0, 0))); // NOI18N
         mainPanel.setName("mainPanel"); // NOI18N
         mainPanel.setLayout(new java.awt.GridBagLayout());
 

@@ -172,7 +172,7 @@ public class LyricDisplay
                         final Rectangle r = lyricText.modelToView(start + len);
                         // Make the rectangle 2/3 the height of the scroll pane
                         // so that the current line stays near the top of the window
-                        int height = jScrollPane1.getHeight() * 2 / 3;
+                        int height = lyricScrollPane.getHeight() * 2 / 3;
                         r.height = height;
                         // Scroll so that the 2/3 height rectangle is visible
                         lyricText.scrollRectToVisible(r);
@@ -466,7 +466,7 @@ public class LyricDisplay
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
+        lyricScrollPane = new javax.swing.JScrollPane();
         lyricText = new javax.swing.JTextPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -479,14 +479,14 @@ public class LyricDisplay
 
         setLayout(new java.awt.BorderLayout());
 
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        lyricScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        lyricScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         lyricText.setFont(new java.awt.Font("Dialog", 0, 24));
         lyricText.setPreferredSize(new java.awt.Dimension(400, 300));
-        jScrollPane1.setViewportView(lyricText);
+        lyricScrollPane.setViewportView(lyricText);
 
-        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        add(lyricScrollPane, java.awt.BorderLayout.CENTER);
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -537,7 +537,8 @@ public class LyricDisplay
     }// </editor-fold>//GEN-END:initComponents
     private void fontSelectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontSelectButtonActionPerformed
         if (mFontSelector == null) {
-            mFontSelector = new FontSelector(null, false);
+            mFontSelector = new FontSelector(MidiQuickFix.getMainFrame(), false);
+            mFontSelector.setLocationRelativeTo(lyricScrollPane.getVerticalScrollBar());
             mFontSelector.setSelectedFont(lyricText.getFont());
             mFontSelector.addFontSelectionListener(this);
         }
@@ -558,7 +559,7 @@ public class LyricDisplay
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane lyricScrollPane;
     private javax.swing.JTextPane lyricText;
     private javax.swing.JCheckBox lyricsCheckBox;
     private javax.swing.JLabel showLabel;

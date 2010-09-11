@@ -41,6 +41,8 @@ public final class Formats {
         new java.text.DecimalFormat("0");
     private static final DecimalFormat secFormat =
         new java.text.DecimalFormat("00");
+    private static final DecimalFormat number_1_1_Format =
+        new java.text.DecimalFormat("0.0");
 
     /**
      * Format the given ticks into a beats:ticks string.
@@ -126,5 +128,14 @@ public final class Formats {
         long secs = seconds % 60;
         long mins = seconds / 60;
         return minFormat.format(mins) + ":" + secFormat.format(secs);
+    }
+
+    /**
+     * Format the given number decimal string with 1 leading zero and 1 decimal place.
+     * @param value the value to format
+     * @return a string representing the seconds in decimal format
+     */
+    public static String formatNumber_1_1(Number value) {
+        return number_1_1_Format.format(value);
     }
 }

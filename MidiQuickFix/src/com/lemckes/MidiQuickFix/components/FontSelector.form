@@ -116,6 +116,11 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="boldCheckBox">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                      <FontInfo relative="true">
+                        <Font bold="true" component="boldCheckBox" property="font" relativeSize="true" size="0"/>
+                      </FontInfo>
+                    </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="bold" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -132,8 +137,10 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="italicCheckBox">
                   <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Dialog" size="12" style="3"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                      <FontInfo relative="true">
+                        <Font component="italicCheckBox" italic="true" property="font" relativeSize="true" size="0"/>
+                      </FontInfo>
                     </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="italic" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>

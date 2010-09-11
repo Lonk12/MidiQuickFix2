@@ -100,8 +100,8 @@ public class CreateEventDialog extends javax.swing.JDialog {
         // Initialise the enabled state of the controls
         noteOnRadio.doClick();
 
-        setLocationRelativeTo(parent);
         pack();
+        setLocationRelativeTo(parent);
     }
 
     private void setFormats() {

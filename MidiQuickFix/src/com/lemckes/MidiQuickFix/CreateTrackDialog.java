@@ -53,8 +53,6 @@ public class CreateTrackDialog extends javax.swing.JDialog
     public CreateTrackDialog(
         MqfSequence seq, Integer index, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        setLocationRelativeTo(parent);
-
         initComponents();
 
         indexField.setValue(index);
@@ -66,6 +64,9 @@ public class CreateTrackDialog extends javax.swing.JDialog
 
         Object[] s = InstrumentNames.getNameArray();
         patchCombo.setModel(new DefaultComboBoxModel(s));
+
+        pack();
+        setLocationRelativeTo(parent);
     }
 
     private void createTrack() {

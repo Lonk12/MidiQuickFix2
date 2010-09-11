@@ -20,7 +20,6 @@
  *   If not, I'll be glad to provide one.
  *
  **************************************************************/
-
 package com.lemckes.MidiQuickFix.util;
 
 import java.awt.EventQueue;
@@ -30,40 +29,53 @@ import java.awt.EventQueue;
  *
  * @version $Id$
  */
-public class TraceDialog extends javax.swing.JDialog {
+public class TraceDialog extends javax.swing.JDialog
+{
+
     static final long serialVersionUID = 5090767651914686108L;
-   
     private static final TraceDialog INSTANCE =
         new TraceDialog(new java.awt.Frame(), false);
-    
+
     /** Creates new form TraceDialog */
     private TraceDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        pack();
+        setLocationRelativeTo(parent);
     }
-    
-    public static final TraceDialog getInstance() {
+
+    /**
+     * Get the single instance of the trace dialog
+     * @return
+     */
+    public static TraceDialog getInstance() {
         return INSTANCE;
     }
-    
+
     public static void addTrace(final String message) {
         if (INSTANCE.isVisible()) {
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(new Runnable()
+            {
+
+                @Override
                 public void run() {
                     traceText.append(message + "\n");
                 }
             });
         }
     }
-    
+
     public static void clear() {
-        EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable()
+        {
+
+            @Override
             public void run() {
                 traceText.setText("");
             }
         });
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -117,15 +129,15 @@ public class TraceDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         clear();
     }//GEN-LAST:event_clearButtonActionPerformed
-    
+
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
         setVisible(false);
+        dispose();
     }//GEN-LAST:event_closeButtonActionPerformed
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton clearButton;
@@ -134,5 +146,4 @@ public class TraceDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private static javax.swing.JTextArea traceText;
     // End of variables declaration//GEN-END:variables
-    
 }

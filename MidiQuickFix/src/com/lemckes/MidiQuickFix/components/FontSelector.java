@@ -37,7 +37,9 @@ import javax.swing.text.StyleConstants;
  * A dialog that allows the user to choose a font.
  * @version  $Id$
  */
-public class FontSelector extends javax.swing.JDialog {
+public class FontSelector extends javax.swing.JDialog
+{
+
     static final long serialVersionUID = -862613500313024646L;
 
     /**
@@ -60,7 +62,9 @@ public class FontSelector extends javax.swing.JDialog {
 
         mAttributes = new SimpleAttributeSet();
 
-        fontList.setModel(new javax.swing.AbstractListModel() {
+        fontList.setModel(new javax.swing.AbstractListModel()
+        {
+
             static final long serialVersionUID = -3821347059262633012L;
             GraphicsEnvironment ge =
                 GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -75,7 +79,9 @@ public class FontSelector extends javax.swing.JDialog {
             }
         });
 
-        fontList.addListSelectionListener(new ListSelectionListener() {
+        fontList.addListSelectionListener(new ListSelectionListener()
+        {
+
             public void valueChanged(ListSelectionEvent e) {
                 StyleConstants.setFontFamily(mAttributes,
                     (String)fontList.getSelectedValue());
@@ -111,8 +117,8 @@ public class FontSelector extends javax.swing.JDialog {
         boolean ital = StyleConstants.isItalic(mAttributes);
         int size = StyleConstants.getFontSize(mAttributes);
 
-        mFont = new Font(name, (bold ? Font.BOLD : 0) +
-            (ital ? Font.ITALIC : 0), size);
+        mFont = new Font(name, (bold ? Font.BOLD : 0)
+            + (ital ? Font.ITALIC : 0), size);
         previewText.setFont(mFont);
 
         this.validate();
@@ -134,7 +140,7 @@ public class FontSelector extends javax.swing.JDialog {
      * @param size the point size of the font
      */
     public void setSelectedFont(String name, boolean bold, boolean italic,
-                                 int size) {
+        int size) {
         fontList.setSelectedValue(name, true);
         StyleConstants.setFontFamily(mAttributes, name);
         sizeCombo.setSelectedItem(Integer.toString(size));
@@ -230,6 +236,7 @@ public class FontSelector extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
         attributesPanel.add(sizeLabel, gridBagConstraints);
 
+        boldCheckBox.setFont(boldCheckBox.getFont().deriveFont(boldCheckBox.getFont().getStyle() | java.awt.Font.BOLD));
         boldCheckBox.setText(UiStrings.getString("bold")); // NOI18N
         boldCheckBox.setName("boldCheckBox"); // NOI18N
         boldCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -244,7 +251,7 @@ public class FontSelector extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         attributesPanel.add(boldCheckBox, gridBagConstraints);
 
-        italicCheckBox.setFont(new java.awt.Font("Dialog", 3, 12));
+        italicCheckBox.setFont(italicCheckBox.getFont().deriveFont((italicCheckBox.getFont().getStyle() | java.awt.Font.ITALIC)));
         italicCheckBox.setText(UiStrings.getString("italic")); // NOI18N
         italicCheckBox.setName("italicCheckBox"); // NOI18N
         italicCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -344,7 +351,8 @@ public class FontSelector extends javax.swing.JDialog {
         int size = StyleConstants.getFontSize(mAttributes);
         try {
             size = Integer.parseInt((String)sizeCombo.getSelectedItem());
-        } catch (NumberFormatException nfe) {
+        }
+        catch (NumberFormatException nfe) {
             // Ignore it
             sizeCombo.setSelectedItem(Integer.toString(size));
         }
@@ -383,13 +391,6 @@ public class FontSelector extends javax.swing.JDialog {
         mReturnStatus = retStatus;
         setVisible(false);
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        new FontSelector(new javax.swing.JFrame(), true).setVisible(true);
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel attributesPanel;
     private javax.swing.JCheckBox boldCheckBox;
@@ -408,7 +409,6 @@ public class FontSelector extends javax.swing.JDialog {
     private javax.swing.JLabel sizeLabel;
     private javax.swing.JLabel styleLabel;
     // End of variables declaration//GEN-END:variables
-
     /** The font attributes. */
     private SimpleAttributeSet mAttributes;
     /** The selected font. */

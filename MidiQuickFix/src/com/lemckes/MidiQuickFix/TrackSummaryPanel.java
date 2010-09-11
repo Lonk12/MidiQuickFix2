@@ -68,7 +68,7 @@ public class TrackSummaryPanel
             }
         });
         mTrackSummaryTable.getModel().addTableModelListener(this);
-        jScrollPane1.setViewportView(table);
+        summaryTableScrollPane.setViewportView(table);
     }
 
     private void createTrack() {
@@ -76,7 +76,8 @@ public class TrackSummaryPanel
         if (row < 0) {
             row = mTrackSummaryTable.getRowCount();
         }
-        CreateTrackDialog ctd = new CreateTrackDialog(mSequence, row, null, true);
+        CreateTrackDialog ctd = new CreateTrackDialog(
+            mSequence, row, MidiQuickFix.getMainFrame(), true);
         ctd.setVisible(true);
         if (ctd.wasTrackCreated()) {
             fireTracksChanged(TrackChangeType.TRACK_ADDED);
@@ -183,10 +184,10 @@ public class TrackSummaryPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
+        summaryTableScrollPane = new javax.swing.JScrollPane();
         controlPanel = new javax.swing.JPanel();
         controlLabel = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        buttonControlPanel = new javax.swing.JPanel();
         buttonPanel = new javax.swing.JPanel();
         addTrackButton = new javax.swing.JButton();
         copyTrackButton = new javax.swing.JButton();
@@ -195,8 +196,8 @@ public class TrackSummaryPanel
         setName("Form"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
-        jScrollPane1.setName("jScrollPane1"); // NOI18N
-        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        summaryTableScrollPane.setName("summaryTableScrollPane"); // NOI18N
+        add(summaryTableScrollPane, java.awt.BorderLayout.CENTER);
 
         controlPanel.setName("controlPanel"); // NOI18N
         controlPanel.setLayout(new java.awt.BorderLayout());
@@ -207,11 +208,12 @@ public class TrackSummaryPanel
         controlLabel.setName("controlLabel"); // NOI18N
         controlPanel.add(controlLabel, java.awt.BorderLayout.PAGE_START);
 
-        jPanel1.setName("jPanel1"); // NOI18N
+        buttonControlPanel.setName("buttonControlPanel"); // NOI18N
 
         buttonPanel.setName("buttonPanel"); // NOI18N
         buttonPanel.setLayout(new java.awt.GridLayout(0, 1, 0, 3));
 
+        addTrackButton.setMnemonic(UiStrings.getString("TrackSummaryPanel.newTrack.mnemonic").charAt(0));
         addTrackButton.setText(bundle.getString("TrackSummaryPanel.addTrackButton.text")); // NOI18N
         addTrackButton.setEnabled(false);
         addTrackButton.setName("addTrackButton"); // NOI18N
@@ -222,6 +224,7 @@ public class TrackSummaryPanel
         });
         buttonPanel.add(addTrackButton);
 
+        copyTrackButton.setMnemonic(UiStrings.getString("TrackSummaryPanel.copyTrack.mnemonic").charAt(0));
         copyTrackButton.setText(bundle.getString("TrackSummaryPanel.copyTrackButton.text")); // NOI18N
         copyTrackButton.setEnabled(false);
         copyTrackButton.setName("copyTrackButton"); // NOI18N
@@ -232,6 +235,7 @@ public class TrackSummaryPanel
         });
         buttonPanel.add(copyTrackButton);
 
+        deleteTrackButton.setMnemonic(UiStrings.getString("TrackSummaryPanel.deleteTrack.mnemonic").charAt(0));
         deleteTrackButton.setText(bundle.getString("TrackSummaryPanel.deleteTrackButton.text")); // NOI18N
         deleteTrackButton.setEnabled(false);
         deleteTrackButton.setName("deleteTrackButton"); // NOI18N
@@ -242,9 +246,9 @@ public class TrackSummaryPanel
         });
         buttonPanel.add(deleteTrackButton);
 
-        jPanel1.add(buttonPanel);
+        buttonControlPanel.add(buttonPanel);
 
-        controlPanel.add(jPanel1, java.awt.BorderLayout.CENTER);
+        controlPanel.add(buttonControlPanel, java.awt.BorderLayout.CENTER);
 
         add(controlPanel, java.awt.BorderLayout.LINE_END);
     }// </editor-fold>//GEN-END:initComponents
@@ -262,12 +266,12 @@ public class TrackSummaryPanel
     }//GEN-LAST:event_copyTrackButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addTrackButton;
+    private javax.swing.JPanel buttonControlPanel;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JLabel controlLabel;
     private javax.swing.JPanel controlPanel;
     private javax.swing.JButton copyTrackButton;
     private javax.swing.JButton deleteTrackButton;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane summaryTableScrollPane;
     // End of variables declaration//GEN-END:variables
 }

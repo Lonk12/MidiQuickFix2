@@ -139,8 +139,8 @@ public class PreferencesDialog
         String currentLaf = UIManager.getLookAndFeel().getName();
         lookAndFeelCombo.setSelectedItem(currentLaf);
 
-        setLocationRelativeTo(parent);
         pack();
+        setLocationRelativeTo(parent);
     }
 
     private void savePreferences() {
@@ -671,7 +671,7 @@ public class PreferencesDialog
     private void fontButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontButtonActionPerformed
         if (mFontSelector == null) {
             mFontSelector = new FontSelector(mParentFrame, false);
-            mFontSelector.setLocationRelativeTo(this);
+            mFontSelector.setLocationRelativeTo(lookAndFeelPanel);
             mFontSelector.setSelectedFont(MqfProperties.getFontProperty(
                 MqfProperties.LYRIC_FONT,
                 lyricsTextPane.getFont()));

@@ -94,6 +94,10 @@ public class TrackEditorPanel extends javax.swing.JPanel
         showNotesCheck.setEnabled(haveTracks);
     }
 
+    public String getCurrentTrackTitle() {
+        return trackSelector.getItemAt(mCurrentTrack).toString();
+    }
+
     /**
      * Populate the entries in the track selector combo with
      * the track number and track names from the tracks array.
@@ -152,7 +156,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
     private void doCreateEvent() {
         if (mCreateEventDialog == null) {
             mCreateEventDialog = new CreateEventDialog(mSeq.getResolution(),
-                null, false);
+                MidiQuickFix.getMainFrame(), false);
             mCreateEventDialog.addEventCreationListener(this);
         }
         TrackTableModel ttm = (TrackTableModel)trackTable.getModel();
@@ -256,6 +260,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         tableScrollPane = new javax.swing.JScrollPane();
         controlPanel = new javax.swing.JPanel();
@@ -269,15 +274,22 @@ public class TrackEditorPanel extends javax.swing.JPanel
         trackLabel = new javax.swing.JLabel();
         trackSelector = new javax.swing.JComboBox();
 
-        setLayout(new java.awt.BorderLayout());
+        setLayout(new java.awt.GridBagLayout());
 
         tableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        add(tableScrollPane, java.awt.BorderLayout.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(tableScrollPane, gridBagConstraints);
 
         controlPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 3, 3));
 
         buttonPanel.setLayout(new java.awt.GridLayout(0, 1, 0, 3));
 
+        insertButton.setMnemonic(UiStrings.getString("TrackEditorPanel.insertButton.mnemonic").charAt(0));
         insertButton.setText(UiStrings.getString("insert")); // NOI18N
         insertButton.setEnabled(false);
         insertButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
@@ -288,6 +300,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
         });
         buttonPanel.add(insertButton);
 
+        deleteButton.setMnemonic(UiStrings.getString("TrackEditorPanel.deleteButton.mnemonic").charAt(0));
         deleteButton.setText(UiStrings.getString("delete")); // NOI18N
         deleteButton.setEnabled(false);
         deleteButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
@@ -298,6 +311,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
         });
         buttonPanel.add(deleteButton);
 
+        moreButton.setMnemonic(UiStrings.getString("TrackEditorPanel.moreButton.mnemonic").charAt(0));
         moreButton.setText(UiStrings.getString("more")); // NOI18N
         moreButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -308,7 +322,12 @@ public class TrackEditorPanel extends javax.swing.JPanel
 
         controlPanel.add(buttonPanel);
 
-        add(controlPanel, java.awt.BorderLayout.EAST);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        add(controlPanel, gridBagConstraints);
 
         trackPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 6, 0));
         trackPanel.setLayout(new java.awt.BorderLayout());
@@ -341,7 +360,11 @@ public class TrackEditorPanel extends javax.swing.JPanel
 
         trackPanel.add(trackSelectorPanel, java.awt.BorderLayout.WEST);
 
-        add(trackPanel, java.awt.BorderLayout.NORTH);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(trackPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int[] selRows = trackTable.getSelectedRows();

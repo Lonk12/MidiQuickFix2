@@ -19,9 +19,9 @@
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
   <SubComponents>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+    <Container class="javax.swing.JScrollPane" name="summaryTableScrollPane">
       <Properties>
-        <Property name="name" type="java.lang.String" value="jScrollPane1" noResource="true"/>
+        <Property name="name" type="java.lang.String" value="summaryTableScrollPane" noResource="true"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
@@ -57,9 +57,9 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Container class="javax.swing.JPanel" name="jPanel1">
+        <Container class="javax.swing.JPanel" name="buttonControlPanel">
           <Properties>
-            <Property name="name" type="java.lang.String" value="jPanel1" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="buttonControlPanel" noResource="true"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
@@ -82,6 +82,9 @@
               <SubComponents>
                 <Component class="javax.swing.JButton" name="addTrackButton">
                   <Properties>
+                    <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                      <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="TrackSummaryPanel.newTrack.mnemonic" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="TrackSummaryPanel.addTrackButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -94,6 +97,9 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="copyTrackButton">
                   <Properties>
+                    <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                      <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="TrackSummaryPanel.copyTrack.mnemonic" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="TrackSummaryPanel.copyTrackButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -106,6 +112,9 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="deleteTrackButton">
                   <Properties>
+                    <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                      <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="TrackSummaryPanel.deleteTrack.mnemonic" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="TrackSummaryPanel.deleteTrackButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                     </Property>

@@ -22,6 +22,7 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.components.TempoSlider;
 import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.LoopSliderEvent;
 import com.lemckes.MidiQuickFix.util.LoopSliderListener;
@@ -153,6 +154,8 @@ public class MidiQuickFix
         });
 
         Startup startDialog = new Startup(new javax.swing.JFrame(), false);
+        // Centre on the screen
+        startDialog.setLocationRelativeTo(null);
         startDialog.setVisible(true);
 
         try {
@@ -208,7 +211,8 @@ public class MidiQuickFix
                             }
                         }
                     }
-                    setTempoFactor(val);
+                    tempoAdjustSlider.setValue(TempoSlider.tempoToSlider(val));
+//                    setTempoFactor(val);
                 }
             });
 
@@ -238,8 +242,8 @@ public class MidiQuickFix
 
             mSequencer.addMetaEventListener(new EventHandler());
 
-            /* Update the position 10 times per second */
-            createTimer(100);
+            /* Update the position 5 times per second */
+            createTimer(200);
 
             mSequenceModified = false;
 
@@ -253,15 +257,10 @@ public class MidiQuickFix
 
                 @Override
                 public void stateChanged(ChangeEvent e) {
-                    // the slider range is [0, 200]
-                    // convert the value to the range [-1.0, 1.0]
-                    int val = tempoAdjustSlider.getValue();
-                    float factor = (val - 100) / 100.0f;
-
-                    // convert from [-1.0, 1.0] to [0.5, 2.0]
-                    // i.e.  2^-1.0 to 2^1.0
-                    factor = (float)Math.pow(2.0, factor);
-                    setTempoFactor(factor);
+//                    if (!tempoAdjustSlider.getValueIsAdjusting()) {
+                    setTempoFactor(
+                        TempoSlider.sliderToTempo(tempoAdjustSlider.getValue()));
+//                    }
                 }
             });
             mTrackSummaryPanel = new TrackSummaryPanel();
@@ -306,7 +305,7 @@ public class MidiQuickFix
         mMainFrame = this;
     }
 
-    public static JFrame getMainFrame(){
+    public static JFrame getMainFrame() {
         return mMainFrame;
     }
 
@@ -526,7 +525,7 @@ public class MidiQuickFix
     private boolean checkForSave() {
         boolean continueAction = true;
         if (mSequenceModified) {
-            int answer = JOptionPane.showConfirmDialog(null,
+            int answer = JOptionPane.showConfirmDialog(this,
                 UiStrings.getString("check_save"),
                 UiStrings.getString("save_changes"),
                 JOptionPane.YES_NO_CANCEL_OPTION);
@@ -698,6 +697,7 @@ public class MidiQuickFix
         // Reset the transpose dialog to zero
         mTransposeDialog.setTransposeBy(0);
         mTransposeDialog.pack();
+        mTransposeDialog.setLocationRelativeTo(transposeButton);
         mTransposeDialog.setVisible(true);
         if (mTransposeDialog.getReturnStatus() == TransposeDialog.RET_OK) {
             boolean running = mSequencer.isRunning();
@@ -711,6 +711,7 @@ public class MidiQuickFix
                 mTransposeDialog.getDoDrums());
             mTrackEditor.setSequence(mSeq);
             mTrackSummaryPanel.setSequence(mSeq);
+            setInfoLabels();
             mSequenceModified = true;
 
             if (overflowed) {
@@ -975,8 +976,8 @@ public class MidiQuickFix
         positionSlider = new com.lemckes.MidiQuickFix.components.LoopSlider();
         tempoAdjustPanel = new javax.swing.JPanel();
         tempoAdjustLabel = new javax.swing.JLabel();
-        tempoAdjustSlider = new javax.swing.JSlider();
         tempoAdjustField = new JFormattedTextField(new DecimalFormat("0.00"));
+        tempoAdjustSlider = new com.lemckes.MidiQuickFix.components.TempoSlider();
         seqInfoPanel = new javax.swing.JPanel();
         lengthLabel = new javax.swing.JLabel();
         lengthText = new javax.swing.JLabel();
@@ -1069,27 +1070,24 @@ public class MidiQuickFix
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         tempoAdjustPanel.add(tempoAdjustLabel, gridBagConstraints);
-
-        tempoAdjustSlider.setMaximum(200);
-        tempoAdjustSlider.setValue(100);
-        tempoAdjustSlider.setPreferredSize(new java.awt.Dimension(100, 16));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        tempoAdjustPanel.add(tempoAdjustSlider, gridBagConstraints);
 
         tempoAdjustField.setColumns(4);
         tempoAdjustField.setFont(new java.awt.Font("Monospaced", 0, 10));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.ipadx = 3;
         gridBagConstraints.ipady = 3;
         tempoAdjustPanel.add(tempoAdjustField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
+        tempoAdjustPanel.add(tempoAdjustSlider, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1212,7 +1210,7 @@ public class MidiQuickFix
 
         editorPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 0, 3, 0));
         editorPanel.setLayout(new javax.swing.BoxLayout(editorPanel, javax.swing.BoxLayout.LINE_AXIS));
-        detailsTabbedPane.addTab(UiStrings.getString("editor"), editorPanel); // NOI18N
+        detailsTabbedPane.addTab(UiStrings.getString("track_editor"), editorPanel); // NOI18N
 
         lyricsPanel.setLayout(new java.awt.BorderLayout());
         detailsTabbedPane.addTab(UiStrings.getString("lyrics"), lyricsPanel); // NOI18N
@@ -1346,10 +1344,21 @@ public class MidiQuickFix
     }//GEN-LAST:event_traceMenuItemActionPerformed
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        if (mAboutDialog == null) {
-            mAboutDialog = new AboutDialog(this, false);
-        }
-        mAboutDialog.setVisible(true);
+        EventQueue.invokeLater(new Runnable()
+        {
+
+            @Override
+            public void run() {
+                JFrame frame = MidiQuickFix.getMainFrame();
+                frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                if (mAboutDialog == null) {
+                    mAboutDialog = new AboutDialog(frame, false);
+                }
+                frame.setCursor(Cursor.getDefaultCursor());
+                mAboutDialog.setVisible(true);
+            }
+        });
+
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
@@ -1459,7 +1468,7 @@ public class MidiQuickFix
     private javax.swing.JFormattedTextField tempoAdjustField;
     private javax.swing.JLabel tempoAdjustLabel;
     private javax.swing.JPanel tempoAdjustPanel;
-    private javax.swing.JSlider tempoAdjustSlider;
+    private com.lemckes.MidiQuickFix.components.TempoSlider tempoAdjustSlider;
     private javax.swing.JLabel tempoLabel;
     private javax.swing.JLabel tempoText;
     private javax.swing.JLabel timeLabel;
