@@ -65,6 +65,7 @@ public class LyricDisplay
     implements MetaEventListener,
     FontSelectionListener
 {
+
     static final long serialVersionUID = 4418719983394376657L;
     private TreeMap<Long, String> mWords = new TreeMap<Long, String>();
     private TreeMap<Long, WordPlace> mPlaces = new TreeMap<Long, WordPlace>();
@@ -87,6 +88,7 @@ public class LyricDisplay
     class MyHighlightPainter
         extends DefaultHighlighter.DefaultHighlightPainter
     {
+
         public MyHighlightPainter(Color color) {
             super(color);
         }
@@ -94,6 +96,7 @@ public class LyricDisplay
 
     private class WordPlace
     {
+
         private int startPos;
         private int length;
 
@@ -131,7 +134,8 @@ public class LyricDisplay
             MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.green.darker()));
         try {
             mHighlightTag = mHighlighter.addHighlight(0, 0, myHighlightPainter);
-        } catch (BadLocationException e) {
+        }
+        catch (BadLocationException e) {
         }
         createStyles();
         updatePreferences();
@@ -165,6 +169,7 @@ public class LyricDisplay
             final int len = wp.getLength();
             EventQueue.invokeLater(new Runnable()
             {
+
                 @Override
                 public void run() {
                     try {
@@ -179,7 +184,8 @@ public class LyricDisplay
                         // Move the highlight
                         mHighlighter.changeHighlight(mHighlightTag, start,
                             start + len);
-                    } catch (BadLocationException ex) {
+                    }
+                    catch (BadLocationException ex) {
                         // What a pity.
                     }
                 }
@@ -211,7 +217,8 @@ public class LyricDisplay
                 if (mySequence != null) {
                     loadSequence(mySequence);
                 }
-            } catch (InvalidMidiDataException ex) {
+            }
+            catch (InvalidMidiDataException ex) {
                 Logger.getLogger(LyricDisplay.class.getName()).
                     log(Level.SEVERE, null, ex);
             }
@@ -251,12 +258,12 @@ public class LyricDisplay
         int patternFlags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
         Pattern rubyPattern =
             Pattern.compile("\\[(.*?)\\]", patternFlags);
+        StyledDocument doc = lyricText.getStyledDocument();
+        Style regularStyle = doc.getStyle("regular");
+        Style rubyStyle = doc.getStyle("ruby");
         for (Entry<Long, String> e : mWords.entrySet()) {
             lyricText.setCaretPosition(lyricText.getDocument().getLength());
             String text = e.getValue();
-            StyledDocument doc = lyricText.getStyledDocument();
-            Style regularStyle = doc.getStyle("regular");
-            Style rubyStyle = doc.getStyle("ruby");
             if (text.contains("[")) {
                 Matcher m = rubyPattern.matcher(text);
                 int nonRubyStartPos = 0;
@@ -285,7 +292,8 @@ public class LyricDisplay
     private void appendText(StyledDocument doc, String text, Style style) {
         try {
             doc.insertString(doc.getLength(), text, style);
-        } catch (BadLocationException ex) {
+        }
+        catch (BadLocationException ex) {
             TraceDialog.addTrace("appendText : " + ex.getLocalizedMessage());
         }
     }
@@ -333,7 +341,8 @@ public class LyricDisplay
                                 mWords.put(tick, lyricString);
                             }
                         }
-                    } catch (UnsupportedEncodingException uee) {
+                    }
+                    catch (UnsupportedEncodingException uee) {
                         TraceDialog.addTrace("findLyrics exception "
                             + uee.getLocalizedMessage());
                     }
@@ -419,8 +428,10 @@ public class LyricDisplay
             mHighlighter.removeAllHighlights();
             mHighlightTag =
                 mHighlighter.addHighlight(0, 0, myHighlightPainter);
-        } catch (BadLocationException e) {
-        } catch (Exception ex) {
+        }
+        catch (BadLocationException e) {
+        }
+        catch (Exception ex) {
             System.err.println("an exception " + ex);
         }
 
@@ -448,6 +459,12 @@ public class LyricDisplay
         StyleConstants.setFontSize(ruby, Math.round(size));
         StyleConstants.setForeground(ruby, MqfProperties.getColourProperty(
             MqfProperties.LYRIC_RUBY_FG_COLOUR, Color.BLACK));
+    }
+
+    public void moveCaretToStart() {
+        lyricText.setCaretPosition(0);
+        final Rectangle r = new Rectangle(1, 1);
+        lyricText.scrollRectToVisible(r);
     }
 
     /**
@@ -482,7 +499,7 @@ public class LyricDisplay
         lyricScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         lyricScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        lyricText.setFont(new java.awt.Font("Dialog", 0, 24));
+        lyricText.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         lyricText.setPreferredSize(new java.awt.Dimension(400, 300));
         lyricScrollPane.setViewportView(lyricText);
 
@@ -538,7 +555,8 @@ public class LyricDisplay
     private void fontSelectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontSelectButtonActionPerformed
         if (mFontSelector == null) {
             mFontSelector = new FontSelector(MidiQuickFix.getMainFrame(), false);
-            mFontSelector.setLocationRelativeTo(lyricScrollPane.getVerticalScrollBar());
+            mFontSelector.setLocationRelativeTo(
+                lyricScrollPane.getVerticalScrollBar());
             mFontSelector.setSelectedFont(lyricText.getFont());
             mFontSelector.addFontSelectionListener(this);
         }
@@ -546,13 +564,12 @@ public class LyricDisplay
     }//GEN-LAST:event_fontSelectButtonActionPerformed
 
     private void lyricsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lyricsCheckBoxActionPerformed
-       reset();
+        reset();
     }//GEN-LAST:event_lyricsCheckBoxActionPerformed
 
     private void textCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textCheckBoxActionPerformed
         reset();
     }//GEN-LAST:event_textCheckBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton fontSelectButton;

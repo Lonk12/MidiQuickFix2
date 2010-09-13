@@ -818,11 +818,6 @@ public class MidiQuickFix
                 JOptionPane.ERROR_MESSAGE);
         }
 
-//        // Clear the lyrics, but only if we are playing from the start.
-//        if (mPlayController.getPausedPosition() == 0 && mLyricDisplay != null) {
-//            mLyricDisplay.reset();
-//        }
-
         mSequencer.setTickPosition(mPlayController.getPausedPosition());
         mSequencer.start();
         mTimer.start();
@@ -844,6 +839,7 @@ public class MidiQuickFix
         mSequencer.setTickPosition(0);
         mTimer.stop();
         positionSlider.setValue(0);
+        mLyricDisplay.moveCaretToStart();
     }
 
     @Override
@@ -856,6 +852,7 @@ public class MidiQuickFix
         }
         mSequencer.setTickPosition(0);
         positionSlider.setValue(0);
+        mLyricDisplay.moveCaretToStart();
 
         // Workaround to turn off the sound ...
         if (mPlayController.getPlayState() == PlayController.PlayState.PLAYING) {
