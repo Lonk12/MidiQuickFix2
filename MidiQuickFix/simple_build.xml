@@ -10,13 +10,14 @@
     </target>
     
     <target name="compile" depends="init">
-        <javac srcdir="src" destdir="build/classes" source="1.5" target="1.5">
+        <javac srcdir="src" destdir="build/classes" source="1.6" target="1.6">
         </javac>
     </target>
     
     <target name="jar" depends="compile" description="Build the jar file.">
         <copy todir="build/classes">
             <fileset includes="**/resources/*" dir="src"/>
+            <fileset includes="**/Bundle.properties" dir="src"/>
         </copy>
         <jar jarfile="dist/MidiQuickFix.jar">
             <manifest>
@@ -45,7 +46,7 @@
         </copy>
         <mkdir dir="release/MidiQuickFix/src/com/lemckes/MidiQuickFix"/>
         <copy todir="release/MidiQuickFix/src/com/lemckes/MidiQuickFix">
-            <fileset includes="*java, *form" dir="src/com/lemckes/MidiQuickFix"/>
+            <fileset includes="*java, *form, *properties" dir="src/com/lemckes/MidiQuickFix"/>
             <fileset includes="*/*java, */*form" dir="src/com/lemckes/MidiQuickFix"/>
             <fileset includes="resources/*properties" dir="src/com/lemckes/MidiQuickFix"/>
             <fileset includes="resources/*gif, resources/*png" dir="src/com/lemckes/MidiQuickFix"/>
