@@ -1,0 +1,19 @@
+Karaoke features
+ Multilingual lyrics
+ Display 'Ruby' text
+ 
+User Interface
+ Position dialogs in sensible places.
+ Added User Preferences for Lyrics display and Look and Feel
+ Display adjusted tempo value in the Tempo field
+ Add Labels to the tempo slider
+ Added display of Song Info
+ 
+Editing functions
+ Update lyrics dynamically when editing a sequence
+ Fix bug with Save As not retaining the new file name
+ Added Create, Copy and Delete Track functions
+ Convert 'NOTE_ON 0' events to NOTE_OFF
+ Convert TEXT events to LYRICS
+ Convert Type 0 midi file to Type 1
+ Delete all NOTE_ON and NOTE_OFF events

@@ -51,12 +51,6 @@ class SysexEvent
             sb.append(Integer.toHexString(i)); // NOI18N
         }
         result[2] = sb.toString();
-//       for (int i = 0; i < data.length; ++i) {
-//            if (i > 0) {
-//                 result[2] += ","; // NOI18N
-//            }
-//            result[2] += data[i] & 0x00ff;
-//        }
         return result;
     }
 }
