@@ -35,9 +35,7 @@ import javax.swing.text.AbstractDocument;
 /**
  * Allow the user to create a new track
  */
-public class CreateTrackDialog extends javax.swing.JDialog
-{
-
+public class CreateTrackDialog extends javax.swing.JDialog {
     private final String DEFAULT_CONTROL_VALUE = "64"; // NOI18N
     private final String DEFAULT_CHANNEL = "0"; // NOI18N
     private MqfSequence mSequence;
@@ -78,7 +76,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         mTrackCreated = true;
     }
 
-    public boolean wasTrackCreated(){
+    public boolean wasTrackCreated() {
         return mTrackCreated;
     }
 
@@ -111,8 +109,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         try {
             me = MetaEvent.createMetaEvent(
                 type, trackNameField.getText(), 0, 92);
-        }
-        catch (InvalidMidiDataException ex) {
+        } catch (InvalidMidiDataException ex) {
             TraceDialog.addTrace(ex.getMessage());
         }
         return me;
@@ -133,11 +130,9 @@ public class CreateTrackDialog extends javax.swing.JDialog
         int data2 = InstrumentNames.getInstrumentBank(instrument);
         MidiEvent me = null;
         try {
-            me =
-                ShortEvent.createShortEvent(command, getChannel(), data1, data2,
-                0);
-        }
-        catch (InvalidMidiDataException ex) {
+            me = ShortEvent.createShortEvent(
+                command, getChannel(), data1, data2, 0);
+        } catch (InvalidMidiDataException ex) {
             TraceDialog.addTrace(ex.getMessage());
         }
         return me;
@@ -156,8 +151,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         try {
             me = ShortEvent.createShortEvent(
                 command, getChannel(), data1, data2, 0);
-        }
-        catch (InvalidMidiDataException ex) {
+        } catch (InvalidMidiDataException ex) {
             TraceDialog.addTrace(ex.getMessage());
         }
         return me;
@@ -176,8 +170,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         try {
             me = ShortEvent.createShortEvent(
                 command, getChannel(), data1, data2, 0);
-        }
-        catch (InvalidMidiDataException ex) {
+        } catch (InvalidMidiDataException ex) {
             TraceDialog.addTrace(ex.getMessage());
         }
         return me;
@@ -194,8 +187,7 @@ public class CreateTrackDialog extends javax.swing.JDialog
         int i = 0;
         try {
             i = Integer.parseInt(s);
-        }
-        catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             // DO NOTHING
         }
         return i;
@@ -392,7 +384,6 @@ public class CreateTrackDialog extends javax.swing.JDialog
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         doClose();
     }//GEN-LAST:event_cancelButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;

@@ -156,7 +156,7 @@ public class LyricDisplay
         }
     }
 
-    public void updateHighlight(final long tick) {
+    private void updateHighlight(final long tick) {
         WordPlace wp = mPlaces.get(tick);
 
         // Fudge to find an entry close to the given tick
@@ -213,7 +213,7 @@ public class LyricDisplay
         if (seq.getSequence() != null) {
             try {
                 mySequence =
-                    new MqfSequence().createMqfSequence(seq.getSequence());
+                    MqfSequence.createMqfSequence(seq.getSequence());
                 if (mySequence != null) {
                     loadSequence(mySequence);
                 }
@@ -316,19 +316,29 @@ public class LyricDisplay
                         if (lyricString.length() > 0) {
                             checkForCharsetChange(lyricString);
                             checkForSongInfo(lyricString);
+                            // Convert MIDI end-of-line/paragraph and Tab characters
+                            // for display.
                             lyricString = lyricString.replaceAll("\n", "\n\n");
                             lyricString = lyricString.replaceAll("\r", "\n");
                             lyricString = lyricString.replaceAll("\\\\n", "\n\n");
                             lyricString = lyricString.replaceAll("\\\\r", "\n");
                             lyricString = lyricString.replaceAll("\\\\t", "\t");
+
+                            // Remove any CharsetChange strings
                             lyricString = lyricString.replaceAll("\\{\\@.*?\\}",
                                 "");
+                            // Remove any SongInfo strings
                             lyricString = lyricString.replaceAll("\\{\\#.*?\\}",
                                 "");
+
+                            // Unescape any remaining escaped special characters
                             lyricString = lyricString.replaceAll("\\\\\\[", "[");
                             lyricString = lyricString.replaceAll("\\\\]", "]");
                             lyricString = lyricString.replaceAll("\\\\\\{", "{");
                             lyricString = lyricString.replaceAll("\\\\}", "}");
+
+                            // Convert commonly used (but not recommended)
+                            // '/' and '\' end-of-line/paragraph markers for display
                             lyricString = lyricString.replaceAll("\\\\", "\n\n");
                             lyricString = lyricString.replaceAll("/", "\n");
 
@@ -419,7 +429,7 @@ public class LyricDisplay
     /**
      *
      */
-    public void updatePreferences() {
+    final public void updatePreferences() {
         myHighlightPainter = new MyHighlightPainter(
             MqfProperties.getColourProperty(
             MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.green.darker()));
@@ -430,6 +440,7 @@ public class LyricDisplay
                 mHighlighter.addHighlight(0, 0, myHighlightPainter);
         }
         catch (BadLocationException e) {
+            // Can not happen with addHighlight(0, 0, myHighlightPainter);
         }
         catch (Exception ex) {
             System.err.println("an exception " + ex);

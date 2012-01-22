@@ -24,7 +24,6 @@ package com.lemckes.MidiQuickFix.util;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Vector;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
@@ -40,14 +39,8 @@ import javax.sound.midi.Track;
  * Any Song Information (as defined by http://www.midi.org/techspecs/rp26.php)
  * is also stored in this class.
  */
-public class MqfSequence extends Sequence
-{
-
+public class MqfSequence extends Sequence {
     private Map<String, String> mSongInfo = new LinkedHashMap<String, String>(4);
-
-    public MqfSequence() throws InvalidMidiDataException {
-        this(Sequence.PPQ, 96);
-    }
 
     public MqfSequence(float divisionType, int resolution, int numTracks) throws
         InvalidMidiDataException {
@@ -59,22 +52,14 @@ public class MqfSequence extends Sequence
         super(divisionType, resolution);
     }
 
-    public MqfSequence createMqfSequence(Sequence seq) throws
+    public static MqfSequence createMqfSequence(Sequence seq) throws
         InvalidMidiDataException {
         MqfSequence mqfs = new MqfSequence(
             seq.getDivisionType(), seq.getResolution());
         for (Track t : seq.getTracks()) {
-            mqfs.getTracksVector().addElement(t);
+            mqfs.tracks.addElement(t);
         }
         return mqfs;
-    }
-
-    /**
-     * Gets the actual Vector that contains the Tracks
-     * @return the actual Vector that contains the Tracks
-     */
-    public Vector<Track> getTracksVector() {
-        return tracks;
     }
 
     /**
@@ -86,9 +71,12 @@ public class MqfSequence extends Sequence
      * @return the newly created Track
      */
     public Track createTrack(int index) {
-        synchronized (tracks) {
+        synchronized (this) {
+            // Create a new Track at the end of the sequence
             Track track = createTrack();
+            // Add the same new Track at the given index
             tracks.add(index, track);
+            // and remove the one from the end.
             tracks.remove(tracks.size() - 1);
             return track;
         }

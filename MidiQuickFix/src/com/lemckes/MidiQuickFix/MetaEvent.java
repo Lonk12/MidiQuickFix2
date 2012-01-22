@@ -34,9 +34,7 @@ import javax.sound.midi.MidiEvent;
  * Handle Midi Meta events.
  * @version $Id$
  */
-public class MetaEvent
-{
-
+public class MetaEvent {
     static java.text.DecimalFormat twoDigitFormat =
         new java.text.DecimalFormat("00"); // NOI18N
     static String[] typeNames = {
@@ -75,7 +73,7 @@ public class MetaEvent
     // nn=numerator, dd=denominator (2^dd), cc=MIDI clocks/metronome click
     // bb=no. of notated 32nd notes per MIDI quarter note (24 MIDI clocks).
     // No I don't understand that last one.
-    // 06 03 18 08 is 6/8 time, 24 clocks/metronome, 8 1/32ndnotes/1/4note
+    // 06 03 18 08 is 6/8 time, 24 clocks/metronome, 8 1/32ndnotes / 1/4note
     public static final int KEY_SIGNATURE = 0x59; //FF 59 02 sf mi
     // -sf=no. of flats +sf=no. of sharps mi=0=major mi=1=minor
     public static final int PROPRIETARY_DATA = 0x7f; //FF 7F len data
@@ -218,8 +216,7 @@ public class MetaEvent
         if (dumpText) {
             try {
                 result[2] = StringConverter.convertBytesToString(data);
-            }
-            catch (UnsupportedEncodingException ex) {
+            } catch (UnsupportedEncodingException ex) {
                 result[2] = "Unsupported Character Encoding";
             }
         }
@@ -293,8 +290,7 @@ public class MetaEvent
         }
         try {
             t = Integer.parseInt(tempoString);
-        }
-        catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             // DO NOTHING - just use the default
         }
         return t;
@@ -322,16 +318,44 @@ public class MetaEvent
                 break;
             case 2:
                 // Beats per bar / Beat note duration
-                result[0] = safeParseByte(parts[0]);
-                byte dur = safeParseByte(parts[1]);
-                double log2 = Math.log(dur) / Math.log(2);
-                result[1] = (byte)Math.round(log2);
-                // One metronome click per beat
-                result[2] = (byte)(ticksPerBeat / dur);
-
+                result[0] = getBeatsPerBar(parts[0]);
+                result[1] = getBeatValue(parts[1]);
+                result[2] = getUsefulClocksPerMetronome(parts[0], parts[1]);
                 break;
+            case 3:
+
         }
         return result;
+    }
+
+    private static byte getBeatsPerBar(String beats) {
+        return safeParseByte(beats);
+    }
+
+    private static byte getBeatValue(String value) {
+        byte beatValue = safeParseByte(value);
+        double log2 = Math.log(beatValue) / Math.log(2);
+        return (byte)Math.round(log2);
+    }
+
+    private static byte getUsefulClocksPerMetronome(String beats, String value) {
+        byte beatsPerBar = getBeatsPerBar(beats);
+        byte beatValue = getBeatValue(value);
+        // Try to generate a useful metronome click
+        // How many MIDI clocks are there in each beat
+        // (there are 24 MIDI clocks in a quarter note)
+        int clocksPerBeat = (24 * 4) / beatValue;
+        int clocksPerMetronome = clocksPerBeat;
+        if (beatsPerBar > 0) {
+            if (beatsPerBar % 4 == 0) {
+                clocksPerMetronome = clocksPerBeat * beatsPerBar / 4;
+            } else if (beatsPerBar % 3 == 0) {
+                clocksPerMetronome = clocksPerBeat * beatsPerBar / 3;
+            } else if (beatsPerBar % 2 == 0) {
+                clocksPerMetronome = clocksPerBeat * beatsPerBar / 2;
+            }
+        }
+        return (byte)clocksPerMetronome;
     }
 
     /**
@@ -447,8 +471,7 @@ public class MetaEvent
         if (isText(mess)) {
             try {
                 data = StringConverter.convertStringToBytes(value);
-            }
-            catch (UnsupportedEncodingException ex) {
+            } catch (UnsupportedEncodingException ex) {
                 // Use the system default encoding
                 data = value.getBytes();
             }
@@ -472,8 +495,7 @@ public class MetaEvent
             for (int i = 0; i < len; ++i) {
                 try {
                     data[i] = Byte.decode(strings[i]);
-                }
-                catch (NumberFormatException nfe) {
+                } catch (NumberFormatException nfe) {
                     data[i] = 0;
                 }
             }
@@ -482,8 +504,7 @@ public class MetaEvent
         if (data != null) {
             try {
                 mess.setMessage(type, data, data.length);
-            }
-            catch (InvalidMidiDataException e) {
+            } catch (InvalidMidiDataException e) {
                 TraceDialog.addTrace(
                     "Error: MetaEvent.setMetaData(" + value + ") " + e.
                     getMessage()); // NOI18N
@@ -521,8 +542,7 @@ public class MetaEvent
         byte t = defVal;
         try {
             t = Byte.parseByte(s);
-        }
-        catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             // DO NOTHING - just use the default
         }
         return t;

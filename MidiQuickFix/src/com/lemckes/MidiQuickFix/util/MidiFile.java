@@ -43,6 +43,6 @@ public class MidiFile {
     static public MqfSequence openSequenceFile(java.io.File file)
     throws InvalidMidiDataException, IOException {
         // Construct a Sequence object
-        return new MqfSequence().createMqfSequence(MidiSystem.getSequence(file));
+        return MqfSequence.createMqfSequence(MidiSystem.getSequence(file));
     }
 }

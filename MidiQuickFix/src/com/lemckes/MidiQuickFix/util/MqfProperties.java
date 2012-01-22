@@ -37,18 +37,18 @@ import java.util.Properties;
 public class MqfProperties
 {
     private static String mPropertiesFileName =
-        System.getProperty("user.home")
-        + System.getProperty("file.separator")
-        + "MQF.properties";
+        System.getProperty("user.home") //NOI18N
+        + System.getProperty("file.separator") //NOI18N
+        + "MQF.properties"; //NOI18N
     private static Properties mProps = new Properties();
-    public static final String LAST_PATH_KEY = "lastpath";
-    public static final String LOOK_AND_FEEL_NAME = "laf_name";
-    public static final String LYRIC_FONT = "lyric_font";
-    public static final String LYRIC_RUBY_FONT_SCALE = "lyric_ruby_font_scale";
-    public static final String LYRIC_BACKGROUND_COLOUR = "lyric_bg";
-    public static final String LYRIC_FOREGROUND_COLOUR = "lyric_fg";
-    public static final String LYRIC_RUBY_FG_COLOUR = "lyric_ruby_fg";
-    public static final String LYRIC_HIGHLIGHT_COLOUR = "lyric_highlight";
+    public static final String LAST_PATH_KEY = "lastpath"; //NOI18N
+    public static final String LOOK_AND_FEEL_NAME = "laf_name"; //NOI18N
+    public static final String LYRIC_FONT = "lyric_font"; //NOI18N
+    public static final String LYRIC_RUBY_FONT_SCALE = "lyric_ruby_font_scale"; //NOI18N
+    public static final String LYRIC_BACKGROUND_COLOUR = "lyric_bg"; //NOI18N
+    public static final String LYRIC_FOREGROUND_COLOUR = "lyric_fg"; //NOI18N
+    public static final String LYRIC_RUBY_FG_COLOUR = "lyric_ruby_fg"; //NOI18N
+    public static final String LYRIC_HIGHLIGHT_COLOUR = "lyric_highlight"; //NOI18N
 
     public static String getProperty(String key) {
         return mProps.getProperty(key);
@@ -83,17 +83,17 @@ public class MqfProperties
         int r = colour.getRed();
         String red = Integer.toHexString(r);
         if (r < 16) {
-            red = "0" + red;
+            red = "0" + red; //NOI18N
         }
         int g = colour.getGreen();
         String green = Integer.toHexString(g);
         if (g < 16) {
-            green = "0" + green;
+            green = "0" + green; //NOI18N
         }
         int b = colour.getBlue();
         String blue = Integer.toHexString(b);
         if (b < 16) {
-            blue = "0" + blue;
+            blue = "0" + blue; //NOI18N
         }
         return red + green + blue;
     }
@@ -119,15 +119,15 @@ public class MqfProperties
 
     private static String encodeFontName(Font font) {
         String name = font.getName();
-        String style = "";
+        String style = ""; //NOI18N
         if (font.isBold()) {
-            style = "BOLD";
+            style = "BOLD"; //NOI18N
         }
         if (font.isItalic()) {
-            style += "ITALIC";
+            style += "ITALIC"; //NOI18N
         }
         if (font.isPlain()) {
-            style = "PLAIN";
+            style = "PLAIN"; //NOI18N
         }
         String size = Integer.toString(font.getSize());
         return name + "-" + style + "-" + size;
@@ -219,7 +219,7 @@ public class MqfProperties
     public static void writeProperties() {
         try {
             mProps.store(new FileWriter(mPropertiesFileName),
-                "MidiQuickFix properties");
+                "MidiQuickFix properties"); //NOI18N
         } catch (FileNotFoundException ex) {
             // Shame really
         } catch (IOException ex) {

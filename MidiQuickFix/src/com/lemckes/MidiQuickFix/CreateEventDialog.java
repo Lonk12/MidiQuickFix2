@@ -59,12 +59,12 @@ public class CreateEventDialog extends javax.swing.JDialog {
     private final String PITCH_BEND = "PITCH_BEND"; // NOI18N
     private final String CHANNEL_PRESSURE = "CHANNEL_PRESSURE"; // NOI18N
     private final String META_EVENT = "META_EVENT"; // NOI18N
-    private final String DEFAULT_OCTAVE = "5"; // NOI18N
-    private final String DEFAULT_PRESSURE = "127"; // NOI18N
-    private final String DEFAULT_PITCH_BEND = "8192"; // NOI18N
-    private final String DEFAULT_CONTROL_VALUE = "64"; // NOI18N
-    private final String DEFAULT_NOTE_VALUE = "127"; // NOI18N
-    private final String DEFAULT_CHANNEL = "0"; // NOI18N
+    private final Integer DEFAULT_OCTAVE = 5;
+    private final Integer DEFAULT_PRESSURE = 127;
+    private final Integer DEFAULT_PITCH_BEND = 8192;
+    private final Integer DEFAULT_CONTROL_VALUE = 64;
+    private final Integer DEFAULT_NOTE_VALUE = 127;
+    private final Integer DEFAULT_CHANNEL = 0;
     private final String DEFAULT_POSITION = "00000:000"; // NOI18N
     private int mTicksPerBeat;
     /** The list of registered listeners. */
@@ -105,6 +105,7 @@ public class CreateEventDialog extends javax.swing.JDialog {
     }
 
     private void setFormats() {
+        positionField.setValue(DEFAULT_POSITION);
         AbstractDocument doc = (AbstractDocument)positionField.getDocument();
         doc.setDocumentFilter(new RegexDocumentFilter(Formats.TICK_BEAT_RE));
 
@@ -113,27 +114,27 @@ public class CreateEventDialog extends javax.swing.JDialog {
         RegexDocumentFilter wordFilter =
             new RegexDocumentFilter("\\p{Digit}{0,5}"); // NOI18N
 
-        bendField.setText(DEFAULT_PITCH_BEND);
+        bendField.setValue(DEFAULT_PITCH_BEND);
         doc = (AbstractDocument)bendField.getDocument();
         doc.setDocumentFilter(wordFilter);
 
-        channelField.setText(DEFAULT_CHANNEL);
+        channelField.setValue(DEFAULT_CHANNEL);
         doc = (AbstractDocument)channelField.getDocument();
         doc.setDocumentFilter(byteFilter);
 
-        channelPressureField.setText(DEFAULT_PRESSURE);
+        channelPressureField.setValue(DEFAULT_PRESSURE);
         doc = (AbstractDocument)channelPressureField.getDocument();
         doc.setDocumentFilter(byteFilter);
 
-        controlValueField.setText(DEFAULT_CONTROL_VALUE);
+        controlValueField.setValue(DEFAULT_CONTROL_VALUE);
         doc = (AbstractDocument)controlValueField.getDocument();
         doc.setDocumentFilter(byteFilter);
 
-        noteValueField.setText(DEFAULT_NOTE_VALUE);
+        noteValueField.setValue(DEFAULT_NOTE_VALUE);
         doc = (AbstractDocument)noteValueField.getDocument();
         doc.setDocumentFilter(byteFilter);
 
-        octaveField.setText(DEFAULT_OCTAVE);
+        octaveField.setValue(DEFAULT_OCTAVE);
         doc = (AbstractDocument)octaveField.getDocument();
         doc.setDocumentFilter(byteFilter);
     }
@@ -247,7 +248,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         tickPanel.add(positionLabel);
 
         positionField.setColumns(8);
-        positionField.setText(DEFAULT_POSITION);
         tickPanel.add(positionField);
 
         mainPanel.add(tickPanel);
@@ -262,7 +262,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         jPanel2.add(channelLabel);
 
         channelField.setColumns(3);
-        channelField.setText(DEFAULT_CHANNEL);
         jPanel2.add(channelField);
 
         shortEventPanel.add(jPanel2);
@@ -332,7 +331,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         jPanel1.add(noteValueLabel, gridBagConstraints);
 
         noteValueField.setColumns(3);
-        noteValueField.setText(DEFAULT_NOTE_VALUE);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
@@ -395,7 +393,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         jPanel1.add(controlValueLabel, gridBagConstraints);
 
         controlValueField.setColumns(3);
-        controlValueField.setText(DEFAULT_CONTROL_VALUE);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 5;
@@ -420,7 +417,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         jPanel1.add(bendRadio, gridBagConstraints);
 
         bendField.setColumns(5);
-        bendField.setText(DEFAULT_PITCH_BEND);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 6;
@@ -445,7 +441,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         jPanel1.add(channelPressureRadio, gridBagConstraints);
 
         channelPressureField.setColumns(3);
-        channelPressureField.setText(DEFAULT_PRESSURE);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 7;
@@ -461,7 +456,6 @@ public class CreateEventDialog extends javax.swing.JDialog {
         jPanel1.add(octaveLabel, gridBagConstraints);
 
         octaveField.setColumns(2);
-        octaveField.setText(DEFAULT_OCTAVE);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
@@ -546,9 +540,9 @@ public class CreateEventDialog extends javax.swing.JDialog {
         String cmd = evt.getActionCommand();
 
         List<Component> enabled = new ArrayList<Component>();
-        if (NOTE_ON.equals(cmd) ||
-            NOTE_OFF.equals(cmd) ||
-            POLY_PRESSURE.equals(cmd)) {
+        if (NOTE_ON.equals(cmd)
+            || NOTE_OFF.equals(cmd)
+            || POLY_PRESSURE.equals(cmd)) {
             enabled.add(noteCombo);
             enabled.add(octaveField);
             enabled.add(noteValueField);
@@ -725,9 +719,8 @@ public class CreateEventDialog extends javax.swing.JDialog {
         int data2 = (bend >> 7) & 0x7f;
         MidiEvent me = null;
         try {
-            me =
-                ShortEvent.createShortEvent(command, getChannel(), data1, data2,
-                getTick());
+            me = ShortEvent.createShortEvent(
+                command, getChannel(), data1, data2, getTick());
         } catch (InvalidMidiDataException ex) {
             TraceDialog.addTrace(ex.getMessage());
         }
@@ -799,7 +792,7 @@ public class CreateEventDialog extends javax.swing.JDialog {
      * @param channel the channel number
      */
     public void setChannel(int channel) {
-        channelField.setText(Integer.toString(channel));
+        channelField.setValue(channel);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField bendField;

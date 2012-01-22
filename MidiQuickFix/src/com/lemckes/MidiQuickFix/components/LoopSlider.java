@@ -49,8 +49,8 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     transient private GeneralPath inPath = new GeneralPath();
     transient private GeneralPath outPath = new GeneralPath();
     private int resolution;
-    private int loopInPoint = 0;
-    private int loopOutPoint = 0;
+    private long loopInPoint = 0;
+    private long loopOutPoint = 0;
 
     /** Creates new form LoopSlider */
     public LoopSlider() {
@@ -118,26 +118,27 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         mListenerList.add(LoopSliderListener.class, l);
     }
 
-    public void setValue(int val) {
-        durationSlider.setValue(val);
+    public void setValue(long val) {
+        durationSlider.setValue((int)val);
     }
 
     public void setDuration(long duration, boolean ticks, int resolution) {
         this.resolution = resolution;
         loopInPoint = 0;
         loopInField.setText(Formats.formatTicks(loopInPoint, resolution, false));
-        loopOutPoint = (int) duration;
+        loopOutPoint = duration;
         loopOutField.setText(Formats.formatTicks(loopOutPoint, resolution, false));
         durationSlider.setDuration(duration, ticks, resolution);
     }
 
+    @Override
     public void stateChanged(javax.swing.event.ChangeEvent changeEvent) {
         int val = durationSlider.getValue();
         currPositionField.setText(Formats.formatTicks(val, resolution, false));
         fireLoopSliderChanged(durationSlider.getValueIsAdjusting());
     }
 
-    public int getLoopInPoint() {
+    public long getLoopInPoint() {
         return loopInPoint;
     }
 
@@ -151,7 +152,7 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         }
     }
 
-    public int getLoopOutPoint() {
+    public long getLoopOutPoint() {
         return loopOutPoint;
     }
 

@@ -38,7 +38,7 @@ public class LoopSliderEvent
      * @param outPoint The position of the end of the loop.
      * @param valueIsAdjusting True if the slider is being adjusted.
      */
-    public LoopSliderEvent(int value, int inPoint, int outPoint, boolean valueIsAdjusting)
+    public LoopSliderEvent(long value, long inPoint, long outPoint, boolean valueIsAdjusting)
     {
         mValue = value;
         mInPoint = inPoint;
@@ -47,20 +47,20 @@ public class LoopSliderEvent
     }
 
 
-    private int mValue;
-    private int mInPoint;
-    private int mOutPoint;
+    private long mValue;
+    private long mInPoint;
+    private long mOutPoint;
     private boolean mValueIsAdjusting;
 
-    public int getValue() {
+    public long getValue() {
         return mValue;
     }
 
-    public int getInPoint() {
+    public long getInPoint() {
         return mInPoint;
     }
 
-    public int getOutPoint() {
+    public long getOutPoint() {
         return mOutPoint;
     }
 

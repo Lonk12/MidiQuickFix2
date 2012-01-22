@@ -23,7 +23,8 @@
 
 package com.lemckes.MidiQuickFix;
 
-import java.util.*;
+import java.util.ResourceBundle;
+
 
 /**
  * Methods associated with MIDI Controller events
@@ -64,7 +65,7 @@ class Controllers {
      * of the controller's value.
      */
     static String meter = "---------------|---------------"; // NOI18N
-    /** Get a String representatioin of the controller's value.
+    /** Get a String representation of the controller's value.
      * @param val The controller's value
      * @param graphic If true the returned string is a graphical
      * representation of the value. e.g. value 64 gives

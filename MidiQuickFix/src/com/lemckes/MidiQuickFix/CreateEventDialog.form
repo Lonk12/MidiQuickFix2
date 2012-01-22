@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.2" maxVersion="1.2" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <NonVisualComponents>
@@ -66,9 +66,6 @@
             <Component class="javax.swing.JFormattedTextField" name="positionField">
               <Properties>
                 <Property name="columns" type="int" value="8"/>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="DEFAULT_POSITION" type="code"/>
-                </Property>
               </Properties>
             </Component>
           </SubComponents>
@@ -112,9 +109,6 @@
                 <Component class="javax.swing.JFormattedTextField" name="channelField">
                   <Properties>
                     <Property name="columns" type="int" value="3"/>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="DEFAULT_CHANNEL" type="code"/>
-                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -224,9 +218,6 @@
                 <Component class="javax.swing.JFormattedTextField" name="noteValueField">
                   <Properties>
                     <Property name="columns" type="int" value="3"/>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="DEFAULT_NOTE_VALUE" type="code"/>
-                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -315,9 +306,6 @@
                 <Component class="javax.swing.JFormattedTextField" name="controlValueField">
                   <Properties>
                     <Property name="columns" type="int" value="3"/>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="DEFAULT_CONTROL_VALUE" type="code"/>
-                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -354,9 +342,6 @@
                 <Component class="javax.swing.JFormattedTextField" name="bendField">
                   <Properties>
                     <Property name="columns" type="int" value="5"/>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="DEFAULT_PITCH_BEND" type="code"/>
-                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -393,9 +378,6 @@
                 <Component class="javax.swing.JFormattedTextField" name="channelPressureField">
                   <Properties>
                     <Property name="columns" type="int" value="3"/>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="DEFAULT_PRESSURE" type="code"/>
-                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -418,9 +400,6 @@
                 <Component class="javax.swing.JFormattedTextField" name="octaveField">
                   <Properties>
                     <Property name="columns" type="int" value="2"/>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="DEFAULT_OCTAVE" type="code"/>
-                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
