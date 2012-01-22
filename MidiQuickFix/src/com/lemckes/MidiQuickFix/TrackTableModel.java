@@ -26,6 +26,8 @@ import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.TreeSet;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -39,9 +41,7 @@ import javax.swing.table.DefaultTableModel;
  * The model for the main track table.
  * @version $Id$
  */
-class TrackTableModel extends DefaultTableModel
-{
-
+class TrackTableModel extends DefaultTableModel {
     static final long serialVersionUID = 5464614685967695539L;
     /** The Track that is being displayed. */
     transient Track mTrack;
@@ -267,8 +267,7 @@ class TrackTableModel extends DefaultTableModel
                         updateMessage(ev, command, channel,
                             NoteNames.getNoteNumber((String)value), d2);
                         fireTableDataChanged();
-                    }
-                    catch (InvalidMidiDataException e) {
+                    } catch (InvalidMidiDataException e) {
                         TraceDialog.addTrace(
                             "Error: TrackTableModel.setValueAt column 2. " + // NOI18N
                             e.getMessage());
@@ -319,8 +318,7 @@ class TrackTableModel extends DefaultTableModel
                     try {
                         updateMessage(ev, command, channel, d1, d2);
                         fireTableDataChanged();
-                    }
-                    catch (InvalidMidiDataException e) {
+                    } catch (InvalidMidiDataException e) {
                         TraceDialog.addTrace(
                             "Error: TrackTableModel.setValueAt column 3. " + // NOI18N
                             e.getMessage());
@@ -340,8 +338,7 @@ class TrackTableModel extends DefaultTableModel
                     try {
                         updateMessage(ev, command, channel, d1, d2);
                         fireTableDataChanged();
-                    }
-                    catch (InvalidMidiDataException e) {
+                    } catch (InvalidMidiDataException e) {
                         TraceDialog.addTrace("Error: setValueAt column 4. " + // NOI18N
                             e.getMessage());
                     }
@@ -372,8 +369,7 @@ class TrackTableModel extends DefaultTableModel
                         try {
                             updateMessage(ev, command, channel, d1, d2);
                             fireTableDataChanged();
-                        }
-                        catch (InvalidMidiDataException e) {
+                        } catch (InvalidMidiDataException e) {
                             TraceDialog.addTrace(
                                 "Error: setValueAt column 6. " + e.getMessage()); // NOI18N
                         }
@@ -411,8 +407,7 @@ class TrackTableModel extends DefaultTableModel
                 ShortMessage mess = (ShortMessage)ev.getMessage();
                 mess.setMessage(command, channel, d1, d2);
             }
-        }
-        catch (InvalidMidiDataException e) {
+        } catch (InvalidMidiDataException e) {
             throw (e);
         }
     }
@@ -431,7 +426,121 @@ class TrackTableModel extends DefaultTableModel
 
     public void insertEvent(MidiEvent event) {
         mTrack.add(event);
+        if (event.getTick() == 0) {
+            sortTickZeroEvents();
+        }
         trackModified();
+    }
+
+    /**
+     * Make sure that all the events that occur at tick zero
+     * are sorted in a suitable order.<br />
+     * The order is :
+     * <ol>
+     * <li>MetaMessage.TRACK_NAME</li>
+     * <li>MetaMessage.TEXT</li>
+     * <li>MetaMessage.COPYRIGHT</li>
+     * <li>Other MetaMessages</li>
+     * <li>System Exclusive messages</li>
+     * <li>ShortMessage System messages</li>
+     * <li>Other ShortMessages</li>
+     * <li>MetaMessage.KEY_SIGNATURE</li>
+     * <li>MetaMessage.TIME_SIGNATURE</li>
+     * <li>MetaMessage.TEMPO</li>
+     * <li>MetaMessage.LYRIC</li>
+     * <li>ShortMessage.PROGRAM_CHANGE</li>
+     * <li>ShortMessage.NOTE_ON</li>
+     * <li>ShortMessage.NOTE_OFF</li>
+     * <li>Anything else ...</li>
+     * </ol>
+     */
+    private void sortTickZeroEvents() {
+        TreeSet<MidiEvent> tickZeroEvents = new TreeSet<MidiEvent>(
+            new Comparator<MidiEvent>() {
+                @Override
+                public int compare(MidiEvent o1, MidiEvent o2) {
+                    return getSortPriority(o1) - getSortPriority(o2);
+                }
+
+                private int getSortPriority(MidiEvent me) {
+                    int priority = Integer.MAX_VALUE;
+                    MidiMessage mess = me.getMessage();
+                    if (mess instanceof MetaMessage) {
+                        MetaMessage mm = (MetaMessage)mess;
+                        int type = mm.getType();
+                        switch (type) {
+                            case MetaEvent.TRACK_NAME:
+                                priority = 1;
+                                break;
+                            case MetaEvent.TEXT:
+                                priority = 2;
+                                break;
+                            case MetaEvent.COPYRIGHT:
+                                priority = 3;
+                                break;
+                            case MetaEvent.KEY_SIGNATURE:
+                                priority = 320;
+                                break;
+                            case MetaEvent.TIME_SIGNATURE:
+                                priority = 321;
+                                break;
+                            case MetaEvent.TEMPO:
+                                priority = 322;
+                                break;
+                            case MetaEvent.LYRIC:
+                                priority = 323;
+                                break;
+                            default:
+                                priority = 10;
+                        }
+                    } else if (mess instanceof SysexMessage) {
+                        priority = 100;
+                    } else if (mess instanceof ShortMessage) {
+                        ShortMessage sm = (ShortMessage)mess;
+                        int st = sm.getStatus();
+                        int command = sm.getCommand() & 0xff;
+
+                        if ((st & 0xf0) <= 0xf0) { // This is a channel message
+                            switch (command) {
+                                case ShortMessage.PROGRAM_CHANGE:
+                                    priority = 410;
+                                    break;
+                                case ShortMessage.NOTE_ON:
+                                    priority = 420;
+                                    break;
+                                case ShortMessage.NOTE_OFF:
+                                    priority = 421;
+                                    break;
+                                default:
+                                    priority = 300;
+                            }
+                        } else {
+                            // ShortMessage System messages
+                            priority = 200;
+                        }
+                    }
+                    return priority;
+                }
+            });
+
+        // Collect all the events that occur at tick zero
+        // and add them to the sorted Set.
+        for (int i = 0; i < mTrack.size(); ++i) {
+            MidiEvent me = mTrack.get(i);
+            if (me.getTick() == 0) {
+                tickZeroEvents.add(me);
+            } else {
+                break;
+            }
+        }
+
+        for(MidiEvent me : tickZeroEvents) {
+            mTrack.remove(me);
+        }
+        
+        for(MidiEvent me : tickZeroEvents) {
+            mTrack.add(me);
+        }
     }
 
     void setTrackChannel(int channel) {
@@ -455,8 +564,7 @@ class TrackTableModel extends DefaultTableModel
                     int d2 = sm.getData2();
                     try {
                         updateMessage(ev, command, channel, d1, d2);
-                    }
-                    catch (InvalidMidiDataException e) {
+                    } catch (InvalidMidiDataException e) {
                         TraceDialog.addTrace("Error: setTrackChannel. " + // NOI18N
                             e.getMessage());
                     }
