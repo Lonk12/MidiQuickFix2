@@ -1,28 +1,31 @@
-/**************************************************************
+/**
+ * ************************************************************
  *
- *   MidiQuickFix - A Simple Midi file editor and player
+ * MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2010 John Lemcke
- *   jostle@users.sourceforge.net
+ * Copyright (C) 2004-2010 John Lemcke
+ * jostle@users.sourceforge.net
  *
- *   This program is free software; you can redistribute it
- *   and/or modify it under the terms of the Artistic License
- *   as published by Larry Wall, either version 2.0,
- *   or (at your option) any later version.
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the Artistic License
+ * as published by Larry Wall, either version 2.0,
+ * or (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *   See the Artistic License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the Artistic License for more details.
  *
- *   You should have received a copy of the Artistic License with this Kit,
- *   in the file named "Artistic.clarified".
- *   If not, I'll be glad to provide one.
+ * You should have received a copy of the Artistic License with this Kit,
+ * in the file named "Artistic.clarified".
+ * If not, I'll be glad to provide one.
  *
- **************************************************************/
+ *************************************************************
+ */
 package com.lemckes.MidiQuickFix.util;
 
 import com.lemckes.MidiQuickFix.MetaEvent;
+import java.util.Arrays;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -38,6 +41,7 @@ public class TrackUpdateUtils
 
     /**
      * Convert all NOTE_ON events with a velocity of zero to NOTE_OFF events
+     *
      * @param track the track to convert
      */
     public static void convertNoteOnZeroToNoteOff(Track track) {
@@ -58,8 +62,7 @@ public class TrackUpdateUtils
                         if (velocity == 0) {
                             try {
                                 sm.setMessage(ShortMessage.NOTE_OFF, channel, noteNum, 0);
-                            }
-                            catch (InvalidMidiDataException ex) {
+                            } catch (InvalidMidiDataException ex) {
                                 System.err.println("Can't convert to NOTE_OFF");
                             }
                         }
@@ -70,8 +73,10 @@ public class TrackUpdateUtils
     }
 
     /**
-     * Convert any TEXT events at the positions in <code>eventIndices</code>
+     * Convert any TEXT events at the positions in
+     * <code>eventIndices</code>
      * into LYRIC events
+     *
      * @param track the track to convert
      * @param eventIndices the event indices in <code>track</code>
      */
@@ -86,9 +91,8 @@ public class TrackUpdateUtils
                 if (str[0].equals("M:Text")) {
                     try {
                         metaMess.setMessage(MetaEvent.LYRIC, metaMess.getData(), metaMess.
-                            getData().length);
-                    }
-                    catch (InvalidMidiDataException ex) {
+                                getData().length);
+                    } catch (InvalidMidiDataException ex) {
                         System.err.println("Can't convert TEXT to LYRIC");
                     }
                 }
@@ -97,11 +101,45 @@ public class TrackUpdateUtils
     }
 
     /**
-     * Remove all NOTE_ON and NOTE_OFF events from the <code>track</code>
+     * Convert any TEXT events at the positions in
+     * <code>eventIndices</code>
+     * into LYRIC events
+     *
+     * @param track the track to convert
+     * @param eventIndices the event indices in <code>track</code>
+     */
+    public static void addSpaceToLyric(Track track, int[] eventIndices) {
+        for (int e : eventIndices) {
+            MidiEvent event = track.get(e);
+
+            MidiMessage message = event.getMessage();
+            if (message.getStatus() == MetaMessage.META) {
+                MetaMessage metaMess = (MetaMessage)message;
+                Object[] str = MetaEvent.getMetaStrings((MetaMessage)message);
+                if (str[0].equals("M:Lyric")) {
+                    byte[] lyric = metaMess.getData();
+                    if (lyric[lyric.length - 1] != ' ') {
+                        byte[] newLyric = Arrays.copyOf(lyric, lyric.length + 1);
+                        newLyric[lyric.length] = ' ';
+                        try {
+                            metaMess.setMessage(MetaEvent.LYRIC, newLyric, newLyric.length);
+                        } catch (InvalidMidiDataException ex) {
+                            System.err.println("Can't add space to LYRIC");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove all NOTE_ON and NOTE_OFF events from the
+     * <code>track</code>
+     *
      * @param track the track from which to remove the notes
      */
     public static void removeNotesFromTrack(Track track) {
-        for (int e = track.size() -1; e >= 0; --e) {
+        for (int e = track.size() - 1; e >= 0; --e) {
             MidiEvent event = track.get(e);
 
             MidiMessage message = event.getMessage();
@@ -112,8 +150,8 @@ public class TrackUpdateUtils
                 // Check that this is a channel message
                 if ((st & 0xf0) <= 0xf0) {
                     int command = sm.getCommand();
-                    if (command == ShortMessage.NOTE_ON ||
-                        command == ShortMessage.NOTE_OFF) {
+                    if (command == ShortMessage.NOTE_ON
+                            || command == ShortMessage.NOTE_OFF) {
                         track.remove(event);
                     }
                 }

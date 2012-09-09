@@ -1,25 +1,27 @@
-/**************************************************************
+/**
+ * ************************************************************
  *
- *   MidiQuickFix - A Simple Midi file editor and player
+ * MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
- *   jostle@users.sourceforge.net
+ * Copyright (C) 2004-2009 John Lemcke
+ * jostle@users.sourceforge.net
  *
- *   This program is free software; you can redistribute it
- *   and/or modify it under the terms of the Artistic License
- *   as published by Larry Wall, either version 2.0,
- *   or (at your option) any later version.
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the Artistic License
+ * as published by Larry Wall, either version 2.0,
+ * or (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *   See the Artistic License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the Artistic License for more details.
  *
- *   You should have received a copy of the Artistic License with this Kit,
- *   in the file named "Artistic.clarified".
- *   If not, I'll be glad to provide one.
+ * You should have received a copy of the Artistic License with this Kit,
+ * in the file named "Artistic.clarified".
+ * If not, I'll be glad to provide one.
  *
- **************************************************************/
+ *************************************************************
+ */
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.UiStrings;
@@ -27,11 +29,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -40,17 +44,25 @@ import javax.swing.event.ChangeListener;
  *
  * @version $Id$
  */
-public class TransposeDialog extends javax.swing.JDialog {
+public class TransposeDialog
+    extends javax.swing.JDialog
+{
+
     static final long serialVersionUID = -7390651121992118010L;
-    /** A return status code - returned if Cancel button has been pressed */
+    /**
+     * A return status code - returned if Cancel button has been pressed
+     */
     public static final int RET_CANCEL = 0;
-    /** A return status code - returned if OK button has been pressed */
+    /**
+     * A return status code - returned if OK button has been pressed
+     */
     public static final int RET_OK = 1;
     private String mKeyString = UiStrings.getString("key_names_string");
     private int mTransposeBy = 0;
 
     /**
      * Creates new form TransposeDialog
+     *
      * @param parent the Frame parent for the dialog
      * @param modal the modality of the dialog
      */
@@ -64,7 +76,9 @@ public class TransposeDialog extends javax.swing.JDialog {
             ((JSpinner.DefaultEditor)ed).getTextField().setColumns(2);
             ((JSpinner.DefaultEditor)ed).getTextField().setEditable(false);
         }
-        semitoneSpinner.addChangeListener(new ChangeListener() {
+        semitoneSpinner.addChangeListener(new ChangeListener()
+        {
+
             public void stateChanged(ChangeEvent e) {
                 mTransposeBy = (Integer)semitoneSpinner.getValue();
                 updateToString(mTransposeBy);
@@ -81,7 +95,9 @@ public class TransposeDialog extends javax.swing.JDialog {
 
     /**
      * Rotate the string that represents the transposed keys
-     * to show the result of transposing by <code>semitones</code>
+     * to show the result of transposing by
+     * <code>semitones</code>
+     *
      * @param semitones the number of semitones
      */
     private void updateToString(int semitones) {
@@ -93,7 +109,9 @@ public class TransposeDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Get the setting of the <code>semitones</code> field
+     * Get the setting of the
+     * <code>semitones</code> field
+     *
      * @return the number of semitones to transpose
      */
     public int getTransposeBy() {
@@ -104,6 +122,7 @@ public class TransposeDialog extends javax.swing.JDialog {
      * Set the number of semitones by which to transpose.
      * Mostly useful for resetting the transpose to zero
      * after each transposition.
+     *
      * @param semitones the number of semitones
      */
     public void setTransposeBy(int semitones) {
@@ -113,7 +132,9 @@ public class TransposeDialog extends javax.swing.JDialog {
 
     /**
      * Get the setting of the doDrums checkbox
-     * @return <code>true</code> if the drum channel should be transposed
+     *
+     * @return
+     * <code>true</code> if the drum channel should be transposed
      */
     public boolean getDoDrums() {
         return doDrumsCheckBox.isSelected();
@@ -121,13 +142,15 @@ public class TransposeDialog extends javax.swing.JDialog {
 
     /**
      * Get the status of the dialog when it was closed
+     *
      * @return the return status of this dialog - one of RET_OK or RET_CANCEL
      */
     public int getReturnStatus() {
         return returnStatus;
     }
 
-    /** This method is called from within the constructor to
+    /**
+     * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
@@ -255,7 +278,9 @@ public class TransposeDialog extends javax.swing.JDialog {
         doClose(RET_CANCEL);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    /** Closes the dialog */
+    /**
+     * Closes the dialog
+     */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
@@ -265,7 +290,6 @@ public class TransposeDialog extends javax.swing.JDialog {
         setVisible(false);
         dispose();
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
@@ -280,7 +304,6 @@ public class TransposeDialog extends javax.swing.JDialog {
     private javax.swing.JTextField toKeyField;
     private javax.swing.JLabel toLabel;
     // End of variables declaration//GEN-END:variables
-
     private int returnStatus = RET_CANCEL;
 
     /**
@@ -289,15 +312,18 @@ public class TransposeDialog extends javax.swing.JDialog {
      * There are probably much better ways to do this but it seemed
      * like a good idea at the time.
      */
-    class KeyHighlighter extends JComponent {
+    class KeyHighlighter
+            extends JComponent
+    {
+
         static final long serialVersionUID = -3094419739144867668L;
-        private List<Component> comps;
+        private List<JTextField> comps;
 
         public KeyHighlighter() {
-            comps = new ArrayList<Component>();
+            comps = new ArrayList<JTextField>();
         }
 
-        public void addComponent(Component c) {
+        public void addComponent(JTextField c) {
             comps.add(c);
         }
 
@@ -307,8 +333,16 @@ public class TransposeDialog extends javax.swing.JDialog {
 
             Color c1 = new Color(0, 240, 255, 64);
 
-            for (Component comp : comps) {
+            for (JTextField comp : comps) {
                 Rectangle bounds = comp.getBounds();
+                Insets insets = comp.getInsets();
+                Insets margin = comp.getMargin();
+                Rectangle newBounds = new Rectangle();
+                newBounds.setBounds(
+                    bounds.x + insets.left + margin.left,
+                    bounds.y + insets.top + margin.top,
+                    bounds.width - insets.left - margin.left - insets.right - margin.right,
+                    bounds.height - insets.top - margin.top - insets.bottom - margin.bottom);
                 Rectangle r = new Rectangle();
                 int width = bounds.width / 12;
                 int step = width * 2;

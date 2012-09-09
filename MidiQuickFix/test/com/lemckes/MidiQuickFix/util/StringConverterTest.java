@@ -18,8 +18,9 @@ public class StringConverterTest extends TestCase
 
     private String s = "Aa Æ©ÜĀƀḀⱠ꜠﹐ԱႠἀ፳亼人鰱 zZabc\u5639\u563b";
 //        String requestedCharsetName = "LATIN";
-        String requestedCharsetName = "JP";
-//        String requestedCharsetName = "UTF-8";
+//        String requestedCharsetName = "JP";
+//        String requestedCharsetName = "X-UTF-32BE-BOM";
+        String requestedCharsetName = "UTF-8";
 //        String requestedCharsetName = "UTF-16";
     byte[] bytes;
 
@@ -46,11 +47,11 @@ public class StringConverterTest extends TestCase
     }
 
     public void testAvailableCharsets() throws Exception {
-//        System.out.println("testAvailableCharsets");
-//        SortedMap<String, Charset> available = Charset.availableCharsets();
-//        for (Entry<String, Charset> e : available.entrySet()) {
-//            System.out.println(e.getKey() + " = " + e.getValue().toString());
-//        }
+        System.out.println("testAvailableCharsets");
+        SortedMap<String, Charset> available = Charset.availableCharsets();
+        for (Entry<String, Charset> e : available.entrySet()) {
+            System.out.println(e.getKey() + " = " + e.getValue().toString());
+        }
         System.out.println("Default = " + Charset.defaultCharset());
     }
 

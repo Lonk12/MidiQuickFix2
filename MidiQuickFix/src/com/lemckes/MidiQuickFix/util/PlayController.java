@@ -1,61 +1,72 @@
-/**************************************************************
+/**
+ * ************************************************************
  *
- *   MidiQuickFix - A Simple Midi file editor and player
+ * MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
- *   jostle@users.sourceforge.net
+ * Copyright (C) 2004-2009 John Lemcke
+ * jostle@users.sourceforge.net
  *
- *   This program is free software; you can redistribute it
- *   and/or modify it under the terms of the Artistic License
- *   as published by Larry Wall, either version 2.0,
- *   or (at your option) any later version.
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the Artistic License
+ * as published by Larry Wall, either version 2.0,
+ * or (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *   See the Artistic License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the Artistic License for more details.
  *
- *   You should have received a copy of the Artistic License with this Kit,
- *   in the file named "Artistic.clarified".
- *   If not, I'll be glad to provide one.
+ * You should have received a copy of the Artistic License with this Kit,
+ * in the file named "Artistic.clarified".
+ * If not, I'll be glad to provide one.
  *
- **************************************************************/
+ *************************************************************
+ */
 package com.lemckes.MidiQuickFix.util;
 
-import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.swing.AbstractAction;
 
 /**
  * Maintains the state of play
+ * <p/>
  * @version $Id$
  */
-public class PlayController {
-    public enum PlayState {
+public class PlayController
+{
+
+    public enum PlayState
+    {
+
         NO_FILE,
         STOPPED,
         PAUSED,
         PLAYING;
-        static final long serialVersionUID = 0L;
     }
-    private boolean looping = false;
+    static final long serialVersionUID = 0L;
+    private boolean mIsLooping = false;
     PlayState mPlayState = PlayState.NO_FILE;
-    /** The tick position at which the sequence was paused. */
+    /**
+     * The tick position at which the sequence was paused.
+     */
     long mPausedPos;
     Sequencer mSequencer;
-    MqfSequence mSeq;
+    MqfSequence mSequence;
 
-    /** Creates a new instance of PlayController
+    /**
+     * Creates a new instance of PlayController
+     * <p/>
      * @param sqr the sequencer to control
      * @param seq the sequence to control
      */
     public PlayController(Sequencer sqr, MqfSequence seq) {
         mSequencer = sqr;
-        mSeq = seq;
+        mSequence = seq;
     }
 
     /**
      * Set the state of play ;-)
+     * <p/>
      * @param state Probably should be one of NO_FILE, STOPPED, PAUSED, PLAYING
      */
     public void setPlayState(PlayState state) {
@@ -79,25 +90,31 @@ public class PlayController {
     }
 
     public void setSequence(MqfSequence seq) {
-        mSeq = seq;
+        mSequence = seq;
     }
 
     /**
      * An Action to handle the Play option.
      */
-    public class PlayAction extends javax.swing.AbstractAction {
+    public class PlayAction
+            extends javax.swing.AbstractAction
+    {
+
         static final long serialVersionUID = 8706407788844636763L;
 
-        /** Creates a new instance of PlayAction */
+        /**
+         * Creates a new instance of PlayAction
+         */
         public PlayAction() {
             putValue(ACCELERATOR_KEY,
-                javax.swing.KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_SPACE,
-                java.awt.event.InputEvent.ALT_MASK));
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_SPACE,
+                    java.awt.event.InputEvent.ALT_MASK));
         }
 
         /**
          * Performs the functions required for Playing
+         * <p/>
          * @param e The event that triggered the action.
          */
         @Override
@@ -117,18 +134,24 @@ public class PlayController {
     /**
      * An Action to handle the Pause option.
      */
-    public class PauseAction extends javax.swing.AbstractAction {
+    public class PauseAction
+            extends javax.swing.AbstractAction
+    {
+
         static final long serialVersionUID = -5681941137061861878L;
 
-        /** Creates a new instance of PauseAction */
+        /**
+         * Creates a new instance of PauseAction
+         */
         public PauseAction() {
             putValue(ACCELERATOR_KEY,
-                javax.swing.KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
         }
 
         /**
          * Performs the functions required for Playing
+         * <p/>
          * @param e The event that triggered the action.
          */
         @Override
@@ -155,19 +178,25 @@ public class PlayController {
     /**
      * An Action to handle the Stop option.
      */
-    public class StopAction extends javax.swing.AbstractAction {
+    public class StopAction
+            extends javax.swing.AbstractAction
+    {
+
         static final long serialVersionUID = -1630547059111486423L;
 
-        /** Creates a new instance of StopAction */
+        /**
+         * Creates a new instance of StopAction
+         */
         public StopAction() {
             putValue(ACCELERATOR_KEY,
-                javax.swing.KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_BACK_SPACE,
-                java.awt.event.InputEvent.ALT_MASK));
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_BACK_SPACE,
+                    java.awt.event.InputEvent.ALT_MASK));
         }
 
         /**
          * Performs the functions required for Stopping
+         * <p/>
          * @param e The event that triggered the action.
          */
         @Override
@@ -190,19 +219,25 @@ public class PlayController {
     /**
      * An Action to handle the Rewind option.
      */
-    public class RewindAction extends javax.swing.AbstractAction {
+    public class RewindAction
+            extends javax.swing.AbstractAction
+    {
+
         static final long serialVersionUID = 112737302001281486L;
 
-        /** Creates a new instance of RewindAction */
+        /**
+         * Creates a new instance of RewindAction
+         */
         public RewindAction() {
             putValue(ACCELERATOR_KEY,
-                javax.swing.KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_LEFT,
-                java.awt.event.InputEvent.ALT_MASK));
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_LEFT,
+                    java.awt.event.InputEvent.ALT_MASK));
         }
 
         /**
          * Performs the functions required for Rewinding
+         * <p/>
          * @param e The event that triggered the action.
          */
         @Override
@@ -214,7 +249,7 @@ public class PlayController {
 
     public void rewind() {
         MidiSeqPlayer rewinder =
-            (MidiSeqPlayer)mRewindAction.getValue("rewinder");
+                (MidiSeqPlayer)mRewindAction.getValue("rewinder");
         rewinder.rewind();
         mPausedPos = 0;
         setActions();
@@ -223,19 +258,25 @@ public class PlayController {
     /**
      * An Action to handle the Loop option.
      */
-    public class LoopAction extends javax.swing.AbstractAction {
+    public class LoopAction
+            extends javax.swing.AbstractAction
+    {
+
         static final long serialVersionUID = 8900494421130657603L;
 
-        /** Creates a new instance of LoopAction */
+        /**
+         * Creates a new instance of LoopAction
+         */
         public LoopAction() {
             putValue(ACCELERATOR_KEY,
-                javax.swing.KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_L,
-                java.awt.event.InputEvent.ALT_MASK));
+                    javax.swing.KeyStroke.getKeyStroke(
+                    java.awt.event.KeyEvent.VK_L,
+                    java.awt.event.InputEvent.ALT_MASK));
         }
 
         /**
          * Performs the functions required for Looping
+         * <p/>
          * @param e The event that triggered the action.
          */
         @Override
@@ -247,8 +288,8 @@ public class PlayController {
 
     public void loop() {
         MidiSeqPlayer looper = (MidiSeqPlayer)mLoopAction.getValue("looper");
-        looping = !looping;
-        looper.loop(looping);
+        mIsLooping = !mIsLooping;
+        looper.loop(mIsLooping);
     }
 
     private void setActions() {
@@ -288,10 +329,10 @@ public class PlayController {
     }
 
     public boolean isLooping() {
-        return looping;
+        return mIsLooping;
     }
 
     public void setLooping(boolean looping) {
-        this.looping = looping;
+        this.mIsLooping = looping;
     }
 }

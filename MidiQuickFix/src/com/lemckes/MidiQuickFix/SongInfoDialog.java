@@ -32,9 +32,7 @@ import javax.swing.JLabel;
 /**
  * Allow the user to create a new track
  */
-public class SongInfoDialog extends javax.swing.JDialog
-{
-
+public class SongInfoDialog extends javax.swing.JDialog {
     /**
      * Create a new CreateTrackDialog for the given Sequence
      * @param seq the sequence in which to create the track
@@ -70,8 +68,7 @@ public class SongInfoDialog extends javax.swing.JDialog
             valueGBC.anchor = java.awt.GridBagConstraints.WEST;
             valueGBC.insets = new java.awt.Insets(0, 3, 0, 0);
 
-            if (seq.getSongInfo().isEmpty())
-            {
+            if (seq.getSongInfo().isEmpty()) {
                 JLabel keyLabel = new javax.swing.JLabel(
                     UiStrings.getString("SongInfoDialog.noInfoMessage"));
                 mainPanel.add(keyLabel, keyGBC);
@@ -90,10 +87,9 @@ public class SongInfoDialog extends javax.swing.JDialog
                 ++separatorGBC.gridy;
                 ++valueGBC.gridy;
             }
-
-            pack();
-            setLocationRelativeTo(parent);
         }
+        pack();
+        setLocationRelativeTo(parent);
     }
 
     private void doClose() {

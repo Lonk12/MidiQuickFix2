@@ -24,6 +24,7 @@ package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.TableColumnWidthSetter;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 import javax.swing.DefaultCellEditor;
@@ -66,6 +67,7 @@ public class TrackTable extends javax.swing.JTable {
             resolution,
             showNotes,
             inFlats));
+        scrollRectToVisible(new Rectangle(0,0,1,1));
     }
 
     public void trackModified(){

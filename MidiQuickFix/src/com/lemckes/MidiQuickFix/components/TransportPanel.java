@@ -24,7 +24,11 @@
 package com.lemckes.MidiQuickFix.components;
 
 import com.lemckes.MidiQuickFix.util.DrawnIcon;
-import com.lemckes.MidiQuickFix.util.PlayController.*;
+import com.lemckes.MidiQuickFix.util.PlayController.LoopAction;
+import com.lemckes.MidiQuickFix.util.PlayController.PauseAction;
+import com.lemckes.MidiQuickFix.util.PlayController.PlayAction;
+import com.lemckes.MidiQuickFix.util.PlayController.RewindAction;
+import com.lemckes.MidiQuickFix.util.PlayController.StopAction;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -40,24 +44,24 @@ import javax.swing.AbstractAction;
  */
 public class TransportPanel extends javax.swing.JPanel {
     static final long serialVersionUID = 6727747406307178988L;
-    
+
     transient private DrawnIcon pauseIcon;
     transient private DrawnIcon playIcon;
     transient private DrawnIcon rewindIcon;
     transient private DrawnIcon stopIcon;
     transient private DrawnIcon loopIcon;
     transient private DrawnIcon recordIcon;
-    
+
     transient private GeneralPath playPath = new GeneralPath();
     transient private GeneralPath stopPath = new GeneralPath();
     transient private GeneralPath pausePath = new GeneralPath();
     transient private GeneralPath loopPath = new GeneralPath();
     transient private GeneralPath rewindPath = new GeneralPath();
     transient private GeneralPath recordPath = new GeneralPath();
-    
+
     transient private GeneralPath loopOuterPath = new GeneralPath();
     transient private GeneralPath loopInnerPath = new GeneralPath();
-    
+
     /** Creates new form TransportPanel */
     public TransportPanel() {
         initComponents();
@@ -70,13 +74,13 @@ public class TransportPanel extends javax.swing.JPanel {
         playPath.lineTo(0.2f, 0.5f);
         playPath.lineTo(0.2f, 0.3f);
         playPath.closePath();
-        
+
         stopPath.moveTo(0.2f, 0.2f);
         stopPath.lineTo(0.8f, 0.2f);
         stopPath.lineTo(0.8f, 0.8f);
         stopPath.lineTo(0.2f, 0.8f);
         stopPath.closePath();
-        
+
         pausePath.moveTo(0.2f, 0.2f);
         pausePath.lineTo(0.4f, 0.2f);
         pausePath.lineTo(0.4f, 0.8f);
@@ -87,7 +91,7 @@ public class TransportPanel extends javax.swing.JPanel {
         pausePath.lineTo(0.8f, 0.8f);
         pausePath.lineTo(0.6f, 0.8f);
         pausePath.closePath();
-        
+
         rewindPath.moveTo(0.2f, 0.2f);
         rewindPath.lineTo(0.3f, 0.2f);
         rewindPath.lineTo(0.3f, 0.8f);
@@ -97,11 +101,11 @@ public class TransportPanel extends javax.swing.JPanel {
         rewindPath.lineTo(0.8f, 0.2f);
         rewindPath.lineTo(0.8f, 0.8f);
         rewindPath.closePath();
-        
+
         Ellipse2D recellipse = new Ellipse2D.Float(0.2f, 0.2f, 0.6f, 0.6f);
         PathIterator pi = recellipse.getPathIterator(null);
         recordPath.append(pi,  false);
-        
+
         loopOuterPath.moveTo(0.55f, 0.30f);
         loopOuterPath.lineTo(0.55f, 0.20f);
         loopOuterPath.lineTo(0.65f, 0.30f);
@@ -114,7 +118,7 @@ public class TransportPanel extends javax.swing.JPanel {
         loopOuterPath.curveTo(0.10f, 0.70f, 0.10f, 0.30f, 0.30f, 0.30f);
         loopOuterPath.closePath();
         Area loopArea = new Area(loopOuterPath);
-        
+
         loopInnerPath.moveTo(0.55f, 0.40f);
         loopInnerPath.lineTo(0.55f, 0.50f);
         loopInnerPath.lineTo(0.65f, 0.40f);
@@ -127,32 +131,32 @@ public class TransportPanel extends javax.swing.JPanel {
         loopInnerPath.curveTo(0.20f, 0.60f, 0.20f, 0.40f, 0.30f, 0.40f);
         loopInnerPath.closePath();
         Area loopHoleArea = new Area(loopInnerPath);
-        
+
         loopArea.subtract(loopHoleArea);
         loopPath.append(loopArea.getPathIterator(null), false);
-        
+
         Dimension buttonSize = new Dimension(40, 40);
-        
+
         playIcon = new DrawnIcon(playButton, playPath);
         playIcon.setPath(playPath);
         playIcon.setFillColour(Color.GREEN);
         playButton.setPreferredSize(buttonSize);
-        
+
         rewindIcon = new DrawnIcon(rewindButton, rewindPath);
         rewindIcon.setPath(rewindPath);
         rewindIcon.setFillColour(Color.CYAN);
         rewindButton.setPreferredSize(buttonSize);
-        
+
         stopIcon = new DrawnIcon(stopButton, stopPath);
         stopIcon.setPath(stopPath);
         stopIcon.setFillColour(new Color(1.0f, 0.5f, 0.2f)); // ORANGE
         stopButton.setPreferredSize(buttonSize);
-        
+
         pauseIcon = new DrawnIcon(pauseButton, pausePath);
         pauseIcon.setPath(pausePath);
         pauseIcon.setFillColour(Color.YELLOW);
         pauseButton.setPreferredSize(buttonSize);
-        
+
         //recordIcon.setPath(recordPath);
         //recordButton.setPreferredSize(buttonSize);
         //recordIcon.setFillColour(Color.RED);
@@ -161,9 +165,9 @@ public class TransportPanel extends javax.swing.JPanel {
         loopIcon.setPath(loopPath);
         loopButton.setPreferredSize(buttonSize);
         loopIcon.setFillColour(Color.BLUE);
-        
+
     }
-    
+
     public void setActions(RewindAction r, PlayAction p, PauseAction u, StopAction s, LoopAction l) {
         r.putValue(AbstractAction.SMALL_ICON, rewindIcon);
         rewindButton.setAction(r);
@@ -175,9 +179,9 @@ public class TransportPanel extends javax.swing.JPanel {
         stopButton.setAction(s);
         l.putValue(AbstractAction.SMALL_ICON, loopIcon);
         loopButton.setAction(l);
-        
+
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -219,8 +223,8 @@ public class TransportPanel extends javax.swing.JPanel {
         loopButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         add(loopButton);
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton loopButton;
     private javax.swing.JButton pauseButton;
@@ -228,5 +232,5 @@ public class TransportPanel extends javax.swing.JPanel {
     private javax.swing.JButton rewindButton;
     private javax.swing.JButton stopButton;
     // End of variables declaration//GEN-END:variables
-    
+
 }

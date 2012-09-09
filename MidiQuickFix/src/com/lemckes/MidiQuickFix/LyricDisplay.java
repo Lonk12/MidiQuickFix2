@@ -207,26 +207,11 @@ public class LyricDisplay
         if (mSequencer != null) {
             mSequencer.removeMetaEventListener(this);
         }
-
         mSequencer = seq;
-        MqfSequence mySequence;
-        if (seq.getSequence() != null) {
-            try {
-                mySequence =
-                    MqfSequence.createMqfSequence(seq.getSequence());
-                if (mySequence != null) {
-                    loadSequence(mySequence);
-                }
-            }
-            catch (InvalidMidiDataException ex) {
-                Logger.getLogger(LyricDisplay.class.getName()).
-                    log(Level.SEVERE, null, ex);
-            }
-        }
         mSequencer.addMetaEventListener(this);
     }
 
-    public void loadSequence(MqfSequence seq) {
+    public void setSequence(MqfSequence seq) {
         mWords.clear();
         mPlaces.clear();
         StringConverter.resetDefaultCharset();
@@ -483,7 +468,7 @@ public class LyricDisplay
      */
     public void reset() {
         lyricText.setText(null);
-        loadSequence(mSequence);
+        setSequence(mSequence);
     }
 
     /** This method is called from within the constructor to

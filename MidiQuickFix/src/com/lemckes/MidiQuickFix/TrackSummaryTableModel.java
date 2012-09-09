@@ -103,7 +103,9 @@ public class TrackSummaryTableModel
         for (int i = 0; i < numTracks; ++i) {
             mInfo[i] = new TrackInfo();
             mInfo[i].mSolo = false;
+            mSeq.setTrackSolo(i, false);
             mInfo[i].mMute = false;
+            mSeq.setTrackMute(i, false);
             mInfo[i].mLyrics = false;
             Track t = mTracks[i];
             mInfo[i].mEnd = t.ticks();

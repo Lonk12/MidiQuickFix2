@@ -22,13 +22,11 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix.util;
 
-import com.lemckes.MidiQuickFix.KeySignatures;
 import com.lemckes.MidiQuickFix.MetaEvent;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
@@ -155,17 +153,5 @@ public class Transposer
             key += 12;
         }
         return keyToSharps[key];
-    }
-
-    public static void main(String args[]) {
-        // Test the key sig conversion
-        byte[] data = new byte[2];
-        data[1] = 0;
-        for (byte sig = -7; sig < 8; ++sig) {
-            data[0] = sig;
-            System.out.print("From " + KeySignatures.getKeyName(data) + " to ");
-            data[0] = adjustKeySig(sig, -3);
-            System.out.println(KeySignatures.getKeyName(data));
-        }
     }
 }

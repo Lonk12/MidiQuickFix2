@@ -1,25 +1,27 @@
-/**************************************************************
+/**
+ * ************************************************************
  *
- *   MidiQuickFix - A Simple Midi file editor and player
+ * MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
- *   jostle@users.sourceforge.net
+ * Copyright (C) 2004-2009 John Lemcke
+ * jostle@users.sourceforge.net
  *
- *   This program is free software; you can redistribute it
- *   and/or modify it under the terms of the Artistic License
- *   as published by Larry Wall, either version 2.0,
- *   or (at your option) any later version.
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the Artistic License
+ * as published by Larry Wall, either version 2.0,
+ * or (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *   See the Artistic License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the Artistic License for more details.
  *
- *   You should have received a copy of the Artistic License with this Kit,
- *   in the file named "Artistic.clarified".
- *   If not, I'll be glad to provide one.
+ * You should have received a copy of the Artistic License with this Kit,
+ * in the file named "Artistic.clarified".
+ * If not, I'll be glad to provide one.
  *
- **************************************************************/
+ *************************************************************
+ */
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.StringConverter;
@@ -32,11 +34,14 @@ import javax.sound.midi.MidiEvent;
 
 /**
  * Handle Midi Meta events.
+ *
  * @version $Id$
  */
-public class MetaEvent {
+public class MetaEvent
+{
+
     static java.text.DecimalFormat twoDigitFormat =
-        new java.text.DecimalFormat("00"); // NOI18N
+            new java.text.DecimalFormat("00"); // NOI18N
     static String[] typeNames = {
         "SEQUENCE_NUMBER",
         "TEXT",
@@ -101,6 +106,7 @@ public class MetaEvent {
 
     /**
      * Get the list of META event type names
+     *
      * @return the list of META event type names
      */
     public static String[] getTypeNames() {
@@ -110,10 +116,11 @@ public class MetaEvent {
     /**
      * Get the values that represent the given META event.
      * The returned array consists of <ol>
-     *    <li>the event name as a String</li>
-     *    <li>the length of the event data as an Integer</li>
-     *    <li>the event data as a String</li>
+     * <li>the event name as a String</li>
+     * <li>the length of the event data as an Integer</li>
+     * <li>the event data as a String</li>
      * </ol>
+     *
      * @param mess the META message to format
      * @return the representation of the message
      */
@@ -176,11 +183,11 @@ public class MetaEvent {
                 // Hour, Minute, Second, Frame, Field
                 // hr mn se fr ff
                 result[2] =
-                    twoDigitFormat.format(data[0] & 0x00ff) + ":" + // NOI18N
-                    twoDigitFormat.format(data[1] & 0x00ff) + ":" + // NOI18N
-                    twoDigitFormat.format(data[2] & 0x00ff) + ":" + // NOI18N
-                    twoDigitFormat.format(data[3] & 0x00ff) + ":" + // NOI18N
-                    twoDigitFormat.format(data[4] & 0x00ff);
+                        twoDigitFormat.format(data[0] & 0x00ff) + ":" + // NOI18N
+                        twoDigitFormat.format(data[1] & 0x00ff) + ":" + // NOI18N
+                        twoDigitFormat.format(data[2] & 0x00ff) + ":" + // NOI18N
+                        twoDigitFormat.format(data[3] & 0x00ff) + ":" + // NOI18N
+                        twoDigitFormat.format(data[4] & 0x00ff);
                 break;
             case TIME_SIGNATURE:
                 result[0] = "M:TimeSignature"; // NOI18N
@@ -239,6 +246,7 @@ public class MetaEvent {
     // Methods to handle TEMPO events.
     /**
      * Convert the given microsecond period to BeatsPerMinute
+     *
      * @param data 3 bytes of data that specify the microsecond period.
      * Calculated as <br>
      * <code>data[0] &lt;&lt; 16 + data[1] &lt;&lt; 8 + data[2]</code>
@@ -260,6 +268,7 @@ public class MetaEvent {
 
     /**
      * Convert the given BeatsPerMinute to a microsecond period
+     *
      * @param bpm the BeatsPerMinute to convert
      * @return 3 bytes of data that specify the microsecond period.
      * Calculated as <br>
@@ -276,6 +285,7 @@ public class MetaEvent {
 
     /**
      * Parse a tempo string with an optional 'bpm' suffix e.g. 88bpm
+     *
      * @param tempoString the string to parse
      * @return the integer part of the string or 60 if the string does not
      * represent a valid integer (with optional 'bpm' suffix)
@@ -300,14 +310,15 @@ public class MetaEvent {
      * Parse a time signature string in the format nn[/dd]
      * nn=numerator, dd=denominator
      * If only nn is given then dd defaults to 4
+     *
      * @param timeSigString the string to parse
      * @param ticksPerBeat used to calculate the metronome click
      * @return the data for the event in a byte[]
      */
     public static byte[] parseTimeSignature(String timeSigString,
-        int ticksPerBeat) {
+            int ticksPerBeat) {
         String[] parts = timeSigString.split("/"); // NOI18N
-        // default to 4/4 
+        // default to 4/4
         byte[] result = {4, 2, (byte)(ticksPerBeat / 4), 8};
         switch (parts.length) {
             case 0:
@@ -359,8 +370,9 @@ public class MetaEvent {
     }
 
     /**
-     * Parse an SMPTE offset string in the form 
+     * Parse an SMPTE offset string in the form
      * "hours:minutes:seconds:frames:fields"
+     *
      * @param smpteString the string to parse
      * @return a byte array with elements representing
      * hours, minutes, seconds, frames, fields
@@ -407,6 +419,7 @@ public class MetaEvent {
 
     /**
      * test if the message data should be treated as a string
+     *
      * @param mess the message to test
      * @return <code>true</code> if the message data should be
      * represented as a string
@@ -418,6 +431,7 @@ public class MetaEvent {
 
     /**
      * test if the message data can be edited in the track editor
+     *
      * @param mess the message to test
      * @return <code>true</code> if the message data can be edited
      */
@@ -428,6 +442,7 @@ public class MetaEvent {
 
     /**
      * Update the data content of the message
+     *
      * @param mess the message to update
      * @param value a String that represents the data for the event.<br>
      * This is parsed into a <code>byte[]</code> that becomes the data of
@@ -465,7 +480,7 @@ public class MetaEvent {
      * @param ticksPerBeat the tick resolution of the sequence
      */
     public static void setMetaData(MetaMessage mess, String value,
-        int ticksPerBeat) {
+            int ticksPerBeat) {
         byte[] data = null;
         int type = mess.getType();
         if (isText(mess)) {
@@ -506,18 +521,20 @@ public class MetaEvent {
                 mess.setMessage(type, data, data.length);
             } catch (InvalidMidiDataException e) {
                 TraceDialog.addTrace(
-                    "Error: MetaEvent.setMetaData(" + value + ") " + e.
-                    getMessage()); // NOI18N
+                        "Error: MetaEvent.setMetaData(" + value + ") " + e.
+                        getMessage()); // NOI18N
             }
         }
     }
 
     /**
      * Create a Midi Meta event
+     *
      * @param type the type of the event as defined by the array returned
      * from getTypeNames()
      * @param data a String that represents the data for the event.<br>
-     * see {@see #setMetaData} for details.
+     * see {
+     * @see #setMetaData} for details.
      * @param tick the position of the event in the sequence
      * @param ticksPerBeat the tick resolution of the sequence
      * @return the created Midi Meta event
@@ -525,8 +542,8 @@ public class MetaEvent {
      * MetaMessage.setMessage() parameters are not valid
      */
     public static MidiEvent createMetaEvent(String type, String data,
-        long tick, int ticksPerBeat)
-        throws InvalidMidiDataException {
+            long tick, int ticksPerBeat)
+            throws InvalidMidiDataException {
         MetaMessage mm = new MetaMessage();
         mm.setMessage(mTypeNameToValue.get(type), null, 0);
         setMetaData(mm, data, ticksPerBeat);

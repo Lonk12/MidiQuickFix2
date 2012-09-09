@@ -1,25 +1,27 @@
-/**************************************************************
+/**
+ * ************************************************************
  *
- *   MidiQuickFix - A Simple Midi file editor and player
+ * MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
- *   jostle@users.sourceforge.net
+ * Copyright (C) 2004-2009 John Lemcke
+ * jostle@users.sourceforge.net
  *
- *   This program is free software; you can redistribute it
- *   and/or modify it under the terms of the Artistic License
- *   as published by Larry Wall, either version 2.0,
- *   or (at your option) any later version.
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the Artistic License
+ * as published by Larry Wall, either version 2.0,
+ * or (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *   See the Artistic License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the Artistic License for more details.
  *
- *   You should have received a copy of the Artistic License with this Kit,
- *   in the file named "Artistic.clarified".
- *   If not, I'll be glad to provide one.
+ * You should have received a copy of the Artistic License with this Kit,
+ * in the file named "Artistic.clarified".
+ * If not, I'll be glad to provide one.
  *
- **************************************************************/
+ *************************************************************
+ */
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.TrackUpdateUtils;
@@ -43,10 +45,12 @@ import javax.swing.event.TableModelListener;
 
 /**
  * The UI for editing track data
+ * <p/>
  * @version $Id$
  */
-public class TrackEditorPanel extends javax.swing.JPanel
-    implements EventCreationListener, ListSelectionListener
+public class TrackEditorPanel
+        extends javax.swing.JPanel
+        implements EventCreationListener, ListSelectionListener
 {
 
     private static final long serialVersionUID = -3117013688244779503L;
@@ -56,7 +60,9 @@ public class TrackEditorPanel extends javax.swing.JPanel
     private CreateEventDialog mCreateEventDialog;
     private TrackTable trackTable;
 
-    /** Creates new form TrackEditorPanel */
+    /**
+     * Creates new form TrackEditorPanel
+     */
     public TrackEditorPanel() {
         initComponents();
         trackTable = new TrackTable();
@@ -75,17 +81,19 @@ public class TrackEditorPanel extends javax.swing.JPanel
 
     /**
      * Set the sequence that will be edited
+     * <p/>
      * @param seq the sequence to edit
      */
     public void setSequence(MqfSequence seq) {
         mSeq = seq;
-        int currentTrack = mCurrentTrack;
+        // int currentTrack = mCurrentTrack;
         boolean haveTracks = false;
         if (mSeq != null) {
             int numTracks = mSeq.getTracks().length;
             if (numTracks > 0) {
                 setTrackComboModel(mSeq.getTracks());
-                mCurrentTrack = currentTrack < numTracks ? currentTrack : 0;
+                // mCurrentTrack = currentTrack < numTracks ? currentTrack : 0;
+                mCurrentTrack = 0;
                 trackSelector.setSelectedIndex(mCurrentTrack);
                 haveTracks = true;
             }
@@ -131,22 +139,25 @@ public class TrackEditorPanel extends javax.swing.JPanel
         trackSelector.setModel(new DefaultComboBoxModel(trackList));
     }
 
-    /** Display the selected track in the editor.
+    /**
+     * Display the selected track in the editor.
+     * <p/>
      * @param trackNum The index of the track to be displayed.
      */
     void selectTrack(int trackNum) {
         mCurrentTrack = trackNum;
         if (mSeq != null) {
             trackTable.setTrack(
-                mSeq.getTracks()[mCurrentTrack],
-                mSeq.getResolution(),
-                showNotesCheck.isSelected(),
-                KeySignatures.isInFlats(mKeySig));
+                    mSeq.getTracks()[mCurrentTrack],
+                    mSeq.getResolution(),
+                    showNotesCheck.isSelected(),
+                    KeySignatures.isInFlats(mKeySig));
         }
     }
 
     /**
      * Add a change listener to the Track Table Model
+     * <p/>
      * @param l the listener to add
      */
     public void addTableChangeListener(TableModelListener l) {
@@ -156,7 +167,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
     private void doCreateEvent() {
         if (mCreateEventDialog == null) {
             mCreateEventDialog = new CreateEventDialog(mSeq.getResolution(),
-                MidiQuickFix.getMainFrame(), false);
+                    MidiQuickFix.getMainFrame(), false);
             mCreateEventDialog.addEventCreationListener(this);
         }
         TrackTableModel ttm = (TrackTableModel)trackTable.getModel();
@@ -185,7 +196,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
             String message = UiStrings.getString("ConvertAllTextQuestion");
             String title = UiStrings.getString("ConvertAllTextTitle");
             int answer = JOptionPane.showConfirmDialog(controlPanel, message, title,
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer == JOptionPane.YES_OPTION) {
                 trackTable.selectAll();
             }
@@ -193,8 +204,25 @@ public class TrackEditorPanel extends javax.swing.JPanel
         if (trackTable.getSelectedRowCount() > 0) {
             int[] rows = trackTable.getSelectedRows();
             TrackUpdateUtils.convertTextToLyric(mSeq.getTracks()[mCurrentTrack], rows);
+            trackTable.trackModified();
         }
-        trackTable.trackModified();
+    }
+
+    public void addSpaceToLyrics() {
+        if (trackTable.getSelectedRowCount() == 0) {
+            String message = UiStrings.getString("AddSpaceToAllQuestion");
+            String title = UiStrings.getString("AddSpaceToAllTitle");
+            int answer = JOptionPane.showConfirmDialog(controlPanel, message, title,
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (answer == JOptionPane.YES_OPTION) {
+                trackTable.selectAll();
+            }
+        }
+        if (trackTable.getSelectedRowCount() > 0) {
+            int[] rows = trackTable.getSelectedRows();
+            TrackUpdateUtils.addSpaceToLyric(mSeq.getTracks()[mCurrentTrack], rows);
+            trackTable.trackModified();
+        }
     }
 
     public void removeNotes() {
@@ -211,10 +239,9 @@ public class TrackEditorPanel extends javax.swing.JPanel
         String type = "TRACK_NAME";
         try {
             MidiEvent me = MetaEvent.createMetaEvent(
-                type, "Control Track", 0, 92);
+                    type, "Control Track", 0, 92);
             t[0].add(me);
-        }
-        catch (InvalidMidiDataException ex) {
+        } catch (InvalidMidiDataException ex) {
             TraceDialog.addTrace(ex.getMessage());
         }
 
@@ -223,10 +250,9 @@ public class TrackEditorPanel extends javax.swing.JPanel
             t[i] = mSeq.createTrack();
             try {
                 MidiEvent me = MetaEvent.createMetaEvent(
-                    type, "Channel " + String.valueOf(i), 0, 92);
+                        type, "Channel " + String.valueOf(i), 0, 92);
                 t[i].add(me);
-            }
-            catch (InvalidMidiDataException ex) {
+            } catch (InvalidMidiDataException ex) {
                 TraceDialog.addTrace(ex.getMessage());
             }
         }
@@ -253,7 +279,8 @@ public class TrackEditorPanel extends javax.swing.JPanel
         trackTable.trackModified();
     }
 
-    /** This method is called from within the constructor to
+    /**
+     * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
@@ -389,6 +416,7 @@ public class TrackEditorPanel extends javax.swing.JPanel
 
     /**
      * Respond to EventCreation events
+     * <p/>
      * @param e the EventCreation event
      */
     @Override

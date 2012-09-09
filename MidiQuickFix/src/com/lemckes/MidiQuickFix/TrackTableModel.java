@@ -26,8 +26,8 @@ import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.TreeSet;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -447,84 +447,103 @@ class TrackTableModel extends DefaultTableModel {
      * <li>MetaMessage.KEY_SIGNATURE</li>
      * <li>MetaMessage.TIME_SIGNATURE</li>
      * <li>MetaMessage.TEMPO</li>
-     * <li>MetaMessage.LYRIC</li>
      * <li>ShortMessage.PROGRAM_CHANGE</li>
      * <li>ShortMessage.NOTE_ON</li>
      * <li>ShortMessage.NOTE_OFF</li>
+     * <li>MetaMessage.LYRIC</li>
      * <li>Anything else ...</li>
      * </ol>
      */
     private void sortTickZeroEvents() {
-        TreeSet<MidiEvent> tickZeroEvents = new TreeSet<MidiEvent>(
-            new Comparator<MidiEvent>() {
-                @Override
-                public int compare(MidiEvent o1, MidiEvent o2) {
-                    return getSortPriority(o1) - getSortPriority(o2);
-                }
+        final int TRACK_NAME_PRIORITY = 101;
+        final int TEXT_PRIORITY = 102;
+        final int COPYRIGHT_PRIORITY = 103;
+        final int OTHER_META_PRIORITY = 200;
+        final int SYSEX_PRIORITY = 210;
+        final int SHORT_SYSTEM_PRIORITY = 301;
+        final int OTHER_SHORT_PRIORITY = 302;
+        final int KEY_SIGNATURE_PRIORITY = 401;
+        final int TIME_SIGNATURE_PRIORITY = 402;
+        final int TEMPO_PRIORITY = 403;
+        final int PROGRAM_CHANGE_PRIORITY = 501;
+        final int NOTE_ON_PRIORITY = 511;
+        final int NOTE_OFF_PRIORITY = 512;
+        final int LYRIC_PRIORITY = 521;
+        final int OTHER_PRIORITY = Integer.MAX_VALUE;
 
-                private int getSortPriority(MidiEvent me) {
-                    int priority = Integer.MAX_VALUE;
-                    MidiMessage mess = me.getMessage();
-                    if (mess instanceof MetaMessage) {
-                        MetaMessage mm = (MetaMessage)mess;
-                        int type = mm.getType();
-                        switch (type) {
-                            case MetaEvent.TRACK_NAME:
-                                priority = 1;
+        Comparator<MidiEvent> comparator = new Comparator<MidiEvent>() {
+            @Override
+            public int compare(MidiEvent o1, MidiEvent o2) {
+                return getSortPriority(o1) - getSortPriority(o2);
+            }
+
+            private int getSortPriority(MidiEvent me) {
+                int priority = OTHER_PRIORITY;
+                MidiMessage mess = me.getMessage();
+                if (mess instanceof MetaMessage) {
+                    MetaMessage mm = (MetaMessage)mess;
+                    int type = mm.getType();
+                    switch (type) {
+                        case MetaEvent.TRACK_NAME:
+                            priority = TRACK_NAME_PRIORITY;
+                            break;
+                        case MetaEvent.TEXT:
+                            priority = TEXT_PRIORITY;
+                            break;
+                        case MetaEvent.COPYRIGHT:
+                            priority = COPYRIGHT_PRIORITY;
+                            break;
+                        case MetaEvent.KEY_SIGNATURE:
+                            priority = KEY_SIGNATURE_PRIORITY;
+                            break;
+                        case MetaEvent.TIME_SIGNATURE:
+                            priority = TIME_SIGNATURE_PRIORITY;
+                            break;
+                        case MetaEvent.TEMPO:
+                            priority = TEMPO_PRIORITY;
+                            break;
+                        case MetaEvent.LYRIC:
+                            priority = LYRIC_PRIORITY;
+                            break;
+                        default:
+                            priority = OTHER_META_PRIORITY;
+                    }
+                } else if (mess instanceof SysexMessage) {
+                    priority = SYSEX_PRIORITY;
+                } else if (mess instanceof ShortMessage) {
+                    ShortMessage sm = (ShortMessage)mess;
+                    int st = sm.getStatus();
+                    int command = sm.getCommand() & 0xff;
+                    if ((st & 0xf0) <= 0xf0) {
+                        // This is a channel message
+                        switch (command) {
+                            case ShortMessage.PROGRAM_CHANGE:
+                                priority = PROGRAM_CHANGE_PRIORITY;
                                 break;
-                            case MetaEvent.TEXT:
-                                priority = 2;
+                            case ShortMessage.NOTE_ON:
+                                if (sm.getData2() != 0) {
+                                    priority = NOTE_ON_PRIORITY;
+                                } else {
+                                    priority = NOTE_OFF_PRIORITY;
+                                }
                                 break;
-                            case MetaEvent.COPYRIGHT:
-                                priority = 3;
-                                break;
-                            case MetaEvent.KEY_SIGNATURE:
-                                priority = 320;
-                                break;
-                            case MetaEvent.TIME_SIGNATURE:
-                                priority = 321;
-                                break;
-                            case MetaEvent.TEMPO:
-                                priority = 322;
-                                break;
-                            case MetaEvent.LYRIC:
-                                priority = 323;
+                            case ShortMessage.NOTE_OFF:
+                                priority = NOTE_OFF_PRIORITY;
                                 break;
                             default:
-                                priority = 10;
+                                priority = OTHER_SHORT_PRIORITY;
                         }
-                    } else if (mess instanceof SysexMessage) {
-                        priority = 100;
-                    } else if (mess instanceof ShortMessage) {
-                        ShortMessage sm = (ShortMessage)mess;
-                        int st = sm.getStatus();
-                        int command = sm.getCommand() & 0xff;
-
-                        if ((st & 0xf0) <= 0xf0) { // This is a channel message
-                            switch (command) {
-                                case ShortMessage.PROGRAM_CHANGE:
-                                    priority = 410;
-                                    break;
-                                case ShortMessage.NOTE_ON:
-                                    priority = 420;
-                                    break;
-                                case ShortMessage.NOTE_OFF:
-                                    priority = 421;
-                                    break;
-                                default:
-                                    priority = 300;
-                            }
-                        } else {
-                            // ShortMessage System messages
-                            priority = 200;
-                        }
+                    } else {
+                        // ShortMessage System messages
+                        priority = SHORT_SYSTEM_PRIORITY;
                     }
-                    return priority;
                 }
-            });
+                return priority;
+            }
+        };
 
-        // Collect all the events that occur at tick zero
-        // and add them to the sorted Set.
+        // Collect all the events that occur at tick zero into a new list
+        ArrayList<MidiEvent> tickZeroEvents = new ArrayList<MidiEvent>(64);
         for (int i = 0; i < mTrack.size(); ++i) {
             MidiEvent me = mTrack.get(i);
             if (me.getTick() == 0) {
@@ -534,11 +553,14 @@ class TrackTableModel extends DefaultTableModel {
             }
         }
 
-        for(MidiEvent me : tickZeroEvents) {
+        // Remove all the events at tick zero
+        for (MidiEvent me : tickZeroEvents) {
             mTrack.remove(me);
         }
-        
-        for(MidiEvent me : tickZeroEvents) {
+
+        //Sort the events and put them back in order.
+        Collections.sort(tickZeroEvents, comparator);
+        for (MidiEvent me : tickZeroEvents) {
             mTrack.add(me);
         }
     }
