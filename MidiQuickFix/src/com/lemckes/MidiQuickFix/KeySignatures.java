@@ -36,7 +36,7 @@ public class KeySignatures
      * The names of the Major key signatures.
      */
     static String[] majorKeyNames = {
-        "B",
+        "Cb",
         "Gb",
         "Db",
         "Ab",
