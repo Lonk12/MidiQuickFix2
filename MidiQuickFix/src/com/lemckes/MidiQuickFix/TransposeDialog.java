@@ -57,7 +57,7 @@ public class TransposeDialog
      * A return status code - returned if OK button has been pressed
      */
     public static final int RET_OK = 1;
-    private String mKeyString = UiStrings.getString("key_names_string");
+    private String mKeyString = UiStrings.getString("key_names_string") + " ";
     private int mTransposeBy = 0;
 
     /**
@@ -183,8 +183,8 @@ public class TransposeDialog
         mainPanel.setLayout(new java.awt.GridBagLayout());
 
         jTextField1.setEditable(false);
-        jTextField1.setFont(new java.awt.Font("Monospaced", 0, 12));
-        jTextField1.setText(UiStrings.getString("key_names_string")); // NOI18N
+        jTextField1.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        jTextField1.setText(" C  Db D  Eb E  F  F# G  Ab A  Bb B ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -200,8 +200,8 @@ public class TransposeDialog
         mainPanel.add(semitoneSpinner, gridBagConstraints);
 
         toKeyField.setEditable(false);
-        toKeyField.setFont(new java.awt.Font("Monospaced", 0, 12));
-        toKeyField.setText(UiStrings.getString("key_names_string")); // NOI18N
+        toKeyField.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        toKeyField.setText(" C  Db D  Eb E  F  F# G  Ab A  Bb B ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -234,7 +234,6 @@ public class TransposeDialog
         doDrumsCheckBox.setText(UiStrings.getString("transpose_drum_channel")); // NOI18N
         doDrumsCheckBox.setToolTipText(UiStrings.getString("transpose_drums_tooltip")); // NOI18N
         doDrumsCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        doDrumsCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;

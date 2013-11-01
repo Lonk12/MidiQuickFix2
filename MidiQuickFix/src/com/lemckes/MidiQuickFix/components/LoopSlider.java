@@ -1,4 +1,5 @@
-/** ************************************************************
+/**
+ * ************************************************************
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
@@ -19,47 +20,61 @@
  * in the file named "Artistic.clarified".
  * If not, I'll be glad to provide one.
  *
- ************************************************************* */
+ *************************************************************
+ */
 package com.lemckes.MidiQuickFix.components;
 
+import com.lemckes.MidiQuickFix.util.BarBeatTick;
 import com.lemckes.MidiQuickFix.util.DrawnIcon;
 import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.LoopSliderEvent;
 import com.lemckes.MidiQuickFix.util.LoopSliderListener;
 import com.lemckes.MidiQuickFix.util.RegexFormatter;
+import com.lemckes.MidiQuickFix.util.SequencePosition;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.GeneralPath;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.Sequence;
 import javax.swing.JFormattedTextField;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
 import javax.swing.text.DefaultFormatterFactory;
 
 /**
  * A duration slider that can have loop points
- * <p/>
+ *
  * @see DurationSlider
  * @version $Id$
  */
-public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
+public class LoopSlider
+    extends javax.swing.JPanel
+    implements ChangeListener
+{
 
     static final long serialVersionUID = -2520861084060073513L;
     transient private DrawnIcon mInIcon;
     transient private DrawnIcon mOutIcon;
-    transient private GeneralPath mInPath = new GeneralPath();
-    transient private GeneralPath mOutPath = new GeneralPath();
+    transient private GeneralPath mInPath;
+    transient private GeneralPath mOutPath;
     private int mResolution;
     private long mLoopInPoint = 0;
     private long mLoopOutPoint = 0;
-    /** The list of registered listeners. */
-    protected EventListenerList mListenerList;
+    private BarBeatTick mBarBeatTick;
 
-    /** Creates a new LoopSlider */
+    /**
+     * Creates a new LoopSlider
+     */
     public LoopSlider() {
         initComponents();
 
-        RegexFormatter formatter = new RegexFormatter("[0-9]+:[0-9]+");
+        try {
+            mBarBeatTick = new BarBeatTick(new Sequence(Sequence.PPQ, 192, 1));
+        } catch (InvalidMidiDataException ex) {
+            ex.printStackTrace();
+        }
+
+    RegexFormatter formatter = new RegexFormatter("[0-9]+:[0-9]+");
         formatter.setAllowsInvalid(false);
         formatter.setOverwriteMode(false);
         formatter.setCommitsOnValidEdit(true);
@@ -70,59 +85,40 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         currPositionField.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
         currPositionField.setFormatterFactory(new DefaultFormatterFactory(formatter));
 
-        loopInButton.setPreferredSize(new Dimension(25, 14));
-        mInPath.moveTo(0.3f, 0.2f);
-        mInPath.lineTo(0.3f, 0.8f);
-        mInPath.lineTo(0.3f, 0.4f);
-        mInPath.lineTo(0.6f, 0.2f);
-        mInPath.closePath();
-        mInPath.moveTo(0.1f, 0.8f);
-        mInPath.lineTo(0.9f, 0.8f);
-        mInPath.moveTo(0.2f, 0.7f);
-        mInPath.lineTo(0.2f, 0.8f);
-        mInPath.moveTo(0.4f, 0.7f);
-        mInPath.lineTo(0.4f, 0.8f);
-        mInPath.moveTo(0.6f, 0.7f);
-        mInPath.lineTo(0.6f, 0.8f);
-        mInPath.moveTo(0.8f, 0.7f);
-        mInPath.lineTo(0.8f, 0.8f);
-        mInIcon = new DrawnIcon(loopInButton, mInPath);
-        mInIcon.setFilled(true);
-        mInIcon.setFillColour(Color.BLACK);
-        loopInButton.setIcon(mInIcon);
-
-        loopOutButton.setPreferredSize(new Dimension(25, 14));
-        mOutPath.moveTo(0.4f, 0.2f);
-        mOutPath.lineTo(0.7f, 0.2f);
-        mOutPath.lineTo(0.7f, 0.8f);
-        mOutPath.lineTo(0.7f, 0.4f);
-        mOutPath.closePath();
-        mOutPath.moveTo(0.1f, 0.8f);
-        mOutPath.lineTo(0.9f, 0.8f);
-        mOutPath.moveTo(0.2f, 0.7f);
-        mOutPath.lineTo(0.2f, 0.8f);
-        mOutPath.moveTo(0.4f, 0.7f);
-        mOutPath.lineTo(0.4f, 0.8f);
-        mOutPath.moveTo(0.6f, 0.7f);
-        mOutPath.lineTo(0.6f, 0.8f);
-        mOutPath.moveTo(0.8f, 0.7f);
-        mOutPath.lineTo(0.8f, 0.8f);
-        mOutIcon = new DrawnIcon(loopOutButton, mOutPath);
-        mOutIcon.setFilled(true);
-        mOutIcon.setFillColour(Color.BLACK);
-        loopOutButton.setIcon(mOutIcon);
+        configureLoopButtons();
 
         durationSlider.addChangeListener(this);
 
-        mListenerList = new EventListenerList();
+//        mListenerList = new EventListenerList();
+    }
+
+    public void setBarBeatTick(BarBeatTick barBeatTick){
+        mBarBeatTick = barBeatTick;
     }
 
     public void addLoopSliderListener(LoopSliderListener l) {
-        mListenerList.add(LoopSliderListener.class, l);
+        listenerList.add(LoopSliderListener.class, l);
     }
 
-    public void setValue(long val) {
+    public void setValue(long val, boolean updateSequence) {
+        if (!updateSequence) {
+            durationSlider.removeChangeListener(this);
+        }
         durationSlider.setValue((int)val);
+        if (!updateSequence) {
+            setPositionField(val);
+            setBarField(mBarBeatTick.getSequencePosition(val));
+            durationSlider.addChangeListener(this);
+        }
+    }
+
+    public void setPositionField(long tick) {
+        currPositionField.setText(Formats.formatTicks(tick, mResolution, false));
+    }
+
+    public void setBarField(SequencePosition position) {
+        String pos = position.getBar() + ":" + position.getBeat();
+        barCountField.setText(pos);
     }
 
     public void setDuration(long duration, boolean ticks, int resolution) {
@@ -137,7 +133,8 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     @Override
     public void stateChanged(javax.swing.event.ChangeEvent changeEvent) {
         int val = durationSlider.getValue();
-        currPositionField.setText(Formats.formatTicks(val, mResolution, false));
+        setPositionField(val);
+        setBarField(mBarBeatTick.getSequencePosition(val));
         fireLoopSliderChanged(durationSlider.getValueIsAdjusting());
     }
 
@@ -146,11 +143,12 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     }
 
     public void setLoopInPoint(int loopInPoint) {
-        loopInPoint = loopInPoint < 0 ? 0 : loopInPoint;
-        loopInPoint = loopInPoint > durationSlider.getMaximum() ? durationSlider.
-            getMaximum() : loopInPoint;
-        if (mLoopInPoint != loopInPoint) {
-            mLoopInPoint = loopInPoint;
+        int inPoint = loopInPoint;
+        inPoint = inPoint < 0 ? 0 : inPoint;
+        inPoint = inPoint > durationSlider.getMaximum()
+            ? durationSlider.getMaximum() : inPoint;
+        if (mLoopInPoint != inPoint) {
+            mLoopInPoint = inPoint;
             loopInField.setText(Formats.formatTicks(mLoopInPoint, mResolution, false));
             fireLoopPointChanged();
         }
@@ -161,11 +159,12 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     }
 
     public void setLoopOutPoint(int loopOutPoint) {
-        loopOutPoint = loopOutPoint < 0 ? 0 : loopOutPoint;
-        loopOutPoint = loopOutPoint > durationSlider.getMaximum() ? durationSlider.
-            getMaximum() : loopOutPoint;
-        if (loopOutPoint >= 0 && mLoopOutPoint != loopOutPoint) {
-            mLoopOutPoint = loopOutPoint;
+        int outPoint = loopOutPoint;
+        outPoint = outPoint < 0 ? 0 : outPoint;
+        outPoint = outPoint > durationSlider.getMaximum()
+            ? durationSlider.getMaximum() : outPoint;
+        if (outPoint >= 0 && mLoopOutPoint != outPoint) {
+            mLoopOutPoint = outPoint;
             loopOutField.setText(Formats.formatTicks(mLoopOutPoint, mResolution, false));
             fireLoopPointChanged();
         }
@@ -194,7 +193,54 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         }
     }
 
-    /** This method is called from within the constructor to
+    private void configureLoopButtons() {
+        loopInButton.setPreferredSize(new Dimension(25, 14));
+        mInPath = new GeneralPath();
+        mInPath.moveTo(0.3f, 0.2f);
+        mInPath.lineTo(0.3f, 0.8f);
+        mInPath.lineTo(0.3f, 0.4f);
+        mInPath.lineTo(0.6f, 0.2f);
+        mInPath.closePath();
+        mInPath.moveTo(0.1f, 0.8f);
+        mInPath.lineTo(0.9f, 0.8f);
+        mInPath.moveTo(0.2f, 0.7f);
+        mInPath.lineTo(0.2f, 0.8f);
+        mInPath.moveTo(0.4f, 0.7f);
+        mInPath.lineTo(0.4f, 0.8f);
+        mInPath.moveTo(0.6f, 0.7f);
+        mInPath.lineTo(0.6f, 0.8f);
+        mInPath.moveTo(0.8f, 0.7f);
+        mInPath.lineTo(0.8f, 0.8f);
+        mInIcon = new DrawnIcon(loopInButton, mInPath);
+        mInIcon.setFilled(true);
+        mInIcon.setFillColour(Color.BLACK);
+        loopInButton.setIcon(mInIcon);
+
+        loopOutButton.setPreferredSize(new Dimension(25, 14));
+        mOutPath = new GeneralPath();
+        mOutPath.moveTo(0.4f, 0.2f);
+        mOutPath.lineTo(0.7f, 0.2f);
+        mOutPath.lineTo(0.7f, 0.8f);
+        mOutPath.lineTo(0.7f, 0.4f);
+        mOutPath.closePath();
+        mOutPath.moveTo(0.1f, 0.8f);
+        mOutPath.lineTo(0.9f, 0.8f);
+        mOutPath.moveTo(0.2f, 0.7f);
+        mOutPath.lineTo(0.2f, 0.8f);
+        mOutPath.moveTo(0.4f, 0.7f);
+        mOutPath.lineTo(0.4f, 0.8f);
+        mOutPath.moveTo(0.6f, 0.7f);
+        mOutPath.lineTo(0.6f, 0.8f);
+        mOutPath.moveTo(0.8f, 0.7f);
+        mOutPath.lineTo(0.8f, 0.8f);
+        mOutIcon = new DrawnIcon(loopOutButton, mOutPath);
+        mOutIcon.setFilled(true);
+        mOutIcon.setFillColour(Color.BLACK);
+        loopOutButton.setIcon(mOutIcon);
+    }
+
+    /**
+     * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
@@ -211,13 +257,14 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         loopOutButton = new javax.swing.JButton();
         loopInLabel = new javax.swing.JLabel();
         loopOutLabel = new javax.swing.JLabel();
+        barCountField = new javax.swing.JTextField();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 3, 3, 3));
         setLayout(new java.awt.GridBagLayout());
 
         loopInField.setColumns(8);
         loopInField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        loopInField.setFont(new java.awt.Font("DialogInput", 0, 14));
+        loopInField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
         loopInField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loopInFieldActionPerformed(evt);
@@ -238,7 +285,7 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
 
         loopOutField.setColumns(8);
         loopOutField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        loopOutField.setFont(new java.awt.Font("DialogInput", 0, 14));
+        loopOutField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
         loopOutField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loopOutFieldActionPerformed(evt);
@@ -267,7 +314,7 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
 
         currPositionField.setColumns(8);
         currPositionField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        currPositionField.setFont(new java.awt.Font("DialogInput", 0, 14));
+        currPositionField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
         currPositionField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 currPositionFieldActionPerformed(evt);
@@ -330,6 +377,11 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
         add(loopOutLabel, gridBagConstraints);
+
+        barCountField.setColumns(12);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        add(barCountField, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     private void loopOutFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopOutFieldActionPerformed
         setLoopOutPoint(Formats.parseTicks(loopOutField.getText(), mResolution));
@@ -340,11 +392,11 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
     }//GEN-LAST:event_loopOutFieldFocusLost
 
     private void currPositionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currPositionFieldActionPerformed
-        setValue(Formats.parseTicks(currPositionField.getText(), mResolution));
+        setValue(Formats.parseTicks(currPositionField.getText(), mResolution), true);
     }//GEN-LAST:event_currPositionFieldActionPerformed
 
     private void currPositionFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_currPositionFieldFocusLost
-        setValue(Formats.parseTicks(currPositionField.getText(), mResolution));
+        setValue(Formats.parseTicks(currPositionField.getText(), mResolution), true);
     }//GEN-LAST:event_currPositionFieldFocusLost
 
     private void loopInFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_loopInFieldFocusLost
@@ -363,6 +415,7 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
         setLoopInPoint(durationSlider.getValue());
     }//GEN-LAST:event_loopInButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField barCountField;
     private javax.swing.JFormattedTextField currPositionField;
     private com.lemckes.MidiQuickFix.components.DurationSlider durationSlider;
     private javax.swing.JButton loopInButton;
@@ -375,12 +428,12 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
 
     /**
      * Notify listeners that are interested in loop slider events.
-     * <p/>
+     *
      * @param valueIsAdjusting True if the slider is being adjusted.
      */
     protected void fireLoopSliderChanged(boolean valueIsAdjusting) {
         LoopSliderListener[] keyListeners =
-            mListenerList.getListeners(LoopSliderListener.class);
+            listenerList.getListeners(LoopSliderListener.class);
         for (int i = keyListeners.length - 1; i >= 0; --i) {
             keyListeners[i].loopSliderChanged(
                 new LoopSliderEvent(durationSlider.getValue(),
@@ -393,7 +446,7 @@ public class LoopSlider extends javax.swing.JPanel implements ChangeListener {
      */
     protected void fireLoopPointChanged() {
         LoopSliderListener[] keyListeners =
-            mListenerList.getListeners(LoopSliderListener.class);
+            listenerList.getListeners(LoopSliderListener.class);
         for (int i = keyListeners.length - 1; i >= 0; --i) {
             keyListeners[i].loopPointChanged(
                 new LoopSliderEvent(durationSlider.getValue(),

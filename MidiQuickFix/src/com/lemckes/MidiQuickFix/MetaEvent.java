@@ -40,9 +40,9 @@ import javax.sound.midi.MidiEvent;
 public class MetaEvent
 {
 
-    static java.text.DecimalFormat twoDigitFormat =
+    private static java.text.DecimalFormat twoDigitFormat =
             new java.text.DecimalFormat("00"); // NOI18N
-    static String[] typeNames = {
+    private static String[] typeNames = {
         "SEQUENCE_NUMBER",
         "TEXT",
         "COPYRIGHT",
@@ -74,18 +74,22 @@ public class MetaEvent
     public static final int END_OF_TRACK = 0x2f; //FF 2F 00
     public static final int TEMPO = 0x51; //FF 51 03 tt tt tt microseconds
     public static final int SMPTE_OFFSET = 0x54; //FF 54 05 hr mn se fr ff
+    /**
+     * nn=numerator, dd=denominator (2^dd), cc=MIDI clocks/metronome click
+     * bb=no. of notated 32nd notes per MIDI quarter note.
+     * There are 24 MIDI clocks per quarter note.
+     * No I don't understand that last one but it will almost certainly be 8.
+     * 06 03 24 08 is 6/8 time, 36 clocks/metronome (2 per bar), 8 1/32nd notes
+     * / 1/4note
+     */
     public static final int TIME_SIGNATURE = 0x58; //FF 58 04 nn dd cc bb
-    // nn=numerator, dd=denominator (2^dd), cc=MIDI clocks/metronome click
-    // bb=no. of notated 32nd notes per MIDI quarter note (24 MIDI clocks).
-    // No I don't understand that last one.
-    // 06 03 18 08 is 6/8 time, 24 clocks/metronome, 8 1/32ndnotes / 1/4note
     public static final int KEY_SIGNATURE = 0x59; //FF 59 02 sf mi
     // -sf=no. of flats +sf=no. of sharps mi=0=major mi=1=minor
     public static final int PROPRIETARY_DATA = 0x7f; //FF 7F len data
     private static final HashMap<String, Integer> mTypeNameToValue;
 
     static {
-        mTypeNameToValue = new HashMap<String, Integer>(20);
+        mTypeNameToValue = new HashMap<>(20);
         mTypeNameToValue.put("SEQUENCE_NUMBER", 0x00); // NOI18N
         mTypeNameToValue.put("TEXT", 0x01); // NOI18N
         mTypeNameToValue.put("COPYRIGHT", 0x02); // NOI18N
@@ -481,7 +485,7 @@ public class MetaEvent
      */
     public static void setMetaData(MetaMessage mess, String value,
             int ticksPerBeat) {
-        byte[] data = null;
+        byte[] data;
         int type = mess.getType();
         if (isText(mess)) {
             try {
