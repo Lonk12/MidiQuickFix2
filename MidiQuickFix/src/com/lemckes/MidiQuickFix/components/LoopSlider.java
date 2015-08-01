@@ -60,6 +60,7 @@ public class LoopSlider
     private int mResolution;
     private long mLoopInPoint = 0;
     private long mLoopOutPoint = 0;
+    private Color mLoopFieldBg;
     private BarBeatTick mBarBeatTick;
 
     /**
@@ -68,6 +69,8 @@ public class LoopSlider
     public LoopSlider() {
         initComponents();
 
+        mLoopFieldBg = loopInField.getBackground();
+        
         try {
             mBarBeatTick = new BarBeatTick(new Sequence(Sequence.PPQ, 192, 1));
         } catch (InvalidMidiDataException ex) {
@@ -89,7 +92,6 @@ public class LoopSlider
 
         durationSlider.addChangeListener(this);
 
-//        mListenerList = new EventListenerList();
     }
 
     public void setBarBeatTick(BarBeatTick barBeatTick){
@@ -188,8 +190,8 @@ public class LoopSlider
             loopInField.setBackground(Color.decode("0xc0ffb0"));
             loopOutField.setBackground(Color.decode("0xc0ffb0"));
         } else {
-            loopInField.setBackground(Color.WHITE);
-            loopOutField.setBackground(Color.WHITE);
+            loopInField.setBackground(mLoopFieldBg);
+            loopOutField.setBackground(mLoopFieldBg);
         }
     }
 
@@ -249,19 +251,30 @@ public class LoopSlider
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        loopInField = new javax.swing.JFormattedTextField();
-        loopOutField = new javax.swing.JFormattedTextField();
-        durationSlider = new com.lemckes.MidiQuickFix.components.DurationSlider();
-        currPositionField = new javax.swing.JFormattedTextField();
-        loopInButton = new javax.swing.JButton();
-        loopOutButton = new javax.swing.JButton();
         loopInLabel = new javax.swing.JLabel();
+        loopInField = new javax.swing.JFormattedTextField();
+        loopInButton = new javax.swing.JButton();
+        currPositionField = new javax.swing.JFormattedTextField();
+        loopOutButton = new javax.swing.JButton();
+        loopOutField = new javax.swing.JFormattedTextField();
         loopOutLabel = new javax.swing.JLabel();
+        durationSlider = new com.lemckes.MidiQuickFix.components.DurationSlider();
         barCountField = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 3, 3, 3));
         setLayout(new java.awt.GridBagLayout());
 
+        loopInLabel.setText(UiStrings.getString("in")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        add(loopInLabel, gridBagConstraints);
+
+        loopInField.setBackground(new java.awt.Color(233, 247, 255));
         loopInField.setColumns(8);
         loopInField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         loopInField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
@@ -276,42 +289,27 @@ public class LoopSlider
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
         add(loopInField, gridBagConstraints);
 
-        loopOutField.setColumns(8);
-        loopOutField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        loopOutField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
-        loopOutField.addActionListener(new java.awt.event.ActionListener() {
+        loopInButton.setToolTipText(UiStrings.getString("loop-in_point_tooltip")); // NOI18N
+        loopInButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loopOutFieldActionPerformed(evt);
-            }
-        });
-        loopOutField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                loopOutFieldFocusLost(evt);
+                loopInButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
-        add(loopOutField, gridBagConstraints);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        add(loopInButton, gridBagConstraints);
 
-        durationSlider.setOpaque(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(durationSlider, gridBagConstraints);
-
+        currPositionField.setBackground(new java.awt.Color(233, 247, 255));
         currPositionField.setColumns(8);
         currPositionField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         currPositionField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
@@ -326,24 +324,11 @@ public class LoopSlider
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(1, 3, 0, 2);
         add(currPositionField, gridBagConstraints);
-
-        loopInButton.setToolTipText(UiStrings.getString("loop-in_point_tooltip")); // NOI18N
-        loopInButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loopInButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        add(loopInButton, gridBagConstraints);
 
         loopOutButton.setToolTipText(UiStrings.getString("loop-out_point_tooltip")); // NOI18N
         loopOutButton.addActionListener(new java.awt.event.ActionListener() {
@@ -352,36 +337,65 @@ public class LoopSlider
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(loopOutButton, gridBagConstraints);
 
-        loopInLabel.setText(UiStrings.getString("in")); // NOI18N
+        loopOutField.setBackground(new java.awt.Color(233, 247, 255));
+        loopOutField.setColumns(8);
+        loopOutField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        loopOutField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
+        loopOutField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loopOutFieldActionPerformed(evt);
+            }
+        });
+        loopOutField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                loopOutFieldFocusLost(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
+        add(loopOutField, gridBagConstraints);
+
+        loopOutLabel.setText(UiStrings.getString("out")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        add(loopOutLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(durationSlider, gridBagConstraints);
+
+        barCountField.setBackground(new java.awt.Color(233, 247, 255));
+        barCountField.setColumns(6);
+        barCountField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
+        add(barCountField, gridBagConstraints);
+
+        jLabel1.setText("Bar:Beat");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        add(loopInLabel, gridBagConstraints);
-
-        loopOutLabel.setText(UiStrings.getString("out")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
-        add(loopOutLabel, gridBagConstraints);
-
-        barCountField.setColumns(12);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        add(barCountField, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        add(jLabel1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     private void loopOutFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loopOutFieldActionPerformed
         setLoopOutPoint(Formats.parseTicks(loopOutField.getText(), mResolution));
@@ -418,6 +432,7 @@ public class LoopSlider
     private javax.swing.JTextField barCountField;
     private javax.swing.JFormattedTextField currPositionField;
     private com.lemckes.MidiQuickFix.components.DurationSlider durationSlider;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JButton loopInButton;
     private javax.swing.JFormattedTextField loopInField;
     private javax.swing.JLabel loopInLabel;

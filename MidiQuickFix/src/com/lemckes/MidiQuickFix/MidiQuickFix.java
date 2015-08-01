@@ -319,6 +319,8 @@ public class MidiQuickFix
                 UiStrings.getString("startup_failed")); // NOI18N
         }
         mMainFrame = this;
+
+        mainSplitPane.setDividerLocation(mainSplitPane.getWidth() / 8);
     }
 
     public static JFrame getMainFrame() {
@@ -1027,9 +1029,7 @@ public class MidiQuickFix
         sequenceChooser = new javax.swing.JFileChooser();
         mainPanel = new javax.swing.JPanel();
         mainSplitPane = new javax.swing.JSplitPane();
-        topPanel = new javax.swing.JPanel();
-        playControlPanel = new javax.swing.JPanel();
-        transportPanel = new com.lemckes.MidiQuickFix.components.TransportPanel();
+        bodyPanel = new javax.swing.JPanel();
         controlPanel = new javax.swing.JPanel();
         progressPanel = new javax.swing.JPanel();
         positionSlider = new com.lemckes.MidiQuickFix.components.LoopSlider();
@@ -1051,6 +1051,9 @@ public class MidiQuickFix
         summaryPanel = new javax.swing.JPanel();
         editorPanel = new javax.swing.JPanel();
         lyricsPanel = new javax.swing.JPanel();
+        topPanel = new javax.swing.JPanel();
+        playControlPanel = new javax.swing.JPanel();
+        transportPanel = new com.lemckes.MidiQuickFix.components.TransportPanel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -1081,34 +1084,22 @@ public class MidiQuickFix
 
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        mainSplitPane.setDividerSize(11);
+        mainSplitPane.setDividerSize(9);
         mainSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setOneTouchExpandable(true);
 
-        topPanel.setLayout(new java.awt.BorderLayout());
-
-        playControlPanel.setLayout(new java.awt.GridBagLayout());
-
-        transportPanel.setAlignmentX(1.0F);
-        transportPanel.setPreferredSize(new java.awt.Dimension(200, 40));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        playControlPanel.add(transportPanel, gridBagConstraints);
-
-        topPanel.add(playControlPanel, java.awt.BorderLayout.CENTER);
+        bodyPanel.setBackground(new java.awt.Color(211, 225, 237));
+        bodyPanel.setLayout(new java.awt.BorderLayout());
 
         controlPanel.setBackground(new java.awt.Color(211, 225, 237));
         controlPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 6, 6, 6));
         controlPanel.setLayout(new java.awt.GridBagLayout());
 
-        progressPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2)));
         progressPanel.setLayout(new java.awt.GridBagLayout());
 
-        positionSlider.setBorder(null);
+        positionSlider.setBackground(new java.awt.Color(197, 210, 221));
+        positionSlider.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(197, 210, 221), 2)));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -1135,6 +1126,7 @@ public class MidiQuickFix
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         tempoAdjustPanel.add(tempoAdjustLabel, gridBagConstraints);
 
+        tempoAdjustField.setBackground(new java.awt.Color(233, 247, 255));
         tempoAdjustField.setColumns(4);
         tempoAdjustField.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1159,46 +1151,47 @@ public class MidiQuickFix
         gridBagConstraints.insets = new java.awt.Insets(6, 16, 0, 16);
         controlPanel.add(tempoAdjustPanel, gridBagConstraints);
 
-        seqInfoPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2)));
+        seqInfoPanel.setBackground(new java.awt.Color(195, 208, 219));
+        seqInfoPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         seqInfoPanel.setLayout(new java.awt.GridBagLayout());
 
         lengthLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         lengthLabel.setText(UiStrings.getString("duration")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(2, 3, 0, 0);
         seqInfoPanel.add(lengthLabel, gridBagConstraints);
 
-        lengthText.setBackground(new java.awt.Color(255, 255, 255));
+        lengthText.setBackground(new java.awt.Color(233, 247, 255));
         lengthText.setFont(new java.awt.Font("DialogInput", 0, 12)); // NOI18N
         lengthText.setText("--:--");
         lengthText.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 6));
         lengthText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 3);
+        gridBagConstraints.insets = new java.awt.Insets(2, 4, 0, 3);
         seqInfoPanel.add(lengthText, gridBagConstraints);
 
         tempoLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         tempoLabel.setText(UiStrings.getString("tempo")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 0);
         seqInfoPanel.add(tempoLabel, gridBagConstraints);
 
-        tempoText.setBackground(new java.awt.Color(255, 255, 255));
+        tempoText.setBackground(new java.awt.Color(233, 247, 255));
         tempoText.setFont(new java.awt.Font("DialogInput", 0, 12)); // NOI18N
         tempoText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 4, 0, 3);
@@ -1208,17 +1201,17 @@ public class MidiQuickFix
         timeLabel.setText(UiStrings.getString("timesig")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 0);
         seqInfoPanel.add(timeLabel, gridBagConstraints);
 
-        timeSigText.setBackground(new java.awt.Color(255, 255, 255));
+        timeSigText.setBackground(new java.awt.Color(233, 247, 255));
         timeSigText.setFont(new java.awt.Font("DialogInput", 0, 12)); // NOI18N
         timeSigText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 4, 0, 3);
@@ -1228,20 +1221,20 @@ public class MidiQuickFix
         keyLabel.setText(UiStrings.getString("key")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 2, 0);
         seqInfoPanel.add(keyLabel, gridBagConstraints);
 
-        keyText.setBackground(new java.awt.Color(255, 255, 255));
+        keyText.setBackground(new java.awt.Color(233, 247, 255));
         keyText.setFont(new java.awt.Font("DialogInput", 0, 12)); // NOI18N
         keyText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 4, 0, 3);
+        gridBagConstraints.insets = new java.awt.Insets(3, 4, 2, 3);
         seqInfoPanel.add(keyText, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1263,9 +1256,9 @@ public class MidiQuickFix
         gridBagConstraints.insets = new java.awt.Insets(6, 3, 0, 0);
         controlPanel.add(transposeButton, gridBagConstraints);
 
-        topPanel.add(controlPanel, java.awt.BorderLayout.SOUTH);
+        bodyPanel.add(controlPanel, java.awt.BorderLayout.PAGE_START);
 
-        mainSplitPane.setLeftComponent(topPanel);
+        detailsTabbedPane.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
 
         summaryPanel.setLayout(new javax.swing.BoxLayout(summaryPanel, javax.swing.BoxLayout.LINE_AXIS));
         detailsTabbedPane.addTab(UiStrings.getString("track_summary"), summaryPanel); // NOI18N
@@ -1277,7 +1270,21 @@ public class MidiQuickFix
         lyricsPanel.setLayout(new java.awt.BorderLayout());
         detailsTabbedPane.addTab(UiStrings.getString("lyrics"), lyricsPanel); // NOI18N
 
-        mainSplitPane.setBottomComponent(detailsTabbedPane);
+        bodyPanel.add(detailsTabbedPane, java.awt.BorderLayout.CENTER);
+
+        mainSplitPane.setRightComponent(bodyPanel);
+
+        topPanel.setLayout(new javax.swing.BoxLayout(topPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        playControlPanel.setLayout(new javax.swing.BoxLayout(playControlPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        transportPanel.setAlignmentX(1.0F);
+        transportPanel.setPreferredSize(new java.awt.Dimension(200, 40));
+        playControlPanel.add(transportPanel);
+
+        topPanel.add(playControlPanel);
+
+        mainSplitPane.setLeftComponent(topPanel);
 
         mainPanel.add(mainSplitPane, java.awt.BorderLayout.CENTER);
 
@@ -1522,6 +1529,7 @@ public class MidiQuickFix
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JPanel bodyPanel;
     private javax.swing.JPanel controlPanel;
     private javax.swing.JTabbedPane detailsTabbedPane;
     private javax.swing.JPanel editorPanel;

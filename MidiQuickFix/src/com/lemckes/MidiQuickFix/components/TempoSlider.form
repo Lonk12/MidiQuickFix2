@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.2" maxVersion="1.2">
   <Properties>
@@ -8,6 +8,7 @@
     <Property name="maximum" type="int" value="200"/>
     <Property name="paintLabels" type="boolean" value="true"/>
     <Property name="value" type="int" value="100"/>
+    <Property name="opaque" type="boolean" value="false"/>
   </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>

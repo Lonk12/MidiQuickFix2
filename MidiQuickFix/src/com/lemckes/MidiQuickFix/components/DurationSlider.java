@@ -123,12 +123,13 @@ public class DurationSlider extends javax.swing.JSlider {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setFont(new java.awt.Font("Dialog", 0, 10));
+        setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         setMajorTickSpacing(10);
         setMinorTickSpacing(1);
         setPaintLabels(true);
         setPaintTicks(true);
         setValue(0);
+        setOpaque(false);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
