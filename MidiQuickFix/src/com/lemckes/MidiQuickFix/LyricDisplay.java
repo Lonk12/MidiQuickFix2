@@ -1,25 +1,27 @@
-/**************************************************************
+/**
+ * ************************************************************
  *
- *   MidiQuickFix - A Simple Midi file editor and player
+ * MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
- *   jostle@users.sourceforge.net
+ * Copyright (C) 2004-2009 John Lemcke
+ * jostle@users.sourceforge.net
  *
- *   This program is free software; you can redistribute it
- *   and/or modify it under the terms of the Artistic License
- *   as published by Larry Wall, either version 2.0,
- *   or (at your option) any later version.
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the Artistic License
+ * as published by Larry Wall, either version 2.0,
+ * or (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *   See the Artistic License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the Artistic License for more details.
  *
- *   You should have received a copy of the Artistic License with this Kit,
- *   in the file named "Artistic.clarified".
- *   If not, I'll be glad to provide one.
+ * You should have received a copy of the Artistic License with this Kit,
+ * in the file named "Artistic.clarified".
+ * If not, I'll be glad to provide one.
  *
- **************************************************************/
+ *************************************************************
+ */
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.components.FontSelector;
@@ -58,6 +60,7 @@ import javax.swing.text.StyledDocument;
 
 /**
  * The lyrics display.
+ *
  * @version $Id$
  */
 public class LyricDisplay
@@ -67,8 +70,8 @@ public class LyricDisplay
 {
 
     static final long serialVersionUID = 4418719983394376657L;
-    private TreeMap<Long, String> mWords = new TreeMap<Long, String>();
-    private TreeMap<Long, WordPlace> mPlaces = new TreeMap<Long, WordPlace>();
+    private final TreeMap<Long, String> mWords = new TreeMap<>();
+    private final TreeMap<Long, WordPlace> mPlaces = new TreeMap<>();
     private Sequencer mSequencer;
     private MqfSequence mSequence;
     /**
@@ -122,7 +125,9 @@ public class LyricDisplay
         }
     }
 
-    /** Creates new form LyricDialog
+    /**
+     * Creates new form LyricDialog
+     *
      * @param trackSelector determines which tracks to display lyrics from
      */
     public LyricDisplay(TrackSummaryTableModel trackSelector) {
@@ -131,11 +136,10 @@ public class LyricDisplay
         mHighlighter = lyricText.getHighlighter();
         myHighlightPainter = new MyHighlightPainter(
             MqfProperties.getColourProperty(
-            MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.green.darker()));
+                MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.green.darker()));
         try {
             mHighlightTag = mHighlighter.addHighlight(0, 0, myHighlightPainter);
-        }
-        catch (BadLocationException e) {
+        } catch (BadLocationException e) {
         }
         createStyles();
         updatePreferences();
@@ -144,6 +148,7 @@ public class LyricDisplay
     /**
      * Implementation of MetaEventListener.meta() that handles
      * lyric and text events.
+     *
      * @param metaMessage the META message to handle
      */
     @Override
@@ -184,8 +189,7 @@ public class LyricDisplay
                         // Move the highlight
                         mHighlighter.changeHighlight(mHighlightTag, start,
                             start + len);
-                    }
-                    catch (BadLocationException ex) {
+                    } catch (BadLocationException ex) {
                         // What a pity.
                     }
                 }
@@ -201,6 +205,7 @@ public class LyricDisplay
 
     /**
      * Set the Sequencer on which to listen for meta events.
+     *
      * @param seq The Sequencer
      */
     public void setSequencer(Sequencer seq) {
@@ -241,8 +246,8 @@ public class LyricDisplay
     public void displayText() {
         lyricText.setText(null);
         int patternFlags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
-        Pattern rubyPattern =
-            Pattern.compile("\\[(.*?)\\]", patternFlags);
+        Pattern rubyPattern
+            = Pattern.compile("\\[(.*?)\\]", patternFlags);
         StyledDocument doc = lyricText.getStyledDocument();
         Style regularStyle = doc.getStyle("regular");
         Style rubyStyle = doc.getStyle("ruby");
@@ -277,8 +282,7 @@ public class LyricDisplay
     private void appendText(StyledDocument doc, String text, Style style) {
         try {
             doc.insertString(doc.getLength(), text, style);
-        }
-        catch (BadLocationException ex) {
+        } catch (BadLocationException ex) {
             TraceDialog.addTrace("appendText : " + ex.getLocalizedMessage());
         }
     }
@@ -296,8 +300,8 @@ public class LyricDisplay
                     byte[] data = metaMessage.getData();
 
                     try {
-                        String lyricString =
-                            StringConverter.convertBytesToString(data);
+                        String lyricString
+                            = StringConverter.convertBytesToString(data);
                         if (lyricString.length() > 0) {
                             checkForCharsetChange(lyricString);
                             checkForSongInfo(lyricString);
@@ -336,8 +340,7 @@ public class LyricDisplay
                                 mWords.put(tick, lyricString);
                             }
                         }
-                    }
-                    catch (UnsupportedEncodingException uee) {
+                    } catch (UnsupportedEncodingException uee) {
                         TraceDialog.addTrace("findLyrics exception "
                             + uee.getLocalizedMessage());
                     }
@@ -348,8 +351,8 @@ public class LyricDisplay
 
     private void checkForCharsetChange(String lyric) {
         int patternFlags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
-        Pattern charsetPattern =
-            Pattern.compile("\\{\\@(.*?)\\}", patternFlags);
+        Pattern charsetPattern
+            = Pattern.compile("\\{\\@(.*?)\\}", patternFlags);
         Matcher m = charsetPattern.matcher(lyric);
         if (m.find() && m.groupCount() > 0) {
             String cSet = m.group(1);
@@ -362,8 +365,8 @@ public class LyricDisplay
 
     private void checkForSongInfo(String lyric) {
         int patternFlags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
-        Pattern songInfoPattern =
-            Pattern.compile("\\{\\#(.*?)\\}", patternFlags);
+        Pattern songInfoPattern
+            = Pattern.compile("\\{\\#(.*?)\\}", patternFlags);
         Matcher m = songInfoPattern.matcher(lyric);
         while (m.find()) {
             for (int i = 1; i <= m.groupCount(); ++i) {
@@ -380,6 +383,7 @@ public class LyricDisplay
 
     /**
      * Called when a font is selected from the FontSelector.
+     *
      * @param e the FontSelectionEvent
      */
     @Override
@@ -417,17 +421,15 @@ public class LyricDisplay
     final public void updatePreferences() {
         myHighlightPainter = new MyHighlightPainter(
             MqfProperties.getColourProperty(
-            MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.green.darker()));
+                MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.green.darker()));
         try {
             mHighlighter = lyricText.getHighlighter();
             mHighlighter.removeAllHighlights();
-            mHighlightTag =
-                mHighlighter.addHighlight(0, 0, myHighlightPainter);
-        }
-        catch (BadLocationException e) {
+            mHighlightTag
+                = mHighlighter.addHighlight(0, 0, myHighlightPainter);
+        } catch (BadLocationException e) {
             // Can not happen with addHighlight(0, 0, myHighlightPainter);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             System.err.println("an exception " + ex);
         }
 
@@ -449,9 +451,9 @@ public class LyricDisplay
             MqfProperties.LYRIC_FOREGROUND_COLOUR, Color.BLACK));
 
         Style ruby = doc.getStyle("ruby");
-        float size =
-            lyricText.getFont().getSize() * MqfProperties.getFloatProperty(
-            MqfProperties.LYRIC_RUBY_FONT_SCALE, 0.8f);
+        float size
+            = lyricText.getFont().getSize() * MqfProperties.getFloatProperty(
+                MqfProperties.LYRIC_RUBY_FONT_SCALE, 0.8f);
         StyleConstants.setFontSize(ruby, Math.round(size));
         StyleConstants.setForeground(ruby, MqfProperties.getColourProperty(
             MqfProperties.LYRIC_RUBY_FG_COLOUR, Color.BLACK));
@@ -471,7 +473,8 @@ public class LyricDisplay
         setSequence(mSequence);
     }
 
-    /** This method is called from within the constructor to
+    /**
+     * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
@@ -553,10 +556,10 @@ public class LyricDisplay
             mFontSelector = new FontSelector(MidiQuickFix.getMainFrame(), false);
             mFontSelector.setLocationRelativeTo(
                 lyricScrollPane.getVerticalScrollBar());
-            mFontSelector.setSelectedFont(lyricText.getFont());
             mFontSelector.addFontSelectionListener(this);
         }
         mFontSelector.setVisible(true);
+        mFontSelector.setSelectedFont(lyricText.getFont());
     }//GEN-LAST:event_fontSelectButtonActionPerformed
 
     private void lyricsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lyricsCheckBoxActionPerformed

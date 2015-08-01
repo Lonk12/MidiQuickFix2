@@ -73,6 +73,92 @@ public class TrackUpdateUtils
     }
 
     /**
+     * Set the velocity of all NOTE_ON events with a velocity greater than zero
+     * to the given value. {@code velocity } must be greater than 1 and less than 128
+     *
+     * @param track the track to convert
+     */
+    public static void setNoteOnVelocity(Track track, int velocity) {
+        if (velocity < 1 || velocity > 127) {
+            System.err.println(
+                "Can't set NOTE_ON velocity < 1 or > 127");
+            return;
+        }
+        for (int e = 0; e < track.size(); ++e) {
+            MidiEvent event = track.get(e);
+
+            MidiMessage message = event.getMessage();
+            if (message instanceof ShortMessage) {
+                ShortMessage sm = (ShortMessage)message;
+                int st = sm.getStatus();
+
+                // Check that this is a channel message
+                if ((st & 0xf0) <= 0xf0) {
+                    int channel = sm.getChannel();
+                    if (sm.getCommand() == ShortMessage.NOTE_ON) {
+                        int noteNum = sm.getData1();
+                        if (sm.getData2() > 0) {
+                            try {
+                                sm.setMessage(ShortMessage.NOTE_ON, channel, noteNum, velocity);
+                            } catch (InvalidMidiDataException ex) {
+                                System.err.println(
+                                    "Can't set NOTE_ON velocity (channel=" + channel
+                                    + ", note=" + noteNum + ", velocity=" + velocity + ")");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Adjust the velocity of all NOTE_ON events with a velocity greater than zero
+     * by the given factor. {@code factor} must be greater than 0.0f and less than 127.0f
+     *
+     * @param track the track to convert
+     */
+    public static void adjustNoteOnVelocity(Track track, float factor) {
+        if (factor <= 0.0f  || factor > 4.0f) {
+            System.err.println(
+                "Can't set NOTE_ON factor <= 0.0 or > 4.0");
+            return;
+        }
+        
+        for (int e = 0; e < track.size(); ++e) {
+            MidiEvent event = track.get(e);
+
+            MidiMessage message = event.getMessage();
+            if (message instanceof ShortMessage) {
+                ShortMessage sm = (ShortMessage)message;
+                int st = sm.getStatus();
+
+                // Check that this is a channel message
+                if ((st & 0xf0) <= 0xf0) {
+                    int channel = sm.getChannel();
+                    if (sm.getCommand() == ShortMessage.NOTE_ON) {
+                        int noteNum = sm.getData1();
+                        int velocity = sm.getData2();
+                        if (velocity > 0) {
+                            try {
+                                // Adjust velocity and clamp to valid values
+                                velocity = Math.round(velocity * factor);
+                                velocity = Math.max(1, velocity);
+                                velocity = Math.min(127, velocity);
+                                sm.setMessage(ShortMessage.NOTE_ON, channel, noteNum, velocity);
+                            } catch (InvalidMidiDataException ex) {
+                                System.err.println(
+                                    "Can't set NOTE_ON velocity (channel=" + channel
+                                    + ", note=" + noteNum + ", velocity=" + velocity + ")");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Convert any TEXT events at the positions in
      * <code>eventIndices</code>
      * into LYRIC events
@@ -91,7 +177,7 @@ public class TrackUpdateUtils
                 if (str[0].equals("M:Text")) {
                     try {
                         metaMess.setMessage(MetaEvent.LYRIC, metaMess.getData(), metaMess.
-                                getData().length);
+                            getData().length);
                     } catch (InvalidMidiDataException ex) {
                         System.err.println("Can't convert TEXT to LYRIC");
                     }
@@ -151,7 +237,7 @@ public class TrackUpdateUtils
                 if ((st & 0xf0) <= 0xf0) {
                     int command = sm.getCommand();
                     if (command == ShortMessage.NOTE_ON
-                            || command == ShortMessage.NOTE_OFF) {
+                        || command == ShortMessage.NOTE_OFF) {
                         track.remove(event);
                     }
                 }

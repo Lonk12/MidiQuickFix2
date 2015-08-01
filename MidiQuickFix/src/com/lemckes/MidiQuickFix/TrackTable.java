@@ -137,9 +137,9 @@ public class TrackTable extends javax.swing.JTable {
         //trace("setInstrumentEditor");
         TableColumn instrumentColumn = getColumnModel().getColumn(4);
 
-        Object[] s = InstrumentNames.getNameArray();
-        JComboBox comboBox =
-            new JComboBox(new DefaultComboBoxModel(s));
+        String[] s = InstrumentNames.getNameArray();
+        JComboBox<String> comboBox =
+            new JComboBox<>(new DefaultComboBoxModel<>(s));
         instrumentColumn.setCellEditor(new DefaultCellEditor(comboBox));
     }
 

@@ -1,54 +1,93 @@
-/**************************************************************
+/**
+ * ************************************************************
  *
- *   MidiQuickFix - A Simple Midi file editor and player
+ * MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
- *   jostle@users.sourceforge.net
+ * Copyright (C) 2004-2009 John Lemcke
+ * jostle@users.sourceforge.net
  *
- *   This program is free software; you can redistribute it
- *   and/or modify it under the terms of the Artistic License
- *   as published by Larry Wall, either version 2.0,
- *   or (at your option) any later version.
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the Artistic License
+ * as published by Larry Wall, either version 2.0,
+ * or (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *   See the Artistic License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the Artistic License for more details.
  *
- *   You should have received a copy of the Artistic License with this Kit,
- *   in the file named "Artistic.clarified".
- *   If not, I'll be glad to provide one.
+ * You should have received a copy of the Artistic License with this Kit,
+ * in the file named "Artistic.clarified".
+ * If not, I'll be glad to provide one.
  *
- **************************************************************/
+ *************************************************************
+ */
 package com.lemckes.MidiQuickFix.components;
 
 import com.lemckes.MidiQuickFix.util.FontSelectionEvent;
 import com.lemckes.MidiQuickFix.util.FontSelectionListener;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 /**
  * A dialog that allows the user to choose a font.
- * @version  $Id$
+ *
+ * @version $Id$
  */
-public class FontSelector extends javax.swing.JDialog
+public class FontSelector
+    extends javax.swing.JDialog
 {
 
     static final long serialVersionUID = -862613500313024646L;
+    /**
+     * The font attributes.
+     */
+    private SimpleAttributeSet mAttributes;
+    /**
+     * The selected font.
+     */
+    private Font mFont;
+    /**
+     * Is this dialog modal
+     */
+    private boolean mModal;
+    /**
+     * The status to return
+     */
+    private int mReturnStatus = RET_CANCEL;
+    /**
+     * A return status code - returned if Cancel button has been pressed
+     */
+    public static final int RET_CANCEL = 0;
+    /**
+     * A return status code - returned if OK button has been pressed
+     */
+    public static final int RET_OK = 1;
+    /**
+     * The list of registered listeners.
+     */
+    protected EventListenerList mListenerList;
 
     /**
      * Creates a new FontSelector dialog.
      */
-    public FontSelector(java.awt.Frame parent, boolean modal) {
+    public FontSelector(Frame parent, boolean modal) {
         super(parent, modal);
         mModal = modal;
         initComponents();
+
+        sizeCombo.setModel(new DefaultComboBoxModel<>(
+            new String[]{
+                "6", "7", "8", "9", "10", "12", "14", "18", "20", "24", "28",
+                "32", "36", "40", "44", "48", "56", "64", "72"}));
 
         if (mModal) {
             okButton.setText(UiStrings.getString("ok"));
@@ -62,31 +101,29 @@ public class FontSelector extends javax.swing.JDialog
 
         mAttributes = new SimpleAttributeSet();
 
-        fontList.setModel(new javax.swing.AbstractListModel()
+        fontList.setModel(new javax.swing.AbstractListModel<String>()
         {
 
             static final long serialVersionUID = -3821347059262633012L;
-            GraphicsEnvironment ge =
-                GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsEnvironment ge
+                = GraphicsEnvironment.getLocalGraphicsEnvironment();
             String[] fontNames = ge.getAvailableFontFamilyNames();
 
+            @Override
             public int getSize() {
                 return fontNames.length;
             }
 
-            public Object getElementAt(int i) {
+            @Override
+            public String getElementAt(int i) {
                 return fontNames[i];
             }
         });
 
-        fontList.addListSelectionListener(new ListSelectionListener()
-        {
-
-            public void valueChanged(ListSelectionEvent e) {
-                StyleConstants.setFontFamily(mAttributes,
-                    (String)fontList.getSelectedValue());
-                updateFontPreview();
-            }
+        fontList.addListSelectionListener((ListSelectionEvent e) -> {
+            StyleConstants.setFontFamily(mAttributes,
+                (String)fontList.getSelectedValue());
+            updateFontPreview();
         });
 
         // Set the default values for the font attributes.
@@ -105,6 +142,7 @@ public class FontSelector extends javax.swing.JDialog
 
     /**
      * Add a listener that will be notified when a font is selected.
+     *
      * @param l the listener to add
      */
     public void addFontSelectionListener(FontSelectionListener l) {
@@ -126,6 +164,7 @@ public class FontSelector extends javax.swing.JDialog
 
     /**
      * Get the selected font.
+     *
      * @return The selected font.
      */
     public Font getSelectedFont() {
@@ -134,6 +173,7 @@ public class FontSelector extends javax.swing.JDialog
 
     /**
      * Set the selected font based on the font attributes
+     *
      * @param name The font family name
      * @param bold true for a bold font
      * @param italic true for an italic font
@@ -152,10 +192,12 @@ public class FontSelector extends javax.swing.JDialog
 
         updateFontPreview();
         fontList.ensureIndexIsVisible(fontList.getSelectedIndex());
+        
     }
 
     /**
      * Set the selected font to the given font
+     *
      * @param font the font to be selected
      */
     public void setSelectedFont(Font font) {
@@ -166,12 +208,44 @@ public class FontSelector extends javax.swing.JDialog
         setSelectedFont(name, bold, ital, size);
     }
 
-    /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
+    /**
+     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
+     */
     public int getReturnStatus() {
         return mReturnStatus;
     }
 
-    /** This method is called from within the constructor to
+    private void setFontSize(int size) {
+        StyleConstants.setFontSize(mAttributes, size);
+        updateFontPreview();
+    }
+
+    private void setBold(boolean isBold) {
+        StyleConstants.setBold(mAttributes, isBold);
+        updateFontPreview();
+    }
+
+    private void setItalic(boolean isItalic) {
+        StyleConstants.setItalic(mAttributes, isItalic);
+        updateFontPreview();
+    }
+
+    private void fireFontSelected() {
+        FontSelectionListener[] listeners
+            = mListenerList.getListeners(FontSelectionListener.class);
+        FontSelectionEvent e = new FontSelectionEvent(mFont);
+        for (int i = listeners.length - 1; i >= 0; --i) {
+            listeners[i].fontSelected(e);
+        }
+    }
+
+    private void doClose(int retStatus) {
+        mReturnStatus = retStatus;
+        setVisible(false);
+    }
+
+    /**
+     * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
@@ -183,12 +257,12 @@ public class FontSelector extends javax.swing.JDialog
         insetPanel = new javax.swing.JPanel();
         mainPanel = new javax.swing.JPanel();
         fontScrollPane = new javax.swing.JScrollPane();
-        fontList = new javax.swing.JList();
+        fontList = new javax.swing.JList<String>();
         attributesPanel = new javax.swing.JPanel();
         sizeLabel = new javax.swing.JLabel();
         boldCheckBox = new javax.swing.JCheckBox();
         italicCheckBox = new javax.swing.JCheckBox();
-        sizeCombo = new javax.swing.JComboBox();
+        sizeCombo = new javax.swing.JComboBox<String>();
         styleLabel = new javax.swing.JLabel();
         previewText = new javax.swing.JTextField();
         familyLabel = new javax.swing.JLabel();
@@ -266,11 +340,9 @@ public class FontSelector extends javax.swing.JDialog
         attributesPanel.add(italicCheckBox, gridBagConstraints);
 
         sizeCombo.setEditable(true);
-        sizeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "6", "7", "8", "9", "10", "12", "14", "18", "20", "24", "28", "32", "36", "40", "44", "48", "56", "64", "72" }));
         sizeCombo.setMinimumSize(new java.awt.Dimension(62, 20));
         sizeCombo.setName("sizeCombo"); // NOI18N
         sizeCombo.setPreferredSize(new java.awt.Dimension(62, 20));
-        sizeCombo.setPrototypeDisplayValue(italicCheckBox.getPreferredSize());
         sizeCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sizeComboActionPerformed(evt);
@@ -337,13 +409,11 @@ public class FontSelector extends javax.swing.JDialog
         pack();
     }// </editor-fold>//GEN-END:initComponents
     private void italicCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_italicCheckBoxActionPerformed
-        StyleConstants.setItalic(mAttributes, italicCheckBox.isSelected());
-        updateFontPreview();
+        setItalic(italicCheckBox.isSelected());
     }//GEN-LAST:event_italicCheckBoxActionPerformed
 
     private void boldCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boldCheckBoxActionPerformed
-        StyleConstants.setBold(mAttributes, boldCheckBox.isSelected());
-        updateFontPreview();
+        setBold(boldCheckBox.isSelected());
     }//GEN-LAST:event_boldCheckBoxActionPerformed
 
     private void sizeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sizeComboActionPerformed
@@ -351,14 +421,11 @@ public class FontSelector extends javax.swing.JDialog
         int size = StyleConstants.getFontSize(mAttributes);
         try {
             size = Integer.parseInt((String)sizeCombo.getSelectedItem());
-        }
-        catch (NumberFormatException nfe) {
+            setFontSize(size);
+        } catch (NumberFormatException nfe) {
             // Ignore it
             sizeCombo.setSelectedItem(Integer.toString(size));
         }
-        StyleConstants.setFontSize(mAttributes, size);
-
-        updateFontPreview();
     }//GEN-LAST:event_sizeComboActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -373,24 +440,14 @@ public class FontSelector extends javax.swing.JDialog
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
-    /** Closes the dialog */
+    /**
+     * Closes the dialog
+     */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
 
-    private void fireFontSelected() {
-        FontSelectionListener[] listeners =
-            mListenerList.getListeners(FontSelectionListener.class);
-        FontSelectionEvent e = new FontSelectionEvent(mFont);
-        for (int i = listeners.length - 1; i >= 0; --i) {
-            listeners[i].fontSelected(e);
-        }
-    }
 
-    private void doClose(int retStatus) {
-        mReturnStatus = retStatus;
-        setVisible(false);
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel attributesPanel;
     private javax.swing.JCheckBox boldCheckBox;
@@ -398,29 +455,15 @@ public class FontSelector extends javax.swing.JDialog
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel familyLabel;
-    private javax.swing.JList fontList;
+    private javax.swing.JList<String> fontList;
     private javax.swing.JScrollPane fontScrollPane;
     private javax.swing.JPanel insetPanel;
     private javax.swing.JCheckBox italicCheckBox;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton okButton;
     private javax.swing.JTextField previewText;
-    private javax.swing.JComboBox sizeCombo;
+    private javax.swing.JComboBox<String> sizeCombo;
     private javax.swing.JLabel sizeLabel;
     private javax.swing.JLabel styleLabel;
     // End of variables declaration//GEN-END:variables
-    /** The font attributes. */
-    private SimpleAttributeSet mAttributes;
-    /** The selected font. */
-    private Font mFont;
-    /** Is this dialog modal */
-    private boolean mModal;
-    /** The status to return */
-    private int mReturnStatus = RET_CANCEL;
-    /** A return status code - returned if Cancel button has been pressed */
-    public static final int RET_CANCEL = 0;
-    /** A return status code - returned if OK button has been pressed */
-    public static final int RET_OK = 1;
-    /** The list of registered listeners. */
-    protected EventListenerList mListenerList;
 }

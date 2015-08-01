@@ -45,7 +45,7 @@ import javax.swing.AbstractAction;
 public class TransportPanel extends javax.swing.JPanel {
     static final long serialVersionUID = 6727747406307178988L;
 
-    transient private DrawnIcon pauseIcon;
+    private final transient DrawnIcon pauseIcon;
     transient private DrawnIcon playIcon;
     transient private DrawnIcon rewindIcon;
     transient private DrawnIcon stopIcon;

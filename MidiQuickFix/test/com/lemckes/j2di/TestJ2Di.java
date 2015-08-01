@@ -34,7 +34,7 @@ public class TestJ2Di
     private ArcGroup mArcGroup1;
     private EllipseGroup mEllipseGroup1;
     private PolyGroup mPolyGroup1;
-    private Smiley mSmiley;
+    private Smiley2 mSmiley;
     private StarGroup mStarGroup;
     private ILine mLine1;
     private ILine mLine2;
@@ -210,7 +210,7 @@ public class TestJ2Di
     }
 
     private void initSmiley() {
-        mSmiley = new Smiley(mLayer1);
+        mSmiley = new Smiley2(mLayer1);
         mSmiley.setPosition(60, 60);
         mLayer1.add(mSmiley);
 

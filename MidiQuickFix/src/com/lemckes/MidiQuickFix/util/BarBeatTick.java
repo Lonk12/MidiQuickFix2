@@ -17,12 +17,11 @@ import javax.sound.midi.Track;
 public class BarBeatTick
 {
 
-    private Map<Long, TimeSignature> mTimeSigChanges = new TreeMap<>();
-    private int mResolution;
-    private int mInitialTicksPerBar;
-    private int mInitialBeatsPerBar;
+    private final Map<Long, TimeSignature> mTimeSigChanges = new TreeMap<>();
+    private final int mResolution;
+    private final int mInitialTicksPerBar;
+    private final int mInitialBeatsPerBar;
     private static final int TIME_SIGNATURE = 0x58;
-    private static final Long ZERO = Long.valueOf(0);
 
     public BarBeatTick(Sequence seq) {
         mResolution = seq.getResolution();
@@ -41,17 +40,17 @@ public class BarBeatTick
             }
         }
 
-        if (mTimeSigChanges.get(ZERO) == null) {
+        if (mTimeSigChanges.get(0L) == null) {
             // There was no time signature at time zero
             // so create a default 4/4,24,8
-            mTimeSigChanges.put(ZERO, new TimeSignature(4, 0.25f, 24, 8));
+            mTimeSigChanges.put(0L, new TimeSignature(4, 0.25f, 24, 8));
         }
 
         // Add a marker for the end of the sequence
         mTimeSigChanges.put(seq.getTickLength(), new TimeSignature(4, 0.25f, 24, 8));
 
-        mInitialBeatsPerBar = mTimeSigChanges.get(ZERO).getBeatsPerBar();
-        mInitialTicksPerBar = mTimeSigChanges.get(ZERO).getTicksPerBar(mResolution);
+        mInitialBeatsPerBar = mTimeSigChanges.get(0L).getBeatsPerBar();
+        mInitialTicksPerBar = mTimeSigChanges.get(0L).getTicksPerBar(mResolution);
     }
 
     public SequencePosition getSequencePosition(long tick) {

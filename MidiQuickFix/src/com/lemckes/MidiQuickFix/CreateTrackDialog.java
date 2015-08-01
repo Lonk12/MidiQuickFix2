@@ -38,7 +38,7 @@ import javax.swing.text.AbstractDocument;
 public class CreateTrackDialog extends javax.swing.JDialog {
     private final String DEFAULT_CONTROL_VALUE = "64"; // NOI18N
     private final String DEFAULT_CHANNEL = "0"; // NOI18N
-    private MqfSequence mSequence;
+    private final MqfSequence mSequence;
     private boolean mTrackCreated = false;
 
     /**
@@ -61,7 +61,7 @@ public class CreateTrackDialog extends javax.swing.JDialog {
         setFormats();
 
         Object[] s = InstrumentNames.getNameArray();
-        patchCombo.setModel(new DefaultComboBoxModel(s));
+        patchCombo.setModel(new DefaultComboBoxModel<>(s));
 
         pack();
         setLocationRelativeTo(parent);
@@ -214,7 +214,7 @@ public class CreateTrackDialog extends javax.swing.JDialog {
         channelLabel = new javax.swing.JLabel();
         channelField = new javax.swing.JFormattedTextField();
         patchLabel = new javax.swing.JLabel();
-        patchCombo = new javax.swing.JComboBox();
+        patchCombo = new javax.swing.JComboBox<Object>();
         volumeLabel = new javax.swing.JLabel();
         volumeField = new javax.swing.JFormattedTextField();
         panLabel = new javax.swing.JLabel();
@@ -396,7 +396,7 @@ public class CreateTrackDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JFormattedTextField panField;
     private javax.swing.JLabel panLabel;
-    private javax.swing.JComboBox patchCombo;
+    private javax.swing.JComboBox<Object> patchCombo;
     private javax.swing.JLabel patchLabel;
     private javax.swing.JTextField trackNameField;
     private javax.swing.JLabel trackNameLabel;

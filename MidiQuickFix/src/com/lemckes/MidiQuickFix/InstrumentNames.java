@@ -116,8 +116,8 @@ class InstrumentNames {
     /** Get all the instrument names.
      * @return The array of instrument names.
      */
-    static public Object[] getNameArray() {
-        return mInstrumentNumberMap.values().toArray();
+    static public String[] getNameArray() {
+        return mInstrumentNumberMap.values().toArray(new String[0]);
     }
 
     /**
@@ -125,8 +125,8 @@ class InstrumentNames {
      * @param bank the bank for which to get the names
      * @return The array of instrument names.
      */
-    static public Object[] getNameArray(int bank) {
-        return mBankNumberMap.get(bank).values().toArray();
+    static public String[] getNameArray(int bank) {
+        return mBankNumberMap.get(bank).values().toArray(new String[0]);
     }
 
     /** Get the program number associated with the named instrument.

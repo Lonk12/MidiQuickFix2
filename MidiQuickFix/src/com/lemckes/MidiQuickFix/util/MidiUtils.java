@@ -4,7 +4,7 @@ package com.lemckes.MidiQuickFix.util;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
-import javax.sound.midi.MidiDeviceReceiver;
+//import javax.sound.midi.MidiDeviceReceiver;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
@@ -51,30 +51,30 @@ public class MidiUtils
 
     public static void checkTransmitter() throws MidiUnavailableException
     {
-        Transmitter tr = MidiSystem.getTransmitter();
-        Receiver rec = new MidiDeviceReceiver() {
-
-            @Override
-            public MidiDevice getMidiDevice() {
-                MidiDevice dev = null;
-                try {
-                     dev= MidiSystem.getMidiDevice(MidiSystem.getMidiDeviceInfo()[0]);
-                } catch (MidiUnavailableException ex) {
-                    ex.printStackTrace();
-                }
-                return dev;
-            }
-
-            @Override
-            public void send(MidiMessage message, long timeStamp) {
-                System.out.println("send - "+message);
-            }
-
-            @Override
-            public void close() {
-            }
-        };
-        tr.setReceiver(rec);
+//        Transmitter tr = MidiSystem.getTransmitter();
+//        Receiver rec = new MidiDeviceReceiver() {
+//
+//            @Override
+//            public MidiDevice getMidiDevice() {
+//                MidiDevice dev = null;
+//                try {
+//                     dev= MidiSystem.getMidiDevice(MidiSystem.getMidiDeviceInfo()[0]);
+//                } catch (MidiUnavailableException ex) {
+//                    ex.printStackTrace();
+//                }
+//                return dev;
+//            }
+//
+//            @Override
+//            public void send(MidiMessage message, long timeStamp) {
+//                System.out.println("send - "+message);
+//            }
+//
+//            @Override
+//            public void close() {
+//            }
+//        };
+//        tr.setReceiver(rec);
     }
 
     public static void main(String[] args) throws MidiUnavailableException{

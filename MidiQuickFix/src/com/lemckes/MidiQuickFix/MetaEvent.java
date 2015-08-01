@@ -40,9 +40,9 @@ import javax.sound.midi.MidiEvent;
 public class MetaEvent
 {
 
-    private static java.text.DecimalFormat twoDigitFormat =
+    private static final java.text.DecimalFormat twoDigitFormat =
             new java.text.DecimalFormat("00"); // NOI18N
-    private static String[] typeNames = {
+    private static final String[] typeNames = {
         "SEQUENCE_NUMBER",
         "TEXT",
         "COPYRIGHT",
@@ -139,7 +139,7 @@ public class MetaEvent
         // The returned Object array
         // { type name, length, value string }
         Object[] result = {"M:", null, ""}; // NOI18N
-        result[1] = Integer.valueOf(data.length);
+        result[1] = data.length;
 
         switch (type) {
             case SEQUENCE_NUMBER:
@@ -474,7 +474,7 @@ public class MetaEvent
      * If only <code>n</code> is given then <code>d</code> defaults to 4</dd>
      * <dt>KEY_SIGNATURE</dt>
      * <dd>one of the following key signature strings<br>
-     * <b>Cb Gb Db Ab Eb Bb F C G D A E B F# C#</b/></dd>
+     * <b>Cb Gb Db Ab Eb Bb F C G D A E B F# C#</b></dd>
      * <dt>SEQUENCE_NUMBER and PROPRIETARY_DATA</dt>
      * <dd>a space-separated list of values that are parsed into
      * a <code>byte[]</code> using <code>Byte.decode()</code><br>

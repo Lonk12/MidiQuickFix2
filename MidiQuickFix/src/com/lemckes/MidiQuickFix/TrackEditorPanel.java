@@ -58,7 +58,7 @@ public class TrackEditorPanel
     private int mCurrentTrack;
     private String mKeySig;
     private CreateEventDialog mCreateEventDialog;
-    private TrackTable trackTable;
+    private final TrackTable trackTable;
 
     /**
      * Creates new form TrackEditorPanel
@@ -103,7 +103,7 @@ public class TrackEditorPanel
     }
 
     public String getCurrentTrackTitle() {
-        return trackSelector.getItemAt(mCurrentTrack).toString();
+        return trackSelector.getItemAt(mCurrentTrack);
     }
 
     /**
@@ -136,7 +136,7 @@ public class TrackEditorPanel
                 }
             }
         }
-        trackSelector.setModel(new DefaultComboBoxModel(trackList));
+        trackSelector.setModel(new DefaultComboBoxModel<>(trackList));
     }
 
     /**
@@ -188,6 +188,16 @@ public class TrackEditorPanel
 
     public void convertNoteOn() {
         TrackUpdateUtils.convertNoteOnZeroToNoteOff(mSeq.getTracks()[mCurrentTrack]);
+        trackTable.trackModified();
+    }
+
+    public void setNoteOnVelocity(int velocity) {
+        TrackUpdateUtils.setNoteOnVelocity(mSeq.getTracks()[mCurrentTrack], velocity);
+        trackTable.trackModified();
+    }
+
+    public void adjustNoteOnVelocity(float factor) {
+        TrackUpdateUtils.adjustNoteOnVelocity(mSeq.getTracks()[mCurrentTrack], factor);
         trackTable.trackModified();
     }
 
@@ -299,7 +309,7 @@ public class TrackEditorPanel
         showNotesCheck = new javax.swing.JCheckBox();
         trackSelectorPanel = new javax.swing.JPanel();
         trackLabel = new javax.swing.JLabel();
-        trackSelector = new javax.swing.JComboBox();
+        trackSelector = new javax.swing.JComboBox<String>();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -374,7 +384,6 @@ public class TrackEditorPanel
         trackLabel.setText(UiStrings.getString("track")); // NOI18N
         trackSelectorPanel.add(trackLabel);
 
-        trackSelector.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0" }));
         trackSelector.setAlignmentX(0.0F);
         trackSelector.setEnabled(false);
         trackSelector.setName("trackSelector"); // NOI18N
@@ -433,7 +442,7 @@ public class TrackEditorPanel
     private javax.swing.JScrollPane tableScrollPane;
     private javax.swing.JLabel trackLabel;
     private javax.swing.JPanel trackPanel;
-    private javax.swing.JComboBox trackSelector;
+    private javax.swing.JComboBox<String> trackSelector;
     private javax.swing.JPanel trackSelectorPanel;
     // End of variables declaration//GEN-END:variables
 }

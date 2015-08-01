@@ -89,13 +89,13 @@ public class CreateEventDialog extends javax.swing.JDialog {
         mListenerList = new EventListenerList();
 
         Object[] s = InstrumentNames.getNameArray();
-        patchCombo.setModel(new DefaultComboBoxModel(s));
+        patchCombo.setModel(new DefaultComboBoxModel<>(s));
         s = NoteNames.getNoteNameArray();
-        noteCombo.setModel(new DefaultComboBoxModel(s));
+        noteCombo.setModel(new DefaultComboBoxModel<>(s));
         s = Controllers.getNameArray();
-        controlChangeCombo.setModel(new DefaultComboBoxModel(s));
+        controlChangeCombo.setModel(new DefaultComboBoxModel<>(s));
         s = MetaEvent.getTypeNames();
-        metaEventCombo.setModel(new DefaultComboBoxModel(s));
+        metaEventCombo.setModel(new DefaultComboBoxModel<>(s));
 
         // Initialise the enabled state of the controls
         noteOnRadio.doClick();
@@ -207,13 +207,13 @@ public class CreateEventDialog extends javax.swing.JDialog {
         noteOnRadio = new javax.swing.JRadioButton();
         noteOffRadio = new javax.swing.JRadioButton();
         polyRadio = new javax.swing.JRadioButton();
-        noteCombo = new javax.swing.JComboBox();
+        noteCombo = new javax.swing.JComboBox<Object>();
         noteValueLabel = new javax.swing.JLabel();
         noteValueField = new javax.swing.JFormattedTextField();
         patchRadio = new javax.swing.JRadioButton();
-        patchCombo = new javax.swing.JComboBox();
+        patchCombo = new javax.swing.JComboBox<Object>();
         controlRadio = new javax.swing.JRadioButton();
-        controlChangeCombo = new javax.swing.JComboBox();
+        controlChangeCombo = new javax.swing.JComboBox<Object>();
         controlValueLabel = new javax.swing.JLabel();
         controlValueField = new javax.swing.JFormattedTextField();
         bendRadio = new javax.swing.JRadioButton();
@@ -224,7 +224,7 @@ public class CreateEventDialog extends javax.swing.JDialog {
         octaveField = new javax.swing.JFormattedTextField();
         metaEventPanel = new javax.swing.JPanel();
         metaEventRadio = new javax.swing.JRadioButton();
-        metaEventCombo = new javax.swing.JComboBox();
+        metaEventCombo = new javax.swing.JComboBox<Object>();
         metaDataLabel = new javax.swing.JLabel();
         metaDataField = new javax.swing.JFormattedTextField();
         jPanel3 = new javax.swing.JPanel();
@@ -803,7 +803,7 @@ public class CreateEventDialog extends javax.swing.JDialog {
     private javax.swing.JFormattedTextField channelPressureField;
     private javax.swing.JRadioButton channelPressureRadio;
     private javax.swing.JButton closeButton;
-    private javax.swing.JComboBox controlChangeCombo;
+    private javax.swing.JComboBox<Object> controlChangeCombo;
     private javax.swing.JRadioButton controlRadio;
     private javax.swing.JFormattedTextField controlValueField;
     private javax.swing.JLabel controlValueLabel;
@@ -815,17 +815,17 @@ public class CreateEventDialog extends javax.swing.JDialog {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JFormattedTextField metaDataField;
     private javax.swing.JLabel metaDataLabel;
-    private javax.swing.JComboBox metaEventCombo;
+    private javax.swing.JComboBox<Object> metaEventCombo;
     private javax.swing.JPanel metaEventPanel;
     private javax.swing.JRadioButton metaEventRadio;
-    private javax.swing.JComboBox noteCombo;
+    private javax.swing.JComboBox<Object> noteCombo;
     private javax.swing.JRadioButton noteOffRadio;
     private javax.swing.JRadioButton noteOnRadio;
     private javax.swing.JFormattedTextField noteValueField;
     private javax.swing.JLabel noteValueLabel;
     private javax.swing.JFormattedTextField octaveField;
     private javax.swing.JLabel octaveLabel;
-    private javax.swing.JComboBox patchCombo;
+    private javax.swing.JComboBox<Object> patchCombo;
     private javax.swing.JRadioButton patchRadio;
     private javax.swing.JRadioButton polyRadio;
     private javax.swing.JFormattedTextField positionField;
