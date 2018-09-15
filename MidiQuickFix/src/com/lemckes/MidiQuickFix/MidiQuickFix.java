@@ -32,9 +32,11 @@ import com.lemckes.MidiQuickFix.util.LoopSliderListener;
 import com.lemckes.MidiQuickFix.util.MidiFile;
 import com.lemckes.MidiQuickFix.util.MidiFileFilter;
 import com.lemckes.MidiQuickFix.util.MidiSeqPlayer;
+import com.lemckes.MidiQuickFix.util.MidiUtils;
 import com.lemckes.MidiQuickFix.util.MqfProperties;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.PlayController;
+import com.lemckes.MidiQuickFix.util.SoundbankFileFilter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.TracksChangedEvent;
 import com.lemckes.MidiQuickFix.util.TracksChangedListener;
@@ -46,13 +48,17 @@ import java.awt.EventQueue;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
@@ -61,7 +67,9 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Patch;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 import javax.swing.JFileChooser;
@@ -80,8 +88,8 @@ import javax.swing.event.TableModelListener;
 
 /**
  * A MIDI file editor that works at the Midi event level.
- * <p/>
- * @version $Id$
+ *
+ * @version $Id: MidiQuickFix.java,v 1.38 2015/08/01 13:57:28 jostle Exp $
  */
 public class MidiQuickFix
     extends JFrame
@@ -100,7 +108,7 @@ public class MidiQuickFix
     /**
      * The system synthesizer.
      */
-    private Synthesizer mSynth;
+    private static Synthesizer mSynth;
     /**
      * The synth's channels.
      */
@@ -194,6 +202,18 @@ public class MidiQuickFix
                 UiStrings.getString("using_java") + " " + mJavaVersion); // NOI18N
 
             startDialog.splash.addStageMessage(
+                UiStrings.getString("init_synth")); // NOI18N
+            initSynth();
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("init_synth_complete")); // NOI18N
+
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("loading_soundbank")); // NOI18N
+            loadDefaultSoundbank();
+            startDialog.splash.addStageMessage(
+                UiStrings.getString("loaded_soundbank")); // NOI18N
+
+            startDialog.splash.addStageMessage(
                 UiStrings.getString("getting_sequencer")); // NOI18N
             mSequencer = MidiSystem.getSequencer();
 
@@ -208,6 +228,7 @@ public class MidiQuickFix
                 startDialog.splash.addStageMessage(
                     UiStrings.getString("opening_sequencer")); // NOI18N
                 mSequencer.open(); // This call blocks the process...
+                mSequencer.getTransmitter().setReceiver(mSynth.getReceiver());
                 startDialog.splash.addStageMessage(
                     UiStrings.getString("sequencer_opened")); // NOI18N
             }
@@ -218,29 +239,24 @@ public class MidiQuickFix
 
             tempoAdjustField.setValue(1.0f);
             tempoAdjustField.addPropertyChangeListener("value", // NOI18N
-                new PropertyChangeListener()
-                {
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        float val = 1.0f;
+                (PropertyChangeEvent evt) -> {
+                    float val = 1.0f;
+                    try {
+                        val = (Float)tempoAdjustField.getValue();
+                    } catch (ClassCastException cce) {
                         try {
-                            val = (Float)tempoAdjustField.getValue();
-                        } catch (ClassCastException cce) {
+                            double d = (Double)tempoAdjustField.getValue();
+                            val = (float)d;
+                        } catch (ClassCastException cce2) {
                             try {
-                                double d = (Double)tempoAdjustField.getValue();
-                                val = (float)d;
-                            } catch (ClassCastException cce2) {
-                                try {
-                                    long l = (Long)tempoAdjustField.getValue();
-                                    val = (float)l;
-                                } catch (ClassCastException cce3) {
-                                    // DO NOTHING
-                                }
+                                long l = (Long)tempoAdjustField.getValue();
+                                val = (float)l;
+                            } catch (ClassCastException cce3) {
+                                // DO NOTHING
                             }
                         }
-                        tempoAdjustSlider.setValue(TempoSlider.tempoToSlider(val));
-//                    setTempoFactor(val);
                     }
+                    tempoAdjustSlider.setValue(TempoSlider.tempoToSlider(val));
                 });
 
             transportPanel.setActions(
@@ -262,9 +278,18 @@ public class MidiQuickFix
             if (lastPath != null) {
                 sequenceChooser.setCurrentDirectory(new File(lastPath));
             }
-            MidiFileFilter filter = new MidiFileFilter();
-            sequenceChooser.addChoosableFileFilter(filter);
-            sequenceChooser.setFileFilter(filter);
+            MidiFileFilter midiFilter = new MidiFileFilter();
+            sequenceChooser.addChoosableFileFilter(midiFilter);
+            sequenceChooser.setFileFilter(midiFilter);
+
+            String soundbankPath = MqfProperties.getProperty(
+                MqfProperties.LAST_SOUNDBANK_PATH_KEY);
+            if (soundbankPath != null) {
+                soundbankChooser.setCurrentDirectory(new File(soundbankPath));
+            }
+            SoundbankFileFilter soundbankFilter = new SoundbankFileFilter();
+            soundbankChooser.addChoosableFileFilter(soundbankFilter);
+            soundbankChooser.setFileFilter(soundbankFilter);
 
             mSequencer.addMetaEventListener(new EventHandler());
 
@@ -275,7 +300,6 @@ public class MidiQuickFix
 
             positionSlider.addLoopSliderListener(this);
 
-            mSynth = MidiSystem.getSynthesizer();
             mChannels = mSynth.getChannels();
 
             tempoAdjustSlider.addChangeListener((ChangeEvent e) -> {
@@ -327,6 +351,133 @@ public class MidiQuickFix
         return mMainFrame;
     }
 
+    private void initSynth() throws MidiUnavailableException {
+        mSynth = MidiSystem.getSynthesizer();
+        mSynth.open();
+    }
+
+    private void openSoundbankFile() {
+        File file = null;
+
+        String defPath = MqfProperties.getStringProperty(
+            MqfProperties.LAST_SOUNDBANK_PATH_KEY,
+            soundbankChooser.getCurrentDirectory().getAbsolutePath());
+        soundbankChooser.setCurrentDirectory(new File(defPath));
+
+        int open = soundbankChooser.showOpenDialog(this);
+        if (open == JFileChooser.APPROVE_OPTION) {
+            file = soundbankChooser.getSelectedFile();
+        }
+
+        // file was selected from file chooser
+        if (file != null) {
+            if (file.canRead()) {
+                String path = file.getAbsoluteFile().getParent();
+                MqfProperties.setProperty(MqfProperties.LAST_SOUNDBANK_PATH_KEY, path);
+                loadSoundbank(file);
+            }
+        }
+    }
+
+    private void loadDefaultSoundbank() {
+        String sf2File;
+//        sf2File = "FluidR3_GM.sf2";
+//        sf2File = "merlin_gmv32.sf2";
+//        sf2File = "merlin_silver.sf2";
+//        sf2File = "A320U.sf2";
+        sf2File = "BankZero.sf2";
+//        sf2File = "TimGM6mb.sf2";
+        URL url = getClass().getResource("resources/Soundbanks/" + sf2File); // NOI18N
+        loadSoundbank(url);
+    }
+
+    private void loadSoundbank(File file) {
+        try {
+            loadSoundbank(file.toURI().toURL());
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(MidiQuickFix.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void loadSoundbank(URL url) {
+        try {
+            Soundbank soundbank;
+            soundbank = MidiSystem.getSoundbank(url);
+            if (mSynth.isSoundbankSupported(soundbank)) {
+                mSynth.unloadAllInstruments(mSynth.getDefaultSoundbank());
+
+//                 // Load all the instruments in the soundbank
+//                 if (mSynth.loadAllInstruments(soundbank)) {
+//                     TraceDialog.addTrace("Loaded Soundbank : " + soundbank.getName());
+//                 }
+//                 debugSoundbank(soundbank);
+                // Just load the basic Bank 0 patches
+                Patch[] patches = new Patch[128];
+                for (int prog = 0; prog < 128; prog++) {
+                    patches[prog] = new Patch(0, prog);
+                }
+                // or use Patch[] patches = mSeq.getPatchList();
+                try {
+                    if (mSynth.loadInstruments(soundbank, patches)) {
+                        TraceDialog.addTrace("Loaded Bank 0 from : " + soundbank.getName());
+                    } else {
+                        TraceDialog.addTrace("Failed to Load Bank 0 from : " + soundbank.getName());
+                    }
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(MidiQuickFix.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    // debugSoundbank(soundbank);
+                }
+                // Load all the patches from the soundbank, one at a time
+//                for (Instrument newI : soundbank.getInstruments()) {
+//                    int bank = newI.getPatch().getBank();
+//                    int prog = newI.getPatch().getProgram();
+//                    if (bank == 0 && prog < 128) {
+//                        if (mSynth.loadInstrument(newI)) {
+//                            System.out.println("Loaded Inst "
+//                                + " - " + bank + "/" + prog + " - "
+//                                + newI.getName() + " - " + newI.getSoundbank().getName());
+//
+//                        } else {
+//                            TraceDialog.addTrace("Failed to load instrument. Bank: " + bank
+//                                + " Prog: " + prog + " from " + soundbank.getName());
+//                        }
+//                    } else {
+//                        break;
+//                    }
+//                }
+            } else {
+                TraceDialog.addTrace("Soundbank : " + soundbank.getName() + " not supported!");
+            }
+            InstrumentNames.populateNames();
+        } catch (InvalidMidiDataException | IOException ex) {
+            Logger.getLogger(MidiUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void debugSoundbank(Soundbank soundbank) {
+        System.out.println("==================================================");
+        System.out.println("Soundbank : " + soundbank.getName());
+        System.out.println("Soundbank : " + soundbank.getVendor());
+        System.out.println("Soundbank : " + soundbank.getVersion());
+        // System.out.println("Soundbank : " + soundbank.getDescription());
+
+        for (Instrument loadedInst : mSynth.getLoadedInstruments()) {
+            int bank = loadedInst.getPatch().getBank();
+            int prog = loadedInst.getPatch().getProgram();
+
+            System.out.println("Loaded Inst "
+                + bank + "/" + prog + " - "
+                + loadedInst.getName());
+        }
+
+        System.out.println("==================================================");
+    }
+
+    public static Synthesizer getSynth() {
+        return mSynth;
+    }
+
     private void createTimer(int delay) {
         java.awt.event.ActionListener taskPerformer;
         taskPerformer = (java.awt.event.ActionEvent evt) -> {
@@ -345,7 +496,7 @@ public class MidiQuickFix
 
     /**
      * Change the mouse pointer to the wait or previous cursor
-     * <p/>
+     *
      * @param busy If true show the WAIT_CURSOR otherwise show the previous
      * cursor
      */
@@ -361,14 +512,11 @@ public class MidiQuickFix
 
     @Override
     public void loopSliderChanged(LoopSliderEvent evt) {
-//        System.out.println("loopSliderChanged " + evt.getValueIsAdjusting());
-//        if (!evt.getValueIsAdjusting()) {
         long pos = evt.getValue();
         mSequencer.setTickPosition(pos);
         if (!mSequencer.isRunning()) {
             mPlayController.setPausedPosition(pos); // in ticks
         }
-//        }
     }
 
     @Override
@@ -399,59 +547,59 @@ public class MidiQuickFix
     private void newSequence(final java.io.File file) {
         final SwingWorker<MqfSequence, Void> worker
             = new SwingWorker<MqfSequence, Void>()
-            {
-                // Open the file in the worker thread
-                @Override
-                public MqfSequence doInBackground() {
-                    MqfSequence seq = null;
-                    try {
-                        setBusy(true);
-                        // Construct a Sequence object
-                        seq = MidiFile.openSequenceFile(file);
+        {
+            // Open the file in the worker thread
+            @Override
+            public MqfSequence doInBackground() {
+                MqfSequence seq = null;
+                try {
+                    setBusy(true);
+                    // Construct a Sequence object
+                    seq = MidiFile.openSequenceFile(file);
 
-                        // Remember the file name for later
-                        mFileName = file.getName();
-                        mFilePath = file.getCanonicalPath();
-                    } catch (IOException e) {
-                        trace("IOException in newSequence() : " + e); // NOI18N
-                        showDialog(UiStrings.getString("file_read_error")
-                            + UiStrings.getString("file_read_permission"),
-                            UiStrings.getString("file_io_error"),
-                            JOptionPane.ERROR_MESSAGE);
-                    } catch (InvalidMidiDataException e) {
-                        trace("InvalidMidiDataException in newSequence() : " + e); // NOI18N
-                        showDialog(UiStrings.getString("file_read_error")
-                            + UiStrings.getString("file_read_invalid"),
-                            UiStrings.getString("file_invalid_data"),
-                            JOptionPane.ERROR_MESSAGE);
-                    } finally {
-                        setBusy(false);
-                    }
-                    return seq;
+                    // Remember the file name for later
+                    mFileName = file.getName();
+                    mFilePath = file.getCanonicalPath();
+                } catch (IOException e) {
+                    trace("IOException in newSequence() : " + e); // NOI18N
+                    showDialog(UiStrings.getString("file_read_error")
+                        + UiStrings.getString("file_read_permission"),
+                        UiStrings.getString("file_io_error"),
+                        JOptionPane.ERROR_MESSAGE);
+                } catch (InvalidMidiDataException e) {
+                    trace("InvalidMidiDataException in newSequence() : " + e); // NOI18N
+                    showDialog(UiStrings.getString("file_read_error")
+                        + UiStrings.getString("file_read_invalid"),
+                        UiStrings.getString("file_invalid_data"),
+                        JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    setBusy(false);
                 }
+                return seq;
+            }
 
-                //Build sequence in the event-dispatching thread.
-                @Override
-                public void done() {
-                    try {
-                        mSeq = get();
-                        if (mSeq != null) {
-                            buildNewSequence();
-                        }
-                    } catch (InterruptedException ex) {
-                        // don't care
-                    } catch (ExecutionException ex) {
-                        String pourQuoi;
-                        Throwable cause = ex.getCause();
-                        if (cause != null) {
-                            pourQuoi = cause.getMessage();
-                        } else {
-                            pourQuoi = ex.getMessage();
-                        }
-                        trace("Error creating sequence: " + pourQuoi);
+            //Build sequence in the event-dispatching thread.
+            @Override
+            public void done() {
+                try {
+                    mSeq = get();
+                    if (mSeq != null) {
+                        buildNewSequence();
                     }
+                } catch (InterruptedException ex) {
+                    // don't care
+                } catch (ExecutionException ex) {
+                    String pourQuoi;
+                    Throwable cause = ex.getCause();
+                    if (cause != null) {
+                        pourQuoi = cause.getMessage();
+                    } else {
+                        pourQuoi = ex.getMessage();
+                    }
+                    trace("Error creating sequence: " + pourQuoi);
                 }
-            };
+            }
+        };
         worker.execute();
     }
 
@@ -524,7 +672,7 @@ public class MidiQuickFix
     }
 
     private void openFile(String fileName) {
-        boolean canContinue = checkForSave();
+        boolean canContinue = checkForSave(null);
         if (canContinue) {
             // No fileName given; open the file chooser
             if (fileName == null) {
@@ -543,7 +691,7 @@ public class MidiQuickFix
             if (fileName != null) {
                 File file = new File(fileName);
                 if (file.canRead()) {
-                    String path = file.getParent();
+                    String path = file.getAbsoluteFile().getParent();
                     MqfProperties.setProperty(MqfProperties.LAST_PATH_KEY, path);
                     newSequence(file);
                 }
@@ -553,26 +701,44 @@ public class MidiQuickFix
 
     /**
      * Check if the sequence needs to be saved.
-     * If it does give the user a Yes/No/Cancel dialog.
+     * If it does give the user a confirmation dialog.
+     * When this method is invoked from the user selecting the File/Open
+     * or File/Quit menu options the {@code evt} parameter is {@code null}
+     * and the dialog contains Yes/No/Cancel options.
+     * <br>
+     * When this method is invoked from the user clicking the
+     * window manager close button the {@code evt} parameter will be
+     * an AWTEvent of some sort. In this case only Yes/No options are
+     * available as the window manager close action can not be cancelled.
+     * <br>
      * If the user elects to save give them a Save As dialog.
-     * <p/>
-     * @return True if the user chooses to continue with the action,
+     *
+     * @param evt Not null if this method is called from the user
+     * clicking the window manager close button.
+     * @return True if the user chooses to continue with the action by selecting
+     * Yes or No,
      * False if the user selects Cancel.
      */
-    private boolean checkForSave() {
+    private boolean checkForSave(java.awt.event.WindowEvent evt) {
         boolean continueAction = true;
         if (mSequenceModified) {
             int answer = JOptionPane.showConfirmDialog(this,
                 UiStrings.getString("check_save"),
                 UiStrings.getString("save_changes"),
-                JOptionPane.YES_NO_CANCEL_OPTION);
-            if (answer == JOptionPane.YES_OPTION) {
-                java.io.File myMidiFile = new java.io.File(mFilePath);
-                saveAs(myMidiFile);
-            } else if (answer == JOptionPane.NO_OPTION) {
-                // Do nothing
-            } else if (answer == JOptionPane.CANCEL_OPTION) {
-                continueAction = false;
+                evt == null ? JOptionPane.YES_NO_CANCEL_OPTION : JOptionPane.YES_NO_OPTION);
+            switch (answer) {
+                case JOptionPane.YES_OPTION:
+                    java.io.File myMidiFile = new java.io.File(mFilePath);
+                    saveAs(myMidiFile);
+                    break;
+                case JOptionPane.NO_OPTION:
+                    // Do nothing
+                    break;
+                case JOptionPane.CANCEL_OPTION:
+                    continueAction = false;
+                    break;
+                default:
+                    break;
             }
         }
         return continueAction;
@@ -580,7 +746,7 @@ public class MidiQuickFix
 
     /**
      * Save the current sequence to the given file.
-     * <p/>
+     *
      * @param file The file to which the sequence is to be saved.
      */
     public void saveFile(java.io.File file) {
@@ -626,7 +792,7 @@ public class MidiQuickFix
 
     /**
      * Save the current sequence to a user selected file.
-     * <p/>
+     *
      * @param file If not null the given file will be selected
      * as the default.
      */
@@ -782,7 +948,7 @@ public class MidiQuickFix
 
     /**
      * Called on a change to the track editor table
-     * <p/>
+     *
      * @param e The event
      */
     @Override
@@ -835,7 +1001,7 @@ public class MidiQuickFix
 //        mTrackEditor.setSequence(mSequence);
 //        mSequenceModified=true;
 //        mTrackSummary.setSequence(mSequence);
-        new QuantiseDialog(mSeq, this, false).setVisible(true);
+//        new QuantiseDialog(mSeq, this, false).setVisible(true);
     }
 
     public void setLookAndFeel(String lafName) {
@@ -850,7 +1016,7 @@ public class MidiQuickFix
                         break;
                     }
                 }
-            } catch (Exception e) {
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
             }
         }
     }
@@ -941,7 +1107,7 @@ public class MidiQuickFix
     ////////////////////////////////////////////////
     /**
      * Send a trace message to the trace window
-     * <p/>
+     *
      * @param s the message to display
      */
     public void trace(final String s) {
@@ -958,13 +1124,9 @@ public class MidiQuickFix
      */
     void showDialog(final String message, final String title,
         final int messageType) {
-        EventQueue.invokeLater(new Runnable()
-        {
-            @Override
-            public void run() {
-                JOptionPane.showMessageDialog(
-                    mainPanel, message, title, messageType);
-            }
+        EventQueue.invokeLater(() -> {
+            JOptionPane.showMessageDialog(
+                mainPanel, message, title, messageType);
         });
     }
 
@@ -995,13 +1157,9 @@ public class MidiQuickFix
             Object[] str = MetaEvent.getMetaStrings(metaMessage);
             // if (!mSequencer.isRunning()) {
             if (type == MetaEvent.END_OF_TRACK) {
-                EventQueue.invokeLater(new Runnable()
-                {
-                    @Override
-                    public void run() {
-                        stop();
-                        mPlayController.stop();
-                    }
+                EventQueue.invokeLater(() -> {
+                    stop();
+                    mPlayController.stop();
                 });
             }
             if (str[0].equals("M:TimeSignature")) { // NOI18N
@@ -1027,6 +1185,7 @@ public class MidiQuickFix
         java.awt.GridBagConstraints gridBagConstraints;
 
         sequenceChooser = new javax.swing.JFileChooser();
+        soundbankChooser = new javax.swing.JFileChooser();
         mainPanel = new javax.swing.JPanel();
         mainSplitPane = new javax.swing.JSplitPane();
         bodyPanel = new javax.swing.JPanel();
@@ -1069,11 +1228,14 @@ public class MidiQuickFix
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         quantiseMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
+        soundbankMenuItem = new javax.swing.JMenuItem();
         preferencesMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         traceMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
+
+        soundbankChooser.setName("soundbankChooser"); // NOI18N
 
         setTitle(UiStrings.getString("mqf")); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1086,7 +1248,6 @@ public class MidiQuickFix
 
         mainSplitPane.setDividerSize(9);
         mainSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setOneTouchExpandable(true);
 
         bodyPanel.setBackground(new java.awt.Color(211, 225, 237));
@@ -1383,6 +1544,14 @@ public class MidiQuickFix
         toolsMenu.setMnemonic(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle").getString("ToolsMenu.mnemonic").charAt(0));
         toolsMenu.setText(bundle1.getString("ToolsMenu.text")); // NOI18N
 
+        soundbankMenuItem.setText("Load Soundbank");
+        soundbankMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                soundbankMenuItemActionPerformed(evt);
+            }
+        });
+        toolsMenu.add(soundbankMenuItem);
+
         preferencesMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle").getString("ToolsMenu.PreferencesMenuItem.mnemonic").charAt(0));
         preferencesMenuItem.setText(bundle1.getString("ToolsMenu.PreferencesMenuItem.text")); // NOI18N
         preferencesMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1439,9 +1608,10 @@ public class MidiQuickFix
             JFrame frame = mMainFrame;
             if (mAboutDialog == null) {
                 mAboutDialog = new AboutDialog(frame, false);
+                mAboutDialog.populateMessages();
             }
+            mAboutDialog.showAboutDialog();
             setBusy(false);
-            mAboutDialog.setVisible(true);
         });
 
     }//GEN-LAST:event_aboutMenuItemActionPerformed
@@ -1467,7 +1637,7 @@ public class MidiQuickFix
      * Exit the Application
      */
     private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
-        if (checkForSave() == true) {
+        if (checkForSave(evt) == true) {
             MqfProperties.writeProperties();
             System.exit(0);
         }
@@ -1482,16 +1652,20 @@ public class MidiQuickFix
     }//GEN-LAST:event_preferencesMenuItemActionPerformed
 
     private void quantiseMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantiseMenuItemActionPerformed
-        showQuantiseDialog();
+        //  showQuantiseDialog();
     }//GEN-LAST:event_quantiseMenuItemActionPerformed
 
     private void reloadMenuitemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadMenuitemActionPerformed
         openFile(mFilePath);
     }//GEN-LAST:event_reloadMenuitemActionPerformed
 
+    private void soundbankMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soundbankMenuItemActionPerformed
+        openSoundbankFile();
+    }//GEN-LAST:event_soundbankMenuItemActionPerformed
+
     /**
      * <B>main</B>
-     * <p/>
+     *
      * @param args The command line arguments
      */
     public static void main(String args[]) {
@@ -1561,6 +1735,8 @@ public class MidiQuickFix
     private javax.swing.JFileChooser sequenceChooser;
     private javax.swing.JMenu sequenceMenu;
     private javax.swing.JMenuItem songInfoMenuItem;
+    private javax.swing.JFileChooser soundbankChooser;
+    private javax.swing.JMenuItem soundbankMenuItem;
     private javax.swing.JPanel summaryPanel;
     private javax.swing.JFormattedTextField tempoAdjustField;
     private javax.swing.JLabel tempoAdjustLabel;

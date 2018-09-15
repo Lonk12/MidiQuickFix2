@@ -4,6 +4,11 @@
   <NonVisualComponents>
     <Component class="javax.swing.JFileChooser" name="sequenceChooser">
     </Component>
+    <Component class="javax.swing.JFileChooser" name="soundbankChooser">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="soundbankChooser" noResource="true"/>
+      </Properties>
+    </Component>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="fileMenu">
@@ -147,6 +152,14 @@
             </Property>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="soundbankMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Load Soundbank"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="soundbankMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="preferencesMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
@@ -240,7 +253,6 @@
           <Properties>
             <Property name="dividerSize" type="int" value="9"/>
             <Property name="orientation" type="int" value="0"/>
-            <Property name="continuousLayout" type="boolean" value="true"/>
             <Property name="oneTouchExpandable" type="boolean" value="true"/>
           </Properties>
           <Constraints>
