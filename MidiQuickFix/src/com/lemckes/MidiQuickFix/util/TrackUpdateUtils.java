@@ -25,6 +25,7 @@
 package com.lemckes.MidiQuickFix.util;
 
 import com.lemckes.MidiQuickFix.MetaEvent;
+import com.lemckes.MidiQuickFix.ShortEvent;
 import java.util.Arrays;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -51,10 +52,7 @@ public class TrackUpdateUtils
             MidiMessage message = event.getMessage();
             if (message instanceof ShortMessage) {
                 ShortMessage sm = (ShortMessage)message;
-                int st = sm.getStatus();
-
-                // Check that this is a channel message
-                if ((st & 0xf0) <= 0xf0) {
+                if (ShortEvent.isChannelMessage(sm)) {
                     int channel = sm.getChannel();
                     if (sm.getCommand() == ShortMessage.NOTE_ON) {
                         int noteNum = sm.getData1();
@@ -74,7 +72,8 @@ public class TrackUpdateUtils
 
     /**
      * Set the velocity of all NOTE_ON events with a velocity greater than zero
-     * to the given value. {@code velocity } must be greater than 1 and less than 128
+     * to the given value. {@code velocity } must be greater than 1 and less
+     * than 128
      *
      * @param track the track to convert
      */
@@ -90,10 +89,7 @@ public class TrackUpdateUtils
             MidiMessage message = event.getMessage();
             if (message instanceof ShortMessage) {
                 ShortMessage sm = (ShortMessage)message;
-                int st = sm.getStatus();
-
-                // Check that this is a channel message
-                if ((st & 0xf0) <= 0xf0) {
+                if (ShortEvent.isChannelMessage(sm)) {
                     int channel = sm.getChannel();
                     if (sm.getCommand() == ShortMessage.NOTE_ON) {
                         int noteNum = sm.getData1();
@@ -113,28 +109,27 @@ public class TrackUpdateUtils
     }
 
     /**
-     * Adjust the velocity of all NOTE_ON events with a velocity greater than zero
-     * by the given factor. {@code factor} must be greater than 0.0f and less than 127.0f
+     * Adjust the velocity of all NOTE_ON events with a velocity greater than
+     * zero
+     * by the given factor. {@code factor} must be greater than 0.0f and less
+     * than 4.0f
      *
      * @param track the track to convert
      */
     public static void adjustNoteOnVelocity(Track track, float factor) {
-        if (factor <= 0.0f  || factor > 4.0f) {
+        if (factor <= 0.0f || factor > 4.0f) {
             System.err.println(
                 "Can't set NOTE_ON factor <= 0.0 or > 4.0");
             return;
         }
-        
+
         for (int e = 0; e < track.size(); ++e) {
             MidiEvent event = track.get(e);
 
             MidiMessage message = event.getMessage();
             if (message instanceof ShortMessage) {
                 ShortMessage sm = (ShortMessage)message;
-                int st = sm.getStatus();
-
-                // Check that this is a channel message
-                if ((st & 0xf0) <= 0xf0) {
+                if (ShortEvent.isChannelMessage(sm)) {
                     int channel = sm.getChannel();
                     if (sm.getCommand() == ShortMessage.NOTE_ON) {
                         int noteNum = sm.getData1();
@@ -187,11 +182,10 @@ public class TrackUpdateUtils
     }
 
     /**
-     * Convert any TEXT events at the positions in
+     * Add a space to any LYRIC events at the positions in
      * <code>eventIndices</code>
-     * into LYRIC events
      *
-     * @param track the track to convert
+     * @param track the track to change
      * @param eventIndices the event indices in <code>track</code>
      */
     public static void addSpaceToLyric(Track track, int[] eventIndices) {
@@ -231,10 +225,7 @@ public class TrackUpdateUtils
             MidiMessage message = event.getMessage();
             if (message instanceof ShortMessage) {
                 ShortMessage sm = (ShortMessage)message;
-                int st = sm.getStatus();
-
-                // Check that this is a channel message
-                if ((st & 0xf0) <= 0xf0) {
+                if (ShortEvent.isChannelMessage(sm)) {
                     int command = sm.getCommand();
                     if (command == ShortMessage.NOTE_ON
                         || command == ShortMessage.NOTE_OFF) {
@@ -242,6 +233,29 @@ public class TrackUpdateUtils
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Shift any events at the positions in
+     * <code>eventIndices</code> by <code>offset</code> ticks.
+     *
+     * @param track the track to convert
+     * @param eventIndices the event indices in <code>track</code>
+     * @param targetTick the new position for the first event.
+     */
+    public static void shiftEvents(Track track, int[] eventIndices, long targetTick) {
+        MidiEvent event = track.get(eventIndices[0]);
+        long offset = targetTick - event.getTick();
+        if (offset == 0) {
+            return;
+        }
+
+        for (int i : eventIndices) {
+            event = track.get(i);
+            long oldTick = event.getTick();
+            long newTick = oldTick + offset;
+            event.setTick(newTick);
         }
     }
 }

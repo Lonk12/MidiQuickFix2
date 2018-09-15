@@ -24,9 +24,8 @@ package com.lemckes.MidiQuickFix;
 
 /**
  * Convert between Midi note numbers and textual note names.
- * @todo This probably should be i18n'd.
- * <p/>
- * @version $Id$
+ * todo This probably should be i18n'd.
+ * @version $Id: NoteNames.java,v 1.9 2012/09/09 03:56:05 jostle Exp $
  */
 class NoteNames {
 
@@ -84,7 +83,15 @@ class NoteNames {
         return noteNum;
     }
 
-    public static String[] getNoteNameArray() {
+    public static String[] getFlatsNoteNamesArray() {
+        return flatNames;
+    }
+
+    public static String[] getSharpNoteNamesArray() {
+        return sharpNames;
+    }
+
+    public static String[] getBothNoteNamesArray() {
         return bothNames;
     }
 }

@@ -51,11 +51,10 @@ public class ICanvasScrollPane extends JScrollPane implements ComponentListener 
     }
 
     /**
-     * Set the number of scroll units in a scroll page <br/>
+     * Set the number of scroll units in a scroll page <br>
      * for example setting this to 10 will scroll the canvas by
      * one tenth of the visible width each time the horizontal scrollbar
      * arrow button is clicked
-     * <p/>
      * @param scrollUnitsX
      */
     public void setScrollUnitsX(int scrollUnitsX) {
@@ -68,11 +67,10 @@ public class ICanvasScrollPane extends JScrollPane implements ComponentListener 
 
     /**
      * /**
-     * Set the number of scroll units in a scroll page <br/>
+     * Set the number of scroll units in a scroll page <br>
      * for example setting this to 10 will scroll the canvas by
      * one tenth of the visible height each time the vertical scrollbar
      * arrow button is clicked
-     * <p/>
      * @param scrollUnitsY
      */
     public void setScrollUnitsY(int scrollUnitsY) {

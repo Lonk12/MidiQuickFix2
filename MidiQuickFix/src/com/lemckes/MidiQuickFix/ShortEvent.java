@@ -29,18 +29,22 @@ import javax.sound.midi.ShortMessage;
 
 /**
  * Handle Midi Short events.
- * @version $Id$
+ * @version $Id: ShortEvent.java,v 1.10 2009/03/16 07:44:20 jostle Exp $
  */
-class ShortEvent {
+public class ShortEvent {
+    
+    public static boolean isChannelMessage(ShortMessage mess) {
+        return (mess.getStatus() & 0xf0) <= 0xf0;
+    }
+    
     static Object[] getShortStrings(ShortMessage mess, boolean inFlats) {
         // Event, Note, Value, Patch, Text, Channel
         Object[] result = { "", "", null, "", "", null }; // NOI18N
-        int st = mess.getStatus();
         //int len = mess.getLength();
         int d1 = mess.getData1();
         int d2 = mess.getData2();
         
-        if ((st & 0xf0) <= 0xf0) { // This is a channel message
+        if (isChannelMessage(mess)) {
             int cmd = mess.getCommand();
             switch (cmd) {
                 case ShortMessage.CHANNEL_PRESSURE:
@@ -54,33 +58,33 @@ class ShortEvent {
                 case ShortMessage.NOTE_OFF:
                     result[0] = "NOTE_OFF"; // NOI18N
                     result[1] = NoteNames.getNoteName(d1, inFlats);
-                    result[2] = Integer.valueOf(d2);
+                    result[2] = d2;
                     break;
                 case ShortMessage.NOTE_ON:
                     result[0] = "NOTE_ON "; // NOI18N
                     result[1] = NoteNames.getNoteName(d1, inFlats);
-                    result[2] = Integer.valueOf(d2);
+                    result[2] = d2;
                     break;
                 case ShortMessage.PITCH_BEND:
                     result[0] = "PITCH_BEND"; // NOI18N
-                    result[2] = Integer.valueOf(d1 + (d2 << 7));
+                    result[2] = d1 + (d2 << 7);
                     break;
                 case ShortMessage.POLY_PRESSURE:
                     result[0] = "POLY_PRESSURE"; // NOI18N
                     result[1] = NoteNames.getNoteName(d1, inFlats);
-                    result[2] = Integer.valueOf(d2);
+                    result[2] = d2;
                     break;
                 case ShortMessage.PROGRAM_CHANGE:
                     result[0] = "PATCH "; // NOI18N
-                    result[3] = InstrumentNames.getName(d2, d1);
+                    result[3] = InstrumentNames.getInstance().getName(d2, d1);
                     break;
                 default:
                     result[0] = "UNKNOWN"; // NOI18N
             }
             int chan = mess.getChannel();
-            result[5] = Integer.valueOf(chan);
+            result[5] = chan;
         } else { // This is a system message
-            switch (st) {
+            switch (mess.getStatus()) {
                 case ShortMessage.ACTIVE_SENSING:
                     result[0] = "ACTIVE_SENSING"; // NOI18N
                     break;
@@ -95,7 +99,7 @@ class ShortEvent {
                     break;
                 case ShortMessage.SONG_POSITION_POINTER:
                     result[0] = "SONG_POSITION_POINTER"; // NOI18N
-                    result[2]  = Integer.valueOf(d1 + (d2 << 7));
+                    result[2]  = d1 + (d2 << 7);
                     break;
                 case ShortMessage.SONG_SELECT:
                     result[0] = "SONG_SELECT"; // NOI18N

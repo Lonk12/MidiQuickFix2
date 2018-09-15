@@ -32,7 +32,7 @@ import javax.swing.event.TableModelEvent;
 
 /**
  * A table that displays summary info about each track in a sequence.
- * @version $Id$
+ * @version $Id: TrackSummaryTable.java,v 1.10 2010/08/15 20:28:32 jostle Exp $
  */
 public class TrackSummaryTable extends javax.swing.JTable
 {

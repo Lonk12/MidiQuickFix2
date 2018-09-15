@@ -71,7 +71,6 @@ public class PerformancePainter {
     /**
      * Call before staring to paint.
      * DO NOT MESS WITH THE CLIP OR TRANSFORM BEFORE CALLING THIS.
-     * <p/>
      * @param g
      */
     public void paintStart(Graphics2D g) {
@@ -123,7 +122,6 @@ public class PerformancePainter {
     /**
      * Set how many frames per second is the minimum will will allow high
      * quality rendering to work with while paint calls are frequent
-     * <p/>
      * @param framesPerSecond
      */
     public void setFramesPerSecond(int framesPerSecond) {
@@ -132,7 +130,6 @@ public class PerformancePainter {
 
     /**
      * Return the high quality hints
-     * <p/>
      * @return
      */
     public Map<RenderingHints.Key, Object> getQualityRenderingHints() {
@@ -141,7 +138,6 @@ public class PerformancePainter {
 
     /**
      * Set the high quality hints
-     * <p/>
      * @param qualityRenderingHints
      */
     public void setQualityRenderingHints(
@@ -151,7 +147,6 @@ public class PerformancePainter {
 
     /**
      * Get the fast (lower quality rendering hints.
-     * <p/>
      * @return
      */
     public Map<RenderingHints.Key, Object> getFastRenderingHints() {
@@ -160,7 +155,6 @@ public class PerformancePainter {
 
     /**
      * Set the fast (lower quality rendering hints.
-     * <p/>
      * @param fastRenderingHints
      */
     public void setFastRenderingHints(
@@ -171,7 +165,6 @@ public class PerformancePainter {
     /**
      * Get the componenet this is for. This is probably useless. but here
      * for completeness and for tasty java-beanlikeness.
-     * <p/>
      * @return
      */
     public JComponent getComponent() {
@@ -181,7 +174,6 @@ public class PerformancePainter {
     /**
      * Set component this is for. this shouldn't be called too often, infact
      * this probably only lives for one component.
-     * <p/>
      * @param component
      */
     public void setComponent(JComponent component) {

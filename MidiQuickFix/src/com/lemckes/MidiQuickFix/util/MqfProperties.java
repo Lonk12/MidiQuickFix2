@@ -1,4 +1,4 @@
-/**************************************************************
+/** ************************************************************
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
@@ -19,7 +19,7 @@
  *   in the file named "Artistic.clarified".
  *   If not, I'll be glad to provide one.
  *
- **************************************************************/
+ ************************************************************* */
 package com.lemckes.MidiQuickFix.util;
 
 import java.awt.Color;
@@ -36,12 +36,15 @@ import java.util.Properties;
  */
 public class MqfProperties
 {
-    private static String mPropertiesFileName =
-        System.getProperty("user.home") //NOI18N
+
+    private static final String mPropertiesFileName
+        = System.getProperty("user.home") //NOI18N
         + System.getProperty("file.separator") //NOI18N
         + "MQF.properties"; //NOI18N
-    private static Properties mProps = new Properties();
+    private static final Properties mProps = new Properties();
+
     public static final String LAST_PATH_KEY = "lastpath"; //NOI18N
+    public static final String LAST_SOUNDBANK_PATH_KEY = "last_soundbank_path"; //NOI18N
     public static final String LOOK_AND_FEEL_NAME = "laf_name"; //NOI18N
     public static final String LYRIC_FONT = "lyric_font"; //NOI18N
     public static final String LYRIC_RUBY_FONT_SCALE = "lyric_ruby_font_scale"; //NOI18N
@@ -80,22 +83,29 @@ public class MqfProperties
     }
 
     private static String encodeColourValue(Color colour) {
+        StringBuilder sb = new StringBuilder(8);
         int r = colour.getRed();
         String red = Integer.toHexString(r);
         if (r < 16) {
-            red = "0" + red; //NOI18N
+            sb.append('0');
         }
+        sb.append(red);
+
         int g = colour.getGreen();
         String green = Integer.toHexString(g);
         if (g < 16) {
-            green = "0" + green; //NOI18N
+            sb.append('0');
         }
+        sb.append(green);
+        
         int b = colour.getBlue();
         String blue = Integer.toHexString(b);
         if (b < 16) {
-            blue = "0" + blue; //NOI18N
+            sb.append('0');
         }
-        return red + green + blue;
+        sb.append(green);
+
+        return sb.toString();
     }
 
     public static Font getFontProperty(String key, Font defaultFont) {

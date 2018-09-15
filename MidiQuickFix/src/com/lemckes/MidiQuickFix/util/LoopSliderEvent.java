@@ -27,7 +27,7 @@ package com.lemckes.MidiQuickFix.util;
 /**
  * The event that is passed to LoopSliderListener implementors.
  * @see LoopSliderListener
- * @version $Id$
+ * @version $Id: LoopSliderEvent.java,v 1.3 2012/01/22 05:32:51 jostle Exp $
  */
 public class LoopSliderEvent
 {

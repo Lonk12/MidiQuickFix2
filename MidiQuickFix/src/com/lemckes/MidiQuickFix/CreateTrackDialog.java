@@ -60,7 +60,7 @@ public class CreateTrackDialog extends javax.swing.JDialog {
 
         setFormats();
 
-        Object[] s = InstrumentNames.getNameArray();
+        Object[] s = InstrumentNames.getInstance().getNameArray();
         patchCombo.setModel(new DefaultComboBoxModel<>(s));
 
         pack();
@@ -126,8 +126,8 @@ public class CreateTrackDialog extends javax.swing.JDialog {
     public MidiEvent getPatch() {
         int command = ShortMessage.PROGRAM_CHANGE;
         String instrument = patchCombo.getSelectedItem().toString();
-        int data1 = InstrumentNames.getInstrumentNumber(instrument);
-        int data2 = InstrumentNames.getInstrumentBank(instrument);
+        int data1 = InstrumentNames.getInstance().getInstrumentNumber(instrument);
+        int data2 = InstrumentNames.getInstance().getInstrumentBank(instrument);
         MidiEvent me = null;
         try {
             me = ShortEvent.createShortEvent(

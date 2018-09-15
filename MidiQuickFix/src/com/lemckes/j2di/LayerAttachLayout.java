@@ -21,7 +21,6 @@ import javax.swing.JLayeredPane;
  * the child layers to be resized to maintain a common width and/or
  * height.
  * A free-floating layer can be created by specifying no attachments.
- * <p/>
  * @see LayerAttachConstraints
  */
 public class LayerAttachLayout implements LayoutManager2 {
@@ -48,7 +47,6 @@ public class LayerAttachLayout implements LayoutManager2 {
 
     /**
      * Sets the constraints for the specified component in this layout.
-     * <p/>
      * @param comp the component to be modified
      * @param constraints the constraints to be applied
      */
@@ -62,7 +60,6 @@ public class LayerAttachLayout implements LayoutManager2 {
      * Gets the constraints for the specified component. A copy of
      * the actual
      * <code>LayerAttachConstraints</code> object is returned.
-     * <p/>
      * @param comp the component to be queried
      * @return the constraint for the specified component in this
      * LayerAttachLayout; a copy of the actual constraint

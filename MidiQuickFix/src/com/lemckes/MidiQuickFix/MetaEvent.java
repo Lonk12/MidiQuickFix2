@@ -28,6 +28,7 @@ import com.lemckes.MidiQuickFix.util.StringConverter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Map;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -35,13 +36,13 @@ import javax.sound.midi.MidiEvent;
 /**
  * Handle Midi Meta events.
  *
- * @version $Id$
+ * @version $Id: MetaEvent.java,v 1.21 2015/08/01 10:41:42 jostle Exp $
  */
 public class MetaEvent
 {
 
-    private static final java.text.DecimalFormat twoDigitFormat =
-            new java.text.DecimalFormat("00"); // NOI18N
+    private static final java.text.DecimalFormat twoDigitFormat
+        = new java.text.DecimalFormat("00"); // NOI18N
     private static final String[] typeNames = {
         "SEQUENCE_NUMBER",
         "TEXT",
@@ -79,14 +80,14 @@ public class MetaEvent
      * bb=no. of notated 32nd notes per MIDI quarter note.
      * There are 24 MIDI clocks per quarter note.
      * No I don't understand that last one but it will almost certainly be 8.
-     * 06 03 24 08 is 6/8 time, 36 clocks/metronome (2 per bar), 8 1/32nd notes
-     * / 1/4note
+     * 0x06 0x03 0x24 0x08 
+     * is 6/8 time, 36 clocks/metronome (2 per bar), 8 * 1/32nd notes = 1/4note
      */
     public static final int TIME_SIGNATURE = 0x58; //FF 58 04 nn dd cc bb
     public static final int KEY_SIGNATURE = 0x59; //FF 59 02 sf mi
     // -sf=no. of flats +sf=no. of sharps mi=0=major mi=1=minor
     public static final int PROPRIETARY_DATA = 0x7f; //FF 7F len data
-    private static final HashMap<String, Integer> mTypeNameToValue;
+    public static final HashMap<String, Integer> mTypeNameToValue;
 
     static {
         mTypeNameToValue = new HashMap<>(20);
@@ -129,9 +130,6 @@ public class MetaEvent
      * @return the representation of the message
      */
     public static Object[] getMetaStrings(MetaMessage mess) {
-        // Some data is String some is a series of bytes others are neither
-        boolean dumpText = false;
-        boolean dumpBytes = false;
 
         int type = mess.getType();
         byte[] data = mess.getData();
@@ -144,54 +142,54 @@ public class MetaEvent
         switch (type) {
             case SEQUENCE_NUMBER:
                 result[0] = "M:SequenceNumber"; // NOI18N
-                dumpBytes = true;
+                result[2] = metaDataToHexBytesString(data);
                 break;
             case TEXT:
                 result[0] = "M:Text"; // NOI18N
-                dumpText = true;
+                result[2] = metaDataToText(data);
                 break;
             case COPYRIGHT:
                 result[0] = "M:Copyright"; // NOI18N
-                dumpText = true;
+                result[2] = metaDataToText(data);
                 break;
             case TRACK_NAME:
                 result[0] = "M:TrackName"; // NOI18N
-                dumpText = true;
+                result[2] = metaDataToText(data);
                 break;
             case INSTRUMENT:
                 result[0] = "M:Instrument"; // NOI18N
-                dumpText = true;
+                result[2] = metaDataToText(data);
                 break;
             case LYRIC:
                 result[0] = "M:Lyric"; // NOI18N
-                dumpText = true;
+                result[2] = metaDataToText(data);
                 break;
             case MARKER:
                 result[0] = "M:Marker"; // NOI18N
-                dumpText = true;
+                result[2] = metaDataToText(data);
                 break;
             case CUE_POINT:
                 result[0] = "M:CuePoint"; // NOI18N
-                dumpText = true;
+                result[2] = metaDataToText(data);
                 break;
             case PROGRAM_NAME:
                 result[0] = "M:ProgramName"; // NOI18N
-                dumpText = true;
+                result[2] = metaDataToText(data);
                 break;
             case DEVICE_NAME:
                 result[0] = "M:DeviceName"; // NOI18N
-                dumpText = true;
+                result[2] = metaDataToText(data);
                 break;
             case SMPTE_OFFSET:
                 result[0] = "M:SMPTEOffset"; // NOI18N
                 // Hour, Minute, Second, Frame, Field
                 // hr mn se fr ff
-                result[2] =
-                        twoDigitFormat.format(data[0] & 0x00ff) + ":" + // NOI18N
-                        twoDigitFormat.format(data[1] & 0x00ff) + ":" + // NOI18N
-                        twoDigitFormat.format(data[2] & 0x00ff) + ":" + // NOI18N
-                        twoDigitFormat.format(data[3] & 0x00ff) + ":" + // NOI18N
-                        twoDigitFormat.format(data[4] & 0x00ff);
+                result[2]
+                    = twoDigitFormat.format(data[0] & 0x00ff) + ":" + // NOI18N
+                    twoDigitFormat.format(data[1] & 0x00ff) + ":" + // NOI18N
+                    twoDigitFormat.format(data[2] & 0x00ff) + ":" + // NOI18N
+                    twoDigitFormat.format(data[3] & 0x00ff) + ":" + // NOI18N
+                    twoDigitFormat.format(data[4] & 0x00ff);
                 break;
             case TIME_SIGNATURE:
                 result[0] = "M:TimeSignature"; // NOI18N
@@ -216,35 +214,237 @@ public class MetaEvent
                 result[0] = "M:EndOfTrack"; // NOI18N
                 break;
             case PROPRIETARY_DATA:
-                result[0] = "M:ProprietaryData"; // NOI18N
-                dumpBytes = true;
+                if (data[0] == 0x43 && data[1] == 0x7b && data[2] == 0x01) {
+                    result[0] = "M:YamahaXFChord"; // NOI18N
+                    result[2] = metaDataToXfChordString(data);
+                } else {
+                    result[0] = "M:ProprietaryData"; // NOI18N
+                    result[2] = metaDataToHexBytesString(data);
+                }
                 break;
             default:
                 result[0] = "M:" + type; // NOI18N
-                dumpBytes = true;
+                result[2] = metaDataToHexBytesString(data);
         }
 
-        if (dumpText) {
-            try {
-                result[2] = StringConverter.convertBytesToString(data);
-            } catch (UnsupportedEncodingException ex) {
-                result[2] = "Unsupported Character Encoding";
-            }
-        }
+        return result;
+    }
 
-        if (dumpBytes) {
-            StringBuilder sb = new StringBuilder(data.length * 6);
-            for (int k = 0; k < data.length; ++k) {
-                int i = data[k] & 0x00ff;
-                if (i > 0) {
-                    sb.append(" "); // NOI18N
-                }
-                sb.append("0x"); // NOI18N
-                sb.append(Integer.toHexString(i)); // NOI18N
-            }
-            result[2] = sb.toString();
+    public static String metaDataToText(byte[] data) {
+        String result;
+        try {
+            result = StringConverter.convertBytesToString(data);
+        } catch (UnsupportedEncodingException ex) {
+            result = "Unsupported Character Encoding";
         }
         return result;
+    }
+
+    public static String metaDataToHexBytesString(byte[] data) {
+        StringBuilder sb = new StringBuilder(data.length * 6);
+        for (int k = 0; k < data.length; ++k) {
+            int i = data[k] & 0x00ff;
+            if (k > 0) {
+                sb.append(" "); // NOI18N
+            }
+            sb.append("0x"); // NOI18N
+            sb.append(Integer.toHexString(i)); // NOI18N
+        }
+        return sb.toString();
+    }
+
+    public static final HashMap<Integer, String> chordRootNames = new HashMap<>(8);
+
+    static {
+        chordRootNames.put(0x01, "C");
+        chordRootNames.put(0x02, "D");
+        chordRootNames.put(0x03, "E");
+        chordRootNames.put(0x04, "F");
+        chordRootNames.put(0x05, "G");
+        chordRootNames.put(0x06, "A");
+        chordRootNames.put(0x07, "B");
+    }
+
+    public static final HashMap<Integer, String> chordFlatsNames = new HashMap<>(8);
+
+    static {
+        chordFlatsNames.put(0x00, "bbb");
+        chordFlatsNames.put(0x10, "bb");
+        chordFlatsNames.put(0x20, "b");
+        chordFlatsNames.put(0x30, "");
+        chordFlatsNames.put(0x40, "#");
+        chordFlatsNames.put(0x50, "##");
+        chordFlatsNames.put(0x60, "###");
+    }
+
+    public static final HashMap<Integer, String> chordTypeNames = new HashMap<>(36);
+
+    static {
+        chordTypeNames.put(0, "Maj");
+        chordTypeNames.put(1, "Maj6");
+        chordTypeNames.put(2, "Maj7");
+        chordTypeNames.put(3, "Maj7(#11)");
+        chordTypeNames.put(4, "Maj(9)");
+        chordTypeNames.put(5, "Maj7(9)");
+        chordTypeNames.put(6, "Maj6(9)");
+        chordTypeNames.put(7, "aug");
+        chordTypeNames.put(8, "min");
+        chordTypeNames.put(9, "min6");
+        chordTypeNames.put(10, "min7");
+        chordTypeNames.put(11, "min7b5");
+        chordTypeNames.put(12, "min(9)");
+        chordTypeNames.put(13, "min7(9)");
+        chordTypeNames.put(14, "min7(11)");
+        chordTypeNames.put(15, "minMaj7");
+        chordTypeNames.put(16, "minMaj7(9)");
+        chordTypeNames.put(17, "dim");
+        chordTypeNames.put(18, "dim7");
+        chordTypeNames.put(19, "7th");
+        chordTypeNames.put(20, "7sus4");
+        chordTypeNames.put(21, "7b5");
+        chordTypeNames.put(22, "7(9)");
+        chordTypeNames.put(23, "7(#11)");
+        chordTypeNames.put(24, "7(13)");
+        chordTypeNames.put(25, "7(b9)");
+        chordTypeNames.put(26, "7(b13)");
+        chordTypeNames.put(27, "7(#9)");
+        chordTypeNames.put(28, "Maj7aug");
+        chordTypeNames.put(29, "7aug");
+        chordTypeNames.put(30, "1+8");
+        chordTypeNames.put(31, "1+5");
+        chordTypeNames.put(32, "sus4");
+        chordTypeNames.put(33, "1+2+5");
+        chordTypeNames.put(34, "cc");
+    }
+
+    public static String getChordTypeString(int chordType) {
+        return getChordTypeString(chordType, false);
+    }
+
+    public static String getChordTypeString(int chordType, boolean showMaj) {
+        if (chordType != 0 || showMaj) {
+            return chordTypeNames.getOrDefault(chordType, "Unknown");
+        } else {
+            return "";
+        }
+    }
+
+    public static String metaDataToXfChordString(byte[] data) {
+        return metaDataToXfChordString(data, false);
+    }
+
+    public static String metaDataToXfChordString(byte[] data, boolean showMaj) {
+        StringBuilder sb = new StringBuilder(data.length * 6);
+
+        int chordRoot = data[3] & 0x0f;
+        int chordFlats = data[3] & 0xf0;
+        int chordType = data[4] & 0xff;
+        sb.append(chordRootNames.getOrDefault(chordRoot, "?"))
+            .append(chordFlatsNames.getOrDefault(chordFlats, "?"));
+        sb.append((showMaj || chordType != 0) ? " " : "");
+        sb.append(getChordTypeString(chordType, showMaj));
+
+        boolean hasBassNote = (data[5] & 0xff) != 0x7f;
+        if (hasBassNote) {
+            int bassRoot = data[5] & 0x0f;
+            int bassFlats = data[5] & 0xf0;
+            int bassType = data[6] & 0xff;
+
+            sb.append("/");
+            sb.append(chordRootNames.getOrDefault(bassRoot, "?"))
+                .append(chordFlatsNames.getOrDefault(bassFlats, "?"));
+            if (bassType != 0x7f) {
+                sb.append((showMaj || chordType != 0) ? " " : "");
+                sb.append(getChordTypeString(bassType, showMaj));
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Convert the String representation of an XfChord to meta event data array
+     *
+     * @param chordNoteName the name of the chord root note (A-G + #, ##, ###,
+     * b, bb, bbb)
+     * @param chordTypeName the type of chord as defined in chordTypeNames (Maj,
+     * 7th, min, aug, dim ... )
+     * @param bassNoteName
+     * @param bassTypeName
+     * @return
+     */
+    public static String xfChordToMetaData(String chordNoteName, String chordTypeName,
+        String bassNoteName, String bassTypeName) {
+
+        byte[] result = {0x43, 0x7b, 0x01, 0, 0, 0, 0};
+
+        if (!chordNoteName.isEmpty()) {
+            String chordBase = chordNoteName.substring(0, 1);
+            int chordRoot = 0;
+            for (Map.Entry<Integer, String> entry : chordRootNames.entrySet()) {
+                if (entry.getValue().equals(chordBase)) {
+                    chordRoot = entry.getKey();
+                    break;
+                }
+            }
+
+            String chordFlatsSharps = chordNoteName.substring(1);
+            int chordFlats = 0x30; // Default to no sharps or flats
+            for (Map.Entry<Integer, String> entry : chordFlatsNames.entrySet()) {
+                if (entry.getValue().equals(chordFlatsSharps)) {
+                    chordFlats = entry.getKey();
+                }
+            }
+
+            result[3] = (byte)((chordRoot & 0x0f | chordFlats & 0xf0) & 0xff);
+        }
+
+        int chordType = 0;
+        for (Map.Entry<Integer, String> entry : chordTypeNames.entrySet()) {
+            if (entry.getValue().equals(chordTypeName)) {
+                chordType = entry.getKey();
+            }
+        }
+
+        result[4] = (byte)(chordType & 0xff);
+
+        int bassRoot = 0x0f;
+        int bassFlats = 0x70;
+        int bassType = 0;
+
+        boolean hasBassNote = !bassNoteName.isEmpty() && !bassNoteName.equalsIgnoreCase("None");
+        if (hasBassNote) {
+            String bassBase = bassNoteName.substring(0, 1);
+            bassRoot = 0;
+            for (Map.Entry<Integer, String> entry : chordRootNames.entrySet()) {
+                if (entry.getValue().equals(bassBase)) {
+                    bassRoot = entry.getKey();
+                    break;
+                }
+            }
+
+            String bassFlatsSharps = bassNoteName.substring(1);
+            bassFlats = 0x30; // Default to no sharps or flats
+            for (Map.Entry<Integer, String> entry : chordFlatsNames.entrySet()) {
+                if (entry.getValue().equals(bassFlatsSharps)) {
+                    bassFlats = entry.getKey();
+                }
+            }
+
+            bassType = 0;
+            for (Map.Entry<Integer, String> entry : chordTypeNames.entrySet()) {
+                if (entry.getValue().equals(bassTypeName)) {
+                    bassType = entry.getKey();
+                }
+            }
+        }
+
+        result[5] = (byte)((bassRoot & 0x0f | bassFlats & 0xf0) & 0xff);
+        result[6] = (byte)(bassType & 0xff);
+
+        String hexString = metaDataToHexBytesString(result);
+
+        return hexString;
     }
 
     // Methods to handle TEMPO events.
@@ -258,14 +458,13 @@ public class MetaEvent
      */
     public static int microSecsToBpm(byte[] data) {
         // Coerce the bytes into ints
-        int[] ints = new int[3];
-        ints[0] = data[0] & 0x00ff;
-        ints[1] = data[1] & 0x00ff;
-        ints[2] = data[2] & 0x00ff;
+        int int0 = data[0] & 0x00ff;
+        int int1 = data[1] & 0x00ff;
+        int int2 = data[2] & 0x00ff;
 
-        long t = ints[0] << 16;
-        t += ints[1] << 8;
-        t += ints[2];
+        long t = int0 << 16;
+        t += int1 << 8;
+        t += int2;
 
         return (int)(60000000 / t);
     }
@@ -320,7 +519,7 @@ public class MetaEvent
      * @return the data for the event in a byte[]
      */
     public static byte[] parseTimeSignature(String timeSigString,
-            int ticksPerBeat) {
+        int ticksPerBeat) {
         String[] parts = timeSigString.split("/"); // NOI18N
         // default to 4/4
         byte[] result = {4, 2, (byte)(ticksPerBeat / 4), 8};
@@ -484,7 +683,7 @@ public class MetaEvent
      * @param ticksPerBeat the tick resolution of the sequence
      */
     public static void setMetaData(MetaMessage mess, String value,
-            int ticksPerBeat) {
+        int ticksPerBeat) {
         byte[] data;
         int type = mess.getType();
         if (isText(mess)) {
@@ -525,8 +724,8 @@ public class MetaEvent
                 mess.setMessage(type, data, data.length);
             } catch (InvalidMidiDataException e) {
                 TraceDialog.addTrace(
-                        "Error: MetaEvent.setMetaData(" + value + ") " + e.
-                        getMessage()); // NOI18N
+                    "Error: MetaEvent.setMetaData(" + value + ") " + e.
+                    getMessage()); // NOI18N
             }
         }
     }
@@ -537,8 +736,7 @@ public class MetaEvent
      * @param type the type of the event as defined by the array returned
      * from getTypeNames()
      * @param data a String that represents the data for the event.<br>
-     * see {
-     * @see #setMetaData} for details.
+     * @see #setMetaData for details.
      * @param tick the position of the event in the sequence
      * @param ticksPerBeat the tick resolution of the sequence
      * @return the created Midi Meta event
@@ -546,8 +744,8 @@ public class MetaEvent
      * MetaMessage.setMessage() parameters are not valid
      */
     public static MidiEvent createMetaEvent(String type, String data,
-            long tick, int ticksPerBeat)
-            throws InvalidMidiDataException {
+        long tick, int ticksPerBeat)
+        throws InvalidMidiDataException {
         MetaMessage mm = new MetaMessage();
         mm.setMessage(mTypeNameToValue.get(type), null, 0);
         setMetaData(mm, data, ticksPerBeat);

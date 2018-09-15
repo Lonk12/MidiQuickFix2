@@ -26,7 +26,7 @@ package com.lemckes.MidiQuickFix.util;
  * The event that is passed to TracksChangedListener implementors to
  * signal the addition or deletion of Tracks from a Sequence.
  * @see TracksChangedListener
- * @version $Id$
+ * @version $Id: TracksChangedEvent.java,v 1.2 2010/08/15 20:28:35 jostle Exp $
  */
 public class TracksChangedEvent
 {

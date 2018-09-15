@@ -19,7 +19,6 @@ public class ICanvas extends JLayeredPane implements Scrollable {
 
     /**
      * Create an ICanvas with the given pixel dimensions.
-     * <p/>
      * @param width The Width of the canvas
      * @param height The height of the canvas
      */
@@ -57,7 +56,6 @@ public class ICanvas extends JLayeredPane implements Scrollable {
      * Set the size of the canvas to the given size.
      * The component's maximumSize, preferredSize
      * and minimumSize are set to the new size.
-     * <p/>
      * @param d The new size
      */
     @Override
@@ -69,7 +67,6 @@ public class ICanvas extends JLayeredPane implements Scrollable {
     /**
      * Set the amount by which the canvas will be scrolled.
      * These values are in screen units (pixels)
-     * <p/>
      * @param horUnit The size of a 'unit' horizontal scroll.
      * A common value is 1/10th of the visible width of the viewport.
      * @param vertUnit The size of a 'unit' vertical scroll.

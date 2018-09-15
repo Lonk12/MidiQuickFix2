@@ -45,7 +45,7 @@ import javax.swing.text.DefaultFormatterFactory;
  * A duration slider that can have loop points
  *
  * @see DurationSlider
- * @version $Id$
+ * @version $Id: LoopSlider.java,v 1.11 2015/08/01 13:57:29 jostle Exp $
  */
 public class LoopSlider
     extends javax.swing.JPanel
@@ -77,7 +77,7 @@ public class LoopSlider
             ex.printStackTrace();
         }
 
-    RegexFormatter formatter = new RegexFormatter("[0-9]+:[0-9]+");
+    RegexFormatter formatter = new RegexFormatter(Formats.TICK_BEAT_RE);
         formatter.setAllowsInvalid(false);
         formatter.setOverwriteMode(false);
         formatter.setCommitsOnValidEdit(true);

@@ -28,7 +28,7 @@ import javax.sound.midi.MidiEvent;
 /**
  * The event that is passed to EventCreationListener implementors.
  * @see EventCreationListener
- * @version $Id$
+ * @version $Id: EventCreationEvent.java,v 1.2 2009/03/16 07:44:20 jostle Exp $
  */
 public class EventCreationEvent {
     /**

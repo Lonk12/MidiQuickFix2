@@ -8,7 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 /**
- * This is the abstract base class that all J2Di graphics extend. <br/>
+ * This is the abstract base class that all J2Di graphics extend. <br>
  * An IShapeGraphic implementation is responsible for drawing a graphical
  * representation of itself when required. Its position is defined in terms of
  * world coordinates.
@@ -77,7 +77,6 @@ public abstract class IGraphic {
      * Test if the given rectangle intersects with this graphic.
      *
      * @param r The rectangle to be tested.
-     * <p/>
      * @return true if the given rectangle intersects with this graphic.
      */
     public abstract boolean intersects(Rectangle2D r);
@@ -87,7 +86,6 @@ public abstract class IGraphic {
      *
      * @param x The x coordinate
      * @param y The y coordinate
-     * <p/>
      * @return true if this graphic contains the given coordinates.
      */
     public abstract boolean contains(double x, double y);
@@ -103,7 +101,6 @@ public abstract class IGraphic {
 
     /**
      * Test if this graphic is visible
-     * <p/>
      * @return
      */
     public boolean isVisible() {
@@ -112,7 +109,6 @@ public abstract class IGraphic {
 
     /**
      * Set the visible state of this graphic
-     * <p/>
      * @param visible
      */
     public void setVisible(boolean visible) {

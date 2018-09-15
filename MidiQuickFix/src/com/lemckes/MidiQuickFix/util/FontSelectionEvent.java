@@ -28,7 +28,7 @@ import java.awt.Font;
 /**
  * The event that is passed to FontSelectionListener implementors.
  * @see FontSelectionListener
- * @version $Id$
+ * @version $Id: FontSelectionEvent.java,v 1.2 2009/03/16 07:44:20 jostle Exp $
  */
 public class FontSelectionEvent {
     /**

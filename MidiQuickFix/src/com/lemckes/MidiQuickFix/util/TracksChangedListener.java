@@ -28,7 +28,7 @@ import java.util.EventListener;
 /**
  * The listener interface for receiving TracksChangedEvents
  * @see TracksChangedEvent
- * @version $Id$
+ * @version $Id: TracksChangedListener.java,v 1.1 2010/06/24 11:46:15 jostle Exp $
  */
 public interface TracksChangedListener extends EventListener
 {

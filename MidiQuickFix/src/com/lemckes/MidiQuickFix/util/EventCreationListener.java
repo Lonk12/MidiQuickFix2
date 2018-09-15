@@ -28,7 +28,7 @@ import java.util.EventListener;
 /**
  * The listener interface for receiving events from a MidiEventCreator
  * @see EventCreationEvent
- * @version $Id$
+ * @version $Id: EventCreationListener.java,v 1.2 2009/03/16 07:44:20 jostle Exp $
  */
 public interface EventCreationListener extends EventListener
 {

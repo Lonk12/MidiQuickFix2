@@ -61,7 +61,7 @@ import javax.swing.text.StyledDocument;
 /**
  * The lyrics display.
  *
- * @version $Id$
+ * @version $Id: LyricDisplay.java,v 1.20 2015/08/01 10:41:42 jostle Exp $
  */
 public class LyricDisplay
     extends JPanel
@@ -92,7 +92,7 @@ public class LyricDisplay
         extends DefaultHighlighter.DefaultHighlightPainter
     {
 
-        public MyHighlightPainter(Color color) {
+        MyHighlightPainter(Color color) {
             super(color);
         }
     }
@@ -103,7 +103,7 @@ public class LyricDisplay
         private int startPos;
         private int length;
 
-        public WordPlace(int startPos, int length) {
+        WordPlace(int startPos, int length) {
             this.startPos = startPos;
             this.length = length;
         }
@@ -172,26 +172,21 @@ public class LyricDisplay
         if (wp != null) {
             final int start = wp.getStartPos();
             final int len = wp.getLength();
-            EventQueue.invokeLater(new Runnable()
-            {
-
-                @Override
-                public void run() {
-                    try {
-                        // Get the location of the current text
-                        final Rectangle r = lyricText.modelToView(start + len);
-                        // Make the rectangle 2/3 the height of the scroll pane
-                        // so that the current line stays near the top of the window
-                        int height = lyricScrollPane.getHeight() * 2 / 3;
-                        r.height = height;
-                        // Scroll so that the 2/3 height rectangle is visible
-                        lyricText.scrollRectToVisible(r);
-                        // Move the highlight
-                        mHighlighter.changeHighlight(mHighlightTag, start,
-                            start + len);
-                    } catch (BadLocationException ex) {
-                        // What a pity.
-                    }
+            EventQueue.invokeLater(() -> {
+                try {
+                    // Get the location of the current text
+                    final Rectangle r = lyricText.modelToView(start + len);
+                    // Make the rectangle 2/3 the height of the scroll pane
+                    // so that the current line stays near the top of the window
+                    int height1 = lyricScrollPane.getHeight() * 2 / 3;
+                    r.height = height1;
+                    // Scroll so that the 2/3 height rectangle is visible
+                    lyricText.scrollRectToVisible(r);
+                    // Move the highlight
+                    mHighlighter.changeHighlight(mHighlightTag, start,
+                        start + len);
+                } catch (BadLocationException ex) {
+                    // What a pity.
                 }
             });
         } else {
@@ -254,17 +249,18 @@ public class LyricDisplay
         for (Entry<Long, String> e : mWords.entrySet()) {
             lyricText.setCaretPosition(lyricText.getDocument().getLength());
             String text = e.getValue();
+            // Test for possible ruby text
             if (text.contains("[")) {
                 Matcher m = rubyPattern.matcher(text);
-                int nonRubyStartPos = 0;
+                int nonRubyStartPos = 0; // Keep track of text outside the ruby delimiters '[]'
                 while (m.find()) {
                     int rubyStartPos = m.start();
                     int rubyEndPos = m.end();
-                    String preRuby = "";
                     if (rubyStartPos > nonRubyStartPos) {
-                        preRuby = text.substring(nonRubyStartPos, rubyStartPos);
+                        // There was some text before the start of the ruby text
+                        String preRuby = text.substring(nonRubyStartPos, rubyStartPos);
+                        appendText(doc, preRuby, regularStyle);
                     }
-                    appendText(doc, preRuby, regularStyle);
                     // Add some zero-width spaces to replace the [ and ]
                     String ruby = "\u200B" + m.group(1) + "\u200B";
                     appendText(doc, ruby, rubyStyle);
@@ -273,6 +269,7 @@ public class LyricDisplay
                 String lastBit = text.substring(nonRubyStartPos);
                 appendText(doc, lastBit, regularStyle);
             } else {
+                // Not ruby, just plain text
                 appendText(doc, text, regularStyle);
             }
         }
@@ -405,12 +402,16 @@ public class LyricDisplay
         StyledDocument doc = lyricText.getStyledDocument();
         Style defaultStyle = StyleContext.getDefaultStyleContext().
             getStyle(StyleContext.DEFAULT_STYLE);
+        StyleConstants.setLineSpacing(defaultStyle, 2.0f);
 
         Style regular = doc.addStyle("regular", defaultStyle);
+        StyleConstants.setLineSpacing(regular, 2.0f);
         StyleConstants.setForeground(regular, Color.BLACK);
 
         Style ruby = doc.addStyle("ruby", regular);
         float size = lyricText.getFont().getSize() * 0.6f;
+        StyleConstants.setLineSpacing(ruby, 2.0f);
+        StyleConstants.setSpaceBelow(ruby, size);
         StyleConstants.setFontSize(ruby, Math.round(size));
         StyleConstants.setForeground(ruby, Color.BLACK);
     }
@@ -430,7 +431,7 @@ public class LyricDisplay
         } catch (BadLocationException e) {
             // Can not happen with addHighlight(0, 0, myHighlightPainter);
         } catch (Exception ex) {
-            System.err.println("an exception " + ex);
+            TraceDialog.addTrace("an exception " + ex);
         }
 
         lyricText.setBackground(MqfProperties.getColourProperty(
@@ -454,6 +455,7 @@ public class LyricDisplay
         float size
             = lyricText.getFont().getSize() * MqfProperties.getFloatProperty(
                 MqfProperties.LYRIC_RUBY_FONT_SCALE, 0.8f);
+        StyleConstants.setSpaceBelow(ruby, size);
         StyleConstants.setFontSize(ruby, Math.round(size));
         StyleConstants.setForeground(ruby, MqfProperties.getColourProperty(
             MqfProperties.LYRIC_RUBY_FG_COLOUR, Color.BLACK));

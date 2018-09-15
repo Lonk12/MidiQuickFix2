@@ -1,4 +1,4 @@
-/**************************************************************
+/** ************************************************************
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
@@ -19,7 +19,7 @@
  *   in the file named "Artistic.clarified".
  *   If not, I'll be glad to provide one.
  *
- **************************************************************/
+ ************************************************************* */
 package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.UiStrings;
@@ -27,27 +27,61 @@ import java.util.Properties;
 
 /**
  * Show the About dialog.
- * @version $Id$
+ *
+ * @version $Id: AboutDialog.java,v 1.10 2010/09/11 05:44:14 jostle Exp $
  */
-public class AboutDialog extends javax.swing.JDialog
+public class AboutDialog
+    extends javax.swing.JDialog
 {
 
     static final long serialVersionUID = 934886629248418748L;
+
     /**
      * The component that displays our splash screen
      */
     SplashDrawing mSplash;
 
+    java.awt.Frame mParent;
+
     /**
      * Creates an About dialog
+     *
      * @param parent the Frame parent of the dialog
      * @param modal the modality of the dialog
      */
     public AboutDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        setTitle(UiStrings.getString("about_mqf")); // NOI18N
+        mParent = parent;
         mSplash = new SplashDrawing();
         mSplash.setCentredText(true);
+
+        initComponents();
+    }
+
+    /**
+     * Show the About dialog.
+     * I'd rather call this method 'show()' but that overrides
+     * a deprecated java.awt.Dialog method.
+     */
+    public void showAboutDialog() {
+//        setTitle(UiStrings.getString("about_mqf")); // NOI18N
+//        getContentPane().add(mSplash, java.awt.BorderLayout.CENTER);
+        pack();
+        setLocationRelativeTo(mParent);
+        setVisible(true);
+    }
+
+    /**
+     * Populate the messages in the About dialog.
+     */
+    public void populateMessages() {
+        setTitle(UiStrings.getString("about_mqf")); // NOI18N
+        getContentPane().add(mSplash, java.awt.BorderLayout.CENTER);
+//        pack();
+//        setLocationRelativeTo(mParent);
+
+        mSplash.setMessageDelay(0);
+
         mSplash.addStageMessage(UiStrings.getString("about_message")); // NOI18N
         mSplash.addStageMessage(UiStrings.getString("version_string")); // NOI18N
         mSplash.addStageMessage("http://midiquickfix.sourceforge.net"); // NOI18N
@@ -55,40 +89,33 @@ public class AboutDialog extends javax.swing.JDialog
         mSplash.addStageMessage(UiStrings.getString("copyright")); // NOI18N
         mSplash.addStageMessage(UiStrings.getString("contact_email")); // NOI18N
 
-        showSystemInfo();
-
-        initComponents();
-        getContentPane().add(mSplash, java.awt.BorderLayout.CENTER);
-        pack();
-        setLocationRelativeTo(parent);
-    }
-
-    private void showSystemInfo() {
         Properties p = System.getProperties();
 
-        String name =
-            p.getProperty("java.vm.name", UiStrings.getString("unknown_java")); // NOI18N
-        String version =
-            p.getProperty("java.vm.version",
-            UiStrings.getString("unknown_version")); // NOI18N
-        String vendor =
-            p.getProperty("java.vm.vendor",
-            UiStrings.getString("unknown_vendor")); // NOI18N
+        String name
+            = p.getProperty("java.vm.name", UiStrings.getString("unknown_java")); // NOI18N
+        String version
+            = p.getProperty("java.vm.version",
+                UiStrings.getString("unknown_version")); // NOI18N
+        String vendor
+            = p.getProperty("java.vm.vendor",
+                UiStrings.getString("unknown_vendor")); // NOI18N
 
         mSplash.addStageMessage("");
         mSplash.addStageMessage(name + " - " + version);
         mSplash.addStageMessage(UiStrings.getString("vendor") + " : " + vendor); // NOI18N
 
-        String osname =
-            p.getProperty("os.name", UiStrings.getString("unknown_os")); // NOI18N
-        String osversion =
-            p.getProperty("os.version",
-            UiStrings.getString("unknown_os_version")); // NOI18N
-        String arch =
-            p.getProperty("os.arch", UiStrings.getString("unknown_os_arch")); // NOI18N
+        String osname
+            = p.getProperty("os.name", UiStrings.getString("unknown_os")); // NOI18N
+        String osversion
+            = p.getProperty("os.version",
+                UiStrings.getString("unknown_os_version")); // NOI18N
+        String arch
+            = p.getProperty("os.arch", UiStrings.getString("unknown_os_arch")); // NOI18N
 
         mSplash.addStageMessage("");
         mSplash.addStageMessage(osname + " - " + arch + " - " + osversion);
+
+//        setVisible(true);
     }
 
     private void doClose() {
@@ -96,7 +123,8 @@ public class AboutDialog extends javax.swing.JDialog
         dispose();
     }
 
-    /** This method is called from within the constructor to
+    /**
+     * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
@@ -135,7 +163,9 @@ public class AboutDialog extends javax.swing.JDialog
         doClose();
     }//GEN-LAST:event_okButtonActionPerformed
 
-    /** Closes the dialog */
+    /**
+     * Closes the dialog
+     */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose();
     }//GEN-LAST:event_closeDialog

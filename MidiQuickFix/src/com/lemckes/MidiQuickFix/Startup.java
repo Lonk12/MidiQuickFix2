@@ -26,7 +26,7 @@ import com.lemckes.MidiQuickFix.util.UiStrings;
 
 /**
  * Show a splash screen and startup progress.
- * @version $Id$
+ * @version $Id: Startup.java,v 1.11 2010/02/28 06:03:06 jostle Exp $
  */
 public class Startup
     extends javax.swing.JDialog {

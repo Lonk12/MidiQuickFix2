@@ -1,4 +1,4 @@
-/**************************************************************
+/** ************************************************************
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
@@ -19,130 +19,159 @@
  *   in the file named "Artistic.clarified".
  *   If not, I'll be glad to provide one.
  *
- **************************************************************/
+ ************************************************************* */
 package com.lemckes.MidiQuickFix;
 
-import com.lemckes.MidiQuickFix.util.TraceDialog;
-import java.util.ResourceBundle;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import javax.sound.midi.Instrument;
 
 /**
  * Methods associated with MIDI instrument (patch) names.
- * @version $Id$
+ *
+ * @version $Id: InstrumentNames.java,v 1.13 2015/08/01 10:41:42 jostle Exp $
  */
-class InstrumentNames {
-    /** Map from instrument name to bank and program numbers.
-     * The Integer value is calculated as <code>bank *256 * program</code> */
-    static SortedMap<String, Integer> mInstrumentNameMap;
-    /** Map from bank and program numbers to instrument name.
-     * The Integer key is calculated as <code>bank *256 + program</code> */
-    static SortedMap<Integer, String> mInstrumentNumberMap;
-    /** Map from bank number to a map from instrument name to program number.*/
-    static SortedMap<Integer, SortedMap<String, Integer>> mBankNameMap;
-    /** Map from bank number to a map from program number to instrument name.*/
-    static SortedMap<Integer, SortedMap<Integer, String>> mBankNumberMap;
+class InstrumentNames
+{
 
-    /** Create an InstrumentNames object. */
-    static {
-        try {
-            javax.sound.midi.Synthesizer synth = null;
-            javax.sound.midi.Instrument[] instruments = null;
-            synth = javax.sound.midi.MidiSystem.getSynthesizer();
-            instruments = synth.getAvailableInstruments();
+    /**
+     * Map from instrument name to bank and program numbers.
+     * The Integer value is calculated as <code>(bank << 8) + program</code>
+     */
+    private static SortedMap<String, Integer> mInstrumentNameMap;
+    /**
+     * Map from bank and program numbers to instrument name.
+     * The Integer key is calculated as <code>(bank << 8) + program</code>
+     */
+    private static SortedMap<Integer, String> mInstrumentNumberMap;
+    /**
+     * Map from bank number to a map from instrument name to program number.
+     */
+    private static SortedMap<Integer, SortedMap<String, Integer>> mBankNameMap;
+    /**
+     * Map from bank number to a map from program number to instrument name.
+     */
+    private static SortedMap<Integer, SortedMap<Integer, String>> mBankNumberMap;
 
-            mInstrumentNameMap = new TreeMap<String, Integer>();
-            mInstrumentNumberMap = new TreeMap<Integer, String>();
-            mBankNameMap = new TreeMap<Integer, SortedMap<String, Integer>>();
-            mBankNumberMap = new TreeMap<Integer, SortedMap<Integer, String>>();
+    private static final InstrumentNames INSTANCE
+        = new InstrumentNames();
 
-            for (int j = 0; j < instruments.length; ++j) {
-                int bank = instruments[j].getPatch().getBank();
-                int prog = instruments[j].getPatch().getProgram();
-                int bankProgram = bank * 256 + prog;
-                String name = instruments[j].getName();
-                // System.out.println(j + "." + bank + "." + prog + "." + name);
+    /**
+     * Create an InstrumentNames object.
+     */
+    public InstrumentNames() {
+        populateNames();
+    }
 
-                mInstrumentNameMap.put(name, bankProgram);
-                mInstrumentNumberMap.put(bankProgram, name);
+    public final static void populateNames() {
+        mInstrumentNameMap = new TreeMap<>();
+        mInstrumentNumberMap = new TreeMap<>();
+        mBankNameMap = new TreeMap<>();
+        mBankNumberMap = new TreeMap<>();
+        javax.sound.midi.Synthesizer synth = MidiQuickFix.getSynth();
 
-                if (mBankNameMap.get(bank) == null) {
-                    mBankNameMap.put(bank, new TreeMap<String, Integer>());
-                }
-                mBankNameMap.get(bank).put(name, prog);
+        javax.sound.midi.Instrument[] instruments;
+        instruments = synth.getLoadedInstruments();
 
-                if (mBankNumberMap.get(bank) == null) {
-                    mBankNumberMap.put(bank, new TreeMap<Integer, String>());
-                }
-                mBankNumberMap.get(bank).put(prog, name);
+        for (Instrument i : instruments) {
+            int bank = i.getPatch().getBank();
+            int prog = i.getPatch().getProgram();
+            int bankProgram = (bank << 8) + prog;
+            String name = i.getName();
+            //System.out.println(bank + "." + prog + "." + name + " - " + i.getSoundbank().getName());
+
+            mInstrumentNameMap.put(name, bankProgram);
+            mInstrumentNumberMap.put(bankProgram, name);
+
+            if (mBankNameMap.get(bank) == null) {
+                mBankNameMap.put(bank, new TreeMap<>());
             }
-        } catch (javax.sound.midi.MidiUnavailableException e) {
-            TraceDialog.addTrace("Failed to getSynthesizer()  " + e.getMessage()); // NOI18N
-            TraceDialog.addTrace("-- Using resource bundle for instrument names"); // NOI18N
+            mBankNameMap.get(bank).put(name, prog);
 
-            ResourceBundle mInstrumentsBundle =
-                ResourceBundle.getBundle(
-                "com/lemckes/MidiQuickFix/resources/GM1Instruments"); // NOI18N
-            int numInsts =
-                Integer.parseInt(mInstrumentsBundle.getString("count")); // NOI18N
-
-            mInstrumentNameMap = new TreeMap<String, Integer>();
-            mInstrumentNumberMap = new TreeMap<Integer, String>();
-            for (int j = 0; j < numInsts; ++j) {
-                mInstrumentNameMap.put(
-                    mInstrumentsBundle.getString(Integer.toString(j + 1)), j);
-                mInstrumentNumberMap.put(
-                    j, mInstrumentsBundle.getString(Integer.toString(j + 1)));
+            if (mBankNumberMap.get(bank) == null) {
+                mBankNumberMap.put(bank, new TreeMap<>());
             }
+            mBankNumberMap.get(bank).put(prog, name);
         }
     }
 
-    /** Get the instrument (patch) name.
-     * @param num The patch number.
-     * @return The instrument (patch) name.
+    /**
+     * Get the single instance of InstrumentNames
+     *
+     * @return
      */
-    static public String getName(int bank, int program) {
-        return mBankNumberMap.get(bank).get(program);
+    public static InstrumentNames getInstance() {
+        return INSTANCE;
     }
 
-    /** Get the instrument (patch) name assuming it to be in the first bank.
-     * @param num The patch number.
+    /**
+     * Get the instrument (patch) name.
+     *
+     * @param program The program number.
      * @return The instrument (patch) name.
      */
-    static public String getName(int program) {
+    public String getName(int bank, int program) {
+        String name = "NoName";
+        int bankProgram = (bank << 8) + program;
+        if (mInstrumentNumberMap.containsKey(bankProgram)) {
+            name = mInstrumentNumberMap.get(bankProgram);
+        }
+
+//        if (mBankNumberMap.containsKey(bank)
+//            && mBankNumberMap.get(bank).containsKey(program)) {
+//            name = mBankNumberMap.get(bank).get(program);
+//        }
+
+        return name;
+    }
+
+    /**
+     * Get the instrument (patch) name assuming it to be in the first bank.
+     *
+     * @param program The patch number.
+     * @return The instrument (patch) name.
+     */
+    public String getName(int program) {
         return getName(0, program);
     }
 
-    /** Get all the instrument names.
+    /**
+     * Get all the instrument names.
+     *
      * @return The array of instrument names.
      */
-    static public String[] getNameArray() {
+    public String[] getNameArray() {
         return mInstrumentNumberMap.values().toArray(new String[0]);
     }
 
     /**
      * Get the instrument names for a given bank.
+     *
      * @param bank the bank for which to get the names
      * @return The array of instrument names.
      */
-    static public String[] getNameArray(int bank) {
+    public String[] getNameArray(int bank) {
         return mBankNumberMap.get(bank).values().toArray(new String[0]);
     }
 
-    /** Get the program number associated with the named instrument.
+    /**
+     * Get the program number associated with the named instrument.
+     *
      * @param name The name of the instrument.
      * @return The patch number for the named instrument.
      */
-    static public int getInstrumentNumber(String name) {
+    public int getInstrumentNumber(String name) {
         // The program number is in the low order byte.
         return mInstrumentNameMap.get(name) & 127;
     }
 
-    /** Get the program number associated with the named instrument.
+    /**
+     * Get the program number associated with the named instrument.
+     *
      * @param name The name of the instrument.
      * @return The patch number for the named instrument.
      */
-    static public int getInstrumentBank(String name) {
+    public int getInstrumentBank(String name) {
         // The bank number is in the high order byte.
         return mInstrumentNameMap.get(name) >> 8;
     }

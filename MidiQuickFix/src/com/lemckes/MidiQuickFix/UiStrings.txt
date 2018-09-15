@@ -147,6 +147,7 @@ show_notes
 show_text_events
 size
 solo
+soundbank_file_filter_description
 start
 startup_failed
 startup_initialising

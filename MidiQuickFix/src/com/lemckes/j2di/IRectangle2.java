@@ -11,7 +11,6 @@ public class IRectangle2
 
     /**
      * Create an IRectangle with the given Rectangle2D.
-     * <p/>
      * @param rectangle The rectangle to be drawn.
      */
     public IRectangle2(Rectangle2D rectangle) {

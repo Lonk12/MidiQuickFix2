@@ -29,7 +29,7 @@ import javax.swing.JLabel;
 
 /**
  * A slider that represents a duration in either ticks or beats.
- * @version $Id$
+ * @version $Id: TempoSlider.java,v 1.2 2015/08/01 13:57:29 jostle Exp $
  */
 public class TempoSlider extends javax.swing.JSlider
 {

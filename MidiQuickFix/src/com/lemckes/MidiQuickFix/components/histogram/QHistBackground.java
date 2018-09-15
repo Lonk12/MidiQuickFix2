@@ -19,11 +19,11 @@ public class QHistBackground
         extends ILayer
 {
 
-    private QHist mQHist;
+    private final QHist mQHist;
     private double mQuantiseLevel = 1;
-    private IGroup mGroup;
-    private QuantiseRatioGraphic mGraphic;
-    private Rectangle2D.Double mWorld =
+    private final IGroup mGroup;
+    private final QuantiseRatioGraphic mGraphic;
+    private final Rectangle2D.Double mWorld =
             new Rectangle2D.Double(0.0, 0.0, 1000.0, 1000.0);
 
     public QHistBackground(QHist hist) {
@@ -40,6 +40,11 @@ public class QHistBackground
     public void setQuantiseLevel(double notesPerBeat) {
         mQuantiseLevel = notesPerBeat;
         repaint();
+    }
+    
+    public double getQuantiseLevel()
+    {
+        return mQuantiseLevel;
     }
 
     public class QuantiseRatioGraphic

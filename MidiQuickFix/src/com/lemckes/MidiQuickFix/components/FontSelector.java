@@ -40,7 +40,7 @@ import javax.swing.text.StyleConstants;
 /**
  * A dialog that allows the user to choose a font.
  *
- * @version $Id$
+ * @version $Id: FontSelector.java,v 1.9 2015/08/01 10:41:42 jostle Exp $
  */
 public class FontSelector
     extends javax.swing.JDialog

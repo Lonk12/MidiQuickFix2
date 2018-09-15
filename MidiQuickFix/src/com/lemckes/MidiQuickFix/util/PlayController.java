@@ -29,8 +29,7 @@ import javax.swing.AbstractAction;
 
 /**
  * Maintains the state of play
- * <p/>
- * @version $Id$
+ * @version $Id: PlayController.java,v 1.10 2012/09/09 03:56:08 jostle Exp $
  */
 public class PlayController
 {
@@ -55,7 +54,6 @@ public class PlayController
 
     /**
      * Creates a new instance of PlayController
-     * <p/>
      * @param sqr the sequencer to control
      * @param seq the sequence to control
      */
@@ -66,7 +64,6 @@ public class PlayController
 
     /**
      * Set the state of play ;-)
-     * <p/>
      * @param state Probably should be one of NO_FILE, STOPPED, PAUSED, PLAYING
      */
     public void setPlayState(PlayState state) {
@@ -114,7 +111,6 @@ public class PlayController
 
         /**
          * Performs the functions required for Playing
-         * <p/>
          * @param e The event that triggered the action.
          */
         @Override
@@ -151,7 +147,6 @@ public class PlayController
 
         /**
          * Performs the functions required for Playing
-         * <p/>
          * @param e The event that triggered the action.
          */
         @Override
@@ -196,7 +191,6 @@ public class PlayController
 
         /**
          * Performs the functions required for Stopping
-         * <p/>
          * @param e The event that triggered the action.
          */
         @Override
@@ -237,7 +231,6 @@ public class PlayController
 
         /**
          * Performs the functions required for Rewinding
-         * <p/>
          * @param e The event that triggered the action.
          */
         @Override
@@ -276,7 +269,6 @@ public class PlayController
 
         /**
          * Performs the functions required for Looping
-         * <p/>
          * @param e The event that triggered the action.
          */
         @Override

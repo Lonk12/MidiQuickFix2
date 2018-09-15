@@ -24,6 +24,7 @@
  */
 package com.lemckes.MidiQuickFix;
 
+import static com.lemckes.MidiQuickFix.ShortEvent.isChannelMessage;
 import com.lemckes.MidiQuickFix.util.TrackUpdateUtils;
 import com.lemckes.MidiQuickFix.util.EventCreationEvent;
 import com.lemckes.MidiQuickFix.util.EventCreationListener;
@@ -45,12 +46,11 @@ import javax.swing.event.TableModelListener;
 
 /**
  * The UI for editing track data
- * <p/>
- * @version $Id$
+ * @version $Id: TrackEditorPanel.java,v 1.19 2015/08/01 10:41:42 jostle Exp $
  */
 public class TrackEditorPanel
-        extends javax.swing.JPanel
-        implements EventCreationListener, ListSelectionListener
+    extends javax.swing.JPanel
+    implements EventCreationListener, ListSelectionListener
 {
 
     private static final long serialVersionUID = -3117013688244779503L;
@@ -81,7 +81,6 @@ public class TrackEditorPanel
 
     /**
      * Set the sequence that will be edited
-     * <p/>
      * @param seq the sequence to edit
      */
     public void setSequence(MqfSequence seq) {
@@ -141,23 +140,21 @@ public class TrackEditorPanel
 
     /**
      * Display the selected track in the editor.
-     * <p/>
      * @param trackNum The index of the track to be displayed.
      */
     void selectTrack(int trackNum) {
         mCurrentTrack = trackNum;
         if (mSeq != null) {
             trackTable.setTrack(
-                    mSeq.getTracks()[mCurrentTrack],
-                    mSeq.getResolution(),
-                    showNotesCheck.isSelected(),
-                    KeySignatures.isInFlats(mKeySig));
+                mSeq.getTracks()[mCurrentTrack],
+                mSeq.getResolution(),
+                showNotesCheck.isSelected(),
+                KeySignatures.isInFlats(mKeySig));
         }
     }
 
     /**
      * Add a change listener to the Track Table Model
-     * <p/>
      * @param l the listener to add
      */
     public void addTableChangeListener(TableModelListener l) {
@@ -167,7 +164,7 @@ public class TrackEditorPanel
     private void doCreateEvent() {
         if (mCreateEventDialog == null) {
             mCreateEventDialog = new CreateEventDialog(mSeq.getResolution(),
-                    MidiQuickFix.getMainFrame(), false);
+                MidiQuickFix.getMainFrame(), false);
             mCreateEventDialog.addEventCreationListener(this);
         }
         TrackTableModel ttm = (TrackTableModel)trackTable.getModel();
@@ -184,6 +181,7 @@ public class TrackEditorPanel
         mCreateEventDialog.setPosition(tick);
         mCreateEventDialog.setChannel(channel);
         mCreateEventDialog.setVisible(true);
+        mCreateEventDialog.setIsInFlats(KeySignatures.isInFlats(mKeySig));
     }
 
     public void convertNoteOn() {
@@ -206,7 +204,7 @@ public class TrackEditorPanel
             String message = UiStrings.getString("ConvertAllTextQuestion");
             String title = UiStrings.getString("ConvertAllTextTitle");
             int answer = JOptionPane.showConfirmDialog(controlPanel, message, title,
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer == JOptionPane.YES_OPTION) {
                 trackTable.selectAll();
             }
@@ -223,7 +221,7 @@ public class TrackEditorPanel
             String message = UiStrings.getString("AddSpaceToAllQuestion");
             String title = UiStrings.getString("AddSpaceToAllTitle");
             int answer = JOptionPane.showConfirmDialog(controlPanel, message, title,
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer == JOptionPane.YES_OPTION) {
                 trackTable.selectAll();
             }
@@ -240,6 +238,19 @@ public class TrackEditorPanel
         trackTable.trackModified();
     }
 
+    public void shiftEvents(long targetTick) {
+        if (trackTable.getSelectedRowCount() == 0) {
+            String message = UiStrings.getString("SelectionNeededForShift");
+            String title = UiStrings.getString("SelectionNeededTitle");
+            JOptionPane.showMessageDialog(controlPanel, message, title,
+                JOptionPane.ERROR_MESSAGE);
+        } else {
+            int[] rows = trackTable.getSelectedRows();
+            TrackUpdateUtils.shiftEvents(mSeq.getTracks()[mCurrentTrack], rows, targetTick);
+            trackTable.trackModified();
+        }
+    }
+
     public void splitTrack() {
         Track t[] = new Track[17];
         Track originalTrack = mSeq.getTracks()[mCurrentTrack];
@@ -249,7 +260,7 @@ public class TrackEditorPanel
         String type = "TRACK_NAME";
         try {
             MidiEvent me = MetaEvent.createMetaEvent(
-                    type, "Control Track", 0, 92);
+                type, "Control Track", 0, 92);
             t[0].add(me);
         } catch (InvalidMidiDataException ex) {
             TraceDialog.addTrace(ex.getMessage());
@@ -260,7 +271,7 @@ public class TrackEditorPanel
             t[i] = mSeq.createTrack();
             try {
                 MidiEvent me = MetaEvent.createMetaEvent(
-                        type, "Channel " + String.valueOf(i), 0, 92);
+                    type, "Channel " + String.valueOf(i), 0, 92);
                 t[i].add(me);
             } catch (InvalidMidiDataException ex) {
                 TraceDialog.addTrace(ex.getMessage());
@@ -272,9 +283,7 @@ public class TrackEditorPanel
             MidiEvent ev = originalTrack.get(i);
             MidiMessage mess = ev.getMessage();
             if (mess instanceof ShortMessage) {
-                int st = ((ShortMessage)mess).getStatus();
-                // Check that this is a channel message
-                if ((st & 0xf0) <= 0xf0) {
+                if (isChannelMessage((ShortMessage)mess)) {
                     ShortMessage sm = (ShortMessage)mess;
                     int channel = sm.getChannel();
                     t[channel + 1].add(ev);
@@ -425,7 +434,6 @@ public class TrackEditorPanel
 
     /**
      * Respond to EventCreation events
-     * <p/>
      * @param e the EventCreation event
      */
     @Override

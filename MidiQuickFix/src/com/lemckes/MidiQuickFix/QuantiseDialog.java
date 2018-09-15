@@ -28,38 +28,36 @@ package com.lemckes.MidiQuickFix;
 import com.lemckes.MidiQuickFix.components.histogram.QHist;
 import com.lemckes.MidiQuickFix.components.histogram.QHistBackground;
 import com.lemckes.MidiQuickFix.components.histogram.QHistChart;
+import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.j2di.ICanvas;
 import com.lemckes.j2di.ICanvasScrollPane;
 import java.awt.Frame;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.TreeMap;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 import javax.swing.JCheckBox;
-import javax.swing.JRadioButton;
 
 /**
  * Allow the user to quantise a sequence
  */
 public class QuantiseDialog
-        extends javax.swing.JDialog
+    extends javax.swing.JDialog
 {
 
-    private MqfSequence mSequence;
+    private final MqfSequence mSequence;
     private ArrayList<String> mTrackNames;
     private ArrayList<ArrayList<Integer>> mNoteOnEventOffsets;
     private ArrayList<ArrayList<Integer>> mNoteOffEventOffsets;
     private ArrayList<ArrayList<Integer>> mLyricEventOffsets;
-    private ArrayList<QHist> mNoteOnHistograms;
-    private ArrayList<QHist> mNoteOffHistograms;
-    private ArrayList<QHist> mLyricHistograms;
-    private ICanvas mChart;
-    private QHistBackground mBackground;
-    private ArrayList<JCheckBox> mCheckBoxes = new ArrayList<JCheckBox>(8);
+    private final ArrayList<QHist> mNoteOnHistograms;
+    private final ArrayList<QHist> mNoteOffHistograms;
+    private final ArrayList<QHist> mLyricHistograms;
+    private final ICanvas mChart;
+    private final QHistBackground mBackground;
+    private final ArrayList<JCheckBox> mCheckBoxes = new ArrayList<>(8);
 
     /**
      * Create a new QuantiseDialog for the given Sequence
@@ -77,12 +75,12 @@ public class QuantiseDialog
 
         mSequence = seq;
 
-        mNoteOnHistograms =
-                new ArrayList<QHist>(mSequence.getTracks().length);
-        mNoteOffHistograms =
-                new ArrayList<QHist>(mSequence.getTracks().length);
-        mLyricHistograms =
-                new ArrayList<QHist>(mSequence.getTracks().length);
+        mNoteOnHistograms
+            = new ArrayList<>(mSequence.getTracks().length);
+        mNoteOffHistograms
+            = new ArrayList<>(mSequence.getTracks().length);
+        mLyricHistograms
+            = new ArrayList<>(mSequence.getTracks().length);
 
         analyseSequence(seq);
 
@@ -120,13 +118,8 @@ public class QuantiseDialog
             JCheckBox trackCheck = new JCheckBox();
             trackCheck.setText(Integer.toString(i));
             trackCheck.setName("trackCheck_" + i); // NOI18N
-            trackCheck.addActionListener(new java.awt.event.ActionListener()
-            {
-
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    drawSelectedTrackCharts();
-                }
+            trackCheck.addActionListener((java.awt.event.ActionEvent evt) -> {
+                drawSelectedTrackCharts();
             });
             trackCheck.setToolTipText(mTrackNames.get(i));
             mCheckBoxes.add(trackCheck);
@@ -145,25 +138,25 @@ public class QuantiseDialog
 
                 // Find the maximum number of values in the data
                 numValues = (int)Math.max(
-                        numValues, mNoteOnHistograms.get(trackNum).getNumValues());
+                    numValues, mNoteOnHistograms.get(trackNum).getNumValues());
 
                 boolean noteOnEnabled = !mNoteOnEventOffsets.isEmpty()
-                        && noteOnToggle.isSelected();
+                    && noteOnToggle.isSelected();
                 boolean noteOffEnabled = !mNoteOffEventOffsets.isEmpty()
-                        && noteOffToggle.isSelected();
+                    && noteOffToggle.isSelected();
                 boolean lyricEnabled = !mLyricEventOffsets.isEmpty()
-                        && lyricToggle.isSelected();
+                    && lyricToggle.isSelected();
 
                 if (noteOnEnabled) {
                     maxVal = mNoteOnHistograms.get(trackNum).getMaxValue();
                 }
                 if (noteOffEnabled) {
                     maxVal = Math.max(maxVal,
-                            mNoteOffHistograms.get(trackNum).getMaxValue());
+                        mNoteOffHistograms.get(trackNum).getMaxValue());
                 }
                 if (lyricEnabled) {
                     maxVal = Math.max(maxVal,
-                            mLyricHistograms.get(trackNum).getMaxValue());
+                        mLyricHistograms.get(trackNum).getMaxValue());
                 }
             }
         }
@@ -189,11 +182,11 @@ public class QuantiseDialog
 //        xaxis.setTotalNumberOfBlocks(mNoteOnHistograms.get(trackNum).size());
 //
         boolean noteOnEnabled = !mNoteOnEventOffsets.isEmpty()
-                && noteOnToggle.isSelected();
+            && noteOnToggle.isSelected();
         boolean noteOffEnabled = !mNoteOffEventOffsets.isEmpty()
-                && noteOffToggle.isSelected();
+            && noteOffToggle.isSelected();
         boolean lyricEnabled = !mLyricEventOffsets.isEmpty()
-                && lyricToggle.isSelected();
+            && lyricToggle.isSelected();
 
 //        double maxVal = 0;
 //        if (noteOnEnabled) {
@@ -219,47 +212,85 @@ public class QuantiseDialog
     }
 
     private void quantiseSequence(MqfSequence mSequence, int quantiseLevel) {
+        int resolution = mSequence.getResolution();
+        int tickRounding = resolution / quantiseLevel;
+        
+        int trackNum = 0;
         for (Track t : mSequence.getTracks()) {
+            int noteOnIndex = 0;
+            int noteOffIndex = 0;
+            int lyricIndex = 0;
+
+            int offset = 0;
+
             for (int i = 0; i < t.size(); ++i) {
                 MidiEvent ev = t.get(i);
                 long tick = ev.getTick();
-                int offset = (int)(tick % quantiseLevel);
-
-                int adjustment = offset;
-                if (offset > quantiseLevel / 2) {
-                    adjustment = offset - quantiseLevel;
+                if (ev.getMessage() instanceof ShortMessage) {
+                    ShortMessage sm = (ShortMessage)ev.getMessage();
+                    int n = sm.getCommand();
+                    switch (n) {
+                        case ShortMessage.NOTE_ON:
+                            int velocity = sm.getData2();
+                            if (velocity != 0) {
+                                offset = mNoteOnEventOffsets.get(trackNum).get(noteOnIndex++);
+                            } else {
+                                offset = mNoteOffEventOffsets.get(trackNum).get(noteOffIndex++);
+                            }
+                            break;
+                        case ShortMessage.NOTE_OFF:
+                            offset = mNoteOffEventOffsets.get(trackNum).get(noteOffIndex++);
+                            break;
+                        default:
+                        // Ignore
+                    }
+                } else if (ev.getMessage() instanceof MetaMessage) {
+                    MetaMessage mm = (MetaMessage)ev.getMessage();
+                    if (mm.getType() == MetaEvent.LYRIC) {
+                        offset = mLyricEventOffsets.get(trackNum).get(lyricIndex++);
+                    }
                 }
-                ev.setTick(tick - adjustment);
+
+                int adjustment = offset % tickRounding;
+                if (adjustment > tickRounding / 2) {
+                    adjustment = adjustment - tickRounding;
+                }
+                if (adjustment != 0) {
+                    ev.setTick(tick - adjustment);
+                }
             }
+            trackNum++;
         }
     }
 
     private void analyseSequence(MqfSequence mSequence) {
         int ticksPerBeat = mSequence.getResolution();
         int quantiseLevel = Math.round(ticksPerBeat / 1f);
+        int sixtyfourths = quantiseLevel / 12;
         System.out.println("ticksPerBeat  = " + ticksPerBeat);
         System.out.println("quantiseLevel = " + quantiseLevel);
+        System.out.println("sixtyfourths = " + sixtyfourths);
 
         int numTracks = mSequence.getTracks().length;
 
-        mTrackNames = new ArrayList<String>(numTracks);
+        mTrackNames = new ArrayList<>(numTracks);
         for (int i = 0; i < numTracks; ++i) {
             mTrackNames.add("Track " + i);
         }
 
-        mNoteOnEventOffsets = new ArrayList<ArrayList<Integer>>(numTracks);
-        mNoteOffEventOffsets = new ArrayList<ArrayList<Integer>>(numTracks);
-        mLyricEventOffsets = new ArrayList<ArrayList<Integer>>(numTracks);
+        mNoteOnEventOffsets = new ArrayList<>(numTracks);
+        mNoteOffEventOffsets = new ArrayList<>(numTracks);
+        mLyricEventOffsets = new ArrayList<>(numTracks);
         int trackNum = 0;
         for (Track t : mSequence.getTracks()) {
-            ArrayList<Integer> trackNoteOnEventOffsets =
-                    new ArrayList<Integer>(t.size() / 2);
+            ArrayList<Integer> trackNoteOnEventOffsets
+                = new ArrayList<>(t.size() / 2);
             mNoteOnEventOffsets.add(trackNoteOnEventOffsets);
-            ArrayList<Integer> trackNoteOffEventOffsets =
-                    new ArrayList<Integer>(t.size() / 2);
+            ArrayList<Integer> trackNoteOffEventOffsets
+                = new ArrayList<>(t.size() / 2);
             mNoteOffEventOffsets.add(trackNoteOffEventOffsets);
-            ArrayList<Integer> trackLyricEventOffsets =
-                    new ArrayList<Integer>(t.size() / 2);
+            ArrayList<Integer> trackLyricEventOffsets
+                = new ArrayList<>(t.size() / 2);
             mLyricEventOffsets.add(trackLyricEventOffsets);
 
             // Collect the offsets for all the NOTE_ON, NOTE_OFF and LYRIC events
@@ -268,13 +299,21 @@ public class QuantiseDialog
                 MidiEvent ev = t.get(i);
                 long tick = ev.getTick();
                 int offset = (int)(tick % quantiseLevel);
+                boolean oddOffset = false;
+                if (offset > 0) {
+                    oddOffset = !(offset % sixtyfourths == 0);
+                }
 
                 if (ev.getMessage() instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)ev.getMessage();
                     int n = sm.getCommand();
                     switch (n) {
                         case ShortMessage.NOTE_ON:
-                            int velocity = Integer.valueOf(sm.getData2());
+                            if (oddOffset) {
+                                System.out.println("Odd Offset:" + offset + " - Track:" + trackNum
+                                    + ", Tick:" + Formats.formatTicks(tick, quantiseLevel, true));
+                            }
+                            int velocity = sm.getData2();
                             if (velocity != 0) {
                                 trackNoteOnEventOffsets.add(offset);
                             } else {
@@ -282,6 +321,10 @@ public class QuantiseDialog
                             }
                             break;
                         case ShortMessage.NOTE_OFF:
+                            if (oddOffset) {
+                                System.out.println("Odd Offset:" + offset + " - Track:" + trackNum
+                                    + ", Tick:" + Formats.formatTicks(tick, quantiseLevel, true));
+                            }
                             trackNoteOffEventOffsets.add(offset);
                             break;
                         default:
@@ -290,11 +333,15 @@ public class QuantiseDialog
                 } else if (ev.getMessage() instanceof MetaMessage) {
                     MetaMessage mm = (MetaMessage)ev.getMessage();
                     if (mm.getType() == MetaEvent.LYRIC) {
+                        if (oddOffset) {
+                            System.out.println("Odd Offset:" + offset + " - Track:" + trackNum
+                                + ", Tick:" + Formats.formatTicks(tick, quantiseLevel, true));
+                        }
                         trackLyricEventOffsets.add(offset);
                     }
                     if (mm.getType() == MetaEvent.TRACK_NAME) {
                         mTrackNames.set(trackNum,
-                                (String)MetaEvent.getMetaStrings((MetaMessage)mm)[2]);
+                            (String)MetaEvent.getMetaStrings((MetaMessage)mm)[2]);
                     }
                 }
             }
@@ -344,11 +391,15 @@ public class QuantiseDialog
             System.out.println("Histograms ");
             System.out.println("Offset\tON\tOFF");
             for (int i = 0; i < quantiseLevel; ++i) {
-                System.out.println(
+                if (trackNoteOnHistograms.get(i) > 0
+                    || trackNoteOffHistograms.get(i) > 0
+                    || trackLyricHistograms.get(i) > 0) {
+                    System.out.println(
                         i + "\t"
                         + trackNoteOnHistograms.get(i) + "\t"
                         + trackNoteOffHistograms.get(i) + "\t"
                         + trackLyricHistograms.get(i));
+                }
             }
             System.out.println("END track " + trackNum);
             trackNum++;
@@ -604,6 +655,7 @@ public class QuantiseDialog
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        quantiseSequence(mSequence, (int)mBackground.getQuantiseLevel());
         doClose();
     }//GEN-LAST:event_okButtonActionPerformed
 

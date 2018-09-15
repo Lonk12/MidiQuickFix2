@@ -25,7 +25,7 @@ package com.lemckes.MidiQuickFix.util;
 
 /**
  * A FileFilter to select just midi files (.mid and .kar)
- * @version $Id$
+ * @version $Id: MidiFileFilter.java,v 1.5 2010/02/28 06:03:06 jostle Exp $
  */
 public class MidiFileFilter extends javax.swing.filechooser.FileFilter {
     /**

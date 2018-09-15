@@ -55,7 +55,7 @@ public class PreferencesDialog
 
     MidiQuickFix mMQF;
     private FontSelector mFontSelector;
-    private Frame mParentFrame;
+    private final Frame mParentFrame;
     private Font mFont;
     private Color mBackground;
     private Color mForeground;
@@ -63,8 +63,9 @@ public class PreferencesDialog
     private Color mHighlight;
     private float mRubyScale;
     private String mDefaultPath;
+    private String mDefaultSoundbankPath;
     private String mLafName;
-    private static String[] sampleText = {
+    private static final String[] sampleText = {
         "Sing a song of sixpence,\n",
         "A pocket ",
         "ruby text",
@@ -74,7 +75,7 @@ public class PreferencesDialog
         " blackbirds,\n",
         "Baked in a pie."
     };
-    private static String[] sampleStyles = {
+    private static final String[] sampleStyles = {
         "regular",
         "regular",
         "ruby",
@@ -158,6 +159,8 @@ public class PreferencesDialog
             MqfProperties.LYRIC_RUBY_FONT_SCALE, mRubyScale);
         MqfProperties.setStringProperty(
             MqfProperties.LAST_PATH_KEY, mDefaultPath);
+        MqfProperties.setStringProperty(
+            MqfProperties.LAST_SOUNDBANK_PATH_KEY, mDefaultSoundbankPath);
         MqfProperties.setStringProperty(
             MqfProperties.LOOK_AND_FEEL_NAME, mLafName);
 

@@ -30,7 +30,7 @@ import javax.sound.midi.MidiSystem;
 
 /**
  * Get a javax.sound.midi.Sequence from a file
- * @version $Id$
+ * @version $Id: MidiFile.java,v 1.5 2012/01/22 05:32:51 jostle Exp $
  */
 public class MidiFile {
     

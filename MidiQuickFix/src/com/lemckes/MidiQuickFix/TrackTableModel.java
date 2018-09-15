@@ -22,6 +22,7 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix;
 
+import static com.lemckes.MidiQuickFix.ShortEvent.isChannelMessage;
 import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
@@ -39,7 +40,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * The model for the main track table.
- * @version $Id$
+ * @version $Id: TrackTableModel.java,v 1.22 2012/09/09 03:56:05 jostle Exp $
  */
 class TrackTableModel extends DefaultTableModel {
     static final long serialVersionUID = 5464614685967695539L;
@@ -66,7 +67,7 @@ class TrackTableModel extends DefaultTableModel {
         if (mTrack != null) {
             buildNoNotesRowMap();
         } else {
-            mNoNotesRowMap = new ArrayList<Integer>();
+            mNoNotesRowMap = new ArrayList<>();
         }
     }
 
@@ -86,7 +87,7 @@ class TrackTableModel extends DefaultTableModel {
      */
     private void buildNoNotesRowMap() {
         mNumNotes = 0;
-        mNoNotesRowMap = new ArrayList<Integer>(mTrack.size());
+        mNoNotesRowMap = new ArrayList<>(mTrack.size());
         for (int i = 0; i < mTrack.size(); ++i) {
             MidiMessage mess = mTrack.get(i).getMessage();
             if (mess instanceof ShortMessage) {
@@ -95,10 +96,10 @@ class TrackTableModel extends DefaultTableModel {
                     || cmd == ShortMessage.NOTE_ON) {
                     mNumNotes++;
                 } else {
-                    mNoNotesRowMap.add(Integer.valueOf(i));
+                    mNoNotesRowMap.add(i);
                 }
             } else {
-                mNoNotesRowMap.add(Integer.valueOf(i));
+                mNoNotesRowMap.add(i);
             }
         }
     }
@@ -128,7 +129,7 @@ class TrackTableModel extends DefaultTableModel {
         int eventIndex = row;
         // Adjust the index if notes are not being displayed
         if (!mShowNotes) {
-            eventIndex = mNoNotesRowMap.get(row).intValue();
+            eventIndex = mNoNotesRowMap.get(row);
         }
         return mTrack.get(eventIndex);
     }
@@ -139,7 +140,7 @@ class TrackTableModel extends DefaultTableModel {
 
     @Override
     public Object getValueAt(int row, int column) {
-        Object result = null;
+        Object result;
         MidiEvent event = getEventForRow(row);
         MidiMessage mess = event.getMessage();
         long tick = event.getTick();
@@ -221,8 +222,7 @@ class TrackTableModel extends DefaultTableModel {
             case 6:
                 // Channel
                 if (mess instanceof ShortMessage) {
-                    int st = ((ShortMessage)mess).getStatus();
-                    if ((st & 0xf0) <= 0xf0) {
+                    if (isChannelMessage((ShortMessage)mess)) {
                         result = true;
                     }
                 }
@@ -278,25 +278,24 @@ class TrackTableModel extends DefaultTableModel {
                 // Value
                 if (mess instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)mess;
-                    int st = sm.getStatus();
                     int channel = sm.getChannel();
                     int d1 = sm.getData1();
                     int d2 = sm.getData2();
                     int command = sm.getCommand() & 0xff;
 
-                    if ((st & 0xf0) <= 0xf0) { // This is a channel message
+                    if (isChannelMessage(sm)) {
                         switch (command) {
                             case ShortMessage.CHANNEL_PRESSURE:
-                                d1 = ((Integer)value).intValue();
+                                d1 = (Integer)value;
                                 break;
                             case ShortMessage.CONTROL_CHANGE:
                             case ShortMessage.NOTE_OFF:
                             case ShortMessage.NOTE_ON:
                             case ShortMessage.POLY_PRESSURE:
-                                d2 = ((Integer)value).intValue();
+                                d2 = (Integer)value;
                                 break;
                             case ShortMessage.PITCH_BEND:
-                                int val = ((Integer)value).intValue();
+                                int val = (Integer)value;
                                 d1 = val & 0x7f;
                                 d2 = (val - d1) >> 7;
                                 break;
@@ -332,9 +331,9 @@ class TrackTableModel extends DefaultTableModel {
                     int command = sm.getCommand() & 0xff;
                     int channel = sm.getChannel() & 0xff;
                     int d1 =
-                        InstrumentNames.getInstrumentNumber((String)value) & 0xff;
+                        InstrumentNames.getInstance().getInstrumentNumber((String)value) & 0xff;
                     int d2 =
-                        InstrumentNames.getInstrumentBank((String)value) & 0xff;
+                        InstrumentNames.getInstance().getInstrumentBank((String)value) & 0xff;
                     try {
                         updateMessage(ev, command, channel, d1, d2);
                         fireTableDataChanged();
@@ -355,7 +354,7 @@ class TrackTableModel extends DefaultTableModel {
             case 6:
                 // Channel
                 if (mess instanceof ShortMessage) {
-                    int channel = ((Integer)value).intValue();
+                    int channel = (Integer)value;
                     int answer = javax.swing.JOptionPane.showConfirmDialog(null,
                         UiStrings.getString("set_channel_question") + channel);
                     if (answer == javax.swing.JOptionPane.YES_OPTION) {
@@ -413,7 +412,7 @@ class TrackTableModel extends DefaultTableModel {
     }
 
     public void deleteEvents(int[] rows) {
-        ArrayList<MidiEvent> events = new ArrayList<MidiEvent>(rows.length);
+        ArrayList<MidiEvent> events = new ArrayList<>(rows.length);
         for (int i = 0; i < rows.length; ++i) {
             events.add(getEventForRow(rows[i]));
         }
@@ -434,7 +433,7 @@ class TrackTableModel extends DefaultTableModel {
 
     /**
      * Make sure that all the events that occur at tick zero
-     * are sorted in a suitable order.<br />
+     * are sorted in a suitable order.<br>
      * The order is :
      * <ol>
      * <li>MetaMessage.TRACK_NAME</li>
@@ -512,10 +511,8 @@ class TrackTableModel extends DefaultTableModel {
                     priority = SYSEX_PRIORITY;
                 } else if (mess instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)mess;
-                    int st = sm.getStatus();
                     int command = sm.getCommand() & 0xff;
-                    if ((st & 0xf0) <= 0xf0) {
-                        // This is a channel message
+                    if (isChannelMessage(sm)) {
                         switch (command) {
                             case ShortMessage.PROGRAM_CHANGE:
                                 priority = PROGRAM_CHANGE_PRIORITY;
@@ -543,7 +540,7 @@ class TrackTableModel extends DefaultTableModel {
         };
 
         // Collect all the events that occur at tick zero into a new list
-        ArrayList<MidiEvent> tickZeroEvents = new ArrayList<MidiEvent>(64);
+        ArrayList<MidiEvent> tickZeroEvents = new ArrayList<>(64);
         for (int i = 0; i < mTrack.size(); ++i) {
             MidiEvent me = mTrack.get(i);
             if (me.getTick() == 0) {
@@ -576,9 +573,7 @@ class TrackTableModel extends DefaultTableModel {
             MidiEvent ev = mTrack.get(i);
             MidiMessage mess = ev.getMessage();
             if (mess instanceof ShortMessage) {
-                int st = ((ShortMessage)mess).getStatus();
-                // Check that this is a channel message
-                if ((st & 0xf0) <= 0xf0) {
+                if (isChannelMessage((ShortMessage)mess)) {
                     ShortMessage sm = (ShortMessage)mess;
                     int command = sm.getCommand();
                     // int channel = sm.getChannel();
@@ -601,27 +596,37 @@ class TrackTableModel extends DefaultTableModel {
         Object result[] = {null, null, null, null, null, null};
 
         int st = mess.getStatus();
-        if (st == MetaMessage.META) {
-            // Returns Event, Length, Text
-            Object[] str = MetaEvent.getMetaStrings((MetaMessage)mess);
-            result[0] = str[0];
-            result[4] = str[2];
-        } else if (st == SysexMessage.SYSTEM_EXCLUSIVE
-            || st == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
-            // Returns Event, Length, Text
-            Object[] str = SysexEvent.getSysexStrings((SysexMessage)mess);
-            result[0] = str[0];
-            result[4] = str[2];
-        } else {
-            // Returns Event, Note, Value, Patch, Text, Channel
-            Object[] str =
-                ShortEvent.getShortStrings((ShortMessage)mess, mInFlats);
-            result[0] = str[0];
-            result[1] = str[1];
-            result[2] = str[2];
-            result[3] = str[3];
-            result[4] = str[4];
-            result[5] = str[5];
+        switch (st) {
+            case MetaMessage.META:
+                {
+                    // Returns Event, Length, Text
+                    Object[] str = MetaEvent.getMetaStrings((MetaMessage)mess);
+                    result[0] = str[0];
+                    result[4] = str[2];
+                    break;
+                }
+            case SysexMessage.SYSTEM_EXCLUSIVE:
+            case SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE:
+                {
+                    // Returns Event, Length, Text
+                    Object[] str = SysexEvent.getSysexStrings((SysexMessage)mess);
+                    result[0] = str[0];
+                    result[4] = str[2];
+                    break;
+                }
+            default:
+                {
+                    // Returns Event, Note, Value, Patch, Text, Channel
+                    Object[] str =
+                        ShortEvent.getShortStrings((ShortMessage)mess, mInFlats);
+                    result[0] = str[0];
+                    result[1] = str[1];
+                    result[2] = str[2];
+                    result[3] = str[3];
+                    result[4] = str[4];
+                    result[5] = str[5];
+                    break;
+                }
         }
         return result;
     }

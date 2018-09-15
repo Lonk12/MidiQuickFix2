@@ -5,7 +5,7 @@ import java.awt.BasicStroke;
 import java.awt.Stroke;
 
 /**
- * This is the abstract base class that all J2Di graphics extend. <br/>
+ * This is the abstract base class that all J2Di graphics extend. <br>
  * An IShapeGraphic implementation is responsible for drawing a graphical
  * representation of itself when required. Its position is defined in terms of
  * world coordinates.
@@ -82,7 +82,6 @@ public abstract class IShapeGraphic extends IGraphic {
 
     /**
      * Test whether this graphic's stroke is defined in device or world units.
-     * <p/>
      * @return
      */
     public boolean isUseDeviceStroke() {

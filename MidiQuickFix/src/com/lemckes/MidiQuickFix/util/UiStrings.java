@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
 /**
  * Provide access to the UIStrings resources bundle.
  *
- * @version $Id$
+ * @version $Id: UiStrings.java,v 1.5 2013/11/01 09:46:28 jostle Exp $
  */
 public class UiStrings
 {

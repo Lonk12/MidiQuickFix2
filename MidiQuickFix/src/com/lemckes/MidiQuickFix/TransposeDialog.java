@@ -42,7 +42,7 @@ import javax.swing.event.ChangeListener;
 /**
  * Allow the user to transpose the sequence.
  *
- * @version $Id$
+ * @version $Id: TransposeDialog.java,v 1.11 2013/11/01 09:46:28 jostle Exp $
  */
 public class TransposeDialog
     extends javax.swing.JDialog

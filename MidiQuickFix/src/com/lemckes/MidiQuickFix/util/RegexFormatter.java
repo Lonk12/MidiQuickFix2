@@ -31,7 +31,7 @@ import javax.swing.text.DefaultFormatter;
 
 /**
  * A regular expression based version of <code>DefaultFormatter</code>.
- * $Id$
+ * $Id: RegexFormatter.java,v 1.3 2009/03/16 07:44:20 jostle Exp $
  */
 public class RegexFormatter extends DefaultFormatter {
     static final long serialVersionUID = -7268001208342020887L;

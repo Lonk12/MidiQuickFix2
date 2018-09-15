@@ -22,7 +22,7 @@
  **************************************************************/
 package com.lemckes.MidiQuickFix;
 
-import com.lemckes.MidiQuickFix.util.TraceDialog;
+//import com.lemckes.MidiQuickFix.util.TraceDialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 
 /**
  * This class handles the display of the splash screen in the startup dialog.
- * @version $Id$
+ * @version $Id: SplashDrawing.java,v 1.14 2010/05/03 20:54:37 jostle Exp $
  */
 public class SplashDrawing extends javax.swing.JComponent {
     transient BufferedImage mBi;
@@ -47,9 +47,10 @@ public class SplashDrawing extends javax.swing.JComponent {
     int mImageHeight;
     float mLineHeight;
     boolean mCentred = false;
-    ArrayList<String> mStageMessages = new ArrayList<String>();
+    ArrayList<String> mStageMessages = new ArrayList<>();
     Font mFont;
     transient FontRenderContext mFrContext;
+    long mMessageDelay = 250;
 
     /** Creates a new instance of SplashDrawing */
     public SplashDrawing() {
@@ -123,6 +124,15 @@ public class SplashDrawing extends javax.swing.JComponent {
     }
 
     /**
+     * Set the delay after calling #addStageMessasge
+     * 
+     * @param messageDelay the new delay in milliseconds.
+     */
+    public void setMessageDelay(long messageDelay) {
+        mMessageDelay = messageDelay;
+    }
+
+    /**
      * Add a message string to the display
      * @param message the new message
      */
@@ -130,13 +140,15 @@ public class SplashDrawing extends javax.swing.JComponent {
         if (message != null) {
             mStageMessages.add(message);
             paintImmediately(getBounds());
-            TraceDialog.addTrace(message);
+//            TraceDialog.addTrace(message);
 
-            try {
-                // Wait a bit so that the message is seen
-                wait(300);
-            } catch (InterruptedException e) {
-                // Do Nothing
+            if (mMessageDelay > 0) {
+                try {
+                    // Wait a bit so that the message is seen
+                    wait(mMessageDelay);
+                } catch (InterruptedException e) {
+                    // Do Nothing
+                }
             }
         }
     }

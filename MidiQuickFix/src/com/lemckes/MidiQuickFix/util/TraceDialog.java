@@ -27,7 +27,7 @@ import java.awt.EventQueue;
 /**
  * A debugging output dialog.
  *
- * @version $Id$
+ * @version $Id: TraceDialog.java,v 1.5 2010/09/11 05:44:14 jostle Exp $
  */
 public class TraceDialog extends javax.swing.JDialog
 {

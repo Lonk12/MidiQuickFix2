@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 /**
  * The event that is passed to IGroupMouseListener, IGroupMouseMotionListener
  * and IGroupFocusListener implementors.
- * <p/>
  * @see IGroupMouseListener
  * @see IGroupMouseMotionListener
  * @see IGroupFocusListener
@@ -24,7 +23,6 @@ public class IGroupMouseEvent
 
     /**
      * Create an IGroupMouseEvent.
-     * <p/>
      * @param e The MouseEvent which triggered this constructor.
      * @param g The group for which the event occurred.
      */

@@ -27,7 +27,7 @@ import javax.swing.JLabel;
 
 /**
  * A slider that represents a duration in either ticks or beats.
- * @version $Id$
+ * @version $Id: DurationSlider.java,v 1.8 2015/08/01 13:57:28 jostle Exp $
  */
 public class DurationSlider extends javax.swing.JSlider {
     static final long serialVersionUID = 6998631897922134763L;

@@ -23,7 +23,6 @@ public class IDimension extends Dimension2D {
 
     /**
      * Creates a new instance of IDimension.
-     * <p/>
      * @param w The width of this dimension
      * @param h The height of this dimension
      */
@@ -34,7 +33,6 @@ public class IDimension extends Dimension2D {
 
     /**
      * Returns the height of this Dimension in double precision.
-     * <p/>
      * @return the height of this Dimension.
      */
     public double getHeight() {
@@ -43,7 +41,6 @@ public class IDimension extends Dimension2D {
 
     /**
      * Returns the width of this Dimension in double precision.
-     * <p/>
      * @return the width of this Dimension.
      */
     public double getWidth() {
@@ -54,7 +51,6 @@ public class IDimension extends Dimension2D {
      * Sets the size of this Dimension object to the specified width and height.
      * This method is included for completeness, to parallel the
      * getSize method of Component.
-     * <p/>
      * @param w the new width for the Dimension object
      * @param h the new height for the Dimension object
      */

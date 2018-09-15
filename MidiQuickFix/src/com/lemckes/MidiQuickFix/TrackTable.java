@@ -38,7 +38,7 @@ import javax.swing.table.TableModel;
 
 /**
  * A table that presents the events in a track for editing.
- * @version $Id$
+ * @version $Id: TrackTable.java,v 1.13 2015/08/01 10:41:42 jostle Exp $
  */
 public class TrackTable extends javax.swing.JTable {
     static final long serialVersionUID = -3055797455895279118L;
@@ -121,6 +121,10 @@ public class TrackTable extends javax.swing.JTable {
      * @param rows the array of row indexes
      */
     public void deleteRows(int[] rows) {
+        if (isEditing())
+        {
+            getCellEditor().cancelCellEditing();
+        }
         ((TrackTableModel)getModel()).deleteEvents(rows);
     }
 
@@ -137,7 +141,7 @@ public class TrackTable extends javax.swing.JTable {
         //trace("setInstrumentEditor");
         TableColumn instrumentColumn = getColumnModel().getColumn(4);
 
-        String[] s = InstrumentNames.getNameArray();
+        String[] s = InstrumentNames.getInstance().getNameArray();
         JComboBox<String> comboBox =
             new JComboBox<>(new DefaultComboBoxModel<>(s));
         instrumentColumn.setCellEditor(new DefaultCellEditor(comboBox));

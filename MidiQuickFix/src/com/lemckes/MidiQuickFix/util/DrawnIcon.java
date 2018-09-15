@@ -36,7 +36,7 @@ import javax.swing.Icon;
 
 /**
  * An Icon that draws itself using a GeneralPath.
- * @version $Id$
+ * @version $Id: DrawnIcon.java,v 1.6 2010/07/08 04:26:03 jostle Exp $
  */
 public class DrawnIcon implements Icon
 {

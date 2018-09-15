@@ -73,10 +73,8 @@ public class ILayer
     /**
      * Create an ILayer with the given size, as a child of the given ICanvas.
      * The transform is initialised to the identity transform.
-     * <p/>
      * @param width  The width of the layer
      * @param height The height of the layer
-     * @param canvas The parent canvas
      */
     public ILayer(int width, int height) {
         super();
@@ -105,7 +103,6 @@ public class ILayer
     /**
      * Enable all of this ILayer's built in awt event listeners.
      * Subsequent events will be passed on to the appropriate IGroup child.
-     * <p/>
      * @see #disableEventHandling()
      */
     public void enableEventHandling() {
@@ -128,7 +125,6 @@ public class ILayer
      * This interface has been included specifically to allow the use of
      * popup menus. It should also be useful in implementing 'busy state'
      * behaviour.
-     * <p/>
      * @see #enableEventHandling()
      */
     public void disableEventHandling() {
@@ -146,7 +142,6 @@ public class ILayer
 
     /**
      * Set the bounds of the world coordinates.
-     * <p/>
      * @param bounds The rectangle which represents the limits of the world.
      * @param update If {@code true} this layer will be repainted.
      */
@@ -161,7 +156,6 @@ public class ILayer
 
     /**
      * Get the bounds of this layer in world coordinates.
-     * <p/>
      * @return The rectangle that represents the bounds of this layer.
      */
     public Rectangle2D.Double getWorldBounds() {
@@ -170,7 +164,6 @@ public class ILayer
 
     /**
      * Set the size of the visible part of the world.
-     * <p/>
      * @param viewSize The dimensions of the visible part of the world.
      * @param update   If {@code true} this layer will be repainted.
      */
@@ -186,7 +179,6 @@ public class ILayer
     /**
      * Set the size of the visible part of the screen. This would commonly
      * be the size of a JScrollPane's JViewport.
-     * <p/>
      * @param viewSize The dimensions of the visible part of the screen.
      * @param update   If {@code true} this layer will be repainted.
      */
@@ -237,7 +229,6 @@ public class ILayer
     /**
      * Get the affine transform which converts world coordinates to screen
      * coordinates.
-     * <p/>
      * @return the world to screen transform.
      */
     public AffineTransform getTransform() {
@@ -246,7 +237,6 @@ public class ILayer
 
     /**
      * Add a group to the end of the list of children.
-     * <p/>
      * @param g The group to be added
      */
     public void add(IGroup g) {
@@ -255,7 +245,6 @@ public class ILayer
 
     /**
      * Insert a group at the given index in the list of children.
-     * <p/>
      * @param g     The group to be inserted.
      * @param index The index at which the group is to be inserted
      */
@@ -269,7 +258,6 @@ public class ILayer
      * Replace which ever group previously occupied
      * <code>index</code> with
      * <code>g</code>
-     * <p/>
      * @param g     The new group that should occupy
      * <code>index</code>
      * @param index The index of the group to be replaced
@@ -284,7 +272,6 @@ public class ILayer
 
     /**
      * Raise a group so that it becomes the frontmost child.
-     * <p/>
      * @param g The group to be raised
      */
     public void raise(IGroup g) {
@@ -294,7 +281,6 @@ public class ILayer
 
     /**
      * Lower a group so that it becomes the backmost child.
-     * <p/>
      * @param g The group to be lowered
      */
     public void lower(IGroup g) {
@@ -304,9 +290,8 @@ public class ILayer
 
     /**
      * Set the index of a group in the list of children.
-     * <p/>
      * @param g     The group to be reordered
-     * @param index
+     * @param index the new position of the group
      */
     public void setIndex(IGroup g, int index) {
         int safeIndex = Math.min(Math.max(0, index), mGroups.size());
@@ -316,7 +301,6 @@ public class ILayer
 
     /**
      * Find the index in the list of children of the given group.
-     * <p/>
      * @param g The group to find.
      * @return the index of the group or -1 if the group is not found.
      */
@@ -328,7 +312,6 @@ public class ILayer
      * Get the child IGroup at the given index.
      * This assumes that the caller knows how to map indices
      * to groups.
-     * <p/>
      * @param i The index of the child group.
      * @return The child group at the given index or
      * <code>null</code>
@@ -355,7 +338,6 @@ public class ILayer
 
     /**
      * Remove the given child group.
-     * <p/>
      * @param g The group to be removed.
      */
     public void remove(IGroup g) {
@@ -368,7 +350,6 @@ public class ILayer
      * clear any state associated with the group. <br>
      * The group may be one that is nested inside the groups which this
      * layer directly manages.
-     * <p/>
      * @param g The group that has been removed.
      */
     public void groupRemoved(IGroup g) {
@@ -389,7 +370,6 @@ public class ILayer
     /**
      * Set the group which will receive all mouse events.
      * This may be used to implement interactive dragging of graphics.
-     * <p/>
      * @param mouse The group which will receive all mouse events.
      */
     public void setMouseGrab(IGroup mouse) {
@@ -398,7 +378,6 @@ public class ILayer
 
     /**
      * Get the group which has grabbed mouse events.
-     * <p/>
      * @return the group which has grabbed mouse events
      */
     public IGroup getMouseGrab() {
@@ -407,7 +386,6 @@ public class ILayer
 
     /**
      * Set the group which will receive all keyboard events.
-     * <p/>
      * @param keyboard The group which will receive all keyboard events.
      */
     public void setKeyboardGrab(IGroup keyboard) {
@@ -418,7 +396,6 @@ public class ILayer
 
     /**
      * Get the group which has grabbed keyboard events.
-     * <p/>
      * @return the group which has grabbed keyboard events
      */
     public IGroup getKeyboardGrab() {
@@ -428,7 +405,6 @@ public class ILayer
     /**
      * Get the current group. This is generally the group which contains the
      * mouse pointer.
-     * <p/>
      * @return the current group
      */
     public IGroup getCurrentGroup() {
@@ -437,7 +413,6 @@ public class ILayer
 
     /**
      * Set which group is current.
-     * <p/>
      * @param g The group to be made current
      */
     public void setCurrentGroup(IGroup g) {
@@ -447,7 +422,6 @@ public class ILayer
     /**
      * Get the layer's minimum size. In fact an ILayer has only one size
      * which is returned as its minimum, preferred and maximum.
-     * <p/>
      * @return the size of the layer
      */
     @Override
@@ -458,7 +432,6 @@ public class ILayer
     /**
      * Get the layer's preferred size. In fact an ILayer has only one size
      * which is returned as its minimum, preferred and maximum.
-     * <p/>
      * @return the layer's preferred size
      */
     @Override
@@ -469,7 +442,6 @@ public class ILayer
     /**
      * Get the layer's maximum size. In fact an ILayer has only one size
      * which is returned as its minimum, preferred and maximum.
-     * <p/>
      * @return the layer's maximum size
      */
     @Override
@@ -527,7 +499,6 @@ public class ILayer
 
     /**
      * Put the given key/value pair into the rendering hints map.
-     * <p/>
      * @param key   The rendering hint key
      * @param value The rendering hint value
      * @see java.awt.RenderingHints
@@ -550,7 +521,6 @@ public class ILayer
      * Invoked by Swing to draw components. Applications should not invoke
      * paint directly, but should instead use the repaint method to schedule
      * the component for redrawing.
-     * <p/>
      * @param g the Graphics context in which to paint
      */
     @Override
@@ -621,7 +591,6 @@ public class ILayer
     /**
      * Transform the clip rectangle to screen co-ords
      * and let the layer component handle the repaint.
-     * <p/>
      * @param clip
      */
     public void repaint(Rectangle2D clip) {
@@ -636,7 +605,6 @@ public class ILayer
      * Set the size of the cursor hit area in pixels. This defines the square
      * which is tested for intersection with groups when determining the
      * 'current' group.
-     * <p/>
      * @param size The hit area size. Use an odd number to ensure a
      * symmetrical area around the mouse pointer.
      */
@@ -689,7 +657,6 @@ public class ILayer
 
     /**
      * Find the group that will respond to the given mouse event.
-     * <p/>
      * @param evt The mouse event.
      * @return the group that will respond to the given event.
      */
@@ -714,7 +681,6 @@ public class ILayer
 
     /**
      * Find the group which will respond to key events.
-     * <p/>
      * @return the group which will respond to key events.
      */
     private IGroup findKeyboardGroup() {

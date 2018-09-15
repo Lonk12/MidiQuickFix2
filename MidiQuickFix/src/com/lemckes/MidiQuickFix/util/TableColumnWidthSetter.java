@@ -32,7 +32,7 @@ import javax.swing.table.TableModel;
 
 /**
  * A utility to set the widths of a JTable's columns.
- * @version $Id$
+ * @version $Id: TableColumnWidthSetter.java,v 1.6 2009/03/16 07:38:28 jostle Exp $
  */
 public class TableColumnWidthSetter {
     /** This method picks good column sizes.

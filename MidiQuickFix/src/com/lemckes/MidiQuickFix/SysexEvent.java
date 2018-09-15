@@ -26,7 +26,7 @@ import javax.sound.midi.SysexMessage;
 
 /**
  * Handle Midi System Exclusive events.
- * @version $Id$
+ * @version $Id: SysexEvent.java,v 1.8 2010/10/03 03:18:21 jostle Exp $
  */
 class SysexEvent
 {
@@ -44,7 +44,7 @@ class SysexEvent
         StringBuilder sb = new StringBuilder(data.length * 6);
         for (int k = 0; k < data.length; ++k) {
             int i = data[k] & 0x00ff;
-            if (i > 0) {
+            if (k > 0) {
                 sb.append(" "); // NOI18N
             }
             sb.append("0x"); // NOI18N

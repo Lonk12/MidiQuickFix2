@@ -7,7 +7,6 @@ package com.lemckes.j2di;
 
 /**
  * The constraints for a LayerAttachLayout.
- * <p/>
  * @see LayerAttachConstraints
  */
 public class LayerAttachConstraints implements Cloneable {
@@ -39,7 +38,6 @@ public class LayerAttachConstraints implements Cloneable {
 
     /**
      * Set which sides the layer is attached to.
-     * <p/>
      * @param top Attach the layer to the top if
      * <code>true</code>
      * @param bottom Attach the layer to the bottom if
@@ -60,7 +58,6 @@ public class LayerAttachConstraints implements Cloneable {
 
     /**
      * Set the offsets of the layer from its attached sides.
-     * <p/>
      * @param top Top offset
      * @param bottom Bottom offset
      * @param left Left offset
@@ -76,7 +73,6 @@ public class LayerAttachConstraints implements Cloneable {
     /**
      * Sets the layer index where a high index puts the layer in front of
      * lower indices.
-     * <p/>
      * @param layer The layer index.
      */
     public void setLayerIndex(int layer) {
@@ -85,7 +81,6 @@ public class LayerAttachConstraints implements Cloneable {
 
     /**
      * Creates a copy of this LayerAttachConstraint.
-     * <p/>
      * @return a copy of this LayerAttachConstraint
      */
     @Override

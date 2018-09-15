@@ -28,12 +28,12 @@ import java.util.ResourceBundle;
 
 /**
  * Methods associated with MIDI Controller events
- * @version $Id$
+ * @version $Id: Controllers.java,v 1.8 2012/01/22 05:32:51 jostle Exp $
  */
 class Controllers {
     /** The names of the controllers are retrieved from a resource file. */
-    static ResourceBundle mControllersBundle;
-    static String[] mNameArray;
+    private static final ResourceBundle mControllersBundle;
+    private static final String[] mNameArray;
     
     /** Create an ControllerNames object. */
     static {

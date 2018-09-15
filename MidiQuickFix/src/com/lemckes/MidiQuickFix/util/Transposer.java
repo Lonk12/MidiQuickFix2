@@ -1,28 +1,31 @@
-/**************************************************************
+/**
+ * ************************************************************
  *
- *   MidiQuickFix - A Simple Midi file editor and player
+ * MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
- *   jostle@users.sourceforge.net
+ * Copyright (C) 2004-2009 John Lemcke
+ * jostle@users.sourceforge.net
  *
- *   This program is free software; you can redistribute it
- *   and/or modify it under the terms of the Artistic License
- *   as published by Larry Wall, either version 2.0,
- *   or (at your option) any later version.
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the Artistic License
+ * as published by Larry Wall, either version 2.0,
+ * or (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *   See the Artistic License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the Artistic License for more details.
  *
- *   You should have received a copy of the Artistic License with this Kit,
- *   in the file named "Artistic.clarified".
- *   If not, I'll be glad to provide one.
+ * You should have received a copy of the Artistic License with this Kit,
+ * in the file named "Artistic.clarified".
+ * If not, I'll be glad to provide one.
  *
- **************************************************************/
+ *************************************************************
+ */
 package com.lemckes.MidiQuickFix.util;
 
 import com.lemckes.MidiQuickFix.MetaEvent;
+import com.lemckes.MidiQuickFix.ShortEvent;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -32,14 +35,17 @@ import javax.sound.midi.Track;
 
 /**
  * Transpose a midi Sequence
- * @version $Id$
+ *
+ * @version $Id: Transposer.java,v 1.9 2012/09/09 03:56:08 jostle Exp $
  */
 public class Transposer
 {
 
-    /** Map a key signature to the number of sharps or flats
-     * Index 0 = C, 1 = Db ... 11 = Bb, 12 = B
-     *                           0   1  2   3  4   5  6  7   8  9  10 11  */
+    /**
+     * Map a key signature to the number of sharps or flats
+     * Index 0 = C, 1 = Db ... 10 = Bb, 11 = B
+     * 0 1 2 3 4 5 6 7 8 9 10 11
+     */
     static byte[] keyToSharps = {0, -5, 2, -3, 4, -1, 6, 1, -4, 3, -2, 5};
     /**
      *
@@ -49,7 +55,9 @@ public class Transposer
      */
     static byte[] sharpsToKey = {11, 6, 1, 8, 3, 10, 5, 0, 7, 2, 9, 4, 11, 6, 1};
 
-    /** Cannot create a new instance of Transposer */
+    /**
+     * Cannot create a new instance of Transposer
+     */
     private Transposer() {
     }
 
@@ -79,7 +87,8 @@ public class Transposer
      *
      * @return <code>true</code> if the value of any note would have
      * over/underflowed the valid range [0, 127]
-     * @param doDrums if <code>true</code> then the drum track, channel 9, will be transposed
+     * @param doDrums if <code>true</code> then the drum track, channel 9, will
+     * be transposed
      * @param seq the sequence to transpose
      * @param semitones the number of semitones to transpose
      */
@@ -89,16 +98,14 @@ public class Transposer
         for (Track t : seq.getTracks()) {
             for (int i = 0; i < t.size(); ++i) {
                 MidiEvent ev = t.get(i);
-                MidiMessage m = ev.getMessage();
-                if (m instanceof ShortMessage) {
-                    ShortMessage mess = (ShortMessage)m;
-                    int d1 = mess.getData1();
-                    int d2 = mess.getData2();
-                    int st = mess.getStatus();
-
-                    if (((st & 0xf0) <= 0xf0) && // This is a channel message
-                        (doDrums || mess.getChannel() != 9)) {
-                        int cmd = mess.getCommand();
+                MidiMessage message = ev.getMessage();
+                if (message instanceof ShortMessage) {
+                    ShortMessage sm = (ShortMessage)message;
+                    int d1 = sm.getData1();
+                    int d2 = sm.getData2();
+                    if (ShortEvent.isChannelMessage(sm)
+                        && (doDrums || sm.getChannel() != 9)) {
+                        int cmd = sm.getCommand();
                         switch (cmd) {
                             case ShortMessage.NOTE_OFF:
                             case ShortMessage.NOTE_ON:
@@ -112,10 +119,9 @@ public class Transposer
                                     overflow = true;
                                 }
                                 try {
-                                    int channel = mess.getChannel() & 0xff;
-                                    mess.setMessage(cmd, channel, d1, d2);
-                                }
-                                catch (InvalidMidiDataException e) {
+                                    int channel = sm.getChannel() & 0xff;
+                                    sm.setMessage(cmd, channel, d1, d2);
+                                } catch (InvalidMidiDataException e) {
                                     TraceDialog.addTrace(
                                         "Transposer invalid note: "
                                         + e.getMessage());
@@ -123,18 +129,17 @@ public class Transposer
                                 break;
                             default:
                             // DO NOTHING
-                        }
+                            }
                     }
-                } else if (m instanceof MetaMessage) {
-                    MetaMessage mess = (MetaMessage)m;
+                } else if (message instanceof MetaMessage) {
+                    MetaMessage mess = (MetaMessage)message;
                     int type = mess.getType();
                     byte[] data = mess.getData();
                     if (type == MetaEvent.KEY_SIGNATURE) {
                         data[0] = adjustKeySig(data[0], semitones);
                         try {
                             mess.setMessage(type, data, 2);
-                        }
-                        catch (InvalidMidiDataException e) {
+                        } catch (InvalidMidiDataException e) {
                             TraceDialog.addTrace(
                                 "Transposer invalid key sig: " + e.getMessage());
                         }

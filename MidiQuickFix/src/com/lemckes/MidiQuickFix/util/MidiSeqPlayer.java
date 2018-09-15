@@ -24,7 +24,7 @@ package com.lemckes.MidiQuickFix.util;
 
 /**
  * Defines the interface for classes that can play a midi sequence
- * @version $Id$
+ * @version $Id: MidiSeqPlayer.java,v 1.5 2009/03/16 07:44:20 jostle Exp $
  */
 public interface MidiSeqPlayer {
     /**

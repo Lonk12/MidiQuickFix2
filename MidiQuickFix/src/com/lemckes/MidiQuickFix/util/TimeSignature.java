@@ -13,19 +13,19 @@ class TimeSignature
     /**
      * The numerator (top number) of the time signature
      */
-    private int mBeatsPerBar;
+    private final int mBeatsPerBar;
     /**
      * Log2 of the denominator (bottom number) of the time signature
      */
-    private float mBeatLength;
+    private final float mBeatLength;
     /**
      * MIDI clocks/metronome click
      */
-    private int mClocksPerMetronome;
+    private final int mClocksPerMetronome;
     /**
      * no. of notated 32nd notes per MIDI quarter note
      */
-    private int mNum32In4;
+    private final int mNum32In4;
 
     public TimeSignature(MetaMessage metaMess) {
         byte[] data = metaMess.getData();

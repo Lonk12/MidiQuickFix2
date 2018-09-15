@@ -27,7 +27,7 @@ package com.lemckes.MidiQuickFix;
 /**
  * Methods associated with key signatures.
  *
- * @version $Id$
+ * @version $Id: KeySignatures.java,v 1.12 2012/10/27 01:11:56 jostle Exp $
  */
 public class KeySignatures
 {

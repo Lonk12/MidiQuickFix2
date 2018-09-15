@@ -1,4 +1,4 @@
-/**************************************************************
+/** ************************************************************
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
@@ -19,45 +19,55 @@
  *   in the file named "Artistic.clarified".
  *   If not, I'll be glad to provide one.
  *
- **************************************************************/
+ ************************************************************* */
 package com.lemckes.MidiQuickFix;
 
+import static com.lemckes.MidiQuickFix.ShortEvent.isChannelMessage;
 import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.sound.midi.MetaMessage;
-import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 import javax.swing.table.AbstractTableModel;
 
 /**
  * The model for the track summary table.
- * @version $Id$
+ *
+ * @version $Id: TrackSummaryTableModel.java,v 1.19 2012/09/09 03:56:05 jostle
+ * Exp $
  */
 public class TrackSummaryTableModel
     extends AbstractTableModel
 {
 
     static final long serialVersionUID = -5109111307767764175L;
-    transient private Synthesizer mSynth;
-    transient private MidiChannel[] mChannels;
-    transient private Sequencer mSeq;
-    /** The Sequence that is loaded. */
-    transient private MqfSequence mSequence;
-    /** The resolution of the sequence */
-    private int mRes;
-    /** The tracks in the sequence */
+//    transient private Synthesizer mSynth;
+//    private final transient MidiChannel[] mChannels;
+    private final transient Sequencer mSeq;
+    
+    /**
+     * The Sequence that is loaded.
+     */
+    private final transient MqfSequence mSequence;
+    
+    /**
+     * The resolution of the sequence
+     */
+    private final int mRes;
+    
+    /**
+     * The tracks in the sequence
+     */
     transient private Track[] mTracks;
 
-    /** The data about a track */
+    /**
+     * The info about a track
+     */
     static class TrackInfo
     {
 
@@ -71,21 +81,29 @@ public class TrackSummaryTableModel
         boolean mMute;
         boolean mLyrics;
     }
-    /** The track info for each track */
+
+    /**
+     * The track info for each track
+     */
     transient private TrackInfo[] mInfo;
 
-    /** Creates a new instance of a TrackSummaryTableModel */
+    /**
+     * Creates a new instance of a TrackSummaryTableModel
+     *
+     * @param s
+     * @param sequencer
+     */
     public TrackSummaryTableModel(MqfSequence s, Sequencer sequencer) {
-        try {
-            mSynth = MidiSystem.getSynthesizer();
-        }
-        catch (MidiUnavailableException e) {
-            TraceDialog.addTrace("No Synthesiser available." + // NOI18N
-                " (Could make playing tricky.)"); // NOI18N
-        }
+//        try {
+//            mSynth = MidiSystem.getSynthesizer();
+//        }
+//        catch (MidiUnavailableException e) {
+//            TraceDialog.addTrace("No Synthesiser available." + // NOI18N
+//                " (Could make playing tricky.)"); // NOI18N
+//        }
 
-        mChannels = mSynth.getChannels();
-        mChannels[0].allSoundOff();
+//        mChannels = MidiQuickFix.getSynth().getChannels();
+        MidiQuickFix.getSynth().getChannels()[0].allSoundOff();
 
         mSeq = sequencer;
         mSequence = s;
@@ -94,7 +112,7 @@ public class TrackSummaryTableModel
         updateInfo();
     }
 
-    public void updateInfo() {
+    public final void updateInfo() {
         mTracks = mSequence.getTracks();
         int numTracks = mTracks.length;
 
@@ -139,10 +157,7 @@ public class TrackSummaryTableModel
 
                 if (mm instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)mm;
-                    int st = sm.getStatus();
-
-                    // Check that this is a channel message
-                    if ((st & 0xf0) <= 0xf0) {
+                    if (isChannelMessage(sm)) {
                         mInfo[i].mChannel = sm.getChannel();
 
                         // The first NOTE_ON is the start of
@@ -152,10 +167,10 @@ public class TrackSummaryTableModel
                                 mInfo[i].mStart = tick;
                             }
                             int noteNum = sm.getData1();
-                            mInfo[i].mLowNote =
-                                Math.min(noteNum, mInfo[i].mLowNote);
-                            mInfo[i].mHighNote =
-                                Math.max(noteNum, mInfo[i].mHighNote);
+                            mInfo[i].mLowNote
+                                = Math.min(noteNum, mInfo[i].mLowNote);
+                            mInfo[i].mHighNote
+                                = Math.max(noteNum, mInfo[i].mHighNote);
                         }
                     }
                 }
@@ -182,7 +197,7 @@ public class TrackSummaryTableModel
         Object result;
         switch (column) {
             case 0:
-                result = Integer.valueOf(row);
+                result = row;
                 break;
             case 1:
                 result = mInfo[row].mName;
@@ -228,17 +243,17 @@ public class TrackSummaryTableModel
                     // Didn't find a channel event
                     result = null;
                 } else {
-                    result = Integer.valueOf(mInfo[row].mChannel);
+                    result = mInfo[row].mChannel;
                 }
                 break;
             case 7:
-                result = Boolean.valueOf(mInfo[row].mSolo);
+                result = mInfo[row].mSolo;
                 break;
             case 8:
-                result = Boolean.valueOf(mInfo[row].mMute);
+                result = mInfo[row].mMute;
                 break;
             case 9:
-                result = Boolean.valueOf(mInfo[row].mLyrics);
+                result = mInfo[row].mLyrics;
                 break;
             default:
                 result = "";
@@ -251,7 +266,7 @@ public class TrackSummaryTableModel
         switch (column) {
             case 7:
                 // Solo
-                mInfo[row].mSolo = ((Boolean)value).booleanValue();
+                mInfo[row].mSolo = ((Boolean)value);
                 mSeq.setTrackSolo(row, mInfo[row].mSolo);
                 boolean soloed = mSeq.getTrackSolo(row);
                 if (soloed != mInfo[row].mSolo) {
@@ -262,7 +277,7 @@ public class TrackSummaryTableModel
                 break;
             case 8:
                 // Mute
-                mInfo[row].mMute = ((Boolean)value).booleanValue();
+                mInfo[row].mMute = ((Boolean)value);
                 mSeq.setTrackMute(row, mInfo[row].mMute);
                 boolean muted = mSeq.getTrackMute(row);
                 if (muted != mInfo[row].mMute) {
@@ -273,14 +288,14 @@ public class TrackSummaryTableModel
                 break;
             case 9:
                 // Show Lyrics
-                mInfo[row].mLyrics = ((Boolean)value).booleanValue();
+                mInfo[row].mLyrics = ((Boolean)value);
                 fireTableCellUpdated(row, column);
                 break;
             default:
             // Do Nothing
         }
     }
-    Class[] types = new Class[] {
+    Class<?>[] types = new Class<?>[]{
         java.lang.Integer.class,
         java.lang.String.class,
         java.lang.Object.class,
@@ -294,10 +309,10 @@ public class TrackSummaryTableModel
     };
 
     @Override
-    public Class getColumnClass(int columnIndex) {
+    public Class<?> getColumnClass(int columnIndex) {
         return types[columnIndex];
     }
-    String[] columnNames = new String[] {
+    String[] columnNames = new String[]{
         UiStrings.getString("no."),
         UiStrings.getString("name"),
         UiStrings.getString("start"),
@@ -314,7 +329,7 @@ public class TrackSummaryTableModel
     public String getColumnName(int col) {
         return columnNames[col];
     }
-    boolean[] canEdit = new boolean[] {
+    boolean[] canEdit = new boolean[]{
         false,
         false,
         false,
