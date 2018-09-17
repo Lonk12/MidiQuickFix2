@@ -278,6 +278,11 @@ public class MidiQuickFix
             if (lastPath != null) {
                 sequenceChooser.setCurrentDirectory(new File(lastPath));
             }
+            else
+            {
+                MqfProperties.setStringProperty(MqfProperties.LAST_PATH_KEY,
+                    sequenceChooser.getCurrentDirectory().getAbsolutePath());
+            }
             MidiFileFilter midiFilter = new MidiFileFilter();
             sequenceChooser.addChoosableFileFilter(midiFilter);
             sequenceChooser.setFileFilter(midiFilter);
@@ -286,6 +291,11 @@ public class MidiQuickFix
                 MqfProperties.LAST_SOUNDBANK_PATH_KEY);
             if (soundbankPath != null) {
                 soundbankChooser.setCurrentDirectory(new File(soundbankPath));
+            }
+            else
+            {
+                MqfProperties.setStringProperty(MqfProperties.LAST_SOUNDBANK_PATH_KEY,
+                    soundbankChooser.getCurrentDirectory().getAbsolutePath());
             }
             SoundbankFileFilter soundbankFilter = new SoundbankFileFilter();
             soundbankChooser.addChoosableFileFilter(soundbankFilter);

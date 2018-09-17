@@ -126,7 +126,10 @@ public class PreferencesDialog
         displayText();
 
         mDefaultPath = MqfProperties.getProperty(MqfProperties.LAST_PATH_KEY);
-        defaultFolderField.setText(mDefaultPath);
+        fileFolderField.setText(mDefaultPath);
+
+        mDefaultSoundbankPath = MqfProperties.getProperty(MqfProperties.LAST_SOUNDBANK_PATH_KEY);
+        soundbankFolderField.setText(mDefaultSoundbankPath);
 
         rubyScaleSpinner.setValue(Math.round(mRubyScale * 100));
 
@@ -290,10 +293,13 @@ public class PreferencesDialog
         jScrollPane1 = new javax.swing.JScrollPane();
         lyricsTextPane = new javax.swing.JTextPane();
         defaultFolderPanel = new javax.swing.JPanel();
-        defaultFolderField = new javax.swing.JTextField();
+        fileFolderField = new javax.swing.JTextField();
         browseButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        soundbankFolderField = new javax.swing.JTextField();
+        browseSoundbankButton = new javax.swing.JButton();
         lookAndFeelPanel = new javax.swing.JPanel();
-        lookAndFeelCombo = new javax.swing.JComboBox<String>();
+        lookAndFeelCombo = new javax.swing.JComboBox<>();
         controlPanel = new javax.swing.JPanel();
         buttonPanel = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
@@ -514,18 +520,18 @@ public class PreferencesDialog
         defaultFolderPanel.setName("defaultFolderPanel"); // NOI18N
         defaultFolderPanel.setLayout(new java.awt.GridBagLayout());
 
-        defaultFolderField.setColumns(24);
-        defaultFolderField.setName("defaultFolderField"); // NOI18N
-        defaultFolderField.addActionListener(new java.awt.event.ActionListener() {
+        fileFolderField.setColumns(24);
+        fileFolderField.setName("fileFolderField"); // NOI18N
+        fileFolderField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                defaultFolderFieldActionPerformed(evt);
+                fileFolderFieldActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
-        defaultFolderPanel.add(defaultFolderField, gridBagConstraints);
+        defaultFolderPanel.add(fileFolderField, gridBagConstraints);
 
         browseButton.setText(bundle.getString("PreferencesDialog.browseButton.text")); // NOI18N
         browseButton.setDefaultCapable(false);
@@ -546,6 +552,42 @@ public class PreferencesDialog
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         mainPanel.add(defaultFolderPanel, gridBagConstraints);
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("PreferencesDialog.soundbankPanel.border.title"))); // NOI18N
+        jPanel2.setName("soundbankPanel"); // NOI18N
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        soundbankFolderField.setColumns(24);
+        soundbankFolderField.setName("defaultSoundbankField"); // NOI18N
+        soundbankFolderField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                soundbankFolderFieldActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 6);
+        jPanel2.add(soundbankFolderField, gridBagConstraints);
+
+        browseSoundbankButton.setText(bundle.getString("PreferencesDialog.browseSoundbankButton.text")); // NOI18N
+        browseSoundbankButton.setDefaultCapable(false);
+        browseSoundbankButton.setMargin(new java.awt.Insets(1, 3, 1, 3));
+        browseSoundbankButton.setName("browseSoundbankButton"); // NOI18N
+        browseSoundbankButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseSoundbankButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
+        jPanel2.add(browseSoundbankButton, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        mainPanel.add(jPanel2, gridBagConstraints);
+
         lookAndFeelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("PreferencesDialog.LookAndFeel.border.title"))); // NOI18N
         lookAndFeelPanel.setName("lookAndFeelPanel"); // NOI18N
         lookAndFeelPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
@@ -560,7 +602,7 @@ public class PreferencesDialog
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         mainPanel.add(lookAndFeelPanel, gridBagConstraints);
 
@@ -704,7 +746,7 @@ public class PreferencesDialog
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fileChooser.setCurrentDirectory(new File(defaultFolderField.getText()));
+        fileChooser.setCurrentDirectory(new File(fileFolderField.getText()));
         int open = fileChooser.showDialog(
             this, UiStrings.getString("PreferencesDialog.AcceptDefaultPath.text"));
         if (open == JFileChooser.APPROVE_OPTION) {
@@ -713,27 +755,47 @@ public class PreferencesDialog
             mDefaultPath = path;
         }
 
-
     }//GEN-LAST:event_browseButtonActionPerformed
 
-    private void defaultFolderFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultFolderFieldActionPerformed
-        mDefaultPath = defaultFolderField.getText();
-    }//GEN-LAST:event_defaultFolderFieldActionPerformed
+    private void fileFolderFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileFolderFieldActionPerformed
+        mDefaultPath = fileFolderField.getText();
+    }//GEN-LAST:event_fileFolderFieldActionPerformed
+
+    private void soundbankFolderFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soundbankFolderFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_soundbankFolderFieldActionPerformed
+
+    private void browseSoundbankButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSoundbankButtonActionPerformed
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setCurrentDirectory(new File(soundbankFolderField.getText()));
+        int open = fileChooser.showDialog(
+            this, UiStrings.getString("PreferencesDialog.AcceptSoundbankPath.text"));
+        if (open == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            String path = file.getAbsolutePath();
+            mDefaultSoundbankPath = path;
+        }
+
+    }//GEN-LAST:event_browseSoundbankButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JButton browseButton;
+    private javax.swing.JButton browseSoundbankButton;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JPanel controlPanel;
-    private javax.swing.JTextField defaultFolderField;
     private javax.swing.JPanel defaultFolderPanel;
+    private javax.swing.JTextField fileFolderField;
     private javax.swing.JButton fontButton;
     private javax.swing.JLabel fontLabel;
     private javax.swing.JButton highlightButton;
     private javax.swing.JLabel highlightLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox<String> lookAndFeelCombo;
     private javax.swing.JPanel lookAndFeelPanel;
@@ -749,5 +811,6 @@ public class PreferencesDialog
     private javax.swing.JLabel rubyFgLabel;
     private javax.swing.JLabel rubyScaleLabel;
     private javax.swing.JSpinner rubyScaleSpinner;
+    private javax.swing.JTextField soundbankFolderField;
     // End of variables declaration//GEN-END:variables
 }
