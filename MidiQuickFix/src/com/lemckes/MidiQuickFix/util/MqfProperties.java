@@ -85,25 +85,22 @@ public class MqfProperties
     private static String encodeColourValue(Color colour) {
         StringBuilder sb = new StringBuilder(8);
         int r = colour.getRed();
-        String red = Integer.toHexString(r);
         if (r < 16) {
             sb.append('0');
         }
-        sb.append(red);
+        sb.append(Integer.toHexString(r));
 
         int g = colour.getGreen();
-        String green = Integer.toHexString(g);
         if (g < 16) {
             sb.append('0');
         }
-        sb.append(green);
+        sb.append(Integer.toHexString(g));
         
         int b = colour.getBlue();
-        String blue = Integer.toHexString(b);
         if (b < 16) {
             sb.append('0');
         }
-        sb.append(green);
+        sb.append(Integer.toHexString(b));
 
         return sb.toString();
     }
