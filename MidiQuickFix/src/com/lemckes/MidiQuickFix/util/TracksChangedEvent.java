@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -26,7 +26,6 @@ package com.lemckes.MidiQuickFix.util;
  * The event that is passed to TracksChangedListener implementors to
  * signal the addition or deletion of Tracks from a Sequence.
  * @see TracksChangedListener
- * @version $Id: TracksChangedEvent.java,v 1.2 2010/08/15 20:28:35 jostle Exp $
  */
 public class TracksChangedEvent
 {

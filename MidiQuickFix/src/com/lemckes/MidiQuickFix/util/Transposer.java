@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -35,8 +35,6 @@ import javax.sound.midi.Track;
 
 /**
  * Transpose a midi Sequence
- *
- * @version $Id: Transposer.java,v 1.9 2012/09/09 03:56:08 jostle Exp $
  */
 public class Transposer
 {

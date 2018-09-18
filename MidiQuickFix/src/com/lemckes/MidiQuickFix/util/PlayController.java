@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -29,7 +29,6 @@ import javax.swing.AbstractAction;
 
 /**
  * Maintains the state of play
- * @version $Id: PlayController.java,v 1.10 2012/09/09 03:56:08 jostle Exp $
  */
 public class PlayController
 {

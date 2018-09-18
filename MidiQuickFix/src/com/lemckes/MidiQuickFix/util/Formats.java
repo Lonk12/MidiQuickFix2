@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -28,8 +28,6 @@ import java.text.DecimalFormat;
 
 /**
  * Utilities to return formatted strings for various types of values.
- *
- * @version $Id: Formats.java,v 1.7 2010/09/11 05:44:14 jostle Exp $
  */
 public final class Formats
 {

@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -29,7 +29,6 @@ import javax.sound.midi.ShortMessage;
 
 /**
  * Handle Midi Short events.
- * @version $Id: ShortEvent.java,v 1.10 2009/03/16 07:44:20 jostle Exp $
  */
 public class ShortEvent {
     
@@ -152,5 +151,8 @@ public class ShortEvent {
         sm.setMessage(status, channel, d1, d2);
         MidiEvent ev = new MidiEvent(sm, tick);
         return ev;
+    }
+
+    private ShortEvent() {
     }
 }

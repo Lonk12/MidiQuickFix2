@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2005 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -29,7 +29,6 @@ import javax.swing.JLabel;
 
 /**
  * A slider that represents a duration in either ticks or beats.
- * @version $Id: TempoSlider.java,v 1.2 2015/08/01 13:57:29 jostle Exp $
  */
 public class TempoSlider extends javax.swing.JSlider
 {

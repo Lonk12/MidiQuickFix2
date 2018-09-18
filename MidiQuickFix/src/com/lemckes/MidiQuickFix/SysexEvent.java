@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -26,7 +26,6 @@ import javax.sound.midi.SysexMessage;
 
 /**
  * Handle Midi System Exclusive events.
- * @version $Id: SysexEvent.java,v 1.8 2010/10/03 03:18:21 jostle Exp $
  */
 class SysexEvent
 {
@@ -52,5 +51,8 @@ class SysexEvent
         }
         result[2] = sb.toString();
         return result;
+    }
+
+    private SysexEvent() {
     }
 }

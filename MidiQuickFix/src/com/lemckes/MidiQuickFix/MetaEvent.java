@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -35,8 +35,6 @@ import javax.sound.midi.MidiEvent;
 
 /**
  * Handle Midi Meta events.
- *
- * @version $Id: MetaEvent.java,v 1.21 2015/08/01 10:41:42 jostle Exp $
  */
 public class MetaEvent
 {

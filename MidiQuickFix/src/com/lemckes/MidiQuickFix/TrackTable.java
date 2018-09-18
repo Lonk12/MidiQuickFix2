@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -38,7 +38,6 @@ import javax.swing.table.TableModel;
 
 /**
  * A table that presents the events in a track for editing.
- * @version $Id: TrackTable.java,v 1.13 2015/08/01 10:41:42 jostle Exp $
  */
 public class TrackTable extends javax.swing.JTable {
     static final long serialVersionUID = -3055797455895279118L;

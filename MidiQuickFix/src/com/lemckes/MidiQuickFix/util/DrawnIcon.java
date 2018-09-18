@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -36,7 +36,6 @@ import javax.swing.Icon;
 
 /**
  * An Icon that draws itself using a GeneralPath.
- * @version $Id: DrawnIcon.java,v 1.6 2010/07/08 04:26:03 jostle Exp $
  */
 public class DrawnIcon implements Icon
 {

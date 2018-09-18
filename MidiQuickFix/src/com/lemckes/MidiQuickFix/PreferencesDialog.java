@@ -2,7 +2,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2010 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -30,6 +30,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -38,6 +40,7 @@ import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Style;
@@ -52,6 +55,8 @@ public class PreferencesDialog
     extends javax.swing.JDialog
     implements FontSelectionListener
 {
+
+    private static final long serialVersionUID = 9364291903L;
 
     MidiQuickFix mMQF;
     private FontSelector mFontSelector;
@@ -91,7 +96,7 @@ public class PreferencesDialog
         extends DefaultHighlighter.DefaultHighlightPainter
     {
 
-        public MyHighlightPainter(Color color) {
+        MyHighlightPainter(Color color) {
             super(color);
         }
     }
@@ -101,6 +106,7 @@ public class PreferencesDialog
      *
      * @param parent
      * @param modal
+     * @param mqf
      */
     public PreferencesDialog(Frame parent, boolean modal, MidiQuickFix mqf) {
         super(parent, modal);
@@ -213,8 +219,8 @@ public class PreferencesDialog
                 doc.insertString(doc.getLength(), sampleText[i],
                     doc.getStyle(sampleStyles[i]));
             }
-        } catch (BadLocationException ble) {
-            System.err.println("Couldn't insert initial text into text pane.");
+        } catch (BadLocationException ex) {
+            Logger.getLogger(PreferencesDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -256,7 +262,8 @@ public class PreferencesDialog
                     break;
                 }
             }
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException |
+            InstantiationException | UnsupportedLookAndFeelException e) {
             // Nimbus is not available, use the default look and feel.
         }
         MqfProperties.readProperties();

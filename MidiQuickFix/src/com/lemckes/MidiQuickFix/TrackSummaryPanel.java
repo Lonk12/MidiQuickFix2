@@ -1,7 +1,26 @@
-/*
- * TrackSummaryPanel.java
+/**
+ * ************************************************************
  *
- * Created on 23/06/2010, 6:11:24 PM
+ * MidiQuickFix - A Simple Midi file editor and player
+ *
+ * Copyright (C) 2004-2018 John Lemcke
+ * jostle@users.sourceforge.net
+ *
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the Artistic License
+ * as published by Larry Wall, either version 2.0,
+ * or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the Artistic License for more details.
+ *
+ * You should have received a copy of the Artistic License with this Kit,
+ * in the file named "Artistic.clarified".
+ * If not, I'll be glad to provide one.
+ *
+ *************************************************************
  */
 package com.lemckes.MidiQuickFix;
 
@@ -20,7 +39,6 @@ import javax.sound.midi.Track;
 import javax.swing.JOptionPane;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -31,6 +49,8 @@ public class TrackSummaryPanel
     extends javax.swing.JPanel
     implements TableModelListener
 {
+
+    private static final long serialVersionUID = 12314235231L;
 
     private MqfSequence mSequence;
     private TrackSummaryTable mTrackSummaryTable;
@@ -53,18 +73,13 @@ public class TrackSummaryPanel
 
     public void setSummaryTable(TrackSummaryTable table) {
         mTrackSummaryTable = table;
-        mTrackSummaryTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-        {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                Object source = e.getSource();
-                if (source == mTrackSummaryTable.getSelectionModel()) {
-                    int numSelectedRows =
-                        mTrackSummaryTable.getSelectedRowCount();
-                    copyTrackButton.setEnabled(numSelectedRows == 1);
-                    deleteTrackButton.setEnabled(numSelectedRows > 0);
-                }
+        mTrackSummaryTable.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            Object source = e.getSource();
+            if (source == mTrackSummaryTable.getSelectionModel()) {
+                int numSelectedRows =
+                    mTrackSummaryTable.getSelectedRowCount();
+                copyTrackButton.setEnabled(numSelectedRows == 1);
+                deleteTrackButton.setEnabled(numSelectedRows > 0);
             }
         });
         mTrackSummaryTable.getModel().addTableModelListener(this);

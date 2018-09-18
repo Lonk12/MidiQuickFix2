@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -28,7 +28,6 @@ import java.util.EventListener;
 /**
  * The listener interface for receiving TracksChangedEvents
  * @see TracksChangedEvent
- * @version $Id: TracksChangedListener.java,v 1.1 2010/06/24 11:46:15 jostle Exp $
  */
 public interface TracksChangedListener extends EventListener
 {

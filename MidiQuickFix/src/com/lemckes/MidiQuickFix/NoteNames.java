@@ -2,7 +2,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -25,7 +25,6 @@ package com.lemckes.MidiQuickFix;
 /**
  * Convert between Midi note numbers and textual note names.
  * todo This probably should be i18n'd.
- * @version $Id: NoteNames.java,v 1.9 2012/09/09 03:56:05 jostle Exp $
  */
 class NoteNames {
 

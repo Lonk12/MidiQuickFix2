@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -32,7 +32,6 @@ import javax.swing.event.TableModelEvent;
 
 /**
  * A table that displays summary info about each track in a sequence.
- * @version $Id: TrackSummaryTable.java,v 1.10 2010/08/15 20:28:32 jostle Exp $
  */
 public class TrackSummaryTable extends javax.swing.JTable
 {

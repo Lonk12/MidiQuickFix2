@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -27,7 +27,6 @@ package com.lemckes.MidiQuickFix.util;
 /**
  * The event that is passed to LoopSliderListener implementors.
  * @see LoopSliderListener
- * @version $Id: LoopSliderEvent.java,v 1.3 2012/01/22 05:32:51 jostle Exp $
  */
 public class LoopSliderEvent
 {

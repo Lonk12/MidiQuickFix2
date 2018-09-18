@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -26,7 +26,6 @@ package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -37,12 +36,9 @@ import javax.swing.JComponent;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
  * Allow the user to transpose the sequence.
- *
- * @version $Id: TransposeDialog.java,v 1.11 2013/11/01 09:46:28 jostle Exp $
  */
 public class TransposeDialog
     extends javax.swing.JDialog
@@ -57,7 +53,7 @@ public class TransposeDialog
      * A return status code - returned if OK button has been pressed
      */
     public static final int RET_OK = 1;
-    private String mKeyString = UiStrings.getString("key_names_string") + " ";
+    private final String mKeyString = UiStrings.getString("key_names_string") + " ";
     private int mTransposeBy = 0;
 
     /**
@@ -69,26 +65,22 @@ public class TransposeDialog
     public TransposeDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        jTextField1.setText(mKeyString);
+        fromKeyField.setText(mKeyString);
         toKeyField.setText(mKeyString);
         JComponent ed = semitoneSpinner.getEditor();
         if (ed instanceof JSpinner.DefaultEditor) {
             ((JSpinner.DefaultEditor)ed).getTextField().setColumns(2);
             ((JSpinner.DefaultEditor)ed).getTextField().setEditable(false);
         }
-        semitoneSpinner.addChangeListener(new ChangeListener()
-        {
-
-            public void stateChanged(ChangeEvent e) {
-                mTransposeBy = (Integer)semitoneSpinner.getValue();
-                updateToString(mTransposeBy);
-            }
+        semitoneSpinner.addChangeListener((ChangeEvent e) -> {
+            mTransposeBy = (Integer)semitoneSpinner.getValue();
+            updateToString(mTransposeBy);
         });
 
         KeyHighlighter kh1 = new KeyHighlighter();
         setGlassPane(kh1);
         kh1.setVisible(true);
-        kh1.addComponent(jTextField1);
+        kh1.addComponent(fromKeyField);
         kh1.addComponent(toKeyField);
         pack();
     }
@@ -160,12 +152,12 @@ public class TransposeDialog
         java.awt.GridBagConstraints gridBagConstraints;
 
         mainPanel = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
-        semitoneSpinner = new javax.swing.JSpinner();
-        toKeyField = new javax.swing.JTextField();
         fromLabel = new javax.swing.JLabel();
+        fromKeyField = new javax.swing.JTextField();
         toLabel = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        toKeyField = new javax.swing.JTextField();
+        semitoneSpinner = new javax.swing.JSpinner();
+        semitoneLabel = new javax.swing.JLabel();
         doDrumsCheckBox = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         buttonPanel = new javax.swing.JPanel();
@@ -182,22 +174,29 @@ public class TransposeDialog
         mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         mainPanel.setLayout(new java.awt.GridBagLayout());
 
-        jTextField1.setEditable(false);
-        jTextField1.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
-        jTextField1.setText(" C  Db D  Eb E  F  F# G  Ab A  Bb B ");
+        fromLabel.setText(UiStrings.getString("from")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        mainPanel.add(fromLabel, gridBagConstraints);
+
+        fromKeyField.setEditable(false);
+        fromKeyField.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        fromKeyField.setText(" C  Db D  Eb E  F  F# G  Ab A  Bb B ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
-        mainPanel.add(jTextField1, gridBagConstraints);
+        mainPanel.add(fromKeyField, gridBagConstraints);
+
+        toLabel.setText(UiStrings.getString("to")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
-        mainPanel.add(semitoneSpinner, gridBagConstraints);
+        mainPanel.add(toLabel, gridBagConstraints);
 
         toKeyField.setEditable(false);
         toKeyField.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
@@ -208,28 +207,21 @@ public class TransposeDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
         mainPanel.add(toKeyField, gridBagConstraints);
-
-        fromLabel.setText(UiStrings.getString("from")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        mainPanel.add(fromLabel, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
+        mainPanel.add(semitoneSpinner, gridBagConstraints);
 
-        toLabel.setText(UiStrings.getString("to")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        mainPanel.add(toLabel, gridBagConstraints);
-
-        jLabel1.setText(UiStrings.getString("semitones")); // NOI18N
+        semitoneLabel.setText(UiStrings.getString("semitones")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
-        mainPanel.add(jLabel1, gridBagConstraints);
+        mainPanel.add(semitoneLabel, gridBagConstraints);
 
         doDrumsCheckBox.setText(UiStrings.getString("transpose_drum_channel")); // NOI18N
         doDrumsCheckBox.setToolTipText(UiStrings.getString("transpose_drums_tooltip")); // NOI18N
@@ -293,12 +285,12 @@ public class TransposeDialog
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox doDrumsCheckBox;
+    private javax.swing.JTextField fromKeyField;
     private javax.swing.JLabel fromLabel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton okButton;
+    private javax.swing.JLabel semitoneLabel;
     private javax.swing.JSpinner semitoneSpinner;
     private javax.swing.JTextField toKeyField;
     private javax.swing.JLabel toLabel;
@@ -316,10 +308,10 @@ public class TransposeDialog
     {
 
         static final long serialVersionUID = -3094419739144867668L;
-        private List<JTextField> comps;
+        private final List<JTextField> comps;
 
-        public KeyHighlighter() {
-            comps = new ArrayList<JTextField>();
+        KeyHighlighter() {
+            comps = new ArrayList<>();
         }
 
         public void addComponent(JTextField c) {

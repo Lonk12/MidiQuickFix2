@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -24,7 +24,6 @@ package com.lemckes.MidiQuickFix.util;
 
 /**
  * Defines the interface for classes that can play a midi sequence
- * @version $Id: MidiSeqPlayer.java,v 1.5 2009/03/16 07:44:20 jostle Exp $
  */
 public interface MidiSeqPlayer {
     /**

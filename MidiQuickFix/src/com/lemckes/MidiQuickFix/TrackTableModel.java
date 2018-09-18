@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -40,7 +40,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * The model for the main track table.
- * @version $Id: TrackTableModel.java,v 1.22 2012/09/09 03:56:05 jostle Exp $
  */
 class TrackTableModel extends DefaultTableModel {
     static final long serialVersionUID = 5464614685967695539L;
@@ -57,7 +56,7 @@ class TrackTableModel extends DefaultTableModel {
     /** Maps table row to track index when mShowNotes is false. */
     ArrayList<Integer> mNoNotesRowMap;
 
-    public TrackTableModel(Track t, int res, boolean showNotes, boolean inFlats) {
+    TrackTableModel(Track t, int res, boolean showNotes, boolean inFlats) {
         mTrack = t;
         mResolution = res;
         mInFlats = inFlats;
@@ -67,7 +66,7 @@ class TrackTableModel extends DefaultTableModel {
         if (mTrack != null) {
             buildNoNotesRowMap();
         } else {
-            mNoNotesRowMap = new ArrayList<>();
+            mNoNotesRowMap = new ArrayList<>(4);
         }
     }
 
@@ -630,7 +629,8 @@ class TrackTableModel extends DefaultTableModel {
         }
         return result;
     }
-    Class[] types = new Class[] {
+    
+    Class<?>[] types = new Class<?>[] {
         java.lang.Object.class,
         java.lang.Object.class,
         java.lang.Object.class,
@@ -641,9 +641,10 @@ class TrackTableModel extends DefaultTableModel {
     };
 
     @Override
-    public Class getColumnClass(int columnIndex) {
+    public Class<?> getColumnClass(int columnIndex) {
         return types[columnIndex];
     }
+    
     String[] columnNames = new String[] {
         UiStrings.getString("beat:tick"),
         UiStrings.getString("event"),

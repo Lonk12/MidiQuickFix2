@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -28,12 +28,15 @@ import java.util.ResourceBundle;
 
 /**
  * Methods associated with MIDI Controller events
- * @version $Id: Controllers.java,v 1.8 2012/01/22 05:32:51 jostle Exp $
  */
 class Controllers {
     /** The names of the controllers are retrieved from a resource file. */
     private static final ResourceBundle mControllersBundle;
     private static final String[] mNameArray;
+    /** A String used to display a 'graphical' representation
+     * of the controller's value.
+     */
+    static String meter = "---------------|---------------"; // NOI18N
     
     /** Create an ControllerNames object. */
     static {
@@ -61,10 +64,6 @@ class Controllers {
         return mNameArray;
     }
     
-    /** A String used to display a 'graphical' representation
-     * of the controller's value.
-     */
-    static String meter = "---------------|---------------"; // NOI18N
     /** Get a String representation of the controller's value.
      * @param val The controller's value
      * @param graphic If true the returned string is a graphical

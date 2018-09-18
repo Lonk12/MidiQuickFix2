@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2010 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -36,6 +36,7 @@ import javax.swing.text.AbstractDocument;
  * Allow the user to create a new track
  */
 public class CreateTrackDialog extends javax.swing.JDialog {
+    private static final long serialVersionUID = 1028562092L;
     private final String DEFAULT_CONTROL_VALUE = "64"; // NOI18N
     private final String DEFAULT_CHANNEL = "0"; // NOI18N
     private final MqfSequence mSequence;

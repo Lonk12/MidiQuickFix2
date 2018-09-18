@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -28,7 +28,6 @@ import javax.sound.midi.MidiEvent;
 /**
  * The event that is passed to EventCreationListener implementors.
  * @see EventCreationListener
- * @version $Id: EventCreationEvent.java,v 1.2 2009/03/16 07:44:20 jostle Exp $
  */
 public class EventCreationEvent {
     /**

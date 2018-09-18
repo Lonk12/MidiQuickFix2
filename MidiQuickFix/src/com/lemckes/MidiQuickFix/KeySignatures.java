@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -26,8 +26,6 @@ package com.lemckes.MidiQuickFix;
 
 /**
  * Methods associated with key signatures.
- *
- * @version $Id: KeySignatures.java,v 1.12 2012/10/27 01:11:56 jostle Exp $
  */
 public class KeySignatures
 {
@@ -110,7 +108,7 @@ public class KeySignatures
     public static byte[] getKeyValues(String keyName) {
         byte[] result = {0, 0};
         // Check for a minor key
-        int mPos = keyName.indexOf("m"); // NOI18N
+        int mPos = keyName.indexOf('m'); // NOI18N
         if (mPos != -1) {
             result[1] = 1;
             // and remove the trailing "m"
@@ -154,5 +152,8 @@ public class KeySignatures
      */
     public static boolean isInFlats(int keyNum) {
         return keyNum < 0;
+    }
+
+    private KeySignatures() {
     }
 }

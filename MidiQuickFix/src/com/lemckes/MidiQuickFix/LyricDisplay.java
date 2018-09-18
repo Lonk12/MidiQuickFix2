@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -39,11 +39,8 @@ import java.awt.Rectangle;
 import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiMessage;
@@ -60,8 +57,6 @@ import javax.swing.text.StyledDocument;
 
 /**
  * The lyrics display.
- *
- * @version $Id: LyricDisplay.java,v 1.20 2015/08/01 10:41:42 jostle Exp $
  */
 public class LyricDisplay
     extends JPanel
@@ -84,8 +79,6 @@ public class LyricDisplay
     private Object mHighlightTag;
     // An instance of the private subclass of the default highlight painter
     private Highlighter.HighlightPainter myHighlightPainter;
-    private Color mForeground;
-    private Color mRubyForeground;
 
     // A private subclass of the default highlight painter
     class MyHighlightPainter
@@ -436,12 +429,6 @@ public class LyricDisplay
 
         lyricText.setBackground(MqfProperties.getColourProperty(
             MqfProperties.LYRIC_BACKGROUND_COLOUR, Color.WHITE));
-
-        mForeground = MqfProperties.getColourProperty(
-            MqfProperties.LYRIC_FOREGROUND_COLOUR, Color.BLACK);
-
-        mRubyForeground = MqfProperties.getColourProperty(
-            MqfProperties.LYRIC_RUBY_FG_COLOUR, Color.BLACK);
 
         lyricText.setFont(MqfProperties.getFontProperty(
             MqfProperties.LYRIC_FONT, new java.awt.Font("Dialog", 0, 24)));

@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2010 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -30,12 +30,14 @@ import java.util.Map.Entry;
 import javax.swing.JLabel;
 
 /**
- * Allow the user to create a new track
+ * Display the Song Info for a sequence
  */
 public class SongInfoDialog extends javax.swing.JDialog {
+
+    private static final long serialVersionUID = 428054279L;
     /**
-     * Create a new CreateTrackDialog for the given Sequence
-     * @param seq the sequence in which to create the track
+     * Create a new SongInfoDialog for the given Sequence
+     * @param seq the sequence for which to display song info
      * @param parent
      * @param modal
      */
@@ -57,7 +59,6 @@ public class SongInfoDialog extends javax.swing.JDialog {
             keyGBC.insets = new java.awt.Insets(0, 0, 0, 3);
 
             GridBagConstraints separatorGBC = new GridBagConstraints();
-            separatorGBC = new java.awt.GridBagConstraints();
             separatorGBC.gridx = 1;
             separatorGBC.gridy = 0;
             separatorGBC.insets = new java.awt.Insets(0, 3, 0, 3);

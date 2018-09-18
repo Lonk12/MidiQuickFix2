@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -37,17 +37,12 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * The model for the track summary table.
- *
- * @version $Id: TrackSummaryTableModel.java,v 1.19 2012/09/09 03:56:05 jostle
- * Exp $
  */
 public class TrackSummaryTableModel
     extends AbstractTableModel
 {
 
     static final long serialVersionUID = -5109111307767764175L;
-//    transient private Synthesizer mSynth;
-//    private final transient MidiChannel[] mChannels;
     private final transient Sequencer mSeq;
     
     /**
@@ -94,15 +89,6 @@ public class TrackSummaryTableModel
      * @param sequencer
      */
     public TrackSummaryTableModel(MqfSequence s, Sequencer sequencer) {
-//        try {
-//            mSynth = MidiSystem.getSynthesizer();
-//        }
-//        catch (MidiUnavailableException e) {
-//            TraceDialog.addTrace("No Synthesiser available." + // NOI18N
-//                " (Could make playing tricky.)"); // NOI18N
-//        }
-
-//        mChannels = MidiQuickFix.getSynth().getChannels();
         MidiQuickFix.getSynth().getChannels()[0].allSoundOff();
 
         mSeq = sequencer;

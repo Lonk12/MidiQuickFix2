@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -45,7 +45,6 @@ import javax.swing.text.DefaultFormatterFactory;
  * A duration slider that can have loop points
  *
  * @see DurationSlider
- * @version $Id: LoopSlider.java,v 1.11 2015/08/01 13:57:29 jostle Exp $
  */
 public class LoopSlider
     extends javax.swing.JPanel

@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -38,16 +38,17 @@ import java.util.ArrayList;
 
 /**
  * This class handles the display of the splash screen in the startup dialog.
- * @version $Id: SplashDrawing.java,v 1.14 2010/05/03 20:54:37 jostle Exp $
  */
 public class SplashDrawing extends javax.swing.JComponent {
+
+    private static final long serialVersionUID = 1436547L;
     transient BufferedImage mBi;
     transient Image mImage;
     int mImageWidth;
     int mImageHeight;
     float mLineHeight;
     boolean mCentred = false;
-    ArrayList<String> mStageMessages = new ArrayList<>();
+    ArrayList<String> mStageMessages = new ArrayList<>(16);
     Font mFont;
     transient FontRenderContext mFrContext;
     long mMessageDelay = 250;
@@ -96,7 +97,7 @@ public class SplashDrawing extends javax.swing.JComponent {
 
         int startY =
             (int)((mImageHeight / 2.0) - (mLineHeight * (mStageMessages.size() - 1) / 2.0));
-        int startX = 20;
+        int startX;
         int i = 0;
         for (String s : mStageMessages) {
             if (!mCentred) {
@@ -140,7 +141,6 @@ public class SplashDrawing extends javax.swing.JComponent {
         if (message != null) {
             mStageMessages.add(message);
             paintImmediately(getBounds());
-//            TraceDialog.addTrace(message);
 
             if (mMessageDelay > 0) {
                 try {

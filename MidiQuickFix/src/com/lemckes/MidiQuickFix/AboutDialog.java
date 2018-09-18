@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -27,8 +27,6 @@ import java.util.Properties;
 
 /**
  * Show the About dialog.
- *
- * @version $Id: AboutDialog.java,v 1.10 2010/09/11 05:44:14 jostle Exp $
  */
 public class AboutDialog
     extends javax.swing.JDialog
@@ -64,8 +62,6 @@ public class AboutDialog
      * a deprecated java.awt.Dialog method.
      */
     public void showAboutDialog() {
-//        setTitle(UiStrings.getString("about_mqf")); // NOI18N
-//        getContentPane().add(mSplash, java.awt.BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(mParent);
         setVisible(true);
@@ -77,8 +73,6 @@ public class AboutDialog
     public void populateMessages() {
         setTitle(UiStrings.getString("about_mqf")); // NOI18N
         getContentPane().add(mSplash, java.awt.BorderLayout.CENTER);
-//        pack();
-//        setLocationRelativeTo(mParent);
 
         mSplash.setMessageDelay(0);
 
@@ -115,7 +109,6 @@ public class AboutDialog
         mSplash.addStageMessage("");
         mSplash.addStageMessage(osname + " - " + arch + " - " + osversion);
 
-//        setVisible(true);
     }
 
     private void doClose() {

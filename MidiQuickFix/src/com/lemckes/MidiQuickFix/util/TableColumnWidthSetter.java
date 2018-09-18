@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -32,7 +32,6 @@ import javax.swing.table.TableModel;
 
 /**
  * A utility to set the widths of a JTable's columns.
- * @version $Id: TableColumnWidthSetter.java,v 1.6 2009/03/16 07:38:28 jostle Exp $
  */
 public class TableColumnWidthSetter {
     /** This method picks good column sizes.

@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -25,7 +25,6 @@ package com.lemckes.MidiQuickFix.util;
 
 /**
  * A FileFilter to select just midi files (.mid and .kar)
- * @version $Id: MidiFileFilter.java,v 1.5 2010/02/28 06:03:06 jostle Exp $
  */
 public class MidiFileFilter extends javax.swing.filechooser.FileFilter {
     /**

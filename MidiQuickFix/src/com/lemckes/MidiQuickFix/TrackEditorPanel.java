@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -30,7 +30,6 @@ import com.lemckes.MidiQuickFix.util.EventCreationEvent;
 import com.lemckes.MidiQuickFix.util.EventCreationListener;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
-import com.lemckes.MidiQuickFix.util.TracksChangedEvent.TrackChangeType;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -46,7 +45,6 @@ import javax.swing.event.TableModelListener;
 
 /**
  * The UI for editing track data
- * @version $Id: TrackEditorPanel.java,v 1.19 2015/08/01 10:41:42 jostle Exp $
  */
 public class TrackEditorPanel
     extends javax.swing.JPanel

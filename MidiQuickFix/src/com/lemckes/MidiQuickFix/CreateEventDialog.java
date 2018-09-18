@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2010 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -43,8 +43,6 @@ import javax.swing.text.AbstractDocument;
 
 /**
  * Allow the user to create a Midi event.
- *
- * @version $Id: CreateEventDialog.java,v 1.10 2015/08/01 10:41:42 jostle Exp $
  */
 public class CreateEventDialog
     extends javax.swing.JDialog
@@ -75,7 +73,7 @@ public class CreateEventDialog
     private final Integer DEFAULT_NOTE_VALUE = 127;
     private final Integer DEFAULT_CHANNEL = 0;
     private final String DEFAULT_POSITION = "00000:000"; // NOI18N
-    private int mTicksPerBeat;
+    private final int mTicksPerBeat;
     private boolean mIsInFlats = false;
     /**
      * The list of registered listeners.
@@ -928,7 +926,7 @@ public class CreateEventDialog
                     xfChordBaseNoteCombo.getSelectedItem().toString(),
                     xfChordBassTypeCombo.getSelectedItem().toString()));
             }
-        };
+        }
         MidiEvent me = null;
         try {
             me = MetaEvent.createMetaEvent(

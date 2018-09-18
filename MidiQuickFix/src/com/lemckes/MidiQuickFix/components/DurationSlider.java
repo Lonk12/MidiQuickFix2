@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2005 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -27,7 +27,6 @@ import javax.swing.JLabel;
 
 /**
  * A slider that represents a duration in either ticks or beats.
- * @version $Id: DurationSlider.java,v 1.8 2015/08/01 13:57:28 jostle Exp $
  */
 public class DurationSlider extends javax.swing.JSlider {
     static final long serialVersionUID = 6998631897922134763L;

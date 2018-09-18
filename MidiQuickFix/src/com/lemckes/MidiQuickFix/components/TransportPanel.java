@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -40,7 +40,6 @@ import javax.swing.AbstractAction;
 
 /**
  * The UI for media transport controls such as Play, Pause, Stop etc.
- * @version $Id: TransportPanel.java,v 1.10 2015/08/01 10:41:42 jostle Exp $
  */
 public class TransportPanel extends javax.swing.JPanel {
     static final long serialVersionUID = 6727747406307178988L;

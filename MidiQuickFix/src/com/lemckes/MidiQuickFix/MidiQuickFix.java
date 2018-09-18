@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2009 John Lemcke
+ * Copyright (C) 2004-2018 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -88,8 +88,6 @@ import javax.swing.event.TableModelListener;
 
 /**
  * A MIDI file editor that works at the Midi event level.
- *
- * @version $Id: MidiQuickFix.java,v 1.38 2015/08/01 13:57:28 jostle Exp $
  */
 public class MidiQuickFix
     extends JFrame
@@ -190,7 +188,7 @@ public class MidiQuickFix
             }
         });
 
-        TraceDialog.getInstance().setVisible(true);
+        // TraceDialog.getInstance().setVisible(true);
 
         Startup startDialog = new Startup(new javax.swing.JFrame(), false);
         // Centre on the screen

@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2009 John Lemcke
+ *   Copyright (C) 2004-2018 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -26,8 +26,6 @@ import java.awt.EventQueue;
 
 /**
  * A debugging output dialog.
- *
- * @version $Id: TraceDialog.java,v 1.5 2010/09/11 05:44:14 jostle Exp $
  */
 public class TraceDialog extends javax.swing.JDialog
 {
