@@ -24,7 +24,6 @@
  */
 package com.lemckes.MidiQuickFix;
 
-import static junit.framework.Assert.assertEquals;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.AfterClass;
