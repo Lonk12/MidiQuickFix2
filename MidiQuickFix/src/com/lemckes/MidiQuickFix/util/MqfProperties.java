@@ -52,6 +52,7 @@ public class MqfProperties
     public static final String LYRIC_FOREGROUND_COLOUR = "lyric_fg"; //NOI18N
     public static final String LYRIC_RUBY_FG_COLOUR = "lyric_ruby_fg"; //NOI18N
     public static final String LYRIC_HIGHLIGHT_COLOUR = "lyric_highlight"; //NOI18N
+    public static final String RECENT_FILES = "recent_files"; //NOI18N
 
     public static String getProperty(String key) {
         return mProps.getProperty(key);

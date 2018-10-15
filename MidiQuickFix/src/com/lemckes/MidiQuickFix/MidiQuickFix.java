@@ -36,6 +36,7 @@ import com.lemckes.MidiQuickFix.util.MidiUtils;
 import com.lemckes.MidiQuickFix.util.MqfProperties;
 import com.lemckes.MidiQuickFix.util.MqfSequence;
 import com.lemckes.MidiQuickFix.util.PlayController;
+import com.lemckes.MidiQuickFix.util.RecentFiles;
 import com.lemckes.MidiQuickFix.util.SoundbankFileFilter;
 import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.TracksChangedEvent;
@@ -1224,7 +1225,9 @@ public class MidiQuickFix
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
+        openRecentMenu = new javax.swing.JMenu();
         reloadMenuitem = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
         saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
@@ -1446,12 +1449,11 @@ public class MidiQuickFix
         topPanel.setLayout(new javax.swing.BoxLayout(topPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         playControlPanel.setLayout(new javax.swing.BoxLayout(playControlPanel, javax.swing.BoxLayout.LINE_AXIS));
+        topPanel.add(playControlPanel);
 
         transportPanel.setAlignmentX(1.0F);
         transportPanel.setPreferredSize(new java.awt.Dimension(200, 40));
-        playControlPanel.add(transportPanel);
-
-        topPanel.add(playControlPanel);
+        topPanel.add(transportPanel);
 
         mainSplitPane.setLeftComponent(topPanel);
 
@@ -1472,6 +1474,9 @@ public class MidiQuickFix
         });
         fileMenu.add(openMenuItem);
 
+        openRecentMenu.setText("Open Recent");
+        fileMenu.add(openRecentMenu);
+
         reloadMenuitem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings"); // NOI18N
         reloadMenuitem.setText(bundle.getString("reload")); // NOI18N
@@ -1481,6 +1486,7 @@ public class MidiQuickFix
             }
         });
         fileMenu.add(reloadMenuitem);
+        fileMenu.add(jSeparator5);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveMenuItem.setMnemonic('S');
@@ -1722,6 +1728,7 @@ public class MidiQuickFix
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JLabel keyLabel;
     private javax.swing.JLabel keyText;
     private javax.swing.JLabel lengthLabel;
@@ -1731,6 +1738,7 @@ public class MidiQuickFix
     private javax.swing.JSplitPane mainSplitPane;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
+    private javax.swing.JMenu openRecentMenu;
     private javax.swing.JPanel playControlPanel;
     private com.lemckes.MidiQuickFix.components.LoopSlider positionSlider;
     private javax.swing.JMenuItem preferencesMenuItem;
