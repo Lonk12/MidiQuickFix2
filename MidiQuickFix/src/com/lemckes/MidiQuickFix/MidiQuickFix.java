@@ -137,6 +137,10 @@ public class MidiQuickFix
      */
     private String mFilePath;
     /**
+     * The recently used files.
+     */
+    private RecentFiles mRecentFiles;
+    /**
      * The timer that drives the position indicator during play.
      */
     private Timer mTimer;
@@ -190,7 +194,6 @@ public class MidiQuickFix
         });
 
         // TraceDialog.getInstance().setVisible(true);
-
         Startup startDialog = new Startup(new javax.swing.JFrame(), false);
         // Centre on the screen
         startDialog.setLocationRelativeTo(null);
@@ -285,6 +288,10 @@ public class MidiQuickFix
             MidiFileFilter midiFilter = new MidiFileFilter();
             sequenceChooser.addChoosableFileFilter(midiFilter);
             sequenceChooser.setFileFilter(midiFilter);
+
+            mRecentFiles = new RecentFiles();
+            mRecentFiles.fromPropertyString(
+                MqfProperties.getStringProperty(MqfProperties.RECENT_FILES, ""));
 
             String soundbankPath = MqfProperties.getProperty(
                 MqfProperties.LAST_SOUNDBANK_PATH_KEY);
@@ -698,13 +705,45 @@ public class MidiQuickFix
 
             // fileName was given as a parameter or selected from file chooser
             if (fileName != null) {
-                File file = new File(fileName);
+                File file = new File(fileName).getAbsoluteFile();
                 if (file.canRead()) {
-                    String path = file.getAbsoluteFile().getParent();
-                    MqfProperties.setProperty(MqfProperties.LAST_PATH_KEY, path);
+                    String absFileName = file.getPath();
+                    mRecentFiles.useFile(absFileName);
+                    MqfProperties.setProperty(
+                        MqfProperties.RECENT_FILES,
+                        mRecentFiles.toPropertyString());
+                    String parentPathName = file.getParent();
+                    MqfProperties.setProperty(
+                        MqfProperties.LAST_PATH_KEY, parentPathName);
                     newSequence(file);
+
+                    EventQueue.invokeLater(() -> {
+                        updateRecentFilesMenu();
+                    });
                 }
             }
+        }
+    }
+
+    private void updateRecentFilesMenu() {
+
+        openRecentMenu.removeAll();
+        
+        for (String pathname : mRecentFiles.getFiles()) {
+            String filename = "NONE";
+            int lastSlash = pathname.lastIndexOf(File.separatorChar);
+            if (lastSlash > -1) {
+                filename = pathname.substring(lastSlash + 1);
+            }
+            javax.swing.JMenuItem menuItem = new javax.swing.JMenuItem();
+
+            menuItem.setText(filename);
+            menuItem.setToolTipText(pathname);
+            menuItem.setActionCommand(pathname);
+            openRecentMenu.add(menuItem);
+            menuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+                openFile(evt.getActionCommand());
+            });
         }
     }
 
