@@ -94,13 +94,15 @@ public class RecentFilesTest
             expectedList.add(fn);
         }
         assertEquals(expectedList, globalInstance.getFiles());
-        
+
         // Reuse file number 14
         String reused = "/tmp/tmpUsedFile14.midi";
         globalInstance.useFile(reused);
-        
+
         expectedList.remove(reused);
         expectedList.add(0, reused);
+
+        assertEquals(expectedList, globalInstance.getFiles());
     }
 
     /**
