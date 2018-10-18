@@ -30,7 +30,7 @@ public class RecentFiles
 {
 
     public static final int MAX_ENTRIES = 8;
-    
+
     public static final String NAME_SEPARATOR = "#";
 
     private final List<String> files;
@@ -77,11 +77,12 @@ public class RecentFiles
 
     /**
      * Parse the individual file names from the property string
-     * @param propertyString 
+     * @param propertyString
      */
     public void fromPropertyString(String propertyString) {
         String[] names = propertyString.split(NAME_SEPARATOR);
         files.clear();
         files.addAll(Arrays.asList(names));
+        files.removeIf((String t) -> t.isEmpty());
     }
 }
