@@ -36,6 +36,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -168,7 +169,8 @@ public class LyricDisplay
             EventQueue.invokeLater(() -> {
                 try {
                     // Get the location of the current text
-                    final Rectangle r = lyricText.modelToView(start + len);
+                    final Rectangle2D r2d = lyricText.modelToView2D(start + len);
+                    final Rectangle r = r2d.getBounds();
                     // Make the rectangle 2/3 the height of the scroll pane
                     // so that the current line stays near the top of the window
                     int height1 = lyricScrollPane.getHeight() * 2 / 3;

@@ -105,7 +105,7 @@ public class PlayController
             putValue(ACCELERATOR_KEY,
                     javax.swing.KeyStroke.getKeyStroke(
                     java.awt.event.KeyEvent.VK_SPACE,
-                    java.awt.event.InputEvent.ALT_MASK));
+                    java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
@@ -141,7 +141,7 @@ public class PlayController
         public PauseAction() {
             putValue(ACCELERATOR_KEY,
                     javax.swing.KeyStroke.getKeyStroke(
-                    java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
+                    java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
@@ -185,7 +185,7 @@ public class PlayController
             putValue(ACCELERATOR_KEY,
                     javax.swing.KeyStroke.getKeyStroke(
                     java.awt.event.KeyEvent.VK_BACK_SPACE,
-                    java.awt.event.InputEvent.ALT_MASK));
+                    java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
@@ -225,7 +225,7 @@ public class PlayController
             putValue(ACCELERATOR_KEY,
                     javax.swing.KeyStroke.getKeyStroke(
                     java.awt.event.KeyEvent.VK_LEFT,
-                    java.awt.event.InputEvent.ALT_MASK));
+                    java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
@@ -263,7 +263,7 @@ public class PlayController
             putValue(ACCELERATOR_KEY,
                     javax.swing.KeyStroke.getKeyStroke(
                     java.awt.event.KeyEvent.VK_L,
-                    java.awt.event.InputEvent.ALT_MASK));
+                    java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
