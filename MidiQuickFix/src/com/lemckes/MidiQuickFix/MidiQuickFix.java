@@ -687,9 +687,10 @@ public class MidiQuickFix
         }
     }
 
-    private void openFile(String fileName) {
+    private void openFile(String fileToOpen) {
         boolean canContinue = checkForSave(null);
         if (canContinue) {
+            String fileName = fileToOpen;
             // No fileName given; open the file chooser
             if (fileName == null) {
                 String defPath = MqfProperties.getStringProperty(

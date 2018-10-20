@@ -487,11 +487,12 @@ public class MetaEvent
     /**
      * Parse a tempo string with an optional 'bpm' suffix e.g. 88bpm
      *
-     * @param tempoString the string to parse
+     * @param tempo the string to parse
      * @return the integer part of the string or 60 if the string does not
      * represent a valid integer (with optional 'bpm' suffix)
      */
-    public static int parseTempo(String tempoString) {
+    public static int parseTempo(String tempo) {
+        String tempoString = tempo;
         int bpmPos = tempoString.toLowerCase().indexOf("bpm"); // NOI18N
 
         // Default value is 60bpm
