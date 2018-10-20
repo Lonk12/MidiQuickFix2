@@ -251,8 +251,7 @@ public class MidiQuickFix
                             val = (float)d;
                         } catch (ClassCastException cce2) {
                             try {
-                                long l = (Long)tempoAdjustField.getValue();
-                                val = (float)l;
+                                val = (Long)tempoAdjustField.getValue();
                             } catch (ClassCastException cce3) {
                                 // DO NOTHING
                             }
@@ -279,9 +278,7 @@ public class MidiQuickFix
                 MqfProperties.LAST_PATH_KEY);
             if (lastPath != null) {
                 sequenceChooser.setCurrentDirectory(new File(lastPath));
-            }
-            else
-            {
+            } else {
                 MqfProperties.setStringProperty(MqfProperties.LAST_PATH_KEY,
                     sequenceChooser.getCurrentDirectory().getAbsolutePath());
             }
@@ -297,9 +294,7 @@ public class MidiQuickFix
                 MqfProperties.LAST_SOUNDBANK_PATH_KEY);
             if (soundbankPath != null) {
                 soundbankChooser.setCurrentDirectory(new File(soundbankPath));
-            }
-            else
-            {
+            } else {
                 MqfProperties.setStringProperty(MqfProperties.LAST_SOUNDBANK_PATH_KEY,
                     soundbankChooser.getCurrentDirectory().getAbsolutePath());
             }
@@ -729,7 +724,7 @@ public class MidiQuickFix
     private void updateRecentFilesMenu() {
 
         openRecentMenu.removeAll();
-        
+
         for (String pathname : mRecentFiles.getFiles()) {
             String filename = "NONE";
             int lastSlash = pathname.lastIndexOf(File.separatorChar);
@@ -746,6 +741,21 @@ public class MidiQuickFix
                 openFile(evt.getActionCommand());
             });
         }
+
+        if (!mRecentFiles.getFiles().isEmpty()) {
+            openRecentMenu.addSeparator();
+            javax.swing.JMenuItem clearMenuItem = new javax.swing.JMenuItem();
+            clearMenuItem.setText(UiStrings.getString("clear_recent"));
+            openRecentMenu.add(clearMenuItem);
+            clearMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+                mRecentFiles.getFiles().clear();
+                openRecentMenu.removeAll();
+                MqfProperties.setProperty(
+                    MqfProperties.RECENT_FILES,
+                    mRecentFiles.toPropertyString());
+            });
+        }
+
     }
 
     /**
@@ -1549,6 +1559,7 @@ public class MidiQuickFix
         fileMenu.add(saveAsMenuItem);
         fileMenu.add(jSeparator1);
 
+        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         exitMenuItem.setMnemonic('x');
         exitMenuItem.setText(UiStrings.getString("exit")); // NOI18N
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
