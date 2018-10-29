@@ -104,11 +104,10 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle"); // NOI18N
-        setTitle(bundle.getString("TrackUpdateUtilDialog.title")); // NOI18N
+        setTitle(UiStrings.getString("TrackUpdateUtilDialog.title")); // NOI18N
         setName("Form"); // NOI18N
 
-        mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("TrackUpdateUtilDialog.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("DejaVu Sans", 1, 12), new java.awt.Color(0, 0, 0))); // NOI18N
+        mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, UiStrings.getString("TrackUpdateUtilDialog.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 12), new java.awt.Color(0, 0, 0))); // NOI18N
         mainPanel.setName("mainPanel"); // NOI18N
         mainPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -141,7 +140,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
         mainPanel.add(jSeparator1, gridBagConstraints);
@@ -168,8 +167,8 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints.gridy = 2;
         mainPanel.add(setVelocityPanel, gridBagConstraints);
 
-        java.util.ResourceBundle bundle1 = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings"); // NOI18N
-        setNoteOnVelocityButton.setText(bundle1.getString("TrackUpdateUtilDialog.setNoteOnVelocityButton.text")); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings"); // NOI18N
+        setNoteOnVelocityButton.setText(bundle.getString("TrackUpdateUtilDialog.setNoteOnVelocityButton.text")); // NOI18N
         setNoteOnVelocityButton.setName("setNoteOnVelocityButton"); // NOI18N
         setNoteOnVelocityButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -186,7 +185,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
         mainPanel.add(jSeparator2, gridBagConstraints);
@@ -205,7 +204,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         adjustVelocityPanel.setName("adjustVelocityPanel"); // NOI18N
 
         adjustVelocityFactorField.setColumns(4);
-        adjustVelocityFactorField.setText(bundle.getString("TrackUpdateUtilDialog.adjustVelocityFactorField.text")); // NOI18N
+        adjustVelocityFactorField.setText(UiStrings.getString("TrackUpdateUtilDialog.adjustVelocityFactorField.text")); // NOI18N
         adjustVelocityFactorField.setName("adjustVelocityFactorField"); // NOI18N
         adjustVelocityFactorField.setValue(1.0f);
         adjustVelocityPanel.add(adjustVelocityFactorField);
@@ -215,7 +214,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints.gridy = 4;
         mainPanel.add(adjustVelocityPanel, gridBagConstraints);
 
-        adjustNoteOnVelocityButton.setText(bundle1.getString("TrackUpdateUtilDialog.adjustNoteOnVelocityButton.text")); // NOI18N
+        adjustNoteOnVelocityButton.setText(bundle.getString("TrackUpdateUtilDialog.adjustNoteOnVelocityButton.text")); // NOI18N
         adjustNoteOnVelocityButton.setName("adjustNoteOnVelocityButton"); // NOI18N
         adjustNoteOnVelocityButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -232,7 +231,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
         mainPanel.add(jSeparator7, gridBagConstraints);
@@ -251,7 +250,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         shiftEventsPanel.setName("shiftEventsPanel"); // NOI18N
 
         shiftEventsField.setColumns(4);
-        shiftEventsField.setToolTipText(bundle.getString("TrackUpdateUtilDialog.shiftEventsField.toolTipText")); // NOI18N
+        shiftEventsField.setToolTipText(UiStrings.getString("TrackUpdateUtilDialog.shiftEventsField.toolTipText")); // NOI18N
         shiftEventsField.setName("shiftEventsField"); // NOI18N
         shiftEventsField.setValue(0l);
         shiftEventsPanel.add(shiftEventsField);
@@ -261,7 +260,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints.gridy = 6;
         mainPanel.add(shiftEventsPanel, gridBagConstraints);
 
-        shiftEventsButton.setText(bundle.getString("TrackUpdateUtilDialog.shiftEventsButton.text")); // NOI18N
+        shiftEventsButton.setText(UiStrings.getString("TrackUpdateUtilDialog.shiftEventsButton.text")); // NOI18N
         shiftEventsButton.setName("shiftEventsButton"); // NOI18N
         shiftEventsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -278,7 +277,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
         mainPanel.add(jSeparator3, gridBagConstraints);
@@ -312,7 +311,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 9;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
         mainPanel.add(jSeparator4, gridBagConstraints);
@@ -346,7 +345,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 11;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
         mainPanel.add(jSeparator5, gridBagConstraints);
@@ -380,7 +379,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 13;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
         mainPanel.add(jSeparator6, gridBagConstraints);
@@ -417,7 +416,7 @@ public class TrackUpdateUtilDialog extends javax.swing.JDialog
         buttonPanel.setName("buttonPanel"); // NOI18N
         buttonPanel.setLayout(new java.awt.GridLayout(1, 0, 5, 0));
 
-        cancelButton.setText(bundle.getString("TrackUpdateUtilDialog.cancelButton.text")); // NOI18N
+        cancelButton.setText(UiStrings.getString("close")); // NOI18N
         cancelButton.setName("cancelButton"); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

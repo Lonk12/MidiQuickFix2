@@ -199,8 +199,8 @@ public class TrackEditorPanel
 
     public void convertText() {
         if (trackTable.getSelectedRowCount() == 0) {
-            String message = UiStrings.getString("ConvertAllTextQuestion");
-            String title = UiStrings.getString("ConvertAllTextTitle");
+            String message = UiStrings.getString("TrackUpdateUtilDialog.convertAllTextQuestion");
+            String title = UiStrings.getString("TrackUpdateUtilDialog.convertAllTextTitle");
             int answer = JOptionPane.showConfirmDialog(controlPanel, message, title,
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer == JOptionPane.YES_OPTION) {
@@ -216,8 +216,8 @@ public class TrackEditorPanel
 
     public void addSpaceToLyrics() {
         if (trackTable.getSelectedRowCount() == 0) {
-            String message = UiStrings.getString("AddSpaceToAllQuestion");
-            String title = UiStrings.getString("AddSpaceToAllTitle");
+            String message = UiStrings.getString("TrackUpdateUtilDialog.addSpaceToAllQuestion");
+            String title = UiStrings.getString("TrackUpdateUtilDialog.addSpaceToAllTitle");
             int answer = JOptionPane.showConfirmDialog(controlPanel, message, title,
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer == JOptionPane.YES_OPTION) {
@@ -238,8 +238,8 @@ public class TrackEditorPanel
 
     public void shiftEvents(long targetTick) {
         if (trackTable.getSelectedRowCount() == 0) {
-            String message = UiStrings.getString("SelectionNeededForShift");
-            String title = UiStrings.getString("SelectionNeededTitle");
+            String message = UiStrings.getString("TrackUpdateUtilDialog.selectionNeededForShift");
+            String title = UiStrings.getString("TrackUpdateUtilDialog.selectionNeededTitle");
             JOptionPane.showMessageDialog(controlPanel, message, title,
                 JOptionPane.ERROR_MESSAGE);
         } else {
