@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2018 John Lemcke
+ *   Copyright (C) 2004-2019 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -45,6 +45,7 @@ public class MqfProperties
 
     public static final String LAST_PATH_KEY = "lastpath"; //NOI18N
     public static final String LAST_SOUNDBANK_PATH_KEY = "last_soundbank_path"; //NOI18N
+    public static final String LAST_SOUNDBANK_FILE_KEY = "last_soundbank_file"; //NOI18N
     public static final String LOOK_AND_FEEL_NAME = "laf_name"; //NOI18N
     public static final String LYRIC_FONT = "lyric_font"; //NOI18N
     public static final String LYRIC_RUBY_FONT_SCALE = "lyric_ruby_font_scale"; //NOI18N
@@ -53,6 +54,7 @@ public class MqfProperties
     public static final String LYRIC_RUBY_FG_COLOUR = "lyric_ruby_fg"; //NOI18N
     public static final String LYRIC_HIGHLIGHT_COLOUR = "lyric_highlight"; //NOI18N
     public static final String RECENT_FILES = "recent_files"; //NOI18N
+    public static final String SHOW_TRACE = "show_trace"; //NOI18N
 
     public static String getProperty(String key) {
         return mProps.getProperty(key);
@@ -188,6 +190,36 @@ public class MqfProperties
         MqfProperties.setProperty(key, encodeIntegerValue(value));
     }
 
+    private static String encodeIntegerValue(int value) {
+        NumberFormat nf = NumberFormat.getIntegerInstance();
+        nf.setGroupingUsed(false);
+        nf.setMinimumIntegerDigits(1);
+        return nf.format(value);
+    }
+
+    public static boolean getBooleanProperty(String key, boolean defaultVal) {
+        boolean val = defaultVal;
+        String prop = MqfProperties.getProperty(key);
+        if (prop != null) {
+            try {
+                val = Boolean.parseBoolean(prop);
+            } catch (NumberFormatException nfe) {
+                setBooleanProperty(key, defaultVal);
+            }
+        } else {
+            setBooleanProperty(key, defaultVal);
+        }
+        return val;
+    }
+
+    public static void setBooleanProperty(String key, boolean value) {
+        MqfProperties.setProperty(key, encodeBooleanValue(value));
+    }
+
+    private static String encodeBooleanValue(boolean value) {
+        return Boolean.toString(value);
+    }
+
     public static String getStringProperty(String key, String defaultVal) {
         String val = defaultVal;
         String prop = MqfProperties.getProperty(key);
@@ -201,13 +233,6 @@ public class MqfProperties
 
     public static void setStringProperty(String key, String value) {
         MqfProperties.setProperty(key, value);
-    }
-
-    private static String encodeIntegerValue(int value) {
-        NumberFormat nf = NumberFormat.getIntegerInstance();
-        nf.setGroupingUsed(false);
-        nf.setMinimumIntegerDigits(1);
-        return nf.format(value);
     }
 
     public static String getPropertiesFileName() {

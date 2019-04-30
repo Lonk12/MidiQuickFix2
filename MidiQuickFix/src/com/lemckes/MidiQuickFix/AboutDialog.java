@@ -57,22 +57,24 @@ public class AboutDialog
     }
 
     /**
-     * Show the About dialog.
-     * I'd rather call this method 'show()' but that overrides
-     * a deprecated java.awt.Dialog method.
+     * Override to set the position of the dialog
+     *
+     * @param visible
      */
-    public void showAboutDialog() {
-        pack();
-        setLocationRelativeTo(mParent);
-        setVisible(true);
+    @Override
+    public void setVisible(boolean visible) {
+        if (visible) {
+            pack();
+            setLocationRelativeTo(mParent);
+        }
+        super.setVisible(visible);
     }
 
     /**
      * Populate the messages in the About dialog.
      */
     public void populateMessages() {
-        setTitle(UiStrings.getString("about_mqf")); // NOI18N
-        getContentPane().add(mSplash, java.awt.BorderLayout.CENTER);
+        aboutPanel.add(mSplash, java.awt.BorderLayout.CENTER);
 
         mSplash.setMessageDelay(0);
 
@@ -109,6 +111,7 @@ public class AboutDialog
         mSplash.addStageMessage("");
         mSplash.addStageMessage(osname + " - " + arch + " - " + osversion);
 
+        
     }
 
     private void doClose() {
@@ -127,6 +130,11 @@ public class AboutDialog
 
         buttonPanel = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        aboutPanel = new javax.swing.JPanel();
+        licensePanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(UiStrings.getString("about_mqf")); // NOI18N
@@ -150,6 +158,21 @@ public class AboutDialog
 
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
+        aboutPanel.setLayout(new java.awt.BorderLayout());
+        jTabbedPane1.addTab(UiStrings.getString("AboutDialog.aboutPanel.title"), aboutPanel); // NOI18N
+
+        licensePanel.setLayout(new java.awt.BorderLayout());
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        licensePanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab(UiStrings.getString("AboutDialog.licensePanel.title"), licensePanel); // NOI18N
+
+        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.PAGE_START);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
@@ -163,7 +186,12 @@ public class AboutDialog
         doClose();
     }//GEN-LAST:event_closeDialog
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel aboutPanel;
     private javax.swing.JPanel buttonPanel;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JPanel licensePanel;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 }

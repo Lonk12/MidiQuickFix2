@@ -56,13 +56,12 @@ this Package to another party. It does not refer to licensing fees.
        (b) recipients of the item may redistribute it under the same
            conditions they received it.
 
-       (c) If the item is a binary, object code, bytecode, the
-       complete
+       (c) If the item is a binary, object code, bytecode, the complete
            corresponding machine-readable source code is included with
            the item.
 
 
-         Permission for Use and Modification Without Redistribution
+      Permission for Use and Modification Without Redistribution
 
   (1) You are permitted to use the Standard Version and create and use
       Modified Versions for any purpose without restriction, provided
@@ -70,7 +69,7 @@ this Package to another party. It does not refer to licensing fees.
       outside of your company or organization.
 
 
-           Permissions for Redistribution of the Standard Version
+      Permissions for Redistribution of the Standard Version
 
   (2) You may make available verbatim copies of the source code of the
       Standard Version of this Package in any medium without
@@ -89,19 +88,16 @@ this Package to another party. It does not refer to licensing fees.
       were the Standard Version.
 
 
- Permissions for Redistribution of Modified Versions of the Package as
- Source
+ Permissions for Redistribution of Modified Versions of the Package as Source
 
-  (4) You may modify your copy of the source code of this Package in
-  any way
+  (4) You may modify your copy of the source code of this Package in any way
       and distribute that Modified Version (either gratis or for a
       Distribution Fee, and with or without a corresponding binary,
       bytecode or object code version of the Modified Version)
       provided that You clearly indicate what changes You made to the
       Package, and provided that You do at least ONE of the following:
 
-       (a) make the Modified Version available to the Originator(s) of
-       the
+       (a) make the Modified Version available to the Originator(s) of the
            Standard Version, under the exact license of the Standard
            Version, so that the Originator(s) may include your
            modifications into the Standard Version (at their
@@ -115,8 +111,7 @@ this Package to another party. It does not refer to licensing fees.
            Version, and rename your Modified Version so that the name
            is substantially different from the Standard Version.
 
-       (c) permit and encourage anyone who receives a copy of the
-       Modified
+       (c) permit and encourage anyone who receives a copy of the Modified
            Version permission to make your modifications Freely
            Available in some specific way.
 
@@ -128,8 +123,7 @@ this Package to another party. It does not refer to licensing fees.
 
       Permissions for Redistribution of Non-Source Versions of Package
 
-  (5) You may distribute binary, object code, bytecode or other
-  non-source
+  (5) You may distribute binary, object code, bytecode or other non-source
       versions of the Standard Version of the Package, provided that
       you include complete instructions on where to get the source
       code of the Standard Version.  Such instructions must be valid
@@ -140,17 +134,14 @@ this Package to another party. It does not refer to licensing fees.
       days after You become aware that the instructions are invalid,
       then You do not forfeit any of Your rights under this license.
 
-  (6) You may distribute binary, object code, bytecode or other
-  non-source
+  (6) You may distribute binary, object code, bytecode or other non-source
       versions of a Modified Version provided that You do at least ONE
       of the following:
 
-       (a) include a copy of the corresponding source code for the
-       Modified
+       (a) include a copy of the corresponding source code for the Modified
            Version under the terms indicated in (4).
 
-       (b) ensure that the installation of Your non-source Modified
-       Version
+       (b) ensure that the installation of Your non-source Modified Version
            does not conflict in any way with an installation of the
            Standard Version, include for each program installed by the
            Modified Version clear documentation describing how it
@@ -158,8 +149,7 @@ this Package to another party. It does not refer to licensing fees.
            Version so that the name is substantially different from
            the Standard Version.
 
-       (c) ensure that the Modified Version includes notification of
-       the
+       (c) ensure that the Modified Version includes notification of the
            changes made from the Standard Version, and offer to
            provide machine-readable source code (under a license that
            permits making that source code Freely Available) of the
@@ -177,8 +167,7 @@ this Package to another party. It does not refer to licensing fees.
       Versions of the Package is still subject to the other terms set
       forth in other sections of this license.
 
-  (8) In addition to the permissions given elsewhere by this license,
-  You
+  (8) In addition to the permissions given elsewhere by this license, You
       are also permitted to link Modified and Standard Versions of
       this Package with other works and distribute the result without
       restriction, provided You have produced binary program(s) that
@@ -191,11 +180,9 @@ this Package to another party. It does not refer to licensing fees.
       Package itself.
 
 
-        Items That are Never Considered Part of a Modified Version
-        Package
+      Items That are Never Considered Part of a Modified Version Package
 
-  (9) Works (including, but not limited to, subroutines and scripts)
-  that
+  (9) Works (including, but not limited to, subroutines and scripts) that
       you have linked or aggregated with the Package that merely
       extend or make use of the Package, but are not intended to cause
       the Package to operate differently from the Standard Version, do
@@ -206,8 +193,7 @@ this Package to another party. It does not refer to licensing fees.
 
               Acceptance of License and Disclaimer of Warranty
 
- (10) You are not required to accept this License, since you have not
- signed
+ (10) You are not required to accept this License, since you have not signed
       it.  However, nothing else grants you permission to copy, modify
       or distribute the Standard or Modified Versions of the Package.
       These actions are prohibited by copyright law if you do not

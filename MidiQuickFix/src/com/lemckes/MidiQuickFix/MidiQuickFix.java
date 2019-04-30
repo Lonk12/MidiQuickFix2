@@ -3,7 +3,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2018 John Lemcke
+ * Copyright (C) 2004-2019 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -26,6 +26,7 @@ package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.components.TempoSlider;
 import com.lemckes.MidiQuickFix.util.BarBeatTick;
+import com.lemckes.MidiQuickFix.util.FontSizer;
 import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.LoopSliderEvent;
 import com.lemckes.MidiQuickFix.util.LoopSliderListener;
@@ -77,6 +78,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
@@ -172,6 +174,16 @@ public class MidiQuickFix
      * @param fileName
      */
     public MidiQuickFix(final String fileName) {
+        FontSizer.scaleFont(2.0);
+//        SwingUtilities.updateComponentTreeUI(this);
+//        pack();
+
+        EventQueue.invokeLater(() -> {
+            build(fileName);
+        });
+    }
+    
+    private void build(final String fileName) {
         TraceDialog.getInstance().addComponentListener(new ComponentListener()
         {
             @Override
@@ -193,7 +205,9 @@ public class MidiQuickFix
             }
         });
 
-        // TraceDialog.getInstance().setVisible(true);
+        TraceDialog.getInstance().setVisible(
+            MqfProperties.getBooleanProperty(MqfProperties.SHOW_TRACE, true));
+
         Startup startDialog = new Startup(new javax.swing.JFrame(), false);
         // Centre on the screen
         startDialog.setLocationRelativeTo(null);
@@ -356,9 +370,14 @@ public class MidiQuickFix
         mMainFrame = this;
 
         mainSplitPane.setDividerLocation(mainSplitPane.getWidth() / 8);
+        
+        SwingUtilities.updateComponentTreeUI(this);
+        pack();
     }
 
     public static JFrame getMainFrame() {
+        KeyStroke ks = KeyStroke.getKeyStroke('a');
+        ks.getModifiers();
         return mMainFrame;
     }
 
@@ -430,14 +449,14 @@ public class MidiQuickFix
                 // or use Patch[] patches = mSeq.getPatchList();
                 try {
                     if (mSynth.loadInstruments(soundbank, patches)) {
-                        TraceDialog.addTrace("Loaded Bank 0 from : " + soundbank.getName());
+                        trace("Loaded Bank 0 from : " + soundbank.getName());
                     } else {
-                        TraceDialog.addTrace("Failed to Load Bank 0 from : " + soundbank.getName());
+                        trace("Failed to Load Bank 0 from : " + soundbank.getName());
                     }
                 } catch (IllegalArgumentException ex) {
                     Logger.getLogger(MidiQuickFix.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
-                    // debugSoundbank(soundbank);
+//                     debugSoundbank(soundbank);
                 }
                 // Load all the patches from the soundbank, one at a time
 //                for (Instrument newI : soundbank.getInstruments()) {
@@ -458,7 +477,7 @@ public class MidiQuickFix
 //                    }
 //                }
             } else {
-                TraceDialog.addTrace("Soundbank : " + soundbank.getName() + " not supported!");
+                trace("Soundbank : " + soundbank.getName() + " not supported!");
             }
             InstrumentNames.populateNames();
         } catch (InvalidMidiDataException | IOException ex) {
@@ -1295,6 +1314,7 @@ public class MidiQuickFix
         traceMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
+        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
 
         soundbankChooser.setName("soundbankChooser"); // NOI18N
 
@@ -1514,7 +1534,7 @@ public class MidiQuickFix
         fileMenu.setMnemonic('F');
         fileMenu.setText(UiStrings.getString("file")); // NOI18N
 
-        openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         openMenuItem.setMnemonic('O');
         openMenuItem.setText(UiStrings.getString("open")); // NOI18N
         openMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1527,7 +1547,7 @@ public class MidiQuickFix
         openRecentMenu.setText("Open Recent");
         fileMenu.add(openRecentMenu);
 
-        reloadMenuitem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        reloadMenuitem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/resources/UIStrings"); // NOI18N
         reloadMenuitem.setText(bundle.getString("reload")); // NOI18N
         reloadMenuitem.addActionListener(new java.awt.event.ActionListener() {
@@ -1538,7 +1558,7 @@ public class MidiQuickFix
         fileMenu.add(reloadMenuitem);
         fileMenu.add(jSeparator5);
 
-        saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         saveMenuItem.setMnemonic('S');
         saveMenuItem.setText(UiStrings.getString("save")); // NOI18N
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1548,7 +1568,7 @@ public class MidiQuickFix
         });
         fileMenu.add(saveMenuItem);
 
-        saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         saveAsMenuItem.setMnemonic('a');
         saveAsMenuItem.setText(UiStrings.getString("saveas")); // NOI18N
         saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1559,7 +1579,7 @@ public class MidiQuickFix
         fileMenu.add(saveAsMenuItem);
         fileMenu.add(jSeparator1);
 
-        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         exitMenuItem.setMnemonic('x');
         exitMenuItem.setText(UiStrings.getString("exit")); // NOI18N
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1574,9 +1594,8 @@ public class MidiQuickFix
         sequenceMenu.setMnemonic('S');
         sequenceMenu.setText(UiStrings.getString("sequence")); // NOI18N
 
-        songInfoMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle").getString("SongInfoMenuItem.mnemonic").charAt(0));
-        java.util.ResourceBundle bundle1 = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle"); // NOI18N
-        songInfoMenuItem.setText(bundle1.getString("SongInfoMenuItem.text")); // NOI18N
+        songInfoMenuItem.setMnemonic(UiStrings.getString("SongInfoMenuItem.mnemonic").charAt(0));
+        songInfoMenuItem.setText(UiStrings.getString("SongInfoMenuItem.text")); // NOI18N
         songInfoMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 songInfoMenuItemActionPerformed(evt);
@@ -1596,6 +1615,7 @@ public class MidiQuickFix
         sequenceMenu.add(jSeparator4);
 
         quantiseMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle").getString("QuantiseMenuItem.mnemonic").charAt(0));
+        java.util.ResourceBundle bundle1 = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle"); // NOI18N
         quantiseMenuItem.setText(bundle1.getString("QuantiseMenuItem.text")); // NOI18N
         quantiseMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1649,6 +1669,16 @@ public class MidiQuickFix
         });
         helpMenu.add(aboutMenuItem);
 
+        jCheckBoxMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jCheckBoxMenuItem1.setSelected(true);
+        jCheckBoxMenuItem1.setText("I'm Trapped");
+        jCheckBoxMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxMenuItem1ActionPerformed(evt);
+            }
+        });
+        helpMenu.add(jCheckBoxMenuItem1);
+
         menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
@@ -1675,7 +1705,7 @@ public class MidiQuickFix
                 mAboutDialog = new AboutDialog(frame, false);
                 mAboutDialog.populateMessages();
             }
-            mAboutDialog.showAboutDialog();
+            mAboutDialog.setVisible(true);
             setBusy(false);
         });
 
@@ -1728,6 +1758,10 @@ public class MidiQuickFix
         openSoundbankFile();
     }//GEN-LAST:event_soundbankMenuItemActionPerformed
 
+    private void jCheckBoxMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxMenuItem1ActionPerformed
+
     /**
      * <B>main</B>
      *
@@ -1775,6 +1809,7 @@ public class MidiQuickFix
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;

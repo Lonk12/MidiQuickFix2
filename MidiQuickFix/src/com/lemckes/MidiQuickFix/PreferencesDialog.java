@@ -2,7 +2,7 @@
  *
  * MidiQuickFix - A Simple Midi file editor and player
  *
- * Copyright (C) 2004-2018 John Lemcke
+ * Copyright (C) 2004-2019 John Lemcke
  * jostle@users.sourceforge.net
  *
  * This program is free software; you can redistribute it
@@ -70,6 +70,7 @@ public class PreferencesDialog
     private String mDefaultPath;
     private String mDefaultSoundbankPath;
     private String mLafName;
+    private Boolean mShowTraceDialog;
     private static final String[] sampleText = {
         "Sing a song of sixpence,\n",
         "A pocket ",
@@ -126,6 +127,8 @@ public class PreferencesDialog
             MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.GREEN.darker());
         mRubyScale = MqfProperties.getFloatProperty(
             MqfProperties.LYRIC_RUBY_FONT_SCALE, 0.8f);
+        mShowTraceDialog = MqfProperties.getBooleanProperty(
+            MqfProperties.SHOW_TRACE, true);
 
         setStyles();
 
@@ -148,6 +151,8 @@ public class PreferencesDialog
         lookAndFeelCombo.setModel(new DefaultComboBoxModel<>(lafNames));
         String currentLaf = UIManager.getLookAndFeel().getName();
         lookAndFeelCombo.setSelectedItem(currentLaf);
+
+        traceDialogCheckbox.getModel().setSelected(mShowTraceDialog);
 
         pack();
         setLocationRelativeTo(parent);
@@ -172,6 +177,8 @@ public class PreferencesDialog
             MqfProperties.LAST_SOUNDBANK_PATH_KEY, mDefaultSoundbankPath);
         MqfProperties.setStringProperty(
             MqfProperties.LOOK_AND_FEEL_NAME, mLafName);
+        MqfProperties.setBooleanProperty(
+            MqfProperties.SHOW_TRACE, mShowTraceDialog);
 
         MqfProperties.writeProperties();
     }
@@ -262,8 +269,8 @@ public class PreferencesDialog
                     break;
                 }
             }
-        } catch (ClassNotFoundException | IllegalAccessException |
-            InstantiationException | UnsupportedLookAndFeelException e) {
+        } catch (ClassNotFoundException | IllegalAccessException
+            | InstantiationException | UnsupportedLookAndFeelException e) {
             // Nimbus is not available, use the default look and feel.
         }
         MqfProperties.readProperties();
@@ -307,6 +314,8 @@ public class PreferencesDialog
         browseSoundbankButton = new javax.swing.JButton();
         lookAndFeelPanel = new javax.swing.JPanel();
         lookAndFeelCombo = new javax.swing.JComboBox<>();
+        traceDialogPanel = new javax.swing.JPanel();
+        traceDialogCheckbox = new javax.swing.JCheckBox();
         controlPanel = new javax.swing.JPanel();
         buttonPanel = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
@@ -613,6 +622,25 @@ public class PreferencesDialog
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         mainPanel.add(lookAndFeelPanel, gridBagConstraints);
 
+        traceDialogPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(UiStrings.getString("PreferencesDialog.traceDialogPanel.border.title"))); // NOI18N
+        traceDialogPanel.setName("traceDialogPanel"); // NOI18N
+        traceDialogPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 2, 2));
+
+        traceDialogCheckbox.setText(UiStrings.getString("PreferencesDialog.traceDialogCheckbox.text")); // NOI18N
+        traceDialogCheckbox.setName("traceDialogCheckbox"); // NOI18N
+        traceDialogCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                traceDialogCheckboxActionPerformed(evt);
+            }
+        });
+        traceDialogPanel.add(traceDialogCheckbox);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        mainPanel.add(traceDialogPanel, gridBagConstraints);
+
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         controlPanel.setName("controlPanel"); // NOI18N
@@ -787,6 +815,12 @@ public class PreferencesDialog
 
     }//GEN-LAST:event_browseSoundbankButtonActionPerformed
 
+    private void traceDialogCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_traceDialogCheckboxActionPerformed
+
+        mShowTraceDialog = traceDialogCheckbox.isSelected();
+
+    }//GEN-LAST:event_traceDialogCheckboxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JButton browseButton;
@@ -819,5 +853,7 @@ public class PreferencesDialog
     private javax.swing.JLabel rubyScaleLabel;
     private javax.swing.JSpinner rubyScaleSpinner;
     private javax.swing.JTextField soundbankFolderField;
+    private javax.swing.JCheckBox traceDialogCheckbox;
+    private javax.swing.JPanel traceDialogPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,7 +4,7 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-      <ResourceString bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="SongInfoDialog.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+      <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="SongInfoDialog.title" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
     </Property>
     <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
   </Properties>
@@ -32,7 +32,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Song Info">
-              <ResourceString PropertyName="titleX" bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="SongInfoDialog.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString PropertyName="titleX" bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="SongInfoDialog.title" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -74,7 +74,7 @@
             <Component class="javax.swing.JButton" name="cancelButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="com/lemckes/MidiQuickFix/Bundle.properties" key="SongInfoDialog.cancelButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="com/lemckes/MidiQuickFix/resources/UIStrings.properties" key="SongInfoDialog.cancelButton.text" replaceFormat="UiStrings.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="name" type="java.lang.String" value="cancelButton" noResource="true"/>
               </Properties>

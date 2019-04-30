@@ -106,7 +106,6 @@ public class SongInfoDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         mainPanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -114,11 +113,10 @@ public class SongInfoDialog extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle"); // NOI18N
-        setTitle(bundle.getString("SongInfoDialog.title")); // NOI18N
+        setTitle(UiStrings.getString("SongInfoDialog.title")); // NOI18N
         setName("Form"); // NOI18N
 
-        mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("SongInfoDialog.title"))); // NOI18N
+        mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(UiStrings.getString("SongInfoDialog.title"))); // NOI18N
         mainPanel.setName("mainPanel"); // NOI18N
         mainPanel.setLayout(new java.awt.GridBagLayout());
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
@@ -129,7 +127,7 @@ public class SongInfoDialog extends javax.swing.JDialog {
         buttonPanel.setName("buttonPanel"); // NOI18N
         buttonPanel.setLayout(new java.awt.GridLayout(1, 0, 5, 0));
 
-        cancelButton.setText(bundle.getString("SongInfoDialog.cancelButton.text")); // NOI18N
+        cancelButton.setText(UiStrings.getString("SongInfoDialog.cancelButton.text")); // NOI18N
         cancelButton.setName("cancelButton"); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
