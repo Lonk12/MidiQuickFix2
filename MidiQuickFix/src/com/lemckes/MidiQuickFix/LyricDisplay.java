@@ -228,7 +228,7 @@ public class LyricDisplay
             int start = word.indexOf(trim);
             int trimLen = trim.length();
             mPlaces.put(e.getKey(), new WordPlace(wordstart + start, trimLen));
-            System.out.println(e.getKey() +"\t:" + word + ": "+ wordstart + ", "+trimLen);
+            // System.out.println(e.getKey() +"\t:" + word + ": "+ wordstart + ", "+trimLen);
             wordstart += word.length();
         }
         displayText();
