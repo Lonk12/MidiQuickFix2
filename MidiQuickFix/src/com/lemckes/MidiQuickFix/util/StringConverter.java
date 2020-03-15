@@ -12,8 +12,8 @@ public class StringConverter
     private static Charset charset;
 
     static {
-        charsetName = "ISO-8859-1";
-        charset = Charset.forName(charsetName);
+        charset = Charset.defaultCharset();
+        charsetName = charset.name();
     }
 
     public static Charset getCharset() {
@@ -44,7 +44,7 @@ public class StringConverter
     }
 
     public static void resetDefaultCharset() {
-        StringConverter.setCharsetName("ISO-8859-1");
+        StringConverter.setCharset(Charset.defaultCharset());
     }
 
     static public String convertBytesToString(byte[] bytes) throws

@@ -70,8 +70,8 @@ public class StringConverterTest extends TestCase
     public void testConvertRoundTrip() throws Exception {
         System.out.println("convertStringToBytes");
         byte[] result = StringConverter.convertStringToBytes(s);
-        assertEquals(bytes.length, result.length);
         String backAgain = StringConverter.convertBytesToString(result);
+        assertEquals(s, backAgain);
         System.out.println("Original  :" + s + ":");
         System.out.println("Converted :" + backAgain + ":");
         System.out.println("s.getBytes");
