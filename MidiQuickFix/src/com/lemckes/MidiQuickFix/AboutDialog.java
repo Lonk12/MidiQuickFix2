@@ -22,8 +22,17 @@
  ************************************************************* */
 package com.lemckes.MidiQuickFix;
 
+import com.lemckes.MidiQuickFix.util.TraceDialog;
 import com.lemckes.MidiQuickFix.util.UiStrings;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Show the About dialog.
@@ -54,6 +63,27 @@ public class AboutDialog
         mSplash.setCentredText(true);
 
         initComponents();
+
+        URL url = getClass().getResource("Artistic.clarified"); // NOI18N
+        try {
+            FileReader fr = new FileReader(new File(url.getFile()));
+            BufferedReader br = new BufferedReader(fr);
+            String l = "";
+            boolean done = false;
+            while (!done) {
+                l = br.readLine();
+                if (l == null) {
+                    done = true;
+                } else {
+                    licenseText.append(l + "\n");
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            TraceDialog.addTrace("Artistic.clarified - File Not Found");
+        } catch (IOException ex) {
+            TraceDialog.addTrace("Artistic.clarified - IOException");
+        }
+
     }
 
     /**
@@ -134,7 +164,7 @@ public class AboutDialog
         aboutPanel = new javax.swing.JPanel();
         licensePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        licenseText = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(UiStrings.getString("about_mqf")); // NOI18N
@@ -163,15 +193,17 @@ public class AboutDialog
 
         licensePanel.setLayout(new java.awt.BorderLayout());
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        licenseText.setEditable(false);
+        licenseText.setColumns(20);
+        licenseText.setLineWrap(true);
+        licenseText.setRows(5);
+        jScrollPane1.setViewportView(licenseText);
 
         licensePanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jTabbedPane1.addTab(UiStrings.getString("AboutDialog.licensePanel.title"), licensePanel); // NOI18N
 
-        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.PAGE_START);
+        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -190,8 +222,8 @@ public class AboutDialog
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JPanel licensePanel;
+    private javax.swing.JTextArea licenseText;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 }
