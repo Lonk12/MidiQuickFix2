@@ -174,10 +174,6 @@ public class MidiQuickFix
      * @param fileName
      */
     public MidiQuickFix(final String fileName) {
-        FontSizer.scaleFont(2.0);
-//        SwingUtilities.updateComponentTreeUI(this);
-//        pack();
-
         EventQueue.invokeLater(() -> {
             build(fileName);
         });
@@ -371,7 +367,6 @@ public class MidiQuickFix
 
         mainSplitPane.setDividerLocation(mainSplitPane.getWidth() / 8);
         
-        SwingUtilities.updateComponentTreeUI(this);
         pack();
     }
 
@@ -1314,7 +1309,6 @@ public class MidiQuickFix
         traceMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
-        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
 
         soundbankChooser.setName("soundbankChooser"); // NOI18N
 
@@ -1669,16 +1663,6 @@ public class MidiQuickFix
         });
         helpMenu.add(aboutMenuItem);
 
-        jCheckBoxMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        jCheckBoxMenuItem1.setSelected(true);
-        jCheckBoxMenuItem1.setText("I'm Trapped");
-        jCheckBoxMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxMenuItem1ActionPerformed(evt);
-            }
-        });
-        helpMenu.add(jCheckBoxMenuItem1);
-
         menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
@@ -1758,10 +1742,6 @@ public class MidiQuickFix
         openSoundbankFile();
     }//GEN-LAST:event_soundbankMenuItemActionPerformed
 
-    private void jCheckBoxMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxMenuItem1ActionPerformed
-
     /**
      * <B>main</B>
      *
@@ -1809,7 +1789,6 @@ public class MidiQuickFix
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
