@@ -41,7 +41,7 @@ import javax.swing.table.TableModel;
  */
 public class TrackTable extends javax.swing.JTable {
     static final long serialVersionUID = -3055797455895279118L;
-    private EventListenerList mListeners = new EventListenerList();
+    private final EventListenerList mListeners = new EventListenerList();
 
     /** Creates a new TrackTable */
     public TrackTable() {
@@ -132,17 +132,23 @@ public class TrackTable extends javax.swing.JTable {
      * @param event the event to be inserted
      */
     public void insertEvent(MidiEvent event) {
+        if (isEditing())
+        {
+            getCellEditor().cancelCellEditing();
+        }
+
         ((TrackTableModel)getModel()).insertEvent(event);
     }
 
     /** Set the table cell editor for the Patch column. */
     void setInstrumentEditor() {
         //trace("setInstrumentEditor");
-        TableColumn instrumentColumn = getColumnModel().getColumn(4);
+        TableColumn instrumentColumn =
+            getColumnModel().getColumn(TrackTableModel.ColumnInfo.PATCH.getIndex());
 
-        String[] s = InstrumentNames.getInstance().getNameArray();
+        String[] names = InstrumentNames.getInstance().getNameArray();
         JComboBox<String> comboBox =
-            new JComboBox<>(new DefaultComboBoxModel<>(s));
+            new JComboBox<>(new DefaultComboBoxModel<>(names));
         instrumentColumn.setCellEditor(new DefaultCellEditor(comboBox));
     }
 
