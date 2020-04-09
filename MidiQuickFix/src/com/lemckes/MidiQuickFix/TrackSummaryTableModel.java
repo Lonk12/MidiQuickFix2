@@ -44,17 +44,17 @@ public class TrackSummaryTableModel
 
     static final long serialVersionUID = -5109111307767764175L;
     private final transient Sequencer mSeq;
-    
+
     /**
      * The Sequence that is loaded.
      */
     private final transient MqfSequence mSequence;
-    
+
     /**
      * The resolution of the sequence
      */
     private final int mRes;
-    
+
     /**
      * The tracks in the sequence
      */
@@ -74,7 +74,8 @@ public class TrackSummaryTableModel
         int mChannel;
         boolean mSolo;
         boolean mMute;
-        boolean mLyrics;
+        boolean mHasLyrics;
+        boolean mShowLyrics;
     }
 
     /**
@@ -82,6 +83,50 @@ public class TrackSummaryTableModel
      */
     transient private TrackInfo[] mInfo;
 
+    /**
+     * Enum to hold info for each column in the table
+     */
+    enum ColumnInfo
+    {
+        TRACK_NUM(0, UiStrings.getString("no."), Integer.class),
+        TRACK_NAME(1, UiStrings.getString("name"), String.class),
+        START_TICK(2, UiStrings.getString("start"), Object.class),
+        END_TICK(3, UiStrings.getString("end"), Object.class),
+        LOW_NOTE(4, UiStrings.getString("low_note"), Object.class),
+        HIGH_NOTE(5, UiStrings.getString("high_note"), Object.class),
+        CHANNEL(6, UiStrings.getString("channel_abbrev"), Integer.class),
+        MUTE(7, UiStrings.getString("solo"), Boolean.class),
+        SOLO(8, UiStrings.getString("mute"), Boolean.class),
+        SHOW_LYRICS(9, UiStrings.getString("lyrics"), Boolean.class);
+
+        private final int mIndex;
+        private final String mName;
+        private final Class<?> mClass;
+
+        ColumnInfo(int columnIndex, String columnName, Class<?> columnClass) {
+            mIndex = columnIndex;
+            mName = columnName;
+            mClass = columnClass;
+        }
+
+        public int getIndex() { return mIndex; }
+        public String getName() { return mName; }
+        public Class<?> getColumnClass() { return mClass; }
+    };
+
+
+    private final ColumnInfo[] columnOrder = new ColumnInfo[] {
+        ColumnInfo.TRACK_NUM,
+        ColumnInfo.TRACK_NAME,
+        ColumnInfo.START_TICK,
+        ColumnInfo.END_TICK,
+        ColumnInfo.LOW_NOTE,
+        ColumnInfo.HIGH_NOTE,
+        ColumnInfo.CHANNEL,
+        ColumnInfo.SOLO,
+        ColumnInfo.MUTE,
+        ColumnInfo.SHOW_LYRICS
+    };
     /**
      * Creates a new instance of a TrackSummaryTableModel
      *
@@ -110,7 +155,7 @@ public class TrackSummaryTableModel
             mSeq.setTrackSolo(i, false);
             mInfo[i].mMute = false;
             mSeq.setTrackMute(i, false);
-            mInfo[i].mLyrics = false;
+            mInfo[i].mShowLyrics = false;
             Track t = mTracks[i];
             mInfo[i].mEnd = t.ticks();
             mInfo[i].mStart = -1;
@@ -118,7 +163,7 @@ public class TrackSummaryTableModel
             mInfo[i].mHighNote = Integer.MIN_VALUE;
             mInfo[i].mChannel = -1;
 
-            /* Only treat M:Text events as lyrics if there are more than 4 of them */
+            /* Only treat M:Text events as lyrics if there are more than 8 of them */
             int textEventCount = 0;
             for (int e = 0; e < t.size(); ++e) {
                 MidiEvent me = t.get(e);
@@ -129,14 +174,14 @@ public class TrackSummaryTableModel
                     Object[] str = MetaEvent.getMetaStrings((MetaMessage)mm);
                     if (str[0].equals("M:TrackName")) {
                         mInfo[i].mName = (String)str[2];
-                    }
-                    if (str[0].equals("M:Lyric")) {
-                        mInfo[i].mLyrics = true;
-                    }
-                    if (str[0].equals("M:Text")) {
+                    } else if (str[0].equals("M:Lyric")) {
+                        mInfo[i].mHasLyrics = true;
+                        mInfo[i].mShowLyrics = true;
+                    } else if (str[0].equals("M:Text")) {
                         ++textEventCount;
-                        if (textEventCount > 4) {
-                            mInfo[i].mLyrics = true;
+                        if (textEventCount > 8) {
+                            mInfo[i].mHasLyrics = true;
+                            mInfo[i].mShowLyrics = true;
                         }
                     }
                 }
@@ -165,7 +210,7 @@ public class TrackSummaryTableModel
     }
 
     public boolean showLyrics(int trackNum) {
-        return mInfo[trackNum].mLyrics;
+        return mInfo[trackNum].mShowLyrics;
     }
 
     @Override
@@ -175,83 +220,70 @@ public class TrackSummaryTableModel
 
     @Override
     public int getColumnCount() {
-        return columnNames.length;
+        return columnOrder.length;
     }
 
     @Override
     public Object getValueAt(int row, int column) {
-        Object result;
-        switch (column) {
-            case 0:
+        Object result = null;
+        switch (columnOrder[column]) {
+            case TRACK_NUM:
                 result = row;
                 break;
-            case 1:
+            case TRACK_NAME:
                 result = mInfo[row].mName;
                 break;
-            case 2:
-                if (mInfo[row].mStart == -1) {
-                    // Didn't find a NOTE_ON event
-                    result = null;
-                } else {
+            case START_TICK:
+                if (mInfo[row].mStart > -1) {
                     result = Formats.formatTicks(mInfo[row].mStart, mRes, true);
                 }
                 break;
-            case 3:
-                if (mInfo[row].mStart == -1) {
-                    // Didn't find a NOTE_ON event
-                    result = null;
-                } else {
+
+            case END_TICK:
+                if (mInfo[row].mStart > -1) {
                     result = Formats.formatTicks(mInfo[row].mEnd, mRes, true);
                 }
                 break;
-            case 4:
-                if (mInfo[row].mLowNote == Integer.MAX_VALUE) {
-                    // Didn't find a NOTE_ON event
-                    result = null;
-                } else {
+
+            case LOW_NOTE:
+                if (mInfo[row].mLowNote != Integer.MAX_VALUE) {
                     // Display the lowest note in flats
                     result = NoteNames.getNoteName(
                         mInfo[row].mLowNote, true);
                 }
                 break;
-            case 5:
-                if (mInfo[row].mHighNote == Integer.MIN_VALUE) {
-                    // Didn't find a NOTE_ON event
-                    result = null;
-                } else {
+
+            case HIGH_NOTE:
+                if (mInfo[row].mHighNote != Integer.MIN_VALUE) {
                     // Display the highest note in sharps
                     result = NoteNames.getNoteName(
                         mInfo[row].mHighNote, false);
                 }
                 break;
-            case 6:
-                if (mInfo[row].mChannel == -1) {
-                    // Didn't find a channel event
-                    result = null;
-                } else {
+
+            case CHANNEL:
+                if (mInfo[row].mChannel > -1) {
                     result = mInfo[row].mChannel;
                 }
                 break;
-            case 7:
+
+            case SOLO:
                 result = mInfo[row].mSolo;
                 break;
-            case 8:
+            case MUTE:
                 result = mInfo[row].mMute;
                 break;
-            case 9:
-                result = mInfo[row].mLyrics;
+            case SHOW_LYRICS:
+                result = mInfo[row].mShowLyrics;
                 break;
-            default:
-                result = "";
         }
         return result;
     }
 
     @Override
     public void setValueAt(Object value, int row, int column) {
-        switch (column) {
-            case 7:
-                // Solo
+        switch (columnOrder[column]) {
+            case SOLO:
                 mInfo[row].mSolo = ((Boolean)value);
                 mSeq.setTrackSolo(row, mInfo[row].mSolo);
                 boolean soloed = mSeq.getTrackSolo(row);
@@ -261,8 +293,7 @@ public class TrackSummaryTableModel
                         + " is actually " + soloed + ")"); // NOI18N
                 }
                 break;
-            case 8:
-                // Mute
+            case MUTE:
                 mInfo[row].mMute = ((Boolean)value);
                 mSeq.setTrackMute(row, mInfo[row].mMute);
                 boolean muted = mSeq.getTrackMute(row);
@@ -272,49 +303,25 @@ public class TrackSummaryTableModel
                         + " is actually " + muted + ")"); // NOI18N
                 }
                 break;
-            case 9:
-                // Show Lyrics
-                mInfo[row].mLyrics = ((Boolean)value);
+            case SHOW_LYRICS:
+                mInfo[row].mShowLyrics = ((Boolean)value);
                 fireTableCellUpdated(row, column);
                 break;
             default:
             // Do Nothing
         }
     }
-    Class<?>[] types = new Class<?>[]{
-        java.lang.Integer.class,
-        java.lang.String.class,
-        java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Integer.class,
-        java.lang.Boolean.class,
-        java.lang.Boolean.class,
-        java.lang.Boolean.class
-    };
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return types[columnIndex];
+        return columnOrder[columnIndex].getColumnClass();
     }
-    String[] columnNames = new String[]{
-        UiStrings.getString("no."),
-        UiStrings.getString("name"),
-        UiStrings.getString("start"),
-        UiStrings.getString("end"),
-        UiStrings.getString("low_note"),
-        UiStrings.getString("high_note"),
-        UiStrings.getString("channel_abbrev"),
-        UiStrings.getString("solo"),
-        UiStrings.getString("mute"),
-        UiStrings.getString("lyrics")
-    };
 
     @Override
-    public String getColumnName(int col) {
-        return columnNames[col];
+    public String getColumnName(int columnIndex) {
+        return columnOrder[columnIndex].getName();
     }
+
     boolean[] canEdit = new boolean[]{
         false,
         false,
@@ -330,9 +337,11 @@ public class TrackSummaryTableModel
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        boolean ret = canEdit[columnIndex];
-        if (columnIndex > 6 && columnIndex < 8 && mInfo[rowIndex].mChannel == -1) {
-            ret = false;
+        boolean ret;
+        if (columnIndex == 9) {
+            ret = mInfo[rowIndex].mHasLyrics;
+        } else {
+            ret = canEdit[columnIndex] && mInfo[rowIndex].mChannel > -1;
         }
         return ret;
     }

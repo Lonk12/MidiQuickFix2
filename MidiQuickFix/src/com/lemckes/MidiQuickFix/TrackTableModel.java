@@ -56,6 +56,47 @@ class TrackTableModel extends DefaultTableModel {
     /** Maps table row to track index when mShowNotes is false. */
     ArrayList<Integer> mNoNotesRowMap;
 
+    /**
+     * Enum to hold info for each column in the table
+     */
+    enum ColumnInfo
+    {
+        BEAT_TICK(0, UiStrings.getString("beat:tick"), Object.class),
+        EVENT_NAME(1, UiStrings.getString("event"), Object.class),
+        NOTE(2, UiStrings.getString("note"), Object.class),
+        VALUE(3, UiStrings.getString("value"), Integer.class),
+        PATCH(4, UiStrings.getString("patch"), Object.class),
+        TEXT(5, UiStrings.getString("text"), Object.class),
+        CHANNEL(6, UiStrings.getString("channel_abbrev"), Integer.class);
+
+        private final int mIndex;
+        private final String mName;
+        private final Class<?> mClass;
+
+        ColumnInfo(int columnIndex, String columnName, Class<?> columnClass) {
+            mIndex = columnIndex;
+            mName = columnName;
+            mClass = columnClass;
+        }
+
+        public int getIndex() { return mIndex; }
+        public String getName() { return mName; }
+        public Class<?> getColumnClass() { return mClass; }
+    };
+
+    /**
+     * Map column number to columnId enum.
+     */
+    private final ColumnInfo[] columnOrder = new ColumnInfo[] {
+        ColumnInfo.BEAT_TICK,
+        ColumnInfo.EVENT_NAME,
+        ColumnInfo.NOTE,
+        ColumnInfo.VALUE,
+        ColumnInfo.PATCH,
+        ColumnInfo.TEXT,
+        ColumnInfo.CHANNEL
+    };
+
     TrackTableModel(Track t, int res, boolean showNotes, boolean inFlats) {
         mTrack = t;
         mResolution = res;
@@ -121,7 +162,7 @@ class TrackTableModel extends DefaultTableModel {
 
     @Override
     public int getColumnCount() {
-        return columnNames.length;
+        return columnOrder.length;
     }
 
     private MidiEvent getEventForRow(int row) {
@@ -139,34 +180,32 @@ class TrackTableModel extends DefaultTableModel {
 
     @Override
     public Object getValueAt(int row, int column) {
-        Object result;
+        Object result = "";
         MidiEvent event = getEventForRow(row);
         MidiMessage mess = event.getMessage();
         long tick = event.getTick();
-        switch (column) {
-            case 0:
+        switch (columnOrder[column]) {
+            case BEAT_TICK:
                 result = Formats.formatTicks(tick, mResolution, true);
                 break;
-            case 1:
+            case EVENT_NAME:
                 result = getMessageArray(mess)[0];
                 break;
-            case 2:
+            case NOTE:
                 result = getMessageArray(mess)[1];
                 break;
-            case 3:
+            case VALUE:
                 result = getMessageArray(mess)[2];
                 break;
-            case 4:
+            case PATCH:
                 result = getMessageArray(mess)[3];
                 break;
-            case 5:
+            case TEXT:
                 result = getMessageArray(mess)[4];
                 break;
-            case 6:
+            case CHANNEL:
                 result = getMessageArray(mess)[5];
                 break;
-            default:
-                result = ""; // NOI18N
         }
         return result;
     }
@@ -175,17 +214,14 @@ class TrackTableModel extends DefaultTableModel {
     public boolean isCellEditable(int row, int column) {
         boolean result = false;
         MidiMessage mess = getEventForRow(row).getMessage();
-        switch (column) {
-            case 0:
-                // Tick
+        switch (columnOrder[column]) {
+            case BEAT_TICK:
                 result = true;
                 break;
-            case 1:
-                // Event
+            case EVENT_NAME:
                 result = false;
                 break;
-            case 2:
-                // Note
+            case NOTE:
                 if (mess instanceof ShortMessage) {
                     int cmd = ((ShortMessage)mess).getCommand();
                     if (cmd == ShortMessage.NOTE_OFF
@@ -194,8 +230,7 @@ class TrackTableModel extends DefaultTableModel {
                     }
                 }
                 break;
-            case 3:
-                // Value
+            case VALUE:
                 if (mess instanceof ShortMessage) {
                     int cmd = ((ShortMessage)mess).getCommand();
                     if (cmd != ShortMessage.PROGRAM_CHANGE) {
@@ -203,8 +238,7 @@ class TrackTableModel extends DefaultTableModel {
                     }
                 }
                 break;
-            case 4:
-                // Patch
+            case PATCH:
                 if (mess instanceof ShortMessage) {
                     int cmd = ((ShortMessage)mess).getCommand();
                     if (cmd == ShortMessage.PROGRAM_CHANGE) {
@@ -212,22 +246,18 @@ class TrackTableModel extends DefaultTableModel {
                     }
                 }
                 break;
-            case 5:
-                // Text
+            case TEXT:
                 if (mess instanceof MetaMessage) {
                     result = MetaEvent.isEditable((MetaMessage)mess);
                 }
                 break;
-            case 6:
-                // Channel
+            case CHANNEL:
                 if (mess instanceof ShortMessage) {
                     if (isChannelMessage((ShortMessage)mess)) {
                         result = true;
                     }
                 }
                 break;
-            default:
-                result = false;
         }
         return result;
     }
@@ -243,19 +273,16 @@ class TrackTableModel extends DefaultTableModel {
 
         MidiEvent ev = getEventForRow(row);
         MidiMessage mess = ev.getMessage();
-        switch (column) {
-            case 0:
-                // Tick
+        switch (columnOrder[column]) {
+            case BEAT_TICK:
                 ev.setTick(Formats.parseTicks(value.toString(), mResolution));
                 fireTableCellUpdated(row, column);
                 break;
-            case 1:
-                // Event
+            case EVENT_NAME:
                 TraceDialog.addTrace(
-                    "Error: TrackTableModel.setValueAt column 1 should not be editable."); // NOI18N
+                    "Error: TrackTableModel.setValueAt EVENT_NAME column should not be editable."); // NOI18N
                 break;
-            case 2:
-                // Note
+            case NOTE:
                 if (mess instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)mess;
                     int command = sm.getCommand() & 0xff;
@@ -268,13 +295,12 @@ class TrackTableModel extends DefaultTableModel {
                         fireTableDataChanged();
                     } catch (InvalidMidiDataException e) {
                         TraceDialog.addTrace(
-                            "Error: TrackTableModel.setValueAt column 2. " + // NOI18N
+                            "Error: TrackTableModel.setValueAt NOTE column. " + // NOI18N
                             e.getMessage());
                     }
                 }
                 break;
-            case 3:
-                // Value
+            case VALUE:
                 if (mess instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)mess;
                     int channel = sm.getChannel();
@@ -303,13 +329,13 @@ class TrackTableModel extends DefaultTableModel {
                                 // is handled in the PATCH column
                                 TraceDialog.addTrace("TrackTableModel - "); // NOI18N
                                 TraceDialog.addTrace(
-                                    "Got to a PROGRAM_CHANGE event in the value column."); // NOI18N
+                                    "Got to a PROGRAM_CHANGE event in the VALUE column."); // NOI18N
                                 break;
                             default:
                                 // Should not get here
                                 TraceDialog.addTrace("TrackTableModel - "); // NOI18N
                                 TraceDialog.addTrace(
-                                    "Got to a default case in the value column."); // NOI18N
+                                    "Got to a default case in the VALUE column."); // NOI18N
                         }
                     }
 
@@ -318,13 +344,12 @@ class TrackTableModel extends DefaultTableModel {
                         fireTableDataChanged();
                     } catch (InvalidMidiDataException e) {
                         TraceDialog.addTrace(
-                            "Error: TrackTableModel.setValueAt column 3. " + // NOI18N
+                            "Error: TrackTableModel.setValueAt VALUE column. " + // NOI18N
                             e.getMessage());
                     }
                 }
                 break;
-            case 4:
-                // Patch
+            case PATCH:
                 if (mess instanceof ShortMessage) {
                     ShortMessage sm = (ShortMessage)mess;
                     int command = sm.getCommand() & 0xff;
@@ -337,21 +362,19 @@ class TrackTableModel extends DefaultTableModel {
                         updateMessage(ev, command, channel, d1, d2);
                         fireTableDataChanged();
                     } catch (InvalidMidiDataException e) {
-                        TraceDialog.addTrace("Error: setValueAt column 4. " + // NOI18N
+                        TraceDialog.addTrace("Error: setValueAt - PATCH column. " + // NOI18N
                             e.getMessage());
                     }
                 }
                 break;
-            case 5:
-                // Text
+            case TEXT:
                 if (mess instanceof MetaMessage) {
                     MetaMessage mm = (MetaMessage)mess;
                     MetaEvent.setMetaData(mm, value.toString(), mResolution);
                     fireTableCellUpdated(row, column);
                 }
                 break;
-            case 6:
-                // Channel
+            case CHANNEL:
                 if (mess instanceof ShortMessage) {
                     int channel = (Integer)value;
                     int answer = javax.swing.JOptionPane.showConfirmDialog(null,
@@ -369,13 +392,11 @@ class TrackTableModel extends DefaultTableModel {
                             fireTableDataChanged();
                         } catch (InvalidMidiDataException e) {
                             TraceDialog.addTrace(
-                                "Error: setValueAt column 6. " + e.getMessage()); // NOI18N
+                                "Error: setValueAt - CHANNEL column. " + e.getMessage()); // NOI18N
                         }
                     }
                 }
                 break;
-            default:
-            // Do Nothing
         }
     }
 
@@ -447,7 +468,7 @@ class TrackTableModel extends DefaultTableModel {
      * <li>MetaMessage.TEMPO</li>
      * <li>ShortMessage.PROGRAM_CHANGE</li>
      * <li>ShortMessage.NOTE_ON</li>
-     * <li>ShortMessage.NOTE_OFF</li>
+     * <li>ShortMessage.NOTE_OFF (or NOTE_ON/0)</li>
      * <li>MetaMessage.LYRIC</li>
      * <li>Anything else ...</li>
      * </ol>
@@ -629,34 +650,14 @@ class TrackTableModel extends DefaultTableModel {
         }
         return result;
     }
-    
-    Class<?>[] types = new Class<?>[] {
-        java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Integer.class,
-        java.lang.Object.class,
-        java.lang.Object.class,
-        java.lang.Integer.class
-    };
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return types[columnIndex];
+        return columnOrder[columnIndex].getColumnClass();
     }
-    
-    String[] columnNames = new String[] {
-        UiStrings.getString("beat:tick"),
-        UiStrings.getString("event"),
-        UiStrings.getString("note"),
-        UiStrings.getString("value"),
-        UiStrings.getString("patch"),
-        UiStrings.getString("text"),
-        UiStrings.getString("channel_abbrev")
-    };
 
     @Override
-    public String getColumnName(int col) {
-        return columnNames[col];
+    public String getColumnName(int columnIndex) {
+        return columnOrder[columnIndex].getName();
     }
 }
