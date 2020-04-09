@@ -31,8 +31,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Show the About dialog.
@@ -68,7 +66,7 @@ public class AboutDialog
         try {
             FileReader fr = new FileReader(new File(url.getFile()));
             BufferedReader br = new BufferedReader(fr);
-            String l = "";
+            String l;
             boolean done = false;
             while (!done) {
                 l = br.readLine();

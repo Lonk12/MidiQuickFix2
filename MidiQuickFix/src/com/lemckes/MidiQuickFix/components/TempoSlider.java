@@ -23,7 +23,6 @@
 package com.lemckes.MidiQuickFix.components;
 
 import com.lemckes.MidiQuickFix.util.Formats;
-import java.awt.Font;
 import java.util.Hashtable;
 import javax.swing.JLabel;
 
@@ -38,7 +37,7 @@ public class TempoSlider extends javax.swing.JSlider
     /** Creates new form DurationSlider */
     public TempoSlider() {
         initComponents();
-        Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
+        Hashtable<Integer, JLabel> labels = new Hashtable<>();
         for (float f = 0.5f; f < 1.0f; f += 0.1f) {
             JLabel label = new JLabel(Formats.formatNumber_1_1(f));
             label.setFont(getFont());

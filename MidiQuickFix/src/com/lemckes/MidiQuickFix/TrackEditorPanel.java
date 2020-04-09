@@ -83,13 +83,11 @@ public class TrackEditorPanel
      */
     public void setSequence(MqfSequence seq) {
         mSeq = seq;
-        // int currentTrack = mCurrentTrack;
         boolean haveTracks = false;
         if (mSeq != null) {
             int numTracks = mSeq.getTracks().length;
             if (numTracks > 0) {
                 setTrackComboModel(mSeq.getTracks());
-                // mCurrentTrack = currentTrack < numTracks ? currentTrack : 0;
                 mCurrentTrack = 0;
                 trackSelector.setSelectedIndex(mCurrentTrack);
                 haveTracks = true;
@@ -114,20 +112,23 @@ public class TrackEditorPanel
             trackList[i] = Integer.toString(i);
             Track t = tracks[i];
             int count = t.size() - 1;
+            long startTick = 0;
+            if (count > 0) {
+                startTick = t.get(0).getTick();
+            }
             for (int j = 0; j < count; ++j) {
                 MidiEvent ev = t.get(j);
                 MidiMessage mess = ev.getMessage();
-                // Don't bother looking past events at time zero.
-                if (ev.getTick() > 0) {
+                // Don't bother looking at events after the first tick.
+                if (ev.getTick() > startTick) {
                     break;
                 }
                 if (mess.getStatus() == MetaMessage.META) {
                     int type = ((MetaMessage)mess).getType();
                     Object[] str = MetaEvent.getMetaStrings((MetaMessage)mess);
                     if (type == MetaEvent.TRACK_NAME) {
-                        trackList[i] += " - " + (String)str[2];
-                    }
-                    if (type == MetaEvent.KEY_SIGNATURE) {
+                        trackList[i] += " - " + str[2];
+                    } else if (type == MetaEvent.KEY_SIGNATURE) {
                         mKeySig = (String)str[2];
                     }
                 }
@@ -148,8 +149,8 @@ public class TrackEditorPanel
                 mSeq.getResolution(),
                 showNotesCheck.isSelected(),
                 KeySignatures.isInFlats(mKeySig));
-        }
-    }
+                }
+            }
 
     /**
      * Add a change listener to the Track Table Model
@@ -316,7 +317,7 @@ public class TrackEditorPanel
         showNotesCheck = new javax.swing.JCheckBox();
         trackSelectorPanel = new javax.swing.JPanel();
         trackLabel = new javax.swing.JLabel();
-        trackSelector = new javax.swing.JComboBox<String>();
+        trackSelector = new javax.swing.JComboBox<>();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -432,6 +433,7 @@ public class TrackEditorPanel
 
     /**
      * Respond to EventCreation events
+     *
      * @param e the EventCreation event
      */
     @Override

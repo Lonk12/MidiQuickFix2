@@ -23,6 +23,7 @@
 package com.lemckes.MidiQuickFix.util;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
@@ -70,7 +71,7 @@ public class TableColumnWidthSetter {
                                        boolean maxLayout) {
         TableModel model = table.getModel();
         Component comp = null;
-        int used = 0;
+        int totalWidthOfColumns = 0;
 
         for (int i = 0; i < table.getColumnModel().getColumnCount(); ++i) {
             int headerWidth = 0;
@@ -143,26 +144,34 @@ public class TableColumnWidthSetter {
                 fudgeFactor;
             column.setPreferredWidth(colWidth);
             column.setWidth(colWidth);
-            used += column.getPreferredWidth();
+            totalWidthOfColumns += column.getPreferredWidth();
         }
 
-        if (maxLayout && table.getParent() != null) {
-            int insetwidth = table.getParent().getInsets().right +
-                table.getParent().getInsets().left;
-            int tot = (table.getColumnCount() + 1) *
-                table.getIntercellSpacing().width +
-                used + insetwidth;
-            if (table.getParent().getWidth() > tot) {
-                int sizeleft = table.getParent().getWidth() - tot +
-                    table.getColumnCount() + 1;
-                for (int i = 0; i < table.getColumnCount(); ++i) {
-                    int give = sizeleft / (table.getColumnCount() - i);
-                    sizeleft -= give;
+        Container parent = table.getParent();
+        if (maxLayout && parent != null) {
+            final int columnCount = table.getColumnCount();
+            int insetwidth =
+                parent.getInsets().left + parent.getInsets().right;
+            // There is an intercell space between each column and
+            // before the first column and after the last column.
+            // Hence (columnCount + 1)
+            int requiredWidth =
+                (columnCount + 1) * table.getIntercellSpacing().width +
+                totalWidthOfColumns + insetwidth;
+
+            if (parent.getWidth() > requiredWidth) {
+                // WHY '+ columnCount + 1'??
+                int remainingWidth =
+                    parent.getWidth() - requiredWidth + columnCount + 1;
+
+                for (int i = 0; i < columnCount; ++i) {
+                    int give = remainingWidth / (columnCount - i);
+                    remainingWidth -= give;
                     TableColumn col = table.getColumnModel().getColumn(i);
                     col.setPreferredWidth(col.getPreferredWidth() + give);
                 }
-                if (table.getColumnCount() > 0) {
-                    assert sizeleft == 0 : sizeleft;
+                if (columnCount > 0) {
+                    assert remainingWidth == 0 : remainingWidth;
                 }
             }
         }

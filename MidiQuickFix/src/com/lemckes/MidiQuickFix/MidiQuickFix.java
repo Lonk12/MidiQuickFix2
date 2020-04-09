@@ -26,7 +26,6 @@ package com.lemckes.MidiQuickFix;
 
 import com.lemckes.MidiQuickFix.components.TempoSlider;
 import com.lemckes.MidiQuickFix.util.BarBeatTick;
-import com.lemckes.MidiQuickFix.util.FontSizer;
 import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.LoopSliderEvent;
 import com.lemckes.MidiQuickFix.util.LoopSliderListener;
@@ -123,10 +122,6 @@ public class MidiQuickFix
      */
     private MqfSequence mSeq;
     /**
-     * The index of the currently display track.
-     */
-    private int mCurrentTrack;
-    /**
      * The resolution in Ticks/Beat of the file.
      */
     private int mResolution;
@@ -178,7 +173,7 @@ public class MidiQuickFix
             build(fileName);
         });
     }
-    
+
     private void build(final String fileName) {
         TraceDialog.getInstance().addComponentListener(new ComponentListener()
         {
@@ -366,7 +361,7 @@ public class MidiQuickFix
         mMainFrame = this;
 
         mainSplitPane.setDividerLocation(mainSplitPane.getWidth() / 8);
-        
+
         pack();
     }
 
@@ -636,7 +631,6 @@ public class MidiQuickFix
         try {
             mPlayController.setSequence(mSeq);
             mResolution = mSeq.getResolution();
-            mCurrentTrack = 0;
 
             tempoAdjustSlider.setValue(TempoSlider.tempoToSlider(1.0f));
             positionSlider.reset();
@@ -884,61 +878,41 @@ public class MidiQuickFix
      * Set the text of the info labels.
      */
     private void setInfoLabels() {
-        // trace("setInfoLabels");
         long dur = mSeq.getMicrosecondLength() / 1000000;
         lengthText.setText(Formats.formatSeconds(dur));
 
         long ticks = mSeq.getTickLength();
         positionSlider.setDuration(ticks, true, mResolution);
 
-        // First get the info from the control track.
-        Track t = mSeq.getTracks()[0];
-        int count = t.size() - 1;
-        for (int j = 0; j < count; ++j) {
-            MidiEvent ev = t.get(j);
-            MidiMessage mess = ev.getMessage();
-            long tick = ev.getTick();
-            if (tick > 0) {
+        // Get the info from META events at tick zero.
+        boolean foundTimeSig = false;
+        boolean foundTempo = false;
+        boolean foundKeySig = false;
+        for (Track track : mSeq.getTracks()) {
+            // Stop if we have found all the fields we need.
+            if (foundTimeSig && foundTempo && foundKeySig){
                 break;
             }
-            int st = mess.getStatus();
-            if (st == MetaMessage.META) {
-                Object[] str = MetaEvent.getMetaStrings((MetaMessage)mess);
-                if (str[0].equals("M:TimeSignature")) {
-                    setTimeSigField(str[2].toString());
+            int eventCount = track.size() - 1;
+            for (int eventIndex = 0; eventIndex < eventCount; ++eventIndex) {
+                MidiEvent ev = track.get(eventIndex);
+                MidiMessage mess = ev.getMessage();
+                long tick = ev.getTick();
+                if (tick > 0) {
+                    break;
                 }
-                if (str[0].equals("M:Tempo")) {
-                    setTempoLabel(str[2].toString());
-                }
-                if (str[0].equals("M:KeySignature")) {
-                    setKeySigField(str[2].toString());
-                }
-            }
-        }
-
-        // Now get the current track info.
-        t = mSeq.getTracks()[mCurrentTrack];
-        count = t.size() - 1;
-        for (int j = 0; j < count; ++j) {
-            MidiEvent ev = t.get(j);
-            MidiMessage mess = ev.getMessage();
-            long tick = ev.getTick();
-            if (tick > 0) {
-                break;
-            }
-            int st = mess.getStatus();
-            // Assume that any meta data in the current track
-            // overrides that found in the control track.
-            if (st == MetaMessage.META) {
-                Object[] str = MetaEvent.getMetaStrings((MetaMessage)mess);
-                if (str[0].equals("M:TimeSignature")) {
-                    setTimeSigField(str[2].toString());
-                }
-                if (str[0].equals("M:Tempo")) {
-                    setTempoLabel(str[2].toString());
-                }
-                if (str[0].equals("M:KeySignature")) {
-                    setKeySigField(str[2].toString());
+                if (mess.getStatus() == MetaMessage.META) {
+                    Object[] str = MetaEvent.getMetaStrings((MetaMessage)mess);
+                    if (str[0].equals("M:TimeSignature")) {
+                        setTimeSigField(str[2].toString());
+                        foundTimeSig = true;
+                    } else if (str[0].equals("M:Tempo")) {
+                        setTempoLabel(str[2].toString());
+                        foundTempo = true;
+                    } else if (str[0].equals("M:KeySignature")) {
+                        setKeySigField(str[2].toString());
+                        foundKeySig = true;
+                    }
                 }
             }
         }
@@ -1237,11 +1211,9 @@ public class MidiQuickFix
             }
             if (str[0].equals("M:TimeSignature")) { // NOI18N
                 setTimeSigField(str[2].toString());
-            }
-            if (str[0].equals("M:KeySignature")) { // NOI18N
+            } else if (str[0].equals("M:KeySignature")) { // NOI18N
                 setKeySigField(str[2].toString());
-            }
-            if (str[0].equals("M:Tempo")) { // NOI18N
+            } else if (str[0].equals("M:Tempo")) { // NOI18N
                 setTempoLabel(str[2].toString());
             }
         }

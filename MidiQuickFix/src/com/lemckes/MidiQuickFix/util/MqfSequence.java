@@ -31,7 +31,7 @@ import javax.sound.midi.Track;
 /**
  * This is a simple wrapper around <code>javax.sound.midi.Sequence</code>
  * to allow access to the Vector of Tracks in the Sequence.
- * The original implementation only provides access through the 
+ * The original implementation only provides access through the
  * <code>public Track[] getTracks()</code> method which returns an array
  * containing the Tracks. This prevents any manipulation of the order
  * of Tracks in the Sequence. I would like to be able to, for instance,
@@ -40,7 +40,7 @@ import javax.sound.midi.Track;
  * is also stored in this class.
  */
 public class MqfSequence extends Sequence {
-    private Map<String, String> mSongInfo = new LinkedHashMap<String, String>(4);
+    private final Map<String, String> mSongInfo = new LinkedHashMap<>(4);
 
     public MqfSequence(float divisionType, int resolution, int numTracks) throws
         InvalidMidiDataException {

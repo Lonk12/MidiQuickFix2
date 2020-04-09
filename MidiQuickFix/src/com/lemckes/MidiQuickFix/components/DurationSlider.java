@@ -23,6 +23,7 @@
 package com.lemckes.MidiQuickFix.components;
 
 import com.lemckes.MidiQuickFix.util.Formats;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 /**
@@ -98,14 +99,14 @@ public class DurationSlider extends javax.swing.JSlider {
         setMajorTickSpacing(major);
         setMinorTickSpacing(minor);
         //Create the label table
-        java.util.Hashtable labelTable = createStandardLabels(major);
-        for (java.util.Enumeration e = labelTable.keys(); e.hasMoreElements();) {
-            Integer pos = (Integer)e.nextElement();
+        java.util.Hashtable<Integer, JComponent> labelTable = createStandardLabels(major);
+        for (java.util.Enumeration<Integer> e = labelTable.keys(); e.hasMoreElements();) {
+            Integer pos = e.nextElement();
             JLabel label = (JLabel)labelTable.get(pos);
             if (ticks) {
-                label.setText(Formats.formatBeats(pos.intValue(), resolution));
+                label.setText(Formats.formatBeats(pos, resolution));
             } else {
-                label.setText(Formats.formatSeconds(pos.intValue()));
+                label.setText(Formats.formatSeconds(pos));
             }
         }
         setLabelTable(labelTable);
