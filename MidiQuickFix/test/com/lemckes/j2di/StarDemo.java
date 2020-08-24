@@ -97,7 +97,6 @@ public class StarDemo
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
@@ -172,13 +171,9 @@ public class StarDemo
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
         jPanel2.add(pointsSlider, gridBagConstraints);
 
-        pointsField.setColumns(4);
         pointsField.setEditable(false);
+        pointsField.setColumns(4);
         pointsField.setName(bundle.getString("StarDemo.pointsField.name")); // NOI18N
-
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, pointsSlider, org.jdesktop.beansbinding.ELProperty.create("${value}"), pointsField, org.jdesktop.beansbinding.BeanProperty.create("value"));
-        bindingGroup.addBinding(binding);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -217,13 +212,9 @@ public class StarDemo
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
         jPanel2.add(stepSlider, gridBagConstraints);
 
-        stepField.setColumns(4);
         stepField.setEditable(false);
+        stepField.setColumns(4);
         stepField.setName(bundle.getString("StarDemo.stepField.name")); // NOI18N
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, stepSlider, org.jdesktop.beansbinding.ELProperty.create("${value}"), stepField, org.jdesktop.beansbinding.BeanProperty.create("value"));
-        bindingGroup.addBinding(binding);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
@@ -261,13 +252,9 @@ public class StarDemo
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
         jPanel2.add(radiusSlider, gridBagConstraints);
 
-        radiusField.setColumns(4);
         radiusField.setEditable(false);
+        radiusField.setColumns(4);
         radiusField.setName(bundle.getString("StarDemo.radiusField.name")); // NOI18N
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, radiusSlider, org.jdesktop.beansbinding.ELProperty.create("${value}"), radiusField, org.jdesktop.beansbinding.BeanProperty.create("value"));
-        bindingGroup.addBinding(binding);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
@@ -304,14 +291,10 @@ public class StarDemo
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
         jPanel2.add(startAngleSlider, gridBagConstraints);
 
-        startAngleField.setColumns(4);
         startAngleField.setEditable(false);
+        startAngleField.setColumns(4);
         startAngleField.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         startAngleField.setName(bundle.getString("StarDemo.startAngleField.name")); // NOI18N
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, startAngleSlider, org.jdesktop.beansbinding.ELProperty.create("${value}"), startAngleField, org.jdesktop.beansbinding.BeanProperty.create("value"));
-        bindingGroup.addBinding(binding);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 1;
@@ -452,8 +435,6 @@ public class StarDemo
 
         setJMenuBar(menuBar);
 
-        bindingGroup.bind();
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -583,6 +564,5 @@ public class StarDemo
     private javax.swing.JFormattedTextField stepField;
     private javax.swing.JLabel stepLabel;
     private javax.swing.JSlider stepSlider;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
