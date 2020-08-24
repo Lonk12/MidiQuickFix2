@@ -46,8 +46,6 @@ import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
@@ -175,24 +173,16 @@ public class MidiQuickFix
     }
 
     private void build(final String fileName) {
-        TraceDialog.getInstance().addComponentListener(new ComponentListener()
+        TraceDialog.getInstance().addWindowListener(new java.awt.event.WindowAdapter()
         {
             @Override
-            public void componentShown(ComponentEvent e) {
-                traceMenuItem.setState(true);
-            }
-
-            @Override
-            public void componentHidden(ComponentEvent e) {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
                 traceMenuItem.setState(false);
             }
 
             @Override
-            public void componentMoved(ComponentEvent e) {
-            }
-
-            @Override
-            public void componentResized(ComponentEvent e) {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                traceMenuItem.setState(true);
             }
         });
 
