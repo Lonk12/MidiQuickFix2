@@ -432,8 +432,10 @@
                             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                               <Color blue="ff" green="f7" red="e9" type="rgb"/>
                             </Property>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="DialogInput" size="12" style="0"/>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                              <FontInfo relative="true">
+                                <Font component="lengthText" property="font" relativeSize="true" size="-1"/>
+                              </FontInfo>
                             </Property>
                             <Property name="text" type="java.lang.String" value="--:--"/>
                             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -467,8 +469,10 @@
                             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                               <Color blue="ff" green="f7" red="e9" type="rgb"/>
                             </Property>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="DialogInput" size="12" style="0"/>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                              <FontInfo relative="true">
+                                <Font component="tempoText" property="font" relativeSize="true" size="-1"/>
+                              </FontInfo>
                             </Property>
                             <Property name="opaque" type="boolean" value="true"/>
                           </Properties>
@@ -496,8 +500,10 @@
                             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                               <Color blue="ff" green="f7" red="e9" type="rgb"/>
                             </Property>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="DialogInput" size="12" style="0"/>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                              <FontInfo relative="true">
+                                <Font component="timeSigText" property="font" relativeSize="true" size="-1"/>
+                              </FontInfo>
                             </Property>
                             <Property name="opaque" type="boolean" value="true"/>
                           </Properties>
@@ -525,8 +531,10 @@
                             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                               <Color blue="ff" green="f7" red="e9" type="rgb"/>
                             </Property>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="DialogInput" size="12" style="0"/>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                              <FontInfo relative="true">
+                                <Font component="keyText" property="font" relativeSize="true" size="-1"/>
+                              </FontInfo>
                             </Property>
                             <Property name="opaque" type="boolean" value="true"/>
                           </Properties>

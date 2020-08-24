@@ -1373,7 +1373,7 @@ public class MidiQuickFix
         seqInfoPanel.add(lengthLabel, gridBagConstraints);
 
         lengthText.setBackground(new java.awt.Color(233, 247, 255));
-        lengthText.setFont(new java.awt.Font("DialogInput", 0, 12)); // NOI18N
+        lengthText.setFont(lengthText.getFont().deriveFont(lengthText.getFont().getSize()-1f));
         lengthText.setText("--:--");
         lengthText.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 6));
         lengthText.setOpaque(true);
@@ -1395,7 +1395,7 @@ public class MidiQuickFix
         seqInfoPanel.add(tempoLabel, gridBagConstraints);
 
         tempoText.setBackground(new java.awt.Color(233, 247, 255));
-        tempoText.setFont(new java.awt.Font("DialogInput", 0, 12)); // NOI18N
+        tempoText.setFont(tempoText.getFont().deriveFont(tempoText.getFont().getSize()-1f));
         tempoText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -1415,7 +1415,7 @@ public class MidiQuickFix
         seqInfoPanel.add(timeLabel, gridBagConstraints);
 
         timeSigText.setBackground(new java.awt.Color(233, 247, 255));
-        timeSigText.setFont(new java.awt.Font("DialogInput", 0, 12)); // NOI18N
+        timeSigText.setFont(timeSigText.getFont().deriveFont(timeSigText.getFont().getSize()-1f));
         timeSigText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -1435,7 +1435,7 @@ public class MidiQuickFix
         seqInfoPanel.add(keyLabel, gridBagConstraints);
 
         keyText.setBackground(new java.awt.Color(233, 247, 255));
-        keyText.setFont(new java.awt.Font("DialogInput", 0, 12)); // NOI18N
+        keyText.setFont(keyText.getFont().deriveFont(keyText.getFont().getSize()-1f));
         keyText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
