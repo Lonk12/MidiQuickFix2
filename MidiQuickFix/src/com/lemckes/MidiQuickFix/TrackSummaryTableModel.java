@@ -95,8 +95,8 @@ public class TrackSummaryTableModel
         LOW_NOTE(4, UiStrings.getString("low_note"), Object.class),
         HIGH_NOTE(5, UiStrings.getString("high_note"), Object.class),
         CHANNEL(6, UiStrings.getString("channel_abbrev"), Integer.class),
-        MUTE(7, UiStrings.getString("solo"), Boolean.class),
-        SOLO(8, UiStrings.getString("mute"), Boolean.class),
+        SOLO(7, UiStrings.getString("solo"), Boolean.class),
+        MUTE(8, UiStrings.getString("mute"), Boolean.class),
         SHOW_LYRICS(9, UiStrings.getString("lyrics"), Boolean.class);
 
         private final int mIndex;
@@ -134,8 +134,6 @@ public class TrackSummaryTableModel
      * @param sequencer
      */
     public TrackSummaryTableModel(MqfSequence s, Sequencer sequencer) {
-        MidiQuickFix.getSynth().getChannels()[0].allSoundOff();
-
         mSeq = sequencer;
         mSequence = s;
         mRes = s.getResolution();
