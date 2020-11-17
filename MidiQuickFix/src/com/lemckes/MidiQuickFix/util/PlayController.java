@@ -49,16 +49,13 @@ public class PlayController
      */
     long mPausedPos;
     Sequencer mSequencer;
-    MqfSequence mSequence;
 
     /**
      * Creates a new instance of PlayController
      * @param sqr the sequencer to control
-     * @param seq the sequence to control
      */
-    public PlayController(Sequencer sqr, MqfSequence seq) {
+    public PlayController(Sequencer sqr) {
         mSequencer = sqr;
-        mSequence = seq;
     }
 
     /**
@@ -83,10 +80,6 @@ public class PlayController
 
     public void setPausedPosition(long pos) {
         mPausedPos = pos;
-    }
-
-    public void setSequence(MqfSequence seq) {
-        mSequence = seq;
     }
 
     /**
@@ -284,38 +277,45 @@ public class PlayController
     }
 
     private void setActions() {
-        if (mPlayState == PlayState.NO_FILE) {
-            ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-            mPlayAction.setEnabled(false);
-            ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-            mPauseAction.setEnabled(false);
-            mRewindAction.setEnabled(false);
-            mStopAction.setEnabled(false);
-            mLoopAction.setEnabled(false);
-        } else if (mPlayState == PlayState.PLAYING) {
-            ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
-            mPlayAction.setEnabled(false);
-            ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-            mPauseAction.setEnabled(true);
-            mRewindAction.setEnabled(true);
-            mStopAction.setEnabled(true);
-            mLoopAction.setEnabled(true);
-        } else if (mPlayState == PlayState.PAUSED) {
-            ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
-            mPlayAction.setEnabled(true);
-            ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
-            mPauseAction.setEnabled(true);
-            mRewindAction.setEnabled(true);
-            mStopAction.setEnabled(true);
-            mLoopAction.setEnabled(true);
-        } else if (mPlayState == PlayState.STOPPED) {
-            ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-            mPlayAction.setEnabled(true);
-            ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-            mPauseAction.setEnabled(false);
-            mRewindAction.setEnabled(false);
-            mStopAction.setEnabled(false);
-            mLoopAction.setEnabled(true);
+        if (null != mPlayState) switch (mPlayState) {
+            case NO_FILE:
+                ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                mPlayAction.setEnabled(false);
+                ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                mPauseAction.setEnabled(false);
+                mRewindAction.setEnabled(false);
+                mStopAction.setEnabled(false);
+                mLoopAction.setEnabled(false);
+                break;
+            case PLAYING:
+                ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
+                mPlayAction.setEnabled(false);
+                ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                mPauseAction.setEnabled(true);
+                mRewindAction.setEnabled(true);
+                mStopAction.setEnabled(true);
+                mLoopAction.setEnabled(true);
+                break;
+            case PAUSED:
+                ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
+                mPlayAction.setEnabled(true);
+                ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
+                mPauseAction.setEnabled(true);
+                mRewindAction.setEnabled(true);
+                mStopAction.setEnabled(true);
+                mLoopAction.setEnabled(true);
+                break;
+            case STOPPED:
+                ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                mPlayAction.setEnabled(true);
+                ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                mPauseAction.setEnabled(false);
+                mRewindAction.setEnabled(false);
+                mStopAction.setEnabled(false);
+                mLoopAction.setEnabled(true);
+                break;
+            default:
+                break;
         }
     }
 
