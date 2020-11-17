@@ -31,11 +31,9 @@ import com.lemckes.MidiQuickFix.util.PlayController.RewindAction;
 import com.lemckes.MidiQuickFix.util.PlayController.StopAction;
 import com.lemckes.MidiQuickFix.util.UiStrings;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.PathIterator;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import javax.swing.AbstractAction;
 
 /**
@@ -44,80 +42,35 @@ import javax.swing.AbstractAction;
 public class TransportPanel extends javax.swing.JPanel {
     static final long serialVersionUID = 6727747406307178988L;
 
-    private final transient DrawnIcon pauseIcon;
-    transient private DrawnIcon playIcon;
-    transient private DrawnIcon rewindIcon;
-    transient private DrawnIcon stopIcon;
-    transient private DrawnIcon loopIcon;
-    transient private DrawnIcon recordIcon;
-
-    transient private GeneralPath playPath = new GeneralPath();
-    transient private GeneralPath stopPath = new GeneralPath();
-    transient private GeneralPath pausePath = new GeneralPath();
-    transient private GeneralPath loopPath = new GeneralPath();
-    transient private GeneralPath rewindPath = new GeneralPath();
-    transient private GeneralPath recordPath = new GeneralPath();
-
-    transient private GeneralPath loopOuterPath = new GeneralPath();
-    transient private GeneralPath loopInnerPath = new GeneralPath();
+    private transient DrawnIcon pauseIcon;
+    private transient DrawnIcon playIcon;
+    private transient DrawnIcon rewindIcon;
+    private transient DrawnIcon stopIcon;
+    private transient DrawnIcon loopIcon;
+    //private transient DrawnIcon recordIcon;
 
     /** Creates new form TransportPanel */
     public TransportPanel() {
         initComponents();
-        playPath.moveTo(0.2f, 0.2f);
-        playPath.lineTo(0.3f, 0.2f);
-        playPath.lineTo(0.8f, 0.5f);
-        playPath.lineTo(0.3f, 0.8f);
-        playPath.lineTo(0.2f, 0.8f);
-        playPath.lineTo(0.2f, 0.7f);
-        playPath.lineTo(0.2f, 0.5f);
-        playPath.lineTo(0.2f, 0.3f);
-        playPath.closePath();
+        createIcons();
+    }
 
-        stopPath.moveTo(0.2f, 0.2f);
-        stopPath.lineTo(0.8f, 0.2f);
-        stopPath.lineTo(0.8f, 0.8f);
-        stopPath.lineTo(0.2f, 0.8f);
-        stopPath.closePath();
-
-        pausePath.moveTo(0.2f, 0.2f);
-        pausePath.lineTo(0.4f, 0.2f);
-        pausePath.lineTo(0.4f, 0.8f);
-        pausePath.lineTo(0.2f, 0.8f);
-        pausePath.closePath();
-        pausePath.moveTo(0.6f, 0.2f);
-        pausePath.lineTo(0.8f, 0.2f);
-        pausePath.lineTo(0.8f, 0.8f);
-        pausePath.lineTo(0.6f, 0.8f);
-        pausePath.closePath();
-
-        rewindPath.moveTo(0.2f, 0.2f);
-        rewindPath.lineTo(0.3f, 0.2f);
-        rewindPath.lineTo(0.3f, 0.8f);
-        rewindPath.lineTo(0.2f, 0.8f);
-        rewindPath.closePath();
-        rewindPath.moveTo(0.3f, 0.5f);
-        rewindPath.lineTo(0.8f, 0.2f);
-        rewindPath.lineTo(0.8f, 0.8f);
-        rewindPath.closePath();
-
-        Ellipse2D recellipse = new Ellipse2D.Float(0.2f, 0.2f, 0.6f, 0.6f);
-        PathIterator pi = recellipse.getPathIterator(null);
-        recordPath.append(pi,  false);
-
+    final void createIcons() {
+        Path2D.Float loopOuterPath = new Path2D.Float();
         loopOuterPath.moveTo(0.55f, 0.30f);
         loopOuterPath.lineTo(0.55f, 0.20f);
         loopOuterPath.lineTo(0.65f, 0.30f);
         loopOuterPath.lineTo(0.70f, 0.30f);
-        loopOuterPath.curveTo(0.90f, 0.30f, 0.90f, 0.70f, 0.70f, 0.70f);
+        loopOuterPath.curveTo(0.95f, 0.30f, 0.95f, 0.70f, 0.70f, 0.70f);
         loopOuterPath.lineTo(0.45f, 0.70f);
         loopOuterPath.lineTo(0.45f, 0.80f);
         loopOuterPath.lineTo(0.35f, 0.70f);
         loopOuterPath.lineTo(0.30f, 0.70f);
-        loopOuterPath.curveTo(0.10f, 0.70f, 0.10f, 0.30f, 0.30f, 0.30f);
+        loopOuterPath.curveTo(0.05f, 0.70f, 0.05f, 0.30f, 0.30f, 0.30f);
         loopOuterPath.closePath();
         Area loopArea = new Area(loopOuterPath);
 
+        Path2D.Float loopInnerPath = new Path2D.Float();
         loopInnerPath.moveTo(0.55f, 0.40f);
         loopInnerPath.lineTo(0.55f, 0.50f);
         loopInnerPath.lineTo(0.65f, 0.40f);
@@ -132,38 +85,46 @@ public class TransportPanel extends javax.swing.JPanel {
         Area loopHoleArea = new Area(loopInnerPath);
 
         loopArea.subtract(loopHoleArea);
+
+        Path2D.Float loopPath = new Path2D.Float();
         loopPath.append(loopArea.getPathIterator(null), false);
-
-        Dimension buttonSize = new Dimension(40, 40);
-
-        playIcon = new DrawnIcon(playButton, playPath);
-        playIcon.setPath(playPath);
-        playIcon.setFillColour(Color.GREEN);
-        playButton.setPreferredSize(buttonSize);
-
-        rewindIcon = new DrawnIcon(rewindButton, rewindPath);
-        rewindIcon.setPath(rewindPath);
-        rewindIcon.setFillColour(Color.CYAN);
-        rewindButton.setPreferredSize(buttonSize);
-
-        stopIcon = new DrawnIcon(stopButton, stopPath);
-        stopIcon.setPath(stopPath);
-        stopIcon.setFillColour(new Color(1.0f, 0.5f, 0.2f)); // ORANGE
-        stopButton.setPreferredSize(buttonSize);
-
-        pauseIcon = new DrawnIcon(pauseButton, pausePath);
-        pauseIcon.setPath(pausePath);
-        pauseIcon.setFillColour(Color.YELLOW);
-        pauseButton.setPreferredSize(buttonSize);
-
-        //recordIcon.setPath(recordPath);
-        //recordButton.setPreferredSize(buttonSize);
-        //recordIcon.setFillColour(Color.RED);
-
         loopIcon = new DrawnIcon(loopButton, loopPath);
-        loopIcon.setPath(loopPath);
-        loopButton.setPreferredSize(buttonSize);
         loopIcon.setFillColour(Color.BLUE);
+
+        Path2D.Float pausePath
+            = new Path2D.Float(new Rectangle2D.Float(0.2f, 0.2f, 0.2f, 0.6f));
+        pausePath.append(new Rectangle2D.Float(0.6f, 0.2f, 0.2f, 0.6f), false);
+        pauseIcon = new DrawnIcon(pauseButton, pausePath);
+        pauseIcon.setFillColour(Color.YELLOW);
+
+        Path2D.Float playPath = new Path2D.Float();
+        playPath.moveTo(0.2f, 0.2f);
+        playPath.lineTo(0.3f, 0.2f);
+        playPath.lineTo(0.8f, 0.5f);
+        playPath.lineTo(0.3f, 0.8f);
+        playPath.lineTo(0.2f, 0.8f);
+        playPath.closePath();
+        playIcon = new DrawnIcon(playButton, playPath);
+        playIcon.setFillColour(Color.GREEN);
+
+//        Path2D.Float recordPath =
+//            new Path2D.Float(new Ellipse2D.Float(0.2f, 0.2f, 0.6f, 0.6f));
+//        recordIcon = new DrawnIcon(recordButton, recordPath);
+//        recordIcon.setFillColour(Color.RED);
+
+        Path2D.Float rewindPath
+            = new Path2D.Float(new Rectangle2D.Float(0.2f, 0.2f, 0.1f, 0.6f));
+        rewindPath.moveTo(0.3f, 0.5f);
+        rewindPath.lineTo(0.8f, 0.2f);
+        rewindPath.lineTo(0.8f, 0.8f);
+        rewindPath.closePath();
+        rewindIcon = new DrawnIcon(rewindButton, rewindPath);
+        rewindIcon.setFillColour(Color.CYAN);
+
+        Path2D.Float stopPath
+            = new Path2D.Float(new Rectangle2D.Float(0.2f, 0.2f, 0.6f, 0.6f));
+        stopIcon = new DrawnIcon(stopButton, stopPath);
+        stopIcon.setFillColour(new Color(1.0f, 0.5f, 0.2f)); // ORANGE
 
     }
 
