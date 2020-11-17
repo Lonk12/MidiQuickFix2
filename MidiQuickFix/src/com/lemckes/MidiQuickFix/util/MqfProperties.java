@@ -43,6 +43,7 @@ public class MqfProperties
         + "MQF.properties"; //NOI18N
     private static final Properties mProps = new Properties();
 
+    public static final String UI_FONT_SCALE = "ui_font_scale"; //NOI18N
     public static final String LAST_PATH_KEY = "lastpath"; //NOI18N
     public static final String LAST_SOUNDBANK_PATH_KEY = "last_soundbank_path"; //NOI18N
     public static final String LAST_SOUNDBANK_FILE_KEY = "last_soundbank_file"; //NOI18N
@@ -98,7 +99,7 @@ public class MqfProperties
             sb.append('0');
         }
         sb.append(Integer.toHexString(g));
-        
+
         int b = colour.getBlue();
         if (b < 16) {
             sb.append('0');

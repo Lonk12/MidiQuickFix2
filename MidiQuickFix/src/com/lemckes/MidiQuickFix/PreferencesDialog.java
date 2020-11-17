@@ -61,7 +61,7 @@ public class PreferencesDialog
     MidiQuickFix mMQF;
     private FontSelector mFontSelector;
     private final Frame mParentFrame;
-    private Font mFont;
+    private Font mLyricFont;
     private Color mBackground;
     private Color mForeground;
     private Color mRubyFg;
@@ -70,6 +70,7 @@ public class PreferencesDialog
     private String mDefaultPath;
     private String mDefaultSoundbankPath;
     private String mLafName;
+    private float mUiScale;
     private Boolean mShowTraceDialog;
     private static final String[] sampleText = {
         "Sing a song of sixpence,\n",
@@ -115,7 +116,7 @@ public class PreferencesDialog
         mParentFrame = parent;
         mMQF = mqf;
 
-        mFont = MqfProperties.getFontProperty(
+        mLyricFont = MqfProperties.getFontProperty(
             MqfProperties.LYRIC_FONT, lyricsTextPane.getFont());
         mBackground = MqfProperties.getColourProperty(
             MqfProperties.LYRIC_BACKGROUND_COLOUR, Color.WHITE);
@@ -152,6 +153,10 @@ public class PreferencesDialog
         String currentLaf = UIManager.getLookAndFeel().getName();
         lookAndFeelCombo.setSelectedItem(currentLaf);
 
+        mUiScale = MqfProperties.getFloatProperty(
+            MqfProperties.UI_FONT_SCALE, 1.0f);
+        uiScaleField.setValue(mUiScale);
+
         traceDialogCheckbox.getModel().setSelected(mShowTraceDialog);
 
         pack();
@@ -160,7 +165,7 @@ public class PreferencesDialog
 
     private void savePreferences() {
         MqfProperties.setFontProperty(
-            MqfProperties.LYRIC_FONT, mFont);
+            MqfProperties.LYRIC_FONT, mLyricFont);
         MqfProperties.setColourProperty(
             MqfProperties.LYRIC_BACKGROUND_COLOUR, mBackground);
         MqfProperties.setColourProperty(
@@ -177,6 +182,9 @@ public class PreferencesDialog
             MqfProperties.LAST_SOUNDBANK_PATH_KEY, mDefaultSoundbankPath);
         MqfProperties.setStringProperty(
             MqfProperties.LOOK_AND_FEEL_NAME, mLafName);
+        mUiScale = ((Number)uiScaleField.getValue()).floatValue();
+        MqfProperties.setFloatProperty(
+            MqfProperties.UI_FONT_SCALE, mUiScale);
         MqfProperties.setBooleanProperty(
             MqfProperties.SHOW_TRACE, mShowTraceDialog);
 
@@ -208,12 +216,12 @@ public class PreferencesDialog
 
     @Override
     public void fontSelected(FontSelectionEvent e) {
-        mFont = e.getSelectedFont();
-        lyricsTextPane.setFont(mFont);
+        mLyricFont = e.getSelectedFont();
+        lyricsTextPane.setFont(mLyricFont);
 
         // calculate the new size for ruby text
         Style s = lyricsTextPane.getStyle("ruby");
-        float size = mFont.getSize() * mRubyScale;
+        float size = mLyricFont.getSize() * mRubyScale;
         StyleConstants.setFontSize(s, Math.round(size));
     }
 
@@ -314,6 +322,8 @@ public class PreferencesDialog
         browseSoundbankButton = new javax.swing.JButton();
         lookAndFeelPanel = new javax.swing.JPanel();
         lookAndFeelCombo = new javax.swing.JComboBox<>();
+        uiScaleLabel = new javax.swing.JLabel();
+        uiScaleField = new javax.swing.JFormattedTextField();
         traceDialogPanel = new javax.swing.JPanel();
         traceDialogCheckbox = new javax.swing.JCheckBox();
         controlPanel = new javax.swing.JPanel();
@@ -606,7 +616,7 @@ public class PreferencesDialog
 
         lookAndFeelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("PreferencesDialog.LookAndFeel.border.title"))); // NOI18N
         lookAndFeelPanel.setName("lookAndFeelPanel"); // NOI18N
-        lookAndFeelPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+        lookAndFeelPanel.setLayout(new java.awt.GridBagLayout());
 
         lookAndFeelCombo.setName("lookAndFeelCombo"); // NOI18N
         lookAndFeelCombo.addActionListener(new java.awt.event.ActionListener() {
@@ -614,7 +624,34 @@ public class PreferencesDialog
                 lookAndFeelComboActionPerformed(evt);
             }
         });
-        lookAndFeelPanel.add(lookAndFeelCombo);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 8, 5);
+        lookAndFeelPanel.add(lookAndFeelCombo, gridBagConstraints);
+
+        uiScaleLabel.setText(bundle.getString("PreferencesDialog.uiScaleLabel.text")); // NOI18N
+        uiScaleLabel.setName("uiScaleLabel"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(5, 9, 5, 5);
+        lookAndFeelPanel.add(uiScaleLabel, gridBagConstraints);
+
+        uiScaleField.setColumns(5);
+        uiScaleField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#.###"))));
+        uiScaleField.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        uiScaleField.setToolTipText(UiStrings.getString("PreferencesDialog.UiScale.ToolTip.text")); // NOI18N
+        uiScaleField.setName("uiScaleField"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 9, 0, 9);
+        lookAndFeelPanel.add(uiScaleField, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -855,5 +892,7 @@ public class PreferencesDialog
     private javax.swing.JTextField soundbankFolderField;
     private javax.swing.JCheckBox traceDialogCheckbox;
     private javax.swing.JPanel traceDialogPanel;
+    private javax.swing.JFormattedTextField uiScaleField;
+    private javax.swing.JLabel uiScaleLabel;
     // End of variables declaration//GEN-END:variables
 }
