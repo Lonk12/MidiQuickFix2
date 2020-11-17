@@ -968,8 +968,8 @@ public class TestJ2Di
 
         setJMenuBar(menuBar);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-594)/2, (screenSize.height-334)/2, 594, 334);
+        setSize(new java.awt.Dimension(745, 334));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void radioClicked(java.awt.event.ActionEvent evt)//GEN-FIRST:event_radioClicked
