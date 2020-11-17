@@ -213,7 +213,7 @@ public class MidiQuickFix
 
             startDialog.splash.addStageMessage(
                 UiStrings.getString("getting_sequencer")); // NOI18N
-            mSequencer = MidiSystem.getSequencer();
+            mSequencer = MidiSystem.getSequencer(false);
 
             startDialog.splash.addStageMessage(
                 UiStrings.getString("get_sequencer_returned")); // NOI18N
@@ -225,13 +225,15 @@ public class MidiQuickFix
                 // Acquire resources and make operational.
                 startDialog.splash.addStageMessage(
                     UiStrings.getString("opening_sequencer")); // NOI18N
-                mSequencer.open(); // This call blocks the process...
-                mSequencer.getTransmitter().setReceiver(mSynth.getReceiver());
+                if (!mSequencer.isOpen()) {
+                    mSequencer.open(); // This call blocks the process...
+                    mSequencer.getTransmitter().setReceiver(mSynth.getReceiver());
+                }
                 startDialog.splash.addStageMessage(
                     UiStrings.getString("sequencer_opened")); // NOI18N
             }
 
-            mPlayController = new PlayController(mSequencer, mSeq);
+            mPlayController = new PlayController(mSequencer);
 
             initComponents();
 
@@ -332,6 +334,7 @@ public class MidiQuickFix
             setLocationRelativeTo(null);
 
             EventQueue.invokeLater(() -> {
+                updateRecentFilesMenu();
                 openFile(fileName);
             });
 
@@ -422,41 +425,42 @@ public class MidiQuickFix
 //                     TraceDialog.addTrace("Loaded Soundbank : " + soundbank.getName());
 //                 }
 //                 debugSoundbank(soundbank);
-                // Just load the basic Bank 0 patches
-                Patch[] patches = new Patch[128];
-                for (int prog = 0; prog < 128; prog++) {
-                    patches[prog] = new Patch(0, prog);
-                }
-                // or use Patch[] patches = mSeq.getPatchList();
-                try {
-                    if (mSynth.loadInstruments(soundbank, patches)) {
-                        trace("Loaded Bank 0 from : " + soundbank.getName());
-                    } else {
-                        trace("Failed to Load Bank 0 from : " + soundbank.getName());
-                    }
-                } catch (IllegalArgumentException ex) {
-                    Logger.getLogger(MidiQuickFix.class.getName()).log(Level.SEVERE, null, ex);
-                } finally {
-//                     debugSoundbank(soundbank);
-                }
-                // Load all the patches from the soundbank, one at a time
-//                for (Instrument newI : soundbank.getInstruments()) {
-//                    int bank = newI.getPatch().getBank();
-//                    int prog = newI.getPatch().getProgram();
-//                    if (bank == 0 && prog < 128) {
-//                        if (mSynth.loadInstrument(newI)) {
-//                            System.out.println("Loaded Inst "
-//                                + " - " + bank + "/" + prog + " - "
-//                                + newI.getName() + " - " + newI.getSoundbank().getName());
-//
-//                        } else {
-//                            TraceDialog.addTrace("Failed to load instrument. Bank: " + bank
-//                                + " Prog: " + prog + " from " + soundbank.getName());
-//                        }
+//                // Just load the basic Bank 0 patches
+//                Patch[] patches = new Patch[128];
+//                for (int prog = 0; prog < 128; prog++) {
+//                    patches[prog] = new Patch(0, prog);
+//                 }
+//                // or use Patch[] patches = mSeq.getPatchList();
+//                try {
+//                    if (mSynth.loadInstruments(soundbank, patches)) {
+//                        trace("Loaded Bank 0 from : " + soundbank.getName());
 //                    } else {
-//                        break;
+//                        trace("Failed to Load Bank 0 from : " + soundbank.getName());
 //                    }
+//                } catch (IllegalArgumentException ex) {
+//                    Logger.getLogger(MidiQuickFix.class.getName()).log(Level.SEVERE, null, ex);
+//                } finally {
+////                     debugSoundbank(soundbank);
 //                }
+                // Load all the patches from the soundbank, one at a time
+                int instrumentCount = 0;
+                int failedCount = 0;
+                for (Instrument newI : soundbank.getInstruments()) {
+                    int bank = newI.getPatch().getBank();
+                    int prog = newI.getPatch().getProgram();
+                    if (bank == 0 && prog < 128) {
+                        ++instrumentCount;
+                        if (mSynth.loadInstrument(newI) == false) {
+                            ++failedCount;
+                            trace("Failed to load instrument. Bank: " + bank
+                                + " Prog: " + prog + " from " + soundbank.getName());
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                trace("Loaded " + (instrumentCount - failedCount) + " / "
+                    + instrumentCount + " from Bank 0 of : " + soundbank.getName());
             } else {
                 trace("Soundbank : " + soundbank.getName() + " not supported!");
             }
@@ -620,7 +624,6 @@ public class MidiQuickFix
     private void buildNewSequence() {
         setBusy(true);
         try {
-            mPlayController.setSequence(mSeq);
             mResolution = mSeq.getResolution();
 
             tempoAdjustSlider.setValue(TempoSlider.tempoToSlider(1.0f));
@@ -865,6 +868,21 @@ public class MidiQuickFix
         }
     }
 
+    private void debugTiming(String source) {
+        long ticks = mSeq.getTickLength();
+        long durUs = mSeq.getMicrosecondLength();
+        int ticksPerBeat = mSeq.getResolution();
+
+        System.out.println("From: " + source);
+        System.out.println("uSecs = " + durUs);
+        System.out.println("ticks = " + ticks);
+        System.out.println("uS/tick = " + durUs / ticks);
+        System.out.println("resol = " + mResolution);
+        System.out.println("resol = " + ticksPerBeat);
+        System.out.println("beats = " + (float)ticks / mResolution);
+        System.out.println("b/min = " + 60.0f * ((float)ticks / mResolution) / (mSeq.getMicrosecondLength() / 1000000f));
+    }
+
     /**
      * Set the text of the info labels.
      */
@@ -875,13 +893,14 @@ public class MidiQuickFix
         long ticks = mSeq.getTickLength();
         positionSlider.setDuration(ticks, true, mResolution);
 
+//        debugTiming("setInfoLabels()");
         // Get the info from META events at tick zero.
         boolean foundTimeSig = false;
         boolean foundTempo = false;
         boolean foundKeySig = false;
         for (Track track : mSeq.getTracks()) {
             // Stop if we have found all the fields we need.
-            if (foundTimeSig && foundTempo && foundKeySig){
+            if (foundTimeSig && foundTempo && foundKeySig) {
                 break;
             }
             int eventCount = track.size() - 1;
@@ -1202,10 +1221,12 @@ public class MidiQuickFix
             }
             if (str[0].equals("M:TimeSignature")) { // NOI18N
                 setTimeSigField(str[2].toString());
+                // debugTiming("EventHandler.meta(M:TimeSignature)");
             } else if (str[0].equals("M:KeySignature")) { // NOI18N
                 setKeySigField(str[2].toString());
             } else if (str[0].equals("M:Tempo")) { // NOI18N
                 setTempoLabel(str[2].toString());
+                // debugTiming("EventHandler.meta(M:Tempo)");
             }
         }
     }
@@ -1711,8 +1732,8 @@ public class MidiQuickFix
      * @param args The command line arguments
      */
     public static void main(String args[]) {
+        MqfProperties.readProperties();
         try {
-            MqfProperties.readProperties();
             String lafName = MqfProperties.getStringProperty(
                 MqfProperties.LOOK_AND_FEEL_NAME, "Nimbus");
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
