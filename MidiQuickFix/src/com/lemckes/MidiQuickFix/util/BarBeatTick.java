@@ -17,13 +17,14 @@ import javax.sound.midi.Track;
 public class BarBeatTick
 {
 
-    private final Map<Long, TimeSignature> mTimeSigChanges = new TreeMap<>();
+    private final Map<Long, TimeSignature> mTimeSigChanges;
     private final int mResolution;
     private final int mInitialTicksPerBar;
     private final int mInitialBeatsPerBar;
     private static final int TIME_SIGNATURE = 0x58;
 
     public BarBeatTick(Sequence seq) {
+        mTimeSigChanges = new TreeMap<>();
         mResolution = seq.getResolution();
         Track t = seq.getTracks()[0];
         int count = t.size() - 1;
@@ -35,6 +36,9 @@ public class BarBeatTick
             if (st == MetaMessage.META) {
                 MetaMessage metaMess = (MetaMessage)mess;
                 if (metaMess.getType() == TIME_SIGNATURE) {
+                    System.out.println("-------- BarBeatTick -------");
+                    System.out.println("Tick:       " + ev.getTick());
+                    System.out.println("Resolution: " + mResolution);
                     mTimeSigChanges.put(ev.getTick(), new TimeSignature(metaMess));
                 }
             }
@@ -60,8 +64,8 @@ public class BarBeatTick
         int currTicksPerBar = mInitialTicksPerBar;
         int currBeatsPerBar = mInitialBeatsPerBar;
         long prevChangeTick = 0;
-        for (Entry<Long, TimeSignature> e : mTimeSigChanges.entrySet()) {
-            long changeTick = e.getKey();
+        for (Entry<Long, TimeSignature> timeSigChange : mTimeSigChanges.entrySet()) {
+            long changeTick = timeSigChange.getKey();
             if (changeTick > 0) {
                 if (tick <= changeTick) {
                     long ticks = tick - prevChangeTick;
@@ -76,8 +80,8 @@ public class BarBeatTick
                     long ticks = changeTick - prevChangeTick;
                     bar += ticks / currTicksPerBar;
                     prevChangeTick = changeTick;
-                    currTicksPerBar = e.getValue().getTicksPerBar(mResolution);
-                    currBeatsPerBar = e.getValue().getBeatsPerBar();
+                    currTicksPerBar = timeSigChange.getValue().getTicksPerBar(mResolution);
+                    currBeatsPerBar = timeSigChange.getValue().getBeatsPerBar();
                 }
             }
         }
