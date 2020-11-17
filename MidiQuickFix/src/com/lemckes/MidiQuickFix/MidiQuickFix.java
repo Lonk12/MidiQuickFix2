@@ -54,6 +54,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1724,6 +1725,10 @@ public class MidiQuickFix
             // lafName is not available, use the default look and feel.
         }
 
+//        float uiScale = MqfProperties.getFloatProperty(MqfProperties.UI_FONT_SCALE, 1.0f);
+//        EventQueue.invokeLater(() -> {
+//            setDefaultFontSize(uiScale);
+//        });
         Properties p = System.getProperties();
         // p.list(System.out);
         mJavaVersion = p.getProperty("java.version", "No java.version found"); // NOI18N
@@ -1742,6 +1747,25 @@ public class MidiQuickFix
             new MidiQuickFix(fileName).setVisible(true);
         });
     }
+
+    public static void setDefaultFontSize(float scale) {
+        Set<Object> keySet = UIManager.getLookAndFeelDefaults().keySet();
+        Object[] keys = keySet.toArray(new Object[keySet.size()]);
+        for (Object key : keys) {
+            if (key != null && key.toString().toLowerCase().contains("font")) {
+                java.awt.Font font = UIManager.getDefaults().getFont(key);
+                if (font != null) {
+                    float defaultSize = font.getSize2D();
+                    float size = defaultSize * scale;
+                    // String family = font.getFamily();
+                    // System.out.println(key + ": \t family = " + family + " \tfrom = " + defaultSize + ", \tto = " + size);
+                    font = font.deriveFont(size);
+                    UIManager.put(key, font);
+                }
+            }
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JPanel bodyPanel;
