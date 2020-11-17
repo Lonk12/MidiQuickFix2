@@ -52,7 +52,7 @@ public class TrackSummaryTable extends javax.swing.JTable
             setPreferredScrollableViewportSize(pd);
         }
         catch (InvalidMidiDataException ex) {
-            TraceDialog.addTrace("TrackSummaryTable new Sequence failed."
+            TraceDialog.addTrace("TrackSummaryTable new MqfSequence failed."
                 + ex.getMessage());
         }
     }

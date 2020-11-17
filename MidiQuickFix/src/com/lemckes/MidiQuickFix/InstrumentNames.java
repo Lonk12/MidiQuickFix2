@@ -34,12 +34,14 @@ class InstrumentNames
 
     /**
      * Map from instrument name to bank and program numbers.
-     * The Integer value is calculated as <code>(bank << 8) + program</code>
+     * The Integer value is calculated as
+     * <code>(bank &lt;&lt; 8) + program</code>
      */
     private static SortedMap<String, Integer> mInstrumentNameMap;
     /**
      * Map from bank and program numbers to instrument name.
-     * The Integer key is calculated as <code>(bank << 8) + program</code>
+     * The Integer key is calculated as
+     * <code>(bank &lt;&lt; 8) + program</code>
      */
     private static SortedMap<Integer, String> mInstrumentNumberMap;
     /**

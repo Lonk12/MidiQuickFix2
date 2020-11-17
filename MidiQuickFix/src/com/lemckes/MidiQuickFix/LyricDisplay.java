@@ -120,7 +120,7 @@ public class LyricDisplay
     }
 
     /**
-     * Creates new form LyricDialog
+     * Creates new form LyricDisplay
      *
      * @param trackSelector determines which tracks to display lyrics from
      */
