@@ -36,9 +36,9 @@ public class BarBeatTick
             if (st == MetaMessage.META) {
                 MetaMessage metaMess = (MetaMessage)mess;
                 if (metaMess.getType() == TIME_SIGNATURE) {
-                    System.out.println("-------- BarBeatTick -------");
-                    System.out.println("Tick:       " + ev.getTick());
-                    System.out.println("Resolution: " + mResolution);
+                    // System.out.println("-------- BarBeatTick -------");
+                    // System.out.println("Tick:       " + ev.getTick());
+                    // System.out.println("Resolution: " + mResolution);
                     mTimeSigChanges.put(ev.getTick(), new TimeSignature(metaMess));
                 }
             }
