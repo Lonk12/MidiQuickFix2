@@ -235,13 +235,13 @@ public class TrackSummaryTableModel
                 break;
             case START_TICK:
                 if (mInfo[row].mStart > -1) {
-                    result = Formats.formatTicks(mInfo[row].mStart, mRes, true);
+                    result = Formats.formatBeatsTicks(mInfo[row].mStart, mRes, true);
                 }
                 break;
 
             case END_TICK:
                 if (mInfo[row].mStart > -1) {
-                    result = Formats.formatTicks(mInfo[row].mEnd, mRes, true);
+                    result = Formats.formatBeatsTicks(mInfo[row].mEnd, mRes, true);
                 }
                 break;
 

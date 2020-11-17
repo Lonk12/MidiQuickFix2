@@ -32,8 +32,9 @@ import java.text.DecimalFormat;
 public final class Formats
 {
 
-    public static final String TICK_BEAT_RE = "\\p{Digit}*:\\p{Digit}{0,3}";
-    public static final String MIN_SEC_RE = "\\p{Digit}*:\\p{Digit}{0,2}";
+    public static final String BEATS_TICKS_RE = "\\p{Digit}*:\\p{Digit}{0,3}";
+    public static final String MINS_SECS_RE = "\\p{Digit}*:\\p{Digit}{0,2}";
+    public static final String BARS_BEATS_RE = "\\p{Digit}*:\\p{Digit}{0,2}";
     private static final DecimalFormat beatFormatShort
         = new java.text.DecimalFormat("0");
     private static final DecimalFormat beatFormatLong
@@ -56,7 +57,7 @@ public final class Formats
      * digits
      * @return a string representing the ticks in beats:ticks format
      */
-    public static String formatTicks(long ticks, int ticksPerBeat,
+    public static String formatBeatsTicks(long ticks, int ticksPerBeat,
         boolean longFormat) {
         DecimalFormat beatF;
         if (longFormat) {
@@ -81,7 +82,7 @@ public final class Formats
      * @return the number of ticks represented by the tickString
      * or -1 if the string cannot be parsed
      */
-    public static int parseTicks(String beatTickString, int ticksPerBeat) {
+    public static int parseBeatsTicks(String beatTickString, int ticksPerBeat) {
         int ticks;
         String tickString = "X";
         String beatString = "X";
@@ -107,6 +108,72 @@ public final class Formats
             int b = Integer.parseInt(beatString);
             int t = Integer.parseInt(tickString);
             ticks = b * ticksPerBeat + t;
+        } catch (NumberFormatException nfe) {
+            ticks = -1;
+        }
+        return ticks;
+    }
+
+    /**
+     * Format the given ticks into a bars:beats string.
+     *
+     * @param ticks the number of ticks
+     * @param ticksPerBeat the number of ticks per beat (a.k.a. resolution)
+     * @return a string representing the ticks in bars:beats format
+     *
+     * WARNING - This needs to be implemented properly to allow for
+     * variable time signatures.
+     */
+    public static String formatBarsBeats(long ticks, int ticksPerBeat) {
+        int beatsPerBar = 4;
+        long bar = 1;
+        long beat = 1;
+        if (ticksPerBeat > 0) {
+            beat = ticks / ticksPerBeat;
+            bar = beat / beatsPerBar;
+        }
+
+        return beatFormatShort.format(bar) + ":" + tickFormat.format(beat);
+    }
+
+    /**
+     * Convert a string in bars:beats format to its value as a number of ticks
+     *
+     * @param barBeatString the bar:beats string
+     * @param ticksPerBeat the number of ticks per beat (a.k.a. resolution)
+     * @return the number of ticks represented by the barBeatString
+     * or -1 if the string cannot be parsed
+     *
+     * WARNING - This needs to be implemented properly to allow for
+     * variable time signatures.
+     */
+    public static int parseBarsBeats(String barBeatString, int ticksPerBeat) {
+        int beatsPerBar = 4;
+        int ticks;
+        String barString = "X";
+        String beatString = "X";
+        try {
+            int colonPos = barBeatString.indexOf(':');
+            if (colonPos == -1) {
+                // No colon found; parse the string as bars
+                beatString = "1";
+                barString = barBeatString;
+            } else if (colonPos == barBeatString.length() - 1 && barBeatString.length() > 1) {
+                // Colon found at end; parse the string as bars
+                beatString = "1";
+                barString = barBeatString.substring(0, colonPos);
+            } else if (colonPos == 0 && barBeatString.length() > 1) {
+                // Colon at start; parse as beats
+                beatString = barBeatString.substring(colonPos + 1);
+                barString = "1";
+            } else {
+                // Something each side of the colon; parse both
+                beatString = barBeatString.substring(colonPos + 1);
+                barString = barBeatString.substring(0, colonPos);
+            }
+            int bars = Integer.parseInt(barString) - 1;
+            int beats = Integer.parseInt(beatString) - 1;
+            ticks = (bars * beatsPerBar + beats) * ticksPerBeat;
         } catch (NumberFormatException nfe) {
             ticks = -1;
         }

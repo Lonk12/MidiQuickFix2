@@ -186,7 +186,7 @@ class TrackTableModel extends DefaultTableModel {
         long tick = event.getTick();
         switch (columnOrder[column]) {
             case BEAT_TICK:
-                result = Formats.formatTicks(tick, mResolution, true);
+                result = Formats.formatBeatsTicks(tick, mResolution, true);
                 break;
             case EVENT_NAME:
                 result = getMessageArray(mess)[0];
@@ -275,7 +275,7 @@ class TrackTableModel extends DefaultTableModel {
         MidiMessage mess = ev.getMessage();
         switch (columnOrder[column]) {
             case BEAT_TICK:
-                ev.setTick(Formats.parseTicks(value.toString(), mResolution));
+                ev.setTick(Formats.parseBeatsTicks(value.toString(), mResolution));
                 fireTableCellUpdated(row, column);
                 break;
             case EVENT_NAME:

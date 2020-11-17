@@ -135,7 +135,7 @@ public class CreateEventDialog
     private void setFormats() {
         positionField.setValue(DEFAULT_POSITION);
         AbstractDocument doc = (AbstractDocument)positionField.getDocument();
-        doc.setDocumentFilter(new RegexDocumentFilter(Formats.TICK_BEAT_RE));
+        doc.setDocumentFilter(new RegexDocumentFilter(Formats.BEATS_TICKS_RE));
 
         RegexDocumentFilter byteFilter
             = new RegexDocumentFilter("\\p{Digit}{0,3}"); // NOI18N
@@ -778,7 +778,7 @@ public class CreateEventDialog
     }
 
     private long getTick() {
-        long tick = Formats.parseTicks(positionField.getText(), mTicksPerBeat);
+        long tick = Formats.parseBeatsTicks(positionField.getText(), mTicksPerBeat);
         return tick;
     }
 
@@ -965,7 +965,7 @@ public class CreateEventDialog
      * @param ticks the position in ticks
      */
     public void setPosition(long ticks) {
-        positionField.setText(Formats.formatTicks(ticks, mTicksPerBeat, true));
+        positionField.setText(Formats.formatBeatsTicks(ticks, mTicksPerBeat, true));
     }
 
     /**
