@@ -129,7 +129,6 @@ public class DurationSlider extends javax.swing.JSlider {
         setPaintLabels(true);
         setPaintTicks(true);
         setValue(0);
-        setOpaque(false);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
