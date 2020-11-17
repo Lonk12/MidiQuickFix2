@@ -15,7 +15,9 @@ class TimeSignature
      */
     private final int mBeatsPerBar;
     /**
-     * Log2 of the denominator (bottom number) of the time signature
+     * Inverse of the denominator (bottom number) of the time signature.
+     *
+     * Semibreve = 1; minim = 0.5; crotchet = 0.25; quaver = 0.125 etc.
      */
     private final float mBeatLength;
     /**
@@ -33,7 +35,6 @@ class TimeSignature
         mBeatLength = 1.0f / (int)(Math.pow(2, (data[1] & 0x00ff)));
         mClocksPerMetronome = (data[2] & 0x00ff);
         mNum32In4 = (data[3] & 0x00ff);
-
     }
 
     public TimeSignature(int beatsPerBar, float beatLength,
@@ -64,5 +65,20 @@ class TimeSignature
 
     public int getNum32In4() {
         return mNum32In4;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(128);
+        sb.append("BeatsPerBar=");
+        sb.append(mBeatsPerBar);
+        sb.append(" : BeatLength=");
+        sb.append(mBeatLength);
+        sb.append(" : ClocksPerMetronome=");
+        sb.append(mClocksPerMetronome);
+        sb.append(" : Num32In4=");
+        sb.append(mNum32In4);
+
+        return sb.toString();
     }
 }
