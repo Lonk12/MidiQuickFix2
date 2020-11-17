@@ -1,4 +1,4 @@
-/**************************************************************
+/** ************************************************************
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
@@ -19,8 +19,7 @@
  *   in the file named "Artistic.clarified".
  *   If not, I'll be glad to provide one.
  *
- **************************************************************/
-
+ ************************************************************* */
 package com.lemckes.MidiQuickFix.util;
 
 import java.text.ParseException;
@@ -33,74 +32,44 @@ import javax.swing.text.DefaultFormatter;
  * A regular expression based version of <code>DefaultFormatter</code>.
  * $Id: RegexFormatter.java,v 1.3 2009/03/16 07:44:20 jostle Exp $
  */
-public class RegexFormatter extends DefaultFormatter {
+public class RegexFormatter
+    extends DefaultFormatter
+{
+
     static final long serialVersionUID = -7268001208342020887L;
 
-    private Pattern pattern;
-    private Matcher matcher;
-    
-    public RegexFormatter()
-    {
+    private Pattern mPattern;
+
+    public RegexFormatter() {
         super();
     }
-    
+
     /**
-     * Creates a regular expression based <code>AbstractFormatter</code>.
-     * <code>pattern</code> specifies the regular expression that will
+     * Creates a regular expression based
+     * <code>AbstractFormatter</code>.<code>pattern</code> specifies the regular
+     * expression that will
      * be used to determine if a value is legal.
+     *
+     * @param pattern
      */
-    public RegexFormatter(String pattern) throws PatternSyntaxException
-    {
+    public RegexFormatter(String pattern) throws PatternSyntaxException {
         this();
-        setPattern(Pattern.compile(pattern));
+        this.mPattern = Pattern.compile(pattern);
     }
-    
+
     /**
-     * Creates a regular expression based <code>AbstractFormatter</code>.
-     * <code>pattern</code> specifies the regular expression that will
+     * Creates a regular expression based
+     * <code>AbstractFormatter</code>.<code>pattern</code> specifies the regular
+     * expression that will
      * be used to determine if a value is legal.
+     *
+     * @param pattern
      */
-    public RegexFormatter(Pattern pattern)
-    {
+    public RegexFormatter(Pattern pattern) {
         this();
-        setPattern(pattern);
+        this.mPattern = pattern;
     }
-    
-    /**
-     * Sets the pattern that will be used to determine if a value is
-     * legal.
-     */
-    public void setPattern(Pattern pattern)
-    {
-        this.pattern = pattern;
-    }
-    
-    /**
-     * Returns the <code>Pattern</code> used to determine if a value is
-     * legal.
-     */
-    public Pattern getPattern()
-    {
-        return pattern;
-    }
-    
-    /**
-     * Sets the <code>Matcher</code> used in the most recent test
-     * if a value is legal.
-     */
-    protected void setMatcher(Matcher matcher)
-    {
-        this.matcher = matcher;
-    }
-    
-    /**
-     * Returns the <code>Matcher</code> from the most test.
-     */
-    protected Matcher getMatcher()
-    {
-        return matcher;
-    }
-    
+
     /**
      * Parses <code>text</code> returning an arbitrary Object.
      * Some formatters may return null.
@@ -113,21 +82,21 @@ public class RegexFormatter extends DefaultFormatter {
      * @param text String to convert
      * @return Object representation of text
      */
-    public Object stringToValue(String text) throws ParseException
-    {
-        Pattern pattern = getPattern();
-        
-        if (pattern != null)
-        {
-            Matcher matcher = pattern.matcher(text);
-            
-            if (matcher.matches())
-            {
-                setMatcher(matcher);
+    @Override
+    public Object stringToValue(String text) throws ParseException {
+        if (mPattern != null) {
+            Matcher matcher = mPattern.matcher(text);
+
+            if (matcher.matches()) {
                 return super.stringToValue(text);
             }
             throw new ParseException("Pattern did not match", 0);
         }
         return text;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
