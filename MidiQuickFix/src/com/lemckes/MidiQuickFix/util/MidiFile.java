@@ -1,4 +1,4 @@
-/**************************************************************
+/** ************************************************************
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
@@ -19,9 +19,7 @@
  *   in the file named "Artistic.clarified".
  *   If not, I'll be glad to provide one.
  *
- **************************************************************/
-
-
+ ************************************************************* */
 package com.lemckes.MidiQuickFix.util;
 
 import java.io.IOException;
@@ -31,17 +29,18 @@ import javax.sound.midi.MidiSystem;
 /**
  * Get a javax.sound.midi.Sequence from a file
  */
-public class MidiFile {
-    
+public class MidiFile
+{
+
     static public MqfSequence openSequenceFile(String fileName)
-    throws InvalidMidiDataException, IOException {
+        throws InvalidMidiDataException, IOException {
         java.io.File myMidiFile = new java.io.File(fileName);
         return openSequenceFile(myMidiFile);
     }
-    
+
     static public MqfSequence openSequenceFile(java.io.File file)
-    throws InvalidMidiDataException, IOException {
+        throws InvalidMidiDataException, IOException {
         // Construct a Sequence object
-        return MqfSequence.createMqfSequence(MidiSystem.getSequence(file));
+        return new MqfSequence(MidiSystem.getSequence(file));
     }
 }

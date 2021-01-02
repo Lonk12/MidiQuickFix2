@@ -47,17 +47,20 @@ import javax.swing.event.TableModelListener;
  */
 public class TrackSummaryPanel
     extends javax.swing.JPanel
-    implements TableModelListener
 {
 
     private static final long serialVersionUID = 12314235231L;
 
     private MqfSequence mSequence;
     private TrackSummaryTable mTrackSummaryTable;
-    /** The list of registered listeners. */
+    /**
+     * The list of registered listeners.
+     */
     protected EventListenerList mListenerList;
 
-    /** Creates new form TrackSummaryPanel */
+    /**
+     * Creates new form TrackSummaryPanel
+     */
     public TrackSummaryPanel() {
         initComponents();
         mListenerList = new EventListenerList();
@@ -66,7 +69,6 @@ public class TrackSummaryPanel
     public void setSequence(MqfSequence seq) {
         mSequence = seq;
         mTrackSummaryTable.setSequence(seq);
-        mTrackSummaryTable.getModel().addTableModelListener(this);
 
         addTrackButton.setEnabled(mSequence != null);
     }
@@ -76,13 +78,12 @@ public class TrackSummaryPanel
         mTrackSummaryTable.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             Object source = e.getSource();
             if (source == mTrackSummaryTable.getSelectionModel()) {
-                int numSelectedRows =
-                    mTrackSummaryTable.getSelectedRowCount();
+                int numSelectedRows
+                    = mTrackSummaryTable.getSelectedRowCount();
                 copyTrackButton.setEnabled(numSelectedRows == 1);
                 deleteTrackButton.setEnabled(numSelectedRows > 0);
             }
         });
-        mTrackSummaryTable.getModel().addTableModelListener(this);
         summaryTableScrollPane.setViewportView(table);
     }
 
@@ -96,7 +97,6 @@ public class TrackSummaryPanel
         ctd.setVisible(true);
         if (ctd.wasTrackCreated()) {
             fireTracksChanged(TrackChangeType.TRACK_ADDED);
-            ((TrackSummaryTableModel)mTrackSummaryTable.getModel()).updateInfo();
         }
     }
 
@@ -119,12 +119,11 @@ public class TrackSummaryPanel
                     String name = "COPY_" + (String)str[2];
                     try {
                         // Create a new event with the new name
-                        MidiEvent me =
-                            MetaEvent.createMetaEvent("TRACK_NAME", name, 0, 0);
+                        MidiEvent me
+                            = MetaEvent.createMetaEvent("TRACK_NAME", name, 0, 0);
                         // and extract the updated message
                         newMess = me.getMessage();
-                    }
-                    catch (InvalidMidiDataException ex) {
+                    } catch (InvalidMidiDataException ex) {
                     }
                 }
             }
@@ -133,7 +132,6 @@ public class TrackSummaryPanel
             newTrack.add(newEvent);
         }
         fireTracksChanged(TrackChangeType.TRACK_ADDED);
-        ((TrackSummaryTableModel)mTrackSummaryTable.getModel()).updateInfo();
     }
 
     private void deleteTracks() {
@@ -151,23 +149,14 @@ public class TrackSummaryPanel
                     mSequence.deleteTrack(mSequence.getTracks()[selectedRows[track]]);
                 }
                 fireTracksChanged(TrackChangeType.TRACK_DELETED);
-                ((TrackSummaryTableModel)mTrackSummaryTable.getModel()).
-                    updateInfo();
             }
-        }
-    }
-
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        int column = e.getColumn();
-        if (column == 9) {
-            fireTracksChanged(TrackChangeType.TRACK_CHANGED);
         }
     }
 
     /**
      * Add a listener that will be notified when Tracks are added to
      * or deleted from the Sequence
+     *
      * @param l the TracksChangedListener to be added
      */
     public void addTracksChangedListener(TracksChangedListener l) {
@@ -176,21 +165,23 @@ public class TrackSummaryPanel
 
     /**
      * Remove a TracksChangedListener
+     *
      * @param l the TracksChangedListener to be removed
      */
-    public void removeEventCreationListener(TracksChangedListener l) {
+    public void removeTracksChangedListener(TracksChangedListener l) {
         mListenerList.remove(TracksChangedListener.class, l);
     }
 
     void fireTracksChanged(TrackChangeType type) {
-        TracksChangedListener[] listeners =
-            mListenerList.getListeners(TracksChangedListener.class);
+        TracksChangedListener[] listeners
+            = mListenerList.getListeners(TracksChangedListener.class);
         for (int i = listeners.length - 1; i >= 0; --i) {
             listeners[i].tracksChanged(new TracksChangedEvent(type));
         }
     }
 
-    /** This method is called from within the constructor to
+    /**
+     * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
