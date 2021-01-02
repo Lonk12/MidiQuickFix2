@@ -24,12 +24,13 @@
  */
 package com.lemckes.MidiQuickFix;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.lemckes.MidiQuickFix.components.TempoSlider;
 import com.lemckes.MidiQuickFix.util.BarBeatTick;
 import com.lemckes.MidiQuickFix.util.Formats;
 import com.lemckes.MidiQuickFix.util.LoopSliderEvent;
 import com.lemckes.MidiQuickFix.util.LoopSliderListener;
-import com.lemckes.MidiQuickFix.util.MidiFile;
 import com.lemckes.MidiQuickFix.util.MidiFileFilter;
 import com.lemckes.MidiQuickFix.util.MidiSeqPlayer;
 import com.lemckes.MidiQuickFix.util.MidiUtils;
@@ -67,7 +68,6 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Patch;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
@@ -155,6 +155,7 @@ public class MidiQuickFix
     private TrackEditorPanel mTrackEditor;
     private TrackSummaryPanel mTrackSummaryPanel;
     private TrackSummaryTable mTrackSummary;
+    private TrackMixerPanel mTrackMixer;
     private LyricDisplay mLyricDisplay;
     private AboutDialog mAboutDialog = null;
     private TransposeDialog mTransposeDialog;
@@ -315,17 +316,21 @@ public class MidiQuickFix
                 setTempoFactor(
                     TempoSlider.sliderToTempo(tempoAdjustSlider.getValue()));
             });
+
             mTrackSummaryPanel = new TrackSummaryPanel();
             mTrackSummary = new TrackSummaryTable(mSequencer);
             mTrackSummaryPanel.setSummaryTable(mTrackSummary);
             mTrackSummaryPanel.addTracksChangedListener(this);
             summaryPanel.add(mTrackSummaryPanel);
+
             mTrackEditor = new TrackEditorPanel();
             editorPanel.add(mTrackEditor);
             mTrackEditor.addTableChangeListener(this);
-            TrackSummaryTableModel tstm
-                = (TrackSummaryTableModel)mTrackSummary.getModel();
-            mLyricDisplay = new LyricDisplay(tstm);
+
+            mTrackMixer = new TrackMixerPanel();
+            trackMixerPanel.add(mTrackMixer);
+
+            mLyricDisplay = new LyricDisplay();
             lyricsPanel.add(mLyricDisplay);
 
             mLyricDisplay.setSequencer(mSequencer);
@@ -569,8 +574,8 @@ public class MidiQuickFix
                 MqfSequence seq = null;
                 try {
                     setBusy(true);
-                    // Construct a Sequence object
-                    seq = MidiFile.openSequenceFile(file);
+                    // Construct an MqfSequence object
+                    seq = new MqfSequence(MidiSystem.getSequence(file));
 
                     // Remember the file name for later
                     mFileName = file.getName();
@@ -645,11 +650,13 @@ public class MidiQuickFix
                 mTrackSummaryPanel.setSequence(mSeq);
             }
 
+            if (mTrackMixer != null) {
+                mTrackMixer.setSequence(mSeq);
+                mTrackMixer.setSequencer(mSequencer);
+            }
+
             mPlayController.setPlayState(PlayController.PlayState.STOPPED);
 
-            TrackSummaryTableModel tstm
-                = (TrackSummaryTableModel)mTrackSummary.getModel();
-            mLyricDisplay.setTrackSelector(tstm);
             mLyricDisplay.setSequence(mSeq);
 
             mSequenceModified = false;
@@ -678,9 +685,7 @@ public class MidiQuickFix
         }
 
         if (mLyricDisplay != null) {
-            mLyricDisplay.setTrackSelector(
-                (TrackSummaryTableModel)mTrackSummary.getModel());
-            mLyricDisplay.reset();
+            mLyricDisplay.rebuild();
         }
     }
 
@@ -1023,12 +1028,10 @@ public class MidiQuickFix
                 mPlayController.pause();
             }
             mTrackSummary.setSequence(mSeq);
-            mLyricDisplay.setTrackSelector(
-                (TrackSummaryTableModel)mTrackSummary.getModel());
             try {
                 mSequencer.setSequence(mSeq);
                 if (e.getColumn() == 5 || e.getColumn() == TableModelEvent.ALL_COLUMNS) {
-                    mLyricDisplay.reset();
+                    mLyricDisplay.rebuild();
                 }
             } catch (javax.sound.midi.InvalidMidiDataException imde) {
                 trace("Exception in tableChanged " + imde.getLocalizedMessage()); // NOI18N
@@ -1266,6 +1269,7 @@ public class MidiQuickFix
         detailsTabbedPane = new javax.swing.JTabbedPane();
         summaryPanel = new javax.swing.JPanel();
         editorPanel = new javax.swing.JPanel();
+        trackMixerPanel = new javax.swing.JPanel();
         lyricsPanel = new javax.swing.JPanel();
         topPanel = new javax.swing.JPanel();
         playControlPanel = new javax.swing.JPanel();
@@ -1487,6 +1491,9 @@ public class MidiQuickFix
         editorPanel.setLayout(new javax.swing.BoxLayout(editorPanel, javax.swing.BoxLayout.LINE_AXIS));
         detailsTabbedPane.addTab(UiStrings.getString("track_editor"), editorPanel); // NOI18N
 
+        trackMixerPanel.setLayout(new java.awt.BorderLayout());
+        detailsTabbedPane.addTab(UiStrings.getString("track_mixer"), trackMixerPanel); // NOI18N
+
         lyricsPanel.setLayout(new java.awt.BorderLayout());
         detailsTabbedPane.addTab(UiStrings.getString("lyrics"), lyricsPanel); // NOI18N
 
@@ -1595,6 +1602,7 @@ public class MidiQuickFix
         quantiseMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle").getString("QuantiseMenuItem.mnemonic").charAt(0));
         java.util.ResourceBundle bundle1 = java.util.ResourceBundle.getBundle("com/lemckes/MidiQuickFix/Bundle"); // NOI18N
         quantiseMenuItem.setText(bundle1.getString("QuantiseMenuItem.text")); // NOI18N
+        quantiseMenuItem.setEnabled(false);
         quantiseMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 quantiseMenuItemActionPerformed(evt);
@@ -1732,6 +1740,8 @@ public class MidiQuickFix
      * @param args The command line arguments
      */
     public static void main(String args[]) {
+        FlatLightLaf.installLafInfo();
+        FlatDarkLaf.installLafInfo();
         MqfProperties.readProperties();
         try {
             String lafName = MqfProperties.getStringProperty(
@@ -1837,6 +1847,7 @@ public class MidiQuickFix
     private javax.swing.JMenu toolsMenu;
     private javax.swing.JPanel topPanel;
     private javax.swing.JCheckBoxMenuItem traceMenuItem;
+    private javax.swing.JPanel trackMixerPanel;
     private com.lemckes.MidiQuickFix.components.TransportPanel transportPanel;
     private javax.swing.JButton transposeButton;
     private javax.swing.JMenuItem transposeMenuItem;
