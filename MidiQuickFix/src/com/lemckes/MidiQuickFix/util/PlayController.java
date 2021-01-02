@@ -52,6 +52,7 @@ public class PlayController
 
     /**
      * Creates a new instance of PlayController
+     *
      * @param sqr the sequencer to control
      */
     public PlayController(Sequencer sqr) {
@@ -60,6 +61,7 @@ public class PlayController
 
     /**
      * Set the state of play ;-)
+     *
      * @param state Probably should be one of NO_FILE, STOPPED, PAUSED, PLAYING
      */
     public void setPlayState(PlayState state) {
@@ -86,7 +88,7 @@ public class PlayController
      * An Action to handle the Play option.
      */
     public class PlayAction
-            extends javax.swing.AbstractAction
+        extends javax.swing.AbstractAction
     {
 
         static final long serialVersionUID = 8706407788844636763L;
@@ -96,13 +98,14 @@ public class PlayController
          */
         public PlayAction() {
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
+                javax.swing.KeyStroke.getKeyStroke(
                     java.awt.event.KeyEvent.VK_SPACE,
                     java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
          * Performs the functions required for Playing
+         *
          * @param e The event that triggered the action.
          */
         @Override
@@ -123,7 +126,7 @@ public class PlayController
      * An Action to handle the Pause option.
      */
     public class PauseAction
-            extends javax.swing.AbstractAction
+        extends javax.swing.AbstractAction
     {
 
         static final long serialVersionUID = -5681941137061861878L;
@@ -133,12 +136,13 @@ public class PlayController
          */
         public PauseAction() {
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
+                javax.swing.KeyStroke.getKeyStroke(
                     java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
-         * Performs the functions required for Playing
+         * Performs the functions required for Pausing
+         *
          * @param e The event that triggered the action.
          */
         @Override
@@ -166,7 +170,7 @@ public class PlayController
      * An Action to handle the Stop option.
      */
     public class StopAction
-            extends javax.swing.AbstractAction
+        extends javax.swing.AbstractAction
     {
 
         static final long serialVersionUID = -1630547059111486423L;
@@ -176,13 +180,14 @@ public class PlayController
          */
         public StopAction() {
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
+                javax.swing.KeyStroke.getKeyStroke(
                     java.awt.event.KeyEvent.VK_BACK_SPACE,
                     java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
          * Performs the functions required for Stopping
+         *
          * @param e The event that triggered the action.
          */
         @Override
@@ -206,7 +211,7 @@ public class PlayController
      * An Action to handle the Rewind option.
      */
     public class RewindAction
-            extends javax.swing.AbstractAction
+        extends javax.swing.AbstractAction
     {
 
         static final long serialVersionUID = 112737302001281486L;
@@ -216,13 +221,14 @@ public class PlayController
          */
         public RewindAction() {
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
+                javax.swing.KeyStroke.getKeyStroke(
                     java.awt.event.KeyEvent.VK_LEFT,
                     java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
          * Performs the functions required for Rewinding
+         *
          * @param e The event that triggered the action.
          */
         @Override
@@ -233,8 +239,8 @@ public class PlayController
     transient public RewindAction mRewindAction = new RewindAction();
 
     public void rewind() {
-        MidiSeqPlayer rewinder =
-                (MidiSeqPlayer)mRewindAction.getValue("rewinder");
+        MidiSeqPlayer rewinder
+            = (MidiSeqPlayer)mRewindAction.getValue("rewinder");
         rewinder.rewind();
         mPausedPos = 0;
         setActions();
@@ -244,7 +250,7 @@ public class PlayController
      * An Action to handle the Loop option.
      */
     public class LoopAction
-            extends javax.swing.AbstractAction
+        extends javax.swing.AbstractAction
     {
 
         static final long serialVersionUID = 8900494421130657603L;
@@ -254,13 +260,14 @@ public class PlayController
          */
         public LoopAction() {
             putValue(ACCELERATOR_KEY,
-                    javax.swing.KeyStroke.getKeyStroke(
+                javax.swing.KeyStroke.getKeyStroke(
                     java.awt.event.KeyEvent.VK_L,
                     java.awt.event.InputEvent.ALT_DOWN_MASK));
         }
 
         /**
          * Performs the functions required for Looping
+         *
          * @param e The event that triggered the action.
          */
         @Override
@@ -277,45 +284,47 @@ public class PlayController
     }
 
     private void setActions() {
-        if (null != mPlayState) switch (mPlayState) {
-            case NO_FILE:
-                ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-                mPlayAction.setEnabled(false);
-                ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-                mPauseAction.setEnabled(false);
-                mRewindAction.setEnabled(false);
-                mStopAction.setEnabled(false);
-                mLoopAction.setEnabled(false);
-                break;
-            case PLAYING:
-                ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
-                mPlayAction.setEnabled(false);
-                ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-                mPauseAction.setEnabled(true);
-                mRewindAction.setEnabled(true);
-                mStopAction.setEnabled(true);
-                mLoopAction.setEnabled(true);
-                break;
-            case PAUSED:
-                ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
-                mPlayAction.setEnabled(true);
-                ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
-                mPauseAction.setEnabled(true);
-                mRewindAction.setEnabled(true);
-                mStopAction.setEnabled(true);
-                mLoopAction.setEnabled(true);
-                break;
-            case STOPPED:
-                ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-                mPlayAction.setEnabled(true);
-                ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
-                mPauseAction.setEnabled(false);
-                mRewindAction.setEnabled(false);
-                mStopAction.setEnabled(false);
-                mLoopAction.setEnabled(true);
-                break;
-            default:
-                break;
+        if (null != mPlayState) {
+            switch (mPlayState) {
+                case NO_FILE:
+                    ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                    mPlayAction.setEnabled(false);
+                    ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                    mPauseAction.setEnabled(false);
+                    mRewindAction.setEnabled(false);
+                    mStopAction.setEnabled(false);
+                    mLoopAction.setEnabled(false);
+                    break;
+                case PLAYING:
+                    ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
+                    mPlayAction.setEnabled(false);
+                    ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                    mPauseAction.setEnabled(true);
+                    mRewindAction.setEnabled(true);
+                    mStopAction.setEnabled(true);
+                    mLoopAction.setEnabled(true);
+                    break;
+                case PAUSED:
+                    ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
+                    mPlayAction.setEnabled(true);
+                    ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(true);
+                    mPauseAction.setEnabled(true);
+                    mRewindAction.setEnabled(true);
+                    mStopAction.setEnabled(true);
+                    mLoopAction.setEnabled(true);
+                    break;
+                case STOPPED:
+                    ((DrawnIcon)mPlayAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                    mPlayAction.setEnabled(true);
+                    ((DrawnIcon)mPauseAction.getValue(AbstractAction.SMALL_ICON)).setActive(false);
+                    mPauseAction.setEnabled(false);
+                    mRewindAction.setEnabled(false);
+                    mStopAction.setEnabled(false);
+                    mLoopAction.setEnabled(true);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
