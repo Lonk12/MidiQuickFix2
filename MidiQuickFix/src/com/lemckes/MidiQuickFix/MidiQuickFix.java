@@ -24,8 +24,6 @@
  */
 package com.lemckes.MidiQuickFix;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import com.lemckes.MidiQuickFix.components.TempoSlider;
 import com.lemckes.MidiQuickFix.util.BarBeatTick;
 import com.lemckes.MidiQuickFix.util.Formats;
@@ -1740,8 +1738,6 @@ public class MidiQuickFix
      * @param args The command line arguments
      */
     public static void main(String args[]) {
-        FlatLightLaf.installLafInfo();
-        FlatDarkLaf.installLafInfo();
         MqfProperties.readProperties();
         try {
             String lafName = MqfProperties.getStringProperty(
