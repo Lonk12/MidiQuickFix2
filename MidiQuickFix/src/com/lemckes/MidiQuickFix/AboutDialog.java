@@ -2,7 +2,7 @@
  *
  *   MidiQuickFix - A Simple Midi file editor and player
  *
- *   Copyright (C) 2004-2018 John Lemcke
+ *   Copyright (C) 2004-2021 John Lemcke
  *   jostle@users.sourceforge.net
  *
  *   This program is free software; you can redistribute it
@@ -76,6 +76,7 @@ public class AboutDialog
                     licenseText.append(l + "\n");
                 }
             }
+            licenseText.setCaretPosition(0);
         } catch (FileNotFoundException ex) {
             TraceDialog.addTrace("Artistic.clarified - File Not Found");
         } catch (IOException ex) {
