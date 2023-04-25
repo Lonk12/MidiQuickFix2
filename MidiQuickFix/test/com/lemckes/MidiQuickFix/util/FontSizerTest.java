@@ -1,7 +1,7 @@
 /*
  * The Artistic License
  *
- * Copyright 2019 john.
+ * Copyright (C) 2004-2023 john.
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the Artistic License

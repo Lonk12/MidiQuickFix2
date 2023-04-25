@@ -1,7 +1,7 @@
 /*
  * The Artistic License
  *
- * Copyright (C) 2004-2021 John Lemcke
+ * Copyright (C) 2004-2023 John Lemcke
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the Artistic License
