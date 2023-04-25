@@ -80,7 +80,8 @@ public class TrackSummaryTable
     private void initComponents() {
 
         setAutoCreateRowSorter(true);
-        setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        setFont(getFont().deriveFont(getFont().getSize()-1f));
+        setName("TrackSummaryTable"); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
