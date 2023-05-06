@@ -33,7 +33,11 @@ public class MidiUtils
         Info[] infos = MidiSystem.getMidiDeviceInfo();
         int i = 0;
         for (Info info : infos) {
-            System.out.println("Info " + i++ + " = " + info);
+            System.out.println("Info " + i++);
+            System.out.println("     Name = " + info.getName());
+            System.out.println("   Vendor = " + info.getVendor());
+            System.out.println("  Version = " + info.getVersion());
+            System.out.println("    Desc. = " + info.getDescription());
             MidiDevice dev = MidiSystem.getMidiDevice(info);
             for (Receiver rec : dev.getReceivers()) {
                 System.out.println("Receiver " + rec.toString());
@@ -85,56 +89,55 @@ public class MidiUtils
     }
 
     public void checkSynthesizer() throws MidiUnavailableException {
-        Synthesizer synth = MidiSystem.getSynthesizer();
-        System.out.println("Synthesizer : " + synth);
-//        Synthesizer synth2 = MidiSystem.getSynthesizer();
+        try (Synthesizer synth = MidiSystem.getSynthesizer()) {
+            System.out.println("Synthesizer : " + synth);
+            //        Synthesizer synth2 = MidiSystem.getSynthesizer();
 //        System.out.println("Synthesizer 2 : " + synth2);
 //        Synthesizer synth = MidiQuickFix.getSynth();
-        synth.open();
-        synth.unloadAllInstruments(synth.getDefaultSoundbank());
-
+            synth.open();
+            synth.unloadAllInstruments(synth.getDefaultSoundbank());
 //        MidiQuickFix mqf = new MidiQuickFix(null);
 //        URL url;
 //        url = mqf.getClass().getResource("resources/Soundbanks/Compifont_13082016.sf2"); // NOI18N
 //        url = mqf.getClass().getResource("resources/Soundbanks/OmegaGMGS2.sf2"); // NOI18N
 //        File file = new File(url.getFile());
-        File file;
-        file = new File("/home/john/src/playpen/MidiQuickFix/src/com/lemckes/MidiQuickFix/resources/Soundbanks/OmegaGMGS2.sf2");
-        try {
-            Soundbank soundbank;
-            soundbank = MidiSystem.getSoundbank(file);
-            System.out.println();
-            System.out.println("Soundbank : " + soundbank.getDescription());
-            System.out.println("Soundbank : " + soundbank.getName());
-            System.out.println("Soundbank : " + soundbank.getVendor());
-            System.out.println("Soundbank : " + soundbank.getVersion());
+            File file;
+            file = new File("/usr/share/sounds/sf2/TimGM6mb.sf2");
+            try {
+                Soundbank soundbank;
+                soundbank = MidiSystem.getSoundbank(file);
+                System.out.println();
+                System.out.println("Soundbank : ");
+                System.out.println("Desc : " + soundbank.getDescription());
+                System.out.println("Name : " + soundbank.getName());
+                System.out.println("Vndr : " + soundbank.getVendor());
+                System.out.println("Vers : " + soundbank.getVersion());
 
-            if (synth.isSoundbankSupported(soundbank)) {
-                System.out.println("Soundbank is Supported");
-            }
+                if (synth.isSoundbankSupported(soundbank)) {
+                    System.out.println("Soundbank is Supported");
+                }
 
-//            synth.loadAllInstruments(soundbank);
-            Patch[] patches = new Patch[129];
-            for (int prog = 0; prog < 128; prog++) {
-                patches[prog] = new Patch(0, prog);
-            }
-            patches[128] = new Patch(0, 0);
-            synth.loadInstruments(soundbank, patches);
-            
+                synth.loadAllInstruments(soundbank);
+//            Patch[] patches = new Patch[129];
+//            for (int prog = 0; prog < 128; prog++) {
+//                patches[prog] = new Patch(0, prog);
+//            }
+//            patches[128] = new Patch(0, 0);
+//            synth.loadInstruments(soundbank, patches);
+
 //            for (Instrument in : soundbank.getInstruments()) {
 //
 //                synth.loadInstrument(in);
 //            }
-
-            Instrument[] instruments2 = synth.getLoadedInstruments();
-            int count2 = 0;
-            for (Instrument i : instruments2) {
-                int bank = i.getPatch().getBank();
-                int prog = i.getPatch().getProgram();
-                System.out.println("Inst " + bank + "/" + prog + " - " + i.getName() + " - " + i.getSoundbank().getName());
+                Instrument[] instruments2 = synth.getLoadedInstruments();
+                for (var i : instruments2) {
+                    int bank = i.getPatch().getBank();
+                    int prog = i.getPatch().getProgram();
+                    System.out.println("Inst " + bank + "/" + prog + " - " + i.getName() + " - " + i.getSoundbank().getName());
+                }
+            } catch (InvalidMidiDataException | IOException ex) {
+                Logger.getLogger(MidiUtils.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (InvalidMidiDataException | IOException ex) {
-            Logger.getLogger(MidiUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -146,5 +149,6 @@ public class MidiUtils
         mu.checkReceiver();
         mu.checkTransmitter();
         mu.checkSynthesizer();
+        System.out.println("");
     }
 }
