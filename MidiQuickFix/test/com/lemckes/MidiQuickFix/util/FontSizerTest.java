@@ -19,6 +19,8 @@
  */
 package com.lemckes.MidiQuickFix.util;
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -31,22 +33,22 @@ import org.junit.Test;
  */
 public class FontSizerTest
 {
-    
-    public FontSizerTest() {
-    }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
+    public FontSizerTest() {
+    }
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -57,11 +59,26 @@ public class FontSizerTest
     @Test
     public void testScaleFont() {
         System.out.println("scaleFont");
-        double scale = 2.0;
-        FontSizer instance = new FontSizer();
-        instance.scaleFont(scale);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+        MqfProperties.readProperties();
+        try {
+            String lafName = MqfProperties.getStringProperty(
+                MqfProperties.LOOK_AND_FEEL_NAME, "Nimbus");
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if (lafName.equals(info.getName())) {
+                    System.out.println(info.getClassName());
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            // lafName is not available, use the default look and feel.
+        }
+
+        float scale = 2.0f;
+        FontSizer.scaleFont(scale);
+        System.out.println("####################################################");
+        FontSizer.scaleFont(scale);
+
     }
-    
+
 }

@@ -128,6 +128,8 @@ public class PreferencesDialog
             MqfProperties.LYRIC_HIGHLIGHT_COLOUR, Color.GREEN.darker());
         mRubyScale = MqfProperties.getFloatProperty(
             MqfProperties.LYRIC_RUBY_FONT_SCALE, 0.8f);
+        mLafName = MqfProperties.getStringProperty(
+            MqfProperties.LOOK_AND_FEEL_NAME, "Metal");
         mShowTraceDialog = MqfProperties.getBooleanProperty(
             MqfProperties.SHOW_TRACE, true);
 

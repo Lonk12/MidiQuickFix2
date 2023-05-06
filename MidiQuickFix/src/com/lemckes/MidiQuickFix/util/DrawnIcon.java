@@ -44,11 +44,11 @@ public class DrawnIcon
     private AbstractButton mParent;
     private Path2D.Float mPath;
     private Color mFillColour = Color.GRAY;
-    private Color mBorderColour = Color.BLACK;
-    private Color mActiveBorderColour = Color.WHITE;
+    private Color mStrokeColour = Color.BLACK;
+    private Color mActiveStrokeColour = Color.WHITE;
     private boolean mActive = false;
     private boolean mFilled;
-    private boolean mBordered;
+    private boolean mStroked;
 
     /**
      * Create a new instance of DrawnIcon with the default shape
@@ -70,7 +70,7 @@ public class DrawnIcon
         this.mParent = parent;
         this.mPath = shape;
         mFilled = true;
-        mBordered = true;
+        mStroked = true;
     }
 
     @Override
@@ -110,8 +110,8 @@ public class DrawnIcon
             drawFill(g2);
         }
 
-        if (mBordered) {
-            drawBorder(g2, scale);
+        if (mStroked) {
+            drawStroke(g2, scale);
         }
 
         g2.setTransform(savedAT);
@@ -124,14 +124,14 @@ public class DrawnIcon
         g2.fill(mPath);
     }
 
-    private void drawBorder(Graphics2D g2, float scale) {
+    private void drawStroke(Graphics2D g2, float scale) {
         boolean pressed = mParent.getModel().isArmed();
         boolean selected = mParent.isSelected();
 
         if (mActive || pressed || selected) {
-            g2.setColor(mActiveBorderColour);
+            g2.setColor(mActiveStrokeColour);
         } else {
-            g2.setColor(mBorderColour);
+            g2.setColor(mStrokeColour);
         }
         float strokeWidth
             = scale < 16 ? 0.5f
@@ -159,16 +159,16 @@ public class DrawnIcon
         this.mFillColour = colour;
     }
 
-    public Color getBorderColour() {
-        return mBorderColour;
+    public Color getStrokeColour() {
+        return mStrokeColour;
     }
 
-    public void setBorderColour(Color borderColour) {
-        this.mBorderColour = borderColour;
+    public void setStrokeColour(Color strokeColour) {
+        this.mStrokeColour = strokeColour;
 
-        // Calculate a contrasting colour for the activeBorderColour
-        float[] hsbVals = Color.RGBtoHSB(borderColour.getRed(),
-            borderColour.getGreen(), borderColour.getBlue(), null);
+        // Calculate a contrasting colour for the activeStrokeColour
+        float[] hsbVals = Color.RGBtoHSB(strokeColour.getRed(),
+            strokeColour.getGreen(), strokeColour.getBlue(), null);
         float hue = hsbVals[0];
         float sat = hsbVals[1];
         float bri = hsbVals[2];
@@ -181,11 +181,11 @@ public class DrawnIcon
                 // otherwise invert the brightness
                 bri = 1.0f - bri;
             }
-            this.mActiveBorderColour
+            this.mActiveStrokeColour
                 = Color.getHSBColor(hue, sat, bri);
         } else {
             // This is not grey so adjust the hue.
-            this.mActiveBorderColour
+            this.mActiveStrokeColour
                 = Color.getHSBColor(hue + 0.5f, sat, bri);
         }
     }
@@ -198,12 +198,12 @@ public class DrawnIcon
         this.mFilled = filled;
     }
 
-    public boolean isBordered() {
-        return mBordered;
+    public boolean isStroked() {
+        return mStroked;
     }
 
-    public void setBordered(boolean bordered) {
-        this.mBordered = bordered;
+    public void setStroked(boolean stroked) {
+        this.mStroked = stroked;
     }
 
     public boolean isActive() {

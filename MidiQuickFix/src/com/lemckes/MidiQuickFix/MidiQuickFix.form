@@ -275,11 +275,6 @@
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
           <SubComponents>
             <Container class="javax.swing.JPanel" name="bodyPanel">
-              <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="ed" green="e1" red="d3" type="rgb"/>
-                </Property>
-              </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
                   <JSplitPaneConstraints position="right"/>
@@ -290,9 +285,6 @@
               <SubComponents>
                 <Container class="javax.swing.JPanel" name="controlPanel">
                   <Properties>
-                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="ed" green="e1" red="d3" type="rgb"/>
-                    </Property>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
                         <EmptyBorder bottom="6" left="6" right="6" top="6"/>
@@ -318,9 +310,6 @@
                       <SubComponents>
                         <Component class="com.lemckes.MidiQuickFix.components.LoopSlider" name="positionSlider">
                           <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="dd" green="d2" red="c5" type="rgb"/>
-                            </Property>
                             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                               <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
                                 <CompoundBorder>
@@ -370,9 +359,6 @@
                         </Component>
                         <Component class="javax.swing.JFormattedTextField" name="tempoAdjustField">
                           <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="f7" red="e9" type="rgb"/>
-                            </Property>
                             <Property name="columns" type="int" value="4"/>
                             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                               <Font name="Monospaced" size="10" style="0"/>
@@ -398,9 +384,6 @@
                     </Container>
                     <Container class="javax.swing.JPanel" name="seqInfoPanel">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="db" green="d0" red="c3" type="rgb"/>
-                        </Property>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
                             <EtchetBorder/>
@@ -430,9 +413,6 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="lengthText">
                           <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="f7" red="e9" type="rgb"/>
-                            </Property>
                             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                               <FontInfo relative="true">
                                 <Font component="lengthText" property="font" relativeSize="true" size="-1"/>
@@ -467,9 +447,6 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="tempoText">
                           <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="f7" red="e9" type="rgb"/>
-                            </Property>
                             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                               <FontInfo relative="true">
                                 <Font component="tempoText" property="font" relativeSize="true" size="-1"/>
@@ -498,9 +475,6 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="timeSigText">
                           <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="f7" red="e9" type="rgb"/>
-                            </Property>
                             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                               <FontInfo relative="true">
                                 <Font component="timeSigText" property="font" relativeSize="true" size="-1"/>
@@ -529,9 +503,6 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="keyText">
                           <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="f7" red="e9" type="rgb"/>
-                            </Property>
                             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                               <FontInfo relative="true">
                                 <Font component="keyText" property="font" relativeSize="true" size="-1"/>

@@ -58,7 +58,9 @@ public class LoopSlider
     private int mResolution;
     private long mLoopInPoint = 0;
     private long mLoopOutPoint = 0;
+    private Color mLoopFieldFg;
     private Color mLoopFieldBg;
+    private Color mLoopingBg;
     private BarBeatTick mBarBeatTick;
 
     /**
@@ -67,7 +69,11 @@ public class LoopSlider
     public LoopSlider() {
         initComponents();
 
+        mLoopFieldFg = loopInField.getForeground();
         mLoopFieldBg = loopInField.getBackground();
+        float[] bg = Color.RGBtoHSB(mLoopFieldBg.getRed(), mLoopFieldBg.getGreen(), mLoopFieldBg.getBlue(), null);
+        float bgBrightness = Math.max(bg[2], 0.5f);
+        mLoopingBg = Color.getHSBColor(0.4f, 0.9f, bgBrightness);
 
         try {
             mBarBeatTick = new BarBeatTick(new Sequence(Sequence.PPQ, 192, 1));
@@ -191,8 +197,8 @@ public class LoopSlider
 
     public void setIsLooping(boolean looping) {
         if (looping) {
-            loopInField.setBackground(Color.decode("0xc0ffb0"));
-            loopOutField.setBackground(Color.decode("0xc0ffb0"));
+            loopInField.setBackground(mLoopingBg);
+            loopOutField.setBackground(mLoopingBg);
         } else {
             loopInField.setBackground(mLoopFieldBg);
             loopOutField.setBackground(mLoopFieldBg);
@@ -218,7 +224,8 @@ public class LoopSlider
         mInPath.lineTo(0.8f, 0.8f);
         mInIcon = new DrawnIcon(loopInButton, mInPath);
         mInIcon.setFilled(true);
-        mInIcon.setFillColour(Color.BLACK);
+        mInIcon.setFillColour(mLoopFieldFg.brighter());
+        mInIcon.setStrokeColour(mLoopFieldFg.brighter());
         loopInButton.setIcon(mInIcon);
 
         mOutPath = new Path2D.Float();
@@ -239,7 +246,8 @@ public class LoopSlider
         mOutPath.lineTo(0.8f, 0.8f);
         mOutIcon = new DrawnIcon(loopOutButton, mOutPath);
         mOutIcon.setFilled(true);
-        mOutIcon.setFillColour(Color.BLACK);
+        mOutIcon.setFillColour(mLoopFieldFg);
+        mOutIcon.setStrokeColour(mLoopFieldFg);
         loopOutButton.setIcon(mOutIcon);
     }
 
@@ -261,7 +269,7 @@ public class LoopSlider
         loopOutField = new javax.swing.JFormattedTextField();
         loopOutLabel = new javax.swing.JLabel();
         durationSlider = new com.lemckes.MidiQuickFix.components.DurationSlider();
-        jLabel1 = new javax.swing.JLabel();
+        barBeatLabel = new javax.swing.JLabel();
         barBeatField = new javax.swing.JFormattedTextField();
 
         setLayout(new java.awt.GridBagLayout());
@@ -276,7 +284,6 @@ public class LoopSlider
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         add(loopInLabel, gridBagConstraints);
 
-        loopInField.setBackground(new java.awt.Color(233, 247, 255));
         loopInField.setColumns(8);
         loopInField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         loopInField.setFont(loopInField.getFont().deriveFont(loopInField.getFont().getSize()-2f));
@@ -316,7 +323,6 @@ public class LoopSlider
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         add(loopInButton, gridBagConstraints);
 
-        currPositionField.setBackground(new java.awt.Color(233, 247, 255));
         currPositionField.setColumns(8);
         currPositionField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         currPositionField.setFont(currPositionField.getFont().deriveFont(currPositionField.getFont().getSize()-2f));
@@ -352,7 +358,6 @@ public class LoopSlider
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(loopOutButton, gridBagConstraints);
 
-        loopOutField.setBackground(new java.awt.Color(233, 247, 255));
         loopOutField.setColumns(8);
         loopOutField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         loopOutField.setFont(loopOutField.getFont().deriveFont(loopOutField.getFont().getSize()-2f));
@@ -389,15 +394,14 @@ public class LoopSlider
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(durationSlider, gridBagConstraints);
 
-        jLabel1.setText("Bar:Beat");
+        barBeatLabel.setText("Bar:Beat");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
-        add(jLabel1, gridBagConstraints);
+        add(barBeatLabel, gridBagConstraints);
 
-        barBeatField.setBackground(new java.awt.Color(233, 247, 255));
         barBeatField.setColumns(6);
         barBeatField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         barBeatField.setFont(barBeatField.getFont().deriveFont(barBeatField.getFont().getSize()-2f));
@@ -460,9 +464,9 @@ public class LoopSlider
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField barBeatField;
+    private javax.swing.JLabel barBeatLabel;
     private javax.swing.JFormattedTextField currPositionField;
     private com.lemckes.MidiQuickFix.components.DurationSlider durationSlider;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JButton loopInButton;
     private javax.swing.JFormattedTextField loopInField;
     private javax.swing.JLabel loopInLabel;

@@ -24,6 +24,8 @@
  */
 package com.lemckes.MidiQuickFix;
 
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.lemckes.MidiQuickFix.components.TempoSlider;
 import com.lemckes.MidiQuickFix.util.BarBeatTick;
 import com.lemckes.MidiQuickFix.util.Formats;
@@ -169,6 +171,10 @@ public class MidiQuickFix
     public MidiQuickFix(final String fileName) {
         EventQueue.invokeLater(() -> {
             build(fileName);
+
+            TraceDialog.getInstance().setLocationRelativeTo(this);
+            TraceDialog.getInstance().setVisible(
+                MqfProperties.getBooleanProperty(MqfProperties.SHOW_TRACE, true));
         });
     }
 
@@ -185,9 +191,6 @@ public class MidiQuickFix
                 traceMenuItem.setState(true);
             }
         });
-
-        TraceDialog.getInstance().setVisible(
-            MqfProperties.getBooleanProperty(MqfProperties.SHOW_TRACE, true));
 
         Startup startDialog = new Startup(new javax.swing.JFrame(), false);
         // Centre on the screen
@@ -941,6 +944,8 @@ public class MidiQuickFix
         String labelString = Integer.toString(mCurrentTempo);
         // Get the default bg colour from another JLabel
         Color bg = timeSigText.getBackground();
+        float bgBrightness = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null)[2];
+        bgBrightness = Math.max(bgBrightness, 0.5f);
 
         try {
             mCurrentTempo = Integer.parseInt(tempo);
@@ -954,11 +959,11 @@ public class MidiQuickFix
             if (mTempoFactor > 1.0f) {
                 labelString = newTempo + " +";
                 float sat = 0.1f + ((mTempoFactor - 1.0f) * 0.8f);
-                bg = Color.getHSBColor(0.4f, sat, 1.0f);
+                bg = Color.getHSBColor(0.4f, sat, bgBrightness);
             } else if (mTempoFactor < 1.0f) {
                 labelString = newTempo + " -";
                 float sat = 0.1f + ((1.0f - mTempoFactor) * 0.8f);
-                bg = Color.getHSBColor(0.1f, sat, 1.0f);
+                bg = Color.getHSBColor(0.1f, sat, bgBrightness);
             }
         }
         tempoText.setBackground(bg);
@@ -1169,7 +1174,9 @@ public class MidiQuickFix
      * @param s the message to display
      */
     public void trace(final String s) {
-        TraceDialog.addTrace(s);
+        if (null != TraceDialog.getInstance()) {
+            TraceDialog.addTrace(s);
+        }
     }
 
     /**
@@ -1311,16 +1318,13 @@ public class MidiQuickFix
         mainSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         mainSplitPane.setOneTouchExpandable(true);
 
-        bodyPanel.setBackground(new java.awt.Color(211, 225, 237));
         bodyPanel.setLayout(new java.awt.BorderLayout());
 
-        controlPanel.setBackground(new java.awt.Color(211, 225, 237));
         controlPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 6, 6, 6));
         controlPanel.setLayout(new java.awt.GridBagLayout());
 
         progressPanel.setLayout(new java.awt.GridBagLayout());
 
-        positionSlider.setBackground(new java.awt.Color(197, 210, 221));
         positionSlider.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(197, 210, 221), 2)));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1348,7 +1352,6 @@ public class MidiQuickFix
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         tempoAdjustPanel.add(tempoAdjustLabel, gridBagConstraints);
 
-        tempoAdjustField.setBackground(new java.awt.Color(233, 247, 255));
         tempoAdjustField.setColumns(4);
         tempoAdjustField.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1373,7 +1376,6 @@ public class MidiQuickFix
         gridBagConstraints.insets = new java.awt.Insets(6, 16, 0, 16);
         controlPanel.add(tempoAdjustPanel, gridBagConstraints);
 
-        seqInfoPanel.setBackground(new java.awt.Color(195, 208, 219));
         seqInfoPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         seqInfoPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -1386,7 +1388,6 @@ public class MidiQuickFix
         gridBagConstraints.insets = new java.awt.Insets(2, 3, 0, 0);
         seqInfoPanel.add(lengthLabel, gridBagConstraints);
 
-        lengthText.setBackground(new java.awt.Color(233, 247, 255));
         lengthText.setFont(lengthText.getFont().deriveFont(lengthText.getFont().getSize()-1f));
         lengthText.setText("--:--");
         lengthText.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 6));
@@ -1408,7 +1409,6 @@ public class MidiQuickFix
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 0);
         seqInfoPanel.add(tempoLabel, gridBagConstraints);
 
-        tempoText.setBackground(new java.awt.Color(233, 247, 255));
         tempoText.setFont(tempoText.getFont().deriveFont(tempoText.getFont().getSize()-1f));
         tempoText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1428,7 +1428,6 @@ public class MidiQuickFix
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 0);
         seqInfoPanel.add(timeLabel, gridBagConstraints);
 
-        timeSigText.setBackground(new java.awt.Color(233, 247, 255));
         timeSigText.setFont(timeSigText.getFont().deriveFont(timeSigText.getFont().getSize()-1f));
         timeSigText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1448,7 +1447,6 @@ public class MidiQuickFix
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 2, 0);
         seqInfoPanel.add(keyLabel, gridBagConstraints);
 
-        keyText.setBackground(new java.awt.Color(233, 247, 255));
         keyText.setFont(keyText.getFont().deriveFont(keyText.getFont().getSize()-1f));
         keyText.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1739,17 +1737,37 @@ public class MidiQuickFix
      */
     public static void main(String args[]) {
         MqfProperties.readProperties();
-        try {
-            String lafName = MqfProperties.getStringProperty(
-                MqfProperties.LOOK_AND_FEEL_NAME, "Nimbus");
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if (lafName.equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
+
+        // Install FlatLaf look and feel
+        FlatLightLaf.installLafInfo();
+        FlatDarkLaf.installLafInfo();
+
+        // Retrieve the user's preferred LAF
+        String preferredLaf = MqfProperties.getStringProperty(
+            MqfProperties.LOOK_AND_FEEL_NAME, "FlatLaf Light");
+
+        // Define the order in which we will attempt to set the LAFs
+        String[] lafName = {
+            preferredLaf,
+            "FlatLaf Light",
+            "FlatLaf Dark",
+            "Nimbus",
+            "Metal"};
+
+        // Attempt to find an installed LAF that matches our choices.
+        boolean found = false;
+        for (int name = 0; (name < lafName.length) && !found; ++name) {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if (lafName[name].equals(info.getName())) {
+                    try {
+                        UIManager.setLookAndFeel(info.getClassName());
+                        found = true;
+                        break;
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+                        // lafName is not available, use the default look and feel.
+                    }
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            // lafName is not available, use the default look and feel.
         }
 
 //        float uiScale = MqfProperties.getFloatProperty(MqfProperties.UI_FONT_SCALE, 1.0f);
@@ -1777,7 +1795,7 @@ public class MidiQuickFix
 
     public static void setDefaultFontSize(float scale) {
         Set<Object> keySet = UIManager.getLookAndFeelDefaults().keySet();
-        Object[] keys = keySet.toArray(new Object[keySet.size()]);
+        Object[] keys = keySet.toArray(Object[]::new);
         for (Object key : keys) {
             if (key != null && key.toString().toLowerCase().contains("font")) {
                 java.awt.Font font = UIManager.getDefaults().getFont(key);

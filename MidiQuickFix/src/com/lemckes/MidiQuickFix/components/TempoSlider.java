@@ -79,11 +79,10 @@ public class TempoSlider extends javax.swing.JSlider
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setFont(new java.awt.Font("Dialog", 0, 9)); // NOI18N
+        setFont(getFont().deriveFont(getFont().getSize()-2f));
         setMaximum(200);
         setPaintLabels(true);
         setValue(100);
-        setOpaque(false);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
