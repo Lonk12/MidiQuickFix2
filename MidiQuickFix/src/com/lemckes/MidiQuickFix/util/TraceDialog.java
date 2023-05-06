@@ -32,9 +32,8 @@ public class TraceDialog extends javax.swing.JDialog
 {
 
     static final long serialVersionUID = 5090767651914686108L;
-    private static final TraceDialog INSTANCE =
-        new TraceDialog(MidiQuickFix.getMainFrame(), false);
-
+    private static TraceDialog INSTANCE;
+    
     /** Creates new form TraceDialog */
     private TraceDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -48,6 +47,9 @@ public class TraceDialog extends javax.swing.JDialog
      * @return
      */
     public static TraceDialog getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new TraceDialog(MidiQuickFix.getMainFrame(), false);
+        }
         return INSTANCE;
     }
 
