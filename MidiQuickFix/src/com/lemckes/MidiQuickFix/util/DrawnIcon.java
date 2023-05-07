@@ -119,8 +119,16 @@ public class DrawnIcon
 
     private void drawFill(Graphics2D g2) {
         boolean enabled = mParent.isEnabled();
+        boolean pressed = mParent.getModel().isArmed();
+        boolean selected = mParent.isSelected();
 
-        g2.setColor(enabled ? mFillColour : Color.GRAY);
+        if (!enabled) {
+            g2.setColor(Color.GRAY);
+        } else if (pressed || selected) {
+            g2.setColor(getActiveColour(mFillColour));
+        } else {
+            g2.setColor(mFillColour);
+        }
         g2.fill(mPath);
     }
 
@@ -129,7 +137,7 @@ public class DrawnIcon
         boolean selected = mParent.isSelected();
 
         if (mActive || pressed || selected) {
-            g2.setColor(mActiveStrokeColour);
+            g2.setColor(getActiveColour(mStrokeColour));
         } else {
             g2.setColor(mStrokeColour);
         }
@@ -165,13 +173,17 @@ public class DrawnIcon
 
     public void setStrokeColour(Color strokeColour) {
         this.mStrokeColour = strokeColour;
+        this.mActiveStrokeColour = getActiveColour(strokeColour);
+    }
 
-        // Calculate a contrasting colour for the activeStrokeColour
-        float[] hsbVals = Color.RGBtoHSB(strokeColour.getRed(),
-            strokeColour.getGreen(), strokeColour.getBlue(), null);
+    private Color getActiveColour(Color baseColour) {
+        // Calculate a contrasting colour for the active colour
+        float[] hsbVals = Color.RGBtoHSB(baseColour.getRed(),
+            baseColour.getGreen(), baseColour.getBlue(), null);
         float hue = hsbVals[0];
         float sat = hsbVals[1];
         float bri = hsbVals[2];
+        Color activeColour;
         if (sat < 0.2) {
             // This is a grey or close to it so adjust the brightness
             if (bri > 0.4 && bri < 0.6) {
@@ -181,13 +193,12 @@ public class DrawnIcon
                 // otherwise invert the brightness
                 bri = 1.0f - bri;
             }
-            this.mActiveStrokeColour
-                = Color.getHSBColor(hue, sat, bri);
+            activeColour = Color.getHSBColor(hue, sat, bri);
         } else {
             // This is not grey so adjust the hue.
-            this.mActiveStrokeColour
-                = Color.getHSBColor(hue + 0.5f, sat, bri);
+            activeColour = Color.getHSBColor(hue + 0.5f, sat, bri);
         }
+        return activeColour;
     }
 
     public boolean isFilled() {
