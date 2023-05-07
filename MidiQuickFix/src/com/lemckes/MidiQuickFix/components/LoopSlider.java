@@ -246,8 +246,8 @@ public class LoopSlider
         mOutPath.lineTo(0.8f, 0.8f);
         mOutIcon = new DrawnIcon(loopOutButton, mOutPath);
         mOutIcon.setFilled(true);
-        mOutIcon.setFillColour(mLoopFieldFg);
-        mOutIcon.setStrokeColour(mLoopFieldFg);
+        mOutIcon.setFillColour(mLoopFieldFg.brighter());
+        mOutIcon.setStrokeColour(mLoopFieldFg.brighter());
         loopOutButton.setIcon(mOutIcon);
     }
 
@@ -287,14 +287,14 @@ public class LoopSlider
         loopInField.setColumns(8);
         loopInField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         loopInField.setFont(loopInField.getFont().deriveFont(loopInField.getFont().getSize()-2f));
-        loopInField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loopInFieldActionPerformed(evt);
-            }
-        });
         loopInField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 loopInFieldFocusLost(evt);
+            }
+        });
+        loopInField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loopInFieldActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -302,14 +302,12 @@ public class LoopSlider
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
         add(loopInField, gridBagConstraints);
 
         loopInButton.setToolTipText(UiStrings.getString("loop-in_point_tooltip")); // NOI18N
         loopInButton.setDefaultCapable(false);
         loopInButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         loopInButton.setMaximumSize(null);
-        loopInButton.setMinimumSize(null);
         loopInButton.setPreferredSize(null);
         loopInButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -321,31 +319,32 @@ public class LoopSlider
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 3);
         add(loopInButton, gridBagConstraints);
 
         currPositionField.setColumns(8);
         currPositionField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         currPositionField.setFont(currPositionField.getFont().deriveFont(currPositionField.getFont().getSize()-2f));
-        currPositionField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                currPositionFieldActionPerformed(evt);
-            }
-        });
         currPositionField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 currPositionFieldFocusLost(evt);
+            }
+        });
+        currPositionField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                currPositionFieldActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(1, 3, 0, 2);
         add(currPositionField, gridBagConstraints);
 
         loopOutButton.setToolTipText(UiStrings.getString("loop-out_point_tooltip")); // NOI18N
         loopOutButton.setDefaultCapable(false);
         loopOutButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        loopOutButton.setMaximumSize(null);
         loopOutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loopOutButtonActionPerformed(evt);
@@ -356,6 +355,7 @@ public class LoopSlider
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 3);
         add(loopOutButton, gridBagConstraints);
 
         loopOutField.setColumns(8);
@@ -376,7 +376,6 @@ public class LoopSlider
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
         add(loopOutField, gridBagConstraints);
 
         loopOutLabel.setText(UiStrings.getString("out")); // NOI18N
@@ -385,7 +384,7 @@ public class LoopSlider
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         add(loopOutLabel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

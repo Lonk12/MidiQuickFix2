@@ -31,7 +31,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.text.SimpleAttributeSet;
@@ -255,12 +254,12 @@ public class FontSelector
         insetPanel = new javax.swing.JPanel();
         mainPanel = new javax.swing.JPanel();
         fontScrollPane = new javax.swing.JScrollPane();
-        fontList = new javax.swing.JList<String>();
+        fontList = new javax.swing.JList<>();
         attributesPanel = new javax.swing.JPanel();
         sizeLabel = new javax.swing.JLabel();
         boldCheckBox = new javax.swing.JCheckBox();
         italicCheckBox = new javax.swing.JCheckBox();
-        sizeCombo = new javax.swing.JComboBox<String>();
+        sizeCombo = new javax.swing.JComboBox<>();
         styleLabel = new javax.swing.JLabel();
         previewText = new javax.swing.JTextField();
         familyLabel = new javax.swing.JLabel();
@@ -375,7 +374,7 @@ public class FontSelector
         insetPanel.add(mainPanel, java.awt.BorderLayout.CENTER);
 
         buttonPanel.setName("buttonPanel"); // NOI18N
-        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 0, 0));
+        buttonPanel.setLayout(new java.awt.FlowLayout(2, 0, 0));
 
         buttonGrid.setName("buttonGrid"); // NOI18N
         buttonGrid.setLayout(new java.awt.GridLayout(1, 0, 5, 0));

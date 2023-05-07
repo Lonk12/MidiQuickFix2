@@ -832,7 +832,7 @@ public class MidiQuickFix
                 Arrays.sort(types);
                 type = types[0];
             }
-            int res = MidiSystem.write(mSeq, type, file);
+            int bytesWritten = MidiSystem.write(mSeq, type, file);
             mSequenceModified = false;
 
             // Remember the file name for later
@@ -1311,6 +1311,7 @@ public class MidiQuickFix
                 exitForm(evt);
             }
         });
+        getContentPane().setLayout(new java.awt.BorderLayout());
 
         mainPanel.setLayout(new java.awt.BorderLayout());
 
@@ -1325,7 +1326,7 @@ public class MidiQuickFix
 
         progressPanel.setLayout(new java.awt.GridBagLayout());
 
-        positionSlider.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(197, 210, 221), 2)));
+        positionSlider.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;

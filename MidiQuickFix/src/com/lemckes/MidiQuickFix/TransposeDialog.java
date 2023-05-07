@@ -170,6 +170,7 @@ public class TransposeDialog
                 closeDialog(evt);
             }
         });
+        getContentPane().setLayout(new java.awt.BorderLayout());
 
         mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         mainPanel.setLayout(new java.awt.GridBagLayout());
@@ -235,7 +236,7 @@ public class TransposeDialog
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
-        jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        jPanel3.setLayout(new java.awt.FlowLayout(2));
 
         buttonPanel.setLayout(new java.awt.GridLayout(1, 0, 5, 0));
 
